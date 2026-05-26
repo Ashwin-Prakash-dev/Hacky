@@ -46,8 +46,8 @@ const SponsorTeaser = () => (
 
         <a href="/sponsors" target="_blank" rel="noreferrer">
           <Button
-            title="View Sponsor Opportunities →"
-            containerClass="mt-8 cursor-pointer border border-white/20 bg-transparent text-white hover:bg-white/5"
+            title="View Sponsor Opportunities"
+            containerClass="mt-8 cursor-pointer"
           />
         </a>
       </div>
@@ -88,19 +88,19 @@ const Contact = () => {
             {!submitted ? (
               <>
                 <p
-                  className="font-general text-xs uppercase tracking-widest mb-4"
+                  className="mb-4 font-general text-xs uppercase tracking-widest"
                   style={{ color: "#C8FF00", letterSpacing: "0.15em" }}
                 >
                   Stay in the loop
                 </p>
                 <h2
                   className="special-font bento-title mb-2"
-                  style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3rem)", letterSpacing: "-0.03em" }}
+                  style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3rem)", letterSpacing: "0.03em" }}
                 >
                   Be <b>f</b>irst in line.
                 </h2>
                 <p
-                  className="font-circular-web text-sm mb-10"
+                  className="mb-10 font-circular-web text-sm"
                   style={{ color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}
                 >
                   We'll reach out the moment registrations open.
@@ -109,7 +109,7 @@ const Contact = () => {
                 </p>
 
                 <form onSubmit={handleSubmit}>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:gap-3 mb-4">
+                  <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:gap-3">
                     <input
                       type="text"
                       placeholder="Your name"

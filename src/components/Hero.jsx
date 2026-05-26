@@ -9,7 +9,7 @@ import VideoPreview from "./VideoPreview";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Hero = () => {
+const Hero = ({ introComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [hasClicked, setHasClicked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -17,6 +17,8 @@ const Hero = () => {
 
   const totalVideos = 4;
   const nextVdRef = useRef(null);
+  const currentVdRef = useRef(null);
+  const heroTitleRef = useRef(null);
 
   const handleVideoLoad = () => {
     setLoadedVideos((prev) => prev + 1);
@@ -27,6 +29,12 @@ const Hero = () => {
       setLoading(false);
     }
   }, [loadedVideos]);
+
+  useEffect(() => {
+    if (introComplete && heroTitleRef.current) {
+      gsap.fromTo(heroTitleRef.current, { opacity: 0 }, { opacity: 1, duration: 0, ease: "power2.out" });
+    }
+  }, [introComplete]);
 
   const handleMiniVdClick = () => {
     setHasClicked(true);
@@ -77,6 +85,12 @@ const Hero = () => {
 
   const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
 
+  const stats = [
+    { value: "30", label: "Hours" },
+    { value: "500+", label: "Hackers" },
+    { value: "Kerala", label: "Location" },
+  ];
+
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden">
       {loading && (
@@ -91,9 +105,9 @@ const Hero = () => {
 
       <div
         id="video-frame"
-        className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg"
-        style={{ backgroundColor: "#000000" }}
+        className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
+        {/* Video layers */}
         <div>
           <div className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
             <VideoPreview>
@@ -102,7 +116,7 @@ const Hero = () => {
                 className="origin-center scale-50 opacity-0 transition-all duration-500 ease-in hover:scale-100 hover:opacity-100"
               >
                 <video
-                  ref={nextVdRef}
+                  ref={currentVdRef}
                   src={getVideoSrc((currentIndex % totalVideos) + 1)}
                   loop
                   muted
@@ -134,25 +148,35 @@ const Hero = () => {
           />
         </div>
 
-        {/* Bottom-right accent */}
-        <h1
-          className="special-font hero-heading absolute bottom-5 right-5 z-40"
-          style={{ color: "rgba(200,255,0,0.15)", fontSize: "clamp(4rem,10vw,8rem)" }}
-        >
+        {/* Gradient vignette — depth + readability */}
+        <div
+          className="absolute inset-0 z-30 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.7) 100%)",
+          }}
+        />
 
+        {/* Decorative bottom-right glyph */}
+        <h1
+          className="special-font hero-heading absolute bottom-4 right-5 z-40 select-none"
+          style={{ color: "rgba(200,255,0,0.13)", fontSize: "clamp(6rem,15vw,13rem)", lineHeight: 1 }}
+        >
+          S.
         </h1>
 
-        {/* Overlay content */}
-        <div className="absolute left-0 top-0 z-40 size-full">
-          <div className="mt-24 px-5 sm:px-10">
-            {/* Pill badge */}
+        {/* Main overlay */}
+        <div className="absolute inset-0 z-40 flex flex-col justify-between px-5 pb-8 pt-28 sm:px-12 sm:pt-32">
+
+          {/* Top-left: badge + headline + tagline + CTA */}
+          <div className="max-w-xl">
             <div
-              className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1"
               style={{ borderColor: "rgba(200,255,0,0.3)" }}
             >
               <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: "#C8FF00", animation: "pulse 2s infinite" }}
+                className="h-1.5 w-1.5 animate-pulse rounded-full"
+                style={{ background: "#C8FF00" }}
               />
               <span
                 className="font-general text-xs uppercase tracking-widest"
@@ -163,44 +187,79 @@ const Hero = () => {
             </div>
 
             <h1
+              id="hero-title"
+              ref={heroTitleRef}
               className="font-open-sauce"
               style={{
-                fontSize: "clamp(3.5rem, 10vw, 9rem)",
+                fontSize: "clamp(4rem, 11vw, 10rem)",
                 fontWeight: 700,
-                letterSpacing: "-0.02em",
-                lineHeight: 1,
-                textTransform: "none",
+                letterSpacing: "-0.03em",
+                lineHeight: 0.9,
                 color: "#c8c8c4",
+                opacity: 0,
               }}
             >
-              Startathon<span style={{ color: "#424242" }}>.</span>
+              Startathon<span style={{ color: "#3a3a3a" }}>.</span>
             </h1>
 
             <p
-              className="mb-5 max-w-sm font-general text-sm text-blue-50"
-              style={{ opacity: 0.6, lineHeight: 1.7 }}
+              className="mt-6 max-w-xs font-general text-sm"
+              style={{ color: "rgba(255,255,255,0.45)", lineHeight: 1.8 }}
             >
               30 hours. Real problems.
               <br />
               Kerala's most curated hackathon.
             </p>
 
-            <Button
-              id="notify-btn"
-              title="Register Interest"
-              rightIcon={<TiLocationArrow />}
-              containerClass="flex-center gap-1"
-              style={{ background: "#C8FF00", color: "#000" }}
-            />
+            <div className="mt-6">
+              <Button
+                id="notify-btn"
+                title="Register Interest"
+                rightIcon={<TiLocationArrow />}
+                containerClass="flex-center gap-1"
+              />
+            </div>
+          </div>
+
+          {/* Bottom row: stats left, scroll hint right */}
+          <div className="flex items-end justify-between">
+            <div className="flex items-end gap-8">
+              {stats.map(({ value, label }, i) => (
+                <div key={label} className="flex items-end gap-8">
+                  {i > 0 && (
+                    <div
+                      className="mb-1 h-6 w-px shrink-0"
+                      style={{ background: "rgba(255,255,255,0.12)" }}
+                    />
+                  )}
+                  <div>
+                    <div
+                      className="font-general text-2xl font-bold leading-none"
+                      style={{ color: "#C8FF00" }}
+                    >
+                      {value}
+                    </div>
+                    <div
+                      className="mt-1 font-general text-xs uppercase tracking-widest"
+                      style={{ color: "rgba(255,255,255,0.3)" }}
+                    >
+                      {label}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="flex flex-col items-center gap-1.5 font-general text-xs uppercase tracking-widest"
+              style={{ color: "rgba(255,255,255,0.2)" }}
+            >
+              <span>Scroll</span>
+              <div className="h-8 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Stats strip below hero */}
-      <div
-        className="absolute bottom-5 left-5 z-40 flex items-center gap-8"
-        style={{ display: "none" }}
-      />
     </div>
   );
 };

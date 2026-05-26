@@ -19,7 +19,7 @@ function App() {
       {!introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
       <main className="relative min-h-screen w-screen overflow-x-hidden">
         <NavBar />
-        <Hero />
+        <Hero introComplete={introComplete} />
         <About />
         <Features />
         <Story />
