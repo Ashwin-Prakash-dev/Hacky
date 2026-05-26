@@ -28,10 +28,9 @@ const About = () => {
 
   return (
     <section id="about" className="about-section min-h-screen w-screen">
-      <div className="about-lead relative mb-8 mt-36 flex flex-col items-center gap-5">
-        <p className="about-kicker font-general text-sm uppercase md:text-[10px]">
-          Welcome to Zentry
-        </p>
+      // AFTER
+<div className="about-lead relative flex h-[140vh] flex-col items-center justify-center gap-5">
+
 
         <AnimatedTitle
           title=" A platform for turning <br /> Projects into products"
