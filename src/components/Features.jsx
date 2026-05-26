@@ -66,7 +66,7 @@ const PrizesCard = () => {
       <div
         style={{
           position: "absolute", bottom: "-20px", right: "-10px",
-          fontFamily: "'zentry', sans-serif",
+          fontFamily: "'Open Sauce One', sans-serif",
           fontSize: "clamp(80px, 18vw, 160px)", fontWeight: 900,
           color: "transparent",
           WebkitTextStroke: "1px rgba(200,255,0,0.07)",
@@ -92,14 +92,14 @@ const PrizesCard = () => {
       >
         <div>
           <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", marginBottom: "16px" }}>
-            <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Prize Pool</span>
+            <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Prize Pool</span>
           </div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
             Pr<b>i</b>zes
           </h2>
         </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-          <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "clamp(2.5rem, 7vw, 5rem)", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "clamp(2.5rem, 7vw, 5rem)", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>
             ₹X.XL
           </span>
           <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "13px" }}>+</span>
@@ -117,7 +117,7 @@ const PrizesCard = () => {
           pointerEvents: hovered ? "auto" : "none",
         }}
       >
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase" }}>Prize Breakdown</span>
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase" }}>Prize Breakdown</span>
         <div style={{ display: "flex", flexDirection: "column" }}>
           {prizes.map((p, i) => (
             <div
@@ -132,13 +132,13 @@ const PrizesCard = () => {
               }}
             >
               <div style={{ display: "flex", alignItems: "baseline", gap: "12px" }}>
-                <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "11px", color: "#bbb", fontWeight: 700, minWidth: "20px" }}>{p.rank}</span>
+                <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#bbb", fontWeight: 700, minWidth: "20px" }}>{p.rank}</span>
                 <div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "12px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.label}</div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "10px", color: "#888", marginTop: "1px" }}>{p.sub}</div>
+                  <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "12px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.label}</div>
+                  <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", color: "#888", marginTop: "1px" }}>{p.sub}</div>
                 </div>
               </div>
-              <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "1rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
+              <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "1rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
             </div>
           ))}
         </div>
@@ -186,7 +186,7 @@ const ExpectCard = () => {
         pointerEvents: hovered ? "none" : "auto",
       }}>
         <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", alignSelf: "flex-start" }}>
-          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Experience</span>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Experience</span>
         </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>
@@ -195,7 +195,7 @@ const ExpectCard = () => {
           <div style={{ marginTop: "16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
             {["30 HRS", "CURATED", "IRL"].map((tag, i) => (
               <span key={i} style={{
-                fontFamily: "var(--font-general, sans-serif)", fontSize: "9px",
+                fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px",
                 letterSpacing: "2px", color: "rgba(255,255,255,0.4)",
                 border: "0.5px solid rgba(255,255,255,0.12)", borderRadius: "2px", padding: "3px 8px",
               }}>{tag}</span>
@@ -211,7 +211,7 @@ const ExpectCard = () => {
         opacity: hovered ? 1 : 0, transition: "opacity 0.35s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none", justifyContent: "center",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "12px" }}>What to Expect</span>
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "12px" }}>What to Expect</span>
         {items.map((item, i) => (
           <div key={i} style={{
             display: "flex", gap: "14px", alignItems: "flex-start",
@@ -223,8 +223,8 @@ const ExpectCard = () => {
           }}>
             <span style={{ color: "#00aa55", fontSize: "14px", marginTop: "1px", flexShrink: 0 }}>{item.icon}</span>
             <div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "11px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "11px", color: "#777", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
+              <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{item.title}</div>
+              <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#777", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
             </div>
           </div>
         ))}
@@ -264,7 +264,7 @@ const TimelineCard = () => {
       <div style={{
         position: "absolute", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
-        fontFamily: "'zentry', sans-serif",
+        fontFamily: "'Open Sauce One', sans-serif",
         fontSize: "clamp(60px, 14vw, 120px)", fontWeight: 900,
         color: "transparent",
         WebkitTextStroke: "1px rgba(200,255,0,0.05)",
@@ -283,13 +283,13 @@ const TimelineCard = () => {
         pointerEvents: hovered ? "none" : "auto",
       }}>
         <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", alignSelf: "flex-start" }}>
-          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Schedule</span>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Schedule</span>
         </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>
             Tim<b>e</b>line
           </h2>
-          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "12px", color: "rgba(255,255,255,0.35)", marginTop: "10px" }}>
+          <p style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.35)", marginTop: "10px" }}>
             July 2026 · SCTCE, Thiruvananthapuram
           </p>
         </div>
@@ -303,7 +303,7 @@ const TimelineCard = () => {
         pointerEvents: hovered ? "auto" : "none",
         overflowY: "auto", backgroundColor: "#fff",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "16px" }}>Event Timeline</span>
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "16px" }}>Event Timeline</span>
         <div style={{ position: "relative", paddingLeft: "16px" }}>
           <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "1px", background: "linear-gradient(to bottom, #C8FF00, rgba(200,255,0,0.1))" }} />
           {events.map((ev, i) => (
@@ -325,7 +325,7 @@ const TimelineCard = () => {
                 <span style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "9px", color: ev.live ? "#6a8800" : "#aaa", letterSpacing: "0.08em", display: "block", marginBottom: "1px" }}>
                   {ev.time} {ev.live && "← LIVE"}
                 </span>
-                <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "11px", color: "#111", fontWeight: ev.live ? 600 : 400, lineHeight: 1.4 }}>
+                <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#111", fontWeight: ev.live ? 600 : 400, lineHeight: 1.4 }}>
                   {ev.label}
                 </span>
               </div>

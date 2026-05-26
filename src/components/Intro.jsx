@@ -5,7 +5,7 @@ const quotes = [
   { text: "Most hackathons optimize for scale.", weight: 300 },
   { text: "Very few optimize for execution.", weight: 300 },
   { text: "We're changing that.", weight: 400 },
-  { text: "startathon.", weight: 700 },
+  { text: "startathon", weight: 700, dot: true },
 ];
 
 const Intro = ({ onComplete }) => {
@@ -100,7 +100,7 @@ const Intro = ({ onComplete }) => {
       <p
         ref={textRef}
         style={{
-          fontFamily: "'General Sans', sans-serif",
+          fontFamily: "'Open Sauce One', sans-serif",
           fontSize: "clamp(1.3rem, 3.5vw, 2.8rem)",
           color: "#fff",
           fontWeight: current.weight,
@@ -113,14 +113,14 @@ const Intro = ({ onComplete }) => {
           opacity: 0,
         }}
       >
-        {current.text}
+        {current.text}{current.dot && <span style={{ color: "#424242" }}>.</span>}
       </p>
 
       <p
         style={{
           position: "absolute",
           bottom: "2.5rem",
-          fontFamily: "'General Sans', sans-serif",
+          fontFamily: "'Open Sauce One', sans-serif",
           fontSize: "0.65rem",
           letterSpacing: "0.18em",
           color: "rgba(255,255,255,0.18)",

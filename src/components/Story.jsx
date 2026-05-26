@@ -129,7 +129,7 @@ const Story = () => {
               <h3
                 className="special-font"
                 style={{
-                  fontFamily: "'General Sans', sans-serif",
+                  fontFamily: "'Open Sauce One', sans-serif",
                   fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
                   fontWeight: 600,
                   color: "#fff",

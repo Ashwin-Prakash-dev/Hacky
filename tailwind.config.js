@@ -4,11 +4,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        zentry: ["zentry", "sans-serif"],
-        general: ["general", "sans-serif"],
-        "circular-web": ["circular-web", "sans-serif"],
-        "robert-medium": ["robert-medium", "sans-serif"],
-        "robert-regular": ["robert-regular", "sans-serif"],
+        "open-sauce": ['"Open Sauce One"', "sans-serif"],
+        zentry: ['"Open Sauce One"', "sans-serif"],
+        general: ['"Open Sauce One"', "sans-serif"],
+        "circular-web": ['"Open Sauce One"', "sans-serif"],
+        "robert-medium": ['"Open Sauce One"', "sans-serif"],
+        "robert-regular": ['"Open Sauce One"', "sans-serif"],
       },
       colors: {
         // Startathon dark palette

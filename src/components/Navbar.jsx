@@ -47,10 +47,10 @@ const NavBar = () => {
           {/* Logo */}
           <a
             href="#"
-            className="font-general text-sm font-bold uppercase tracking-widest text-blue-50"
-            style={{ letterSpacing: "0.08em" }}
+            className="font-open-sauce text-blue-50"
+            style={{ fontSize: "1rem", fontWeight: 700, letterSpacing: "-0.01em", textTransform: "none" }}
           >
-            startathon
+            Startathon<span style={{ color: "#424242" }}>.</span> 
           </a>
 
           {/* Nav links + CTA */}

@@ -18,10 +18,10 @@ const Footer = () => (
       {/* Brand */}
       <div>
         <p
-          className="font-general font-bold uppercase tracking-widest text-white"
-          style={{ fontSize: "0.85rem", letterSpacing: "0.1em" }}
+          className="font-open-sauce text-white"
+          style={{ fontSize: "0.95rem", fontWeight: 700, letterSpacing: "-0.01em" }}
         >
-          startathon
+          Startathon<span style={{ color: "#424242" }}>.</span> 
         </p>
         <p
           className="font-general text-xs mt-1"

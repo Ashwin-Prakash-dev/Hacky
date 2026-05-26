@@ -163,10 +163,17 @@ const Hero = () => {
             </div>
 
             <h1
-              className="special-font hero-heading text-blue-100"
-              style={{ lineHeight: 0.9 }}
+              className="font-open-sauce"
+              style={{
+                fontSize: "clamp(3.5rem, 10vw, 9rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                lineHeight: 1,
+                textTransform: "none",
+                color: "#c8c8c4",
+              }}
             >
-              start<b>a</b>thon
+              Startathon<span style={{ color: "#424242" }}>.</span>
             </h1>
 
             <p
