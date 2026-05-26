@@ -236,109 +236,9 @@ const ExpectCard = () => {
   );
 };
 
-/* ── TIMELINE CARD ───────────────────────────────────────────────────────── */
-const TimelineCard = () => {
-  const [hovered, setHovered] = useState(false);
-
-  const events = [
-    { time: "JUNE", label: "Interest Form Opens", live: false },
-    { time: "JUNE", label: "Early Bird Registration (₹750)", live: false },
-    { time: "JULY 1", label: "Regular Registration Closes (₹1200)", live: false },
-    { time: "JULY WK2/3", label: "Idea Submission (₹100 fee)", live: false },
-    { time: "DAY 1", label: "Kickoff + Build Sprint Begins", live: false },
-    { time: "DAY 1–2", label: "Mentor Rounds · Mid-hack Check-in", live: false },
-    { time: "DAY 2", label: "Final Submissions", live: true },
-    { time: "DAY 2", label: "Demo Day · Awards", live: false },
-  ];
-
-  return (
-    <div
-      className="relative size-full overflow-hidden cursor-pointer"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ backgroundColor: "#0c0c0c" }}
-    >
-      {/* Line texture */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(200,255,0,0.025) 23px, rgba(200,255,0,0.025) 24px)",
-        opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
-      }} />
-
-      {/* Ghost date */}
-      <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontFamily: "'zentry', sans-serif",
-        fontSize: "clamp(70px, 15vw, 130px)", fontWeight: 900,
-        color: "transparent",
-        WebkitTextStroke: "1px rgba(200,255,0,0.04)",
-        userSelect: "none", whiteSpace: "nowrap",
-        opacity: hovered ? 0 : 1, transition: "opacity 0.25s ease",
-        pointerEvents: "none",
-      }}>JUL 26</div>
-
-      {/* Resting */}
-      <div style={{
-        position: "absolute", inset: 0, padding: "2rem",
-        display: "flex", flexDirection: "column", justifyContent: "space-between",
-        opacity: hovered ? 0 : 1,
-        transform: hovered ? "translateY(-6px)" : "translateY(0)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
-        pointerEvents: hovered ? "none" : "auto",
-      }}>
-        <CardLabel text="Schedule" dark />
-        <div>
-          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(1.9rem, 4vw, 3.2rem)", marginBottom: "0.5rem" }}>
-            Tim<b>e</b>line
-          </h2>
-          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", color: "rgba(255,255,255,0.25)", marginTop: "8px", letterSpacing: "0.04em" }}>
-            July 2026 · SCTCE, Thiruvananthapuram
-          </p>
-        </div>
-      </div>
-
-      {/* Hovered timeline */}
-      <div style={{
-        position: "absolute", inset: 0, padding: "1.75rem 2rem",
-        display: "flex", flexDirection: "column",
-        opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease 0.08s",
-        pointerEvents: hovered ? "auto" : "none",
-        overflowY: "auto", backgroundColor: "#fff",
-      }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "1.25rem", display: "block" }}>Event Timeline</span>
-        <div style={{ position: "relative", paddingLeft: "20px", flex: 1 }}>
-          <div style={{ position: "absolute", left: "3px", top: 0, bottom: 0, width: "1px", background: "linear-gradient(to bottom, #C8FF00, rgba(200,255,0,0.05))" }} />
-          {events.map((ev, i) => (
-            <div key={i} style={{
-              position: "relative",
-              marginBottom: i < events.length - 1 ? "0.75rem" : 0,
-              transform: hovered ? "translateX(0)" : "translateX(-6px)",
-              opacity: hovered ? 1 : 0,
-              transition: `transform 0.25s ease ${0.08 + i * 0.045}s, opacity 0.25s ease ${0.08 + i * 0.045}s`,
-            }}>
-              <div style={{
-                position: "absolute", left: "-21px", top: "4px",
-                width: "7px", height: "7px", borderRadius: "50%",
-                backgroundColor: ev.live ? "#C8FF00" : "#d4d4d4",
-                boxShadow: ev.live ? "0 0 8px rgba(200,255,0,0.7)" : "none",
-              }} />
-              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem", color: ev.live ? "#7a9600" : "#bbb", letterSpacing: "0.1em", display: "block", marginBottom: "1px" }}>
-                {ev.time}{ev.live && " · NOW"}
-              </span>
-              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.72rem", color: "#111", fontWeight: ev.live ? 600 : 400, lineHeight: 1.35 }}>
-                {ev.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 /* ── FEATURES SECTION ────────────────────────────────────────────────────── */
-const featureCards = [PrizesCard, ExpectCard, TimelineCard];
+// TimelineCard removed — now rendered as a standalone Timeline section
+const featureCards = [PrizesCard, ExpectCard];
 
 const Features = () => (
   <section id="perks" className="features-stack-section">
@@ -361,7 +261,7 @@ const Features = () => (
           lineHeight: 1.7,
           maxWidth: "28rem",
         }}>
-          Scroll through the prizes, the full experience, and the event schedule. Hover each card to explore.
+          Scroll through the prizes and the full experience. Hover each card to explore.
         </p>
       </div>
 
