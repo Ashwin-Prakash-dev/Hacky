@@ -338,31 +338,29 @@ const TimelineCard = () => {
 };
 
 /* ── FEATURES SECTION ────────────────────────────────────────────────────── */
+const featureCards = [PrizesCard, ExpectCard, TimelineCard];
+
 const Features = () => (
-  <section id="perks" className="pb-52" style={{ background: "#000000" }}>
+  <section id="perks" className="features-stack-section">
     <div className="container mx-auto px-3 md:px-10">
       <div className="px-5 py-32">
         <p className="mt-3 max-w-md font-circular-web text-lg text-blue-50 opacity-50">
-          Hover each card to explore prizes, the full experience, and the event schedule.
+          Scroll through the prizes, the full experience, and the event schedule. Hover each card to explore.
         </p>
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gap: "24px",
-        height: "70vh",
-        minHeight: "500px",
-      }}>
-        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
-          <PrizesCard />
-        </BentoTilt>
-        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
-          <ExpectCard />
-        </BentoTilt>
-        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
-          <TimelineCard />
-        </BentoTilt>
+      <div>
+        {featureCards.map((Card, index) => (
+          <div
+            className="stacked-card"
+            key={Card.name}
+            style={{ zIndex: index + 1 }}
+          >
+            <BentoTilt className="stacked-card-panel border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
+              <Card />
+            </BentoTilt>
+          </div>
+        ))}
       </div>
     </div>
   </section>

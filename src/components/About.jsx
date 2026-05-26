@@ -27,15 +27,15 @@ const About = () => {
   });
 
   return (
-    <div id="about" className="min-h-screen w-screen">
-      <div className="relative mb-8 mt-36 flex flex-col items-center gap-5">
-        <p className="font-general text-sm uppercase md:text-[10px]">
+    <section id="about" className="about-section min-h-screen w-screen">
+      <div className="about-lead relative mb-8 mt-36 flex flex-col items-center gap-5">
+        <p className="about-kicker font-general text-sm uppercase md:text-[10px]">
           Welcome to Zentry
         </p>
 
         <AnimatedTitle
           title=" A platform for turning <br /> Projects into products"
-          containerClass="mt-5 !text-white text-center"
+          containerClass="mt-5 !text-black text-center"
         />
 
         <div className="about-subtext">
@@ -52,7 +52,7 @@ const About = () => {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

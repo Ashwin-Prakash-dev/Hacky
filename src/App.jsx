@@ -17,7 +17,7 @@ function App() {
     <>
       <CustomCursor />
       {!introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
-      <main className="relative min-h-screen w-screen overflow-x-hidden">
+      <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
         <Hero />
         <About />

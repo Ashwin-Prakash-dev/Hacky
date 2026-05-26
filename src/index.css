@@ -145,6 +145,67 @@ body {
   }
 }
 
+.about-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(200, 255, 0, 0.09), transparent 31rem),
+    linear-gradient(180deg, #ffffff 0%, #ffffff 73%, #f4f5f0 100%);
+  color: #111111;
+}
+
+.about-section::before {
+  position: absolute;
+  inset: 6rem 6vw auto;
+  z-index: -1;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(17, 17, 17, 0.12), transparent);
+}
+
+.about-lead {
+  z-index: 1;
+}
+
+.about-kicker {
+  letter-spacing: 0.3em;
+  color: rgba(17, 17, 17, 0.42);
+}
+
+.about-section .about-subtext {
+  color: rgba(17, 17, 17, 0.54);
+}
+
+.features-stack-section {
+  background: #000000;
+  padding-bottom: clamp(5rem, 12vh, 10rem);
+}
+
+.stacked-card {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100svh;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0;
+}
+
+.stacked-card-panel {
+  position: relative;
+  width: min(100%, 70rem);
+  height: 60svh;
+  background: #0a0a0a;
+  box-shadow: 0 24px 68px rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 640px) {
+  .stacked-card-panel {
+    width: calc(100% - 0.5rem);
+  }
+}
+
 /* Loading spinner */
 .three-body {
   --uib-size: 35px;
