@@ -10,8 +10,11 @@ const NavBar = () => {
   const { y: currentScrollY } = useWindowScroll();
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    setScrolled(currentScrollY > 20);
+
     if (currentScrollY === 0) {
       setIsNavVisible(true);
       navContainerRef.current.classList.remove("floating-nav");
@@ -40,44 +43,118 @@ const NavBar = () => {
   return (
     <div
       ref={navContainerRef}
-      className="fixed inset-x-0 top-4 z-50 h-16 border-none transition-all duration-700 sm:inset-x-6"
+      className="fixed inset-x-0 top-0 z-50 transition-all duration-300 sm:inset-x-0"
+      style={{ height: "56px" }}
     >
-      <header className="absolute top-1/2 w-full -translate-y-1/2">
-        <nav className="flex size-full items-center justify-between p-4">
+      {/* Background layer */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: scrolled
+            ? "rgba(0,0,0,0.85)"
+            : "transparent",
+          backdropFilter: scrolled ? "blur(16px)" : "none",
+          borderBottom: scrolled
+            ? "1px solid rgba(255,255,255,0.06)"
+            : "none",
+          transition: "background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
+        }}
+      />
+
+      <header className="relative h-full w-full">
+        <nav
+          className="flex h-full items-center justify-between"
+          style={{ padding: "0 clamp(1.25rem, 4vw, 2.5rem)" }}
+        >
           {/* Logo */}
           <a
             href="#"
-            className="font-general text-sm font-bold uppercase tracking-widest text-blue-50"
-            style={{ letterSpacing: "0.08em" }}
+            style={{
+              fontFamily: "var(--font-general, sans-serif)",
+              fontSize: "0.8rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.9)",
+              textDecoration: "none",
+            }}
           >
             startathon
           </a>
 
           {/* Nav links + CTA */}
-          <div className="flex h-full items-center gap-2">
-            <div className="hidden md:flex items-center">
+          <div className="flex items-center" style={{ gap: "0" }}>
+            <div className="hidden md:flex items-center" style={{ gap: "0" }}>
               {navItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => scrollTo(item.toLowerCase())}
-                  className="nav-hover-btn"
+                  style={{
+                    fontFamily: "var(--font-general, sans-serif)",
+                    fontSize: "0.72rem",
+                    fontWeight: 500,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.4)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "0 1.1rem",
+                    height: "56px",
+                    transition: "color 0.2s",
+                    position: "relative",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.85)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
                 >
                   {item}
                 </button>
               ))}
-              <a
-                href="#sponsors"
-                className="nav-hover-btn"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+              <button
+                onClick={() => scrollTo("sponsors")}
+                style={{
+                  fontFamily: "var(--font-general, sans-serif)",
+                  fontSize: "0.72rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.25)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0 1.1rem",
+                  height: "56px",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
               >
-                For Sponsors
-              </a>
+                Sponsors
+              </button>
             </div>
 
-            {/* Get Notified CTA */}
+            {/* CTA */}
             <button
               onClick={() => scrollTo("contact")}
-              className="ml-6 rounded border border-white/20 px-4 py-2 font-general text-xs uppercase tracking-widest text-blue-50 transition-all duration-200 hover:border-white/60 hover:bg-white/5"
+              style={{
+                marginLeft: "1.5rem",
+                fontFamily: "var(--font-general, sans-serif)",
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "#000",
+                background: "#C8FF00",
+                border: "none",
+                borderRadius: "2px",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+                transition: "opacity 0.2s, transform 0.2s",
+                lineHeight: 1,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
             >
               Get Notified
             </button>

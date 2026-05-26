@@ -44,18 +44,18 @@ const Story = () => {
       if (!el) return;
       gsap.fromTo(
         el,
-        { opacity: 0, y: 40 },
+        { opacity: 0, y: 32 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
+          duration: 0.65,
           ease: "power3.out",
           scrollTrigger: {
             trigger: el,
-            start: "top 85%",
+            start: "top 88%",
             toggleActions: "play none none reverse",
           },
-          delay: i * 0.05,
+          delay: i * 0.04,
         }
       );
     });
@@ -67,18 +67,22 @@ const Story = () => {
       id="story"
       style={{
         background: "#000",
-        padding: "8rem 0 10rem",
+        padding: "8rem 0 9rem",
         width: "100%",
       }}
     >
-      <div className="container mx-auto px-5 md:px-10">
+      <div className="container mx-auto" style={{ padding: "0 clamp(1.25rem, 5vw, 3rem)" }}>
 
         {/* Header */}
-        <div className="mb-20">
-          <p
-            className="font-general text-xs uppercase tracking-widest mb-4"
-            style={{ color: "#C8FF00", letterSpacing: "0.15em" }}
-          >
+        <div style={{ marginBottom: "5rem" }}>
+          <p style={{
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.62rem",
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "#C8FF00",
+            marginBottom: "1.25rem",
+          }}>
             The difference
           </p>
           <AnimatedTitle
@@ -87,17 +91,32 @@ const Story = () => {
           />
         </div>
 
-        {/* Divider */}
-        <div
-          style={{
-            width: "100%",
-            height: "1px",
-            background: "rgba(255,255,255,0.06)",
-            marginBottom: "0",
-          }}
-        />
+        {/* Table header */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "3rem 1fr 1fr",
+          gap: "clamp(1rem, 3vw, 2.5rem)",
+          padding: "0 0 1rem",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+        }}>
+          <span />
+          <span style={{
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.6rem",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.2)",
+          }}>Principle</span>
+          <span style={{
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.6rem",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.2)",
+          }}>What this means</span>
+        </div>
 
-        {/* Differentiator rows */}
+        {/* Rows */}
         <div>
           {differentiators.map((item, i) => (
             <div
@@ -105,53 +124,47 @@ const Story = () => {
               ref={(el) => (itemRefs.current[i] = el)}
               style={{
                 display: "grid",
-                gridTemplateColumns: "64px 1fr 1fr",
-                gap: "2rem",
-                padding: "2.5rem 0",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                gridTemplateColumns: "3rem 1fr 1fr",
+                gap: "clamp(1rem, 3vw, 2.5rem)",
+                padding: "2rem 0",
+                borderBottom: "1px solid rgba(255,255,255,0.05)",
                 alignItems: "start",
+                opacity: 0,
               }}
+              className="story-row"
             >
               {/* Number */}
-              <span
-                className="font-general"
-                style={{
-                  fontSize: "0.7rem",
-                  color: "rgba(255,255,255,0.2)",
-                  letterSpacing: "0.1em",
-                  paddingTop: "4px",
-                }}
-              >
+              <span style={{
+                fontFamily: "var(--font-general, sans-serif)",
+                fontSize: "0.62rem",
+                color: "rgba(255,255,255,0.18)",
+                letterSpacing: "0.1em",
+                paddingTop: "3px",
+              }}>
                 {item.number}
               </span>
 
               {/* Heading */}
-              <h3
-                className="special-font"
-                style={{
-                  fontFamily: "'General Sans', sans-serif",
-                  fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
-                  fontWeight: 600,
-                  color: "#fff",
-                  lineHeight: 1.3,
-                  letterSpacing: "-0.02em",
-                  margin: 0,
-                }}
-              >
+              <h3 style={{
+                fontFamily: "'General Sans', sans-serif",
+                fontSize: "clamp(0.95rem, 1.8vw, 1.25rem)",
+                fontWeight: 600,
+                color: "#fff",
+                lineHeight: 1.35,
+                letterSpacing: "-0.02em",
+                margin: 0,
+              }}>
                 {item.heading}
               </h3>
 
               {/* Body */}
-              <p
-                className="font-circular-web"
-                style={{
-                  fontSize: "0.92rem",
-                  color: "rgba(255,255,255,0.4)",
-                  lineHeight: 1.8,
-                  margin: 0,
-                  maxWidth: "520px",
-                }}
-              >
+              <p style={{
+                fontFamily: "var(--font-circular-web, sans-serif)",
+                fontSize: "0.88rem",
+                color: "rgba(255,255,255,0.38)",
+                lineHeight: 1.8,
+                margin: 0,
+              }}>
                 {item.body}
               </p>
             </div>
@@ -159,28 +172,42 @@ const Story = () => {
         </div>
 
         {/* CTA */}
-        <div
-          style={{
-            marginTop: "4rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "2rem",
-            flexWrap: "wrap",
-          }}
-        >
+        <div style={{
+          marginTop: "3.5rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "2rem",
+          flexWrap: "wrap",
+        }}>
           <Button
             id="story-cta"
             title="Register Interest"
             containerClass="cursor-pointer"
           />
-          <p
-            className="font-general text-xs uppercase tracking-widest"
-            style={{ color: "rgba(255,255,255,0.2)", letterSpacing: "0.12em" }}
-          >
+          <p style={{
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.18)",
+          }}>
             Applications open soon · SCTCE, Thiruvananthapuram
           </p>
         </div>
       </div>
+
+      {/* Mobile styles */}
+      <style>{`
+        @media (max-width: 640px) {
+          .story-row {
+            grid-template-columns: 2rem 1fr !important;
+            grid-template-rows: auto auto;
+          }
+          .story-row > p {
+            grid-column: 2;
+          }
+        }
+      `}</style>
     </section>
   );
 };
