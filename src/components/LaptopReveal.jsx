@@ -15,6 +15,10 @@ gsap.registerPlugin(ScrollTrigger);
 const CAMERA_END_Z = 1.5;
 const CAMERA_START_Z = -30;
 
+// Camera animation timing
+const CAMERA_PHASE_START = 0.35;   // scroll progress at which camera starts moving
+const CAMERA_PHASE_SPAN = 0.65;    // remaining scroll span for camera motion (1 - CAMERA_PHASE_START)
+
 /*
  * CameraController — lives inside the Canvas, reads progressRef each frame.
  * Phases:
@@ -23,7 +27,7 @@ const CAMERA_START_Z = -30;
 function CameraController({ progressRef }) {
   useFrame((state) => {
     const p = progressRef.current;
-    const camProgress = Math.max(0, Math.min((p - 0.35) / 0.65, 1));
+    const camProgress = Math.max(0, Math.min((p - CAMERA_PHASE_START) / CAMERA_PHASE_SPAN, 1));
     const targetZ = THREE.MathUtils.lerp(CAMERA_START_Z, CAMERA_END_Z, camProgress);
     state.camera.position.z = THREE.MathUtils.lerp(
       state.camera.position.z,
@@ -40,6 +44,7 @@ export default function LaptopReveal() {
   const progressRef = useRef(0);
 
   useGSAP(() => {
+    if (!wrapperRef.current) return;
     ScrollTrigger.create({
       trigger: wrapperRef.current,
       start: "top top",
@@ -52,11 +57,11 @@ export default function LaptopReveal() {
       },
       onLeave: () => {
         // Canvas hides — Features section takes over seamlessly
-        gsap.set(canvasWrapRef.current, { autoAlpha: 0 });
+        if (canvasWrapRef.current) gsap.set(canvasWrapRef.current, { autoAlpha: 0 });
       },
       onEnterBack: () => {
         // Restore canvas if user scrolls back up
-        gsap.set(canvasWrapRef.current, { autoAlpha: 1 });
+        if (canvasWrapRef.current) gsap.set(canvasWrapRef.current, { autoAlpha: 1 });
       },
     });
   }, { scope: wrapperRef });
