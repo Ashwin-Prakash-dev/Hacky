@@ -83,15 +83,14 @@ export default function LaptopReveal() {
               <LaptopModel progressRef={progressRef} />
             </group>
             <Environment preset="city" />
+            <ContactShadows
+              position={[0, -4.5, 0]}
+              opacity={0.4}
+              scale={20}
+              blur={1.75}
+              far={4.5}
+            />
           </Suspense>
-
-          <ContactShadows
-            position={[0, -4.5, 0]}
-            opacity={0.4}
-            scale={20}
-            blur={1.75}
-            far={4.5}
-          />
         </Canvas>
       </div>
     </div>

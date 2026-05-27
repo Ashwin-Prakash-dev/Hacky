@@ -43,7 +43,7 @@ export default function LaptopModel({ progressRef, ...props }) {
     );
 
     // Idle float — only active once lid is meaningfully open
-    if (lidProgress > 0.5) {
+    if (p >= 0.35) {
       group.current.rotation.x = THREE.MathUtils.lerp(
         group.current.rotation.x,
         Math.cos(t / 10) / 10 + 0.25,
@@ -89,10 +89,9 @@ export default function LaptopModel({ progressRef, ...props }) {
           <mesh material={materials["matte.001"]} geometry={nodes["Cube008_1"].geometry} />
           <mesh material={materials["screen.001"]} geometry={nodes["Cube008_2"].geometry} />
         </group>
+        {/* Screen HTML overlay — inside hinge group so it moves with the lid */}
+        <ScreenContent />
       </group>
-
-      {/* Screen HTML overlay */}
-      <ScreenContent />
 
       {/* Base */}
       <mesh

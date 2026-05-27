@@ -61,7 +61,7 @@ export default function ScreenContent() {
     <Html
       transform
       occlude
-      position={[0, 1.56, -1.4]}
+      position={[0, 1.60, -1.81]}
       rotation={[-0.256, Math.PI, 0]}
       scale={0.135}
       zIndexRange={[1, 0]}
