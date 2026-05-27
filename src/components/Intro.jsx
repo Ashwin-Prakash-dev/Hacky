@@ -23,6 +23,8 @@ const Intro = ({ onComplete }) => {
     skippedRef.current = true;
     gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current, tailRef.current]);
     if (proxyTweenRef.current) proxyTweenRef.current.kill();
+    containerRef.current.style.maskImage = '';
+    containerRef.current.style.webkitMaskImage = '';
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 0.4,
