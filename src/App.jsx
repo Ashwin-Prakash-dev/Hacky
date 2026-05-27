@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Intro from "./components/Intro";
 import CustomCursor from "./components/CustomCursor";
+import ScrollProgress from "./components/ScrollProgress";
 import NavBar from "./components/Navbar";
 import Hero from "./components/Hero";
+import Stats from "./components/Stats";
 import About from "./components/About";
+import Marquee from "./components/Marquee";
 import Features from "./components/Features";
 import Timeline from "./components/timeline";
 import FAQ from "./components/FAQ";
@@ -15,13 +18,17 @@ function App() {
 
   return (
     <>
+      <ScrollProgress />
       <CustomCursor />
       {!introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
         <Hero />
+        <Stats />
         <About />
+        <Marquee />
         <Features />
+        <Marquee reverse />
         <Timeline />
         <FAQ />
         <Contact />
