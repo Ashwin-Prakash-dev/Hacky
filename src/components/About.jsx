@@ -1,12 +1,6 @@
 // src/components/About.jsx
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 import AnimatedTitle from "./AnimatedTitle";
 import LaptopReveal from "./LaptopReveal";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const About = () => {
   return (
