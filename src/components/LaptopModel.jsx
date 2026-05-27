@@ -28,7 +28,7 @@ export default function LaptopModel({ progressRef, ...props }) {
 
     // Hinge — lid opens as scroll 0→0.35
     const lidProgress = Math.min(p / 0.35, 1);
-    const targetHinge = THREE.MathUtils.lerp(1.575, -0.425, lidProgress);
+    const targetHinge = THREE.MathUtils.lerp(1.575, -0.225, lidProgress);
     hingeGroupRef.current.rotation.x = THREE.MathUtils.lerp(
       hingeGroupRef.current.rotation.x,
       targetHinge,

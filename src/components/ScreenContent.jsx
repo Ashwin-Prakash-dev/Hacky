@@ -68,7 +68,7 @@ export default function ScreenContent() {
       transform
       occlude
       position={[0, 0, 0.01]}
-      scale={0.00256}
+      scale={256}
       zIndexRange={[1, 0]}
     >
       <FeaturesPreview />
