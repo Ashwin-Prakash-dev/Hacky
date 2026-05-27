@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useState } from "react";
 import Intro from "./components/Intro";
 import CustomCursor from "./components/CustomCursor";
@@ -6,6 +7,7 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Features from "./components/Features";
 import Story from "./components/Story";
+import Timeline from "./components/timeline";   // ← add this
 import FAQ from "./components/FAQ";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
@@ -23,6 +25,7 @@ function App() {
         <About />
         <Features />
         <Story />
+        <Timeline />    {/* ← add this */}
         <FAQ />
         <Contact />
         <Footer />
