@@ -56,14 +56,19 @@ function FeaturesPreview() {
  *   2. Add: const texture = useLoader(THREE.TextureLoader, '/img/screen-preview.png')
  *   3. Return: <mesh position={...} rotation={...}><planeGeometry args={[2.1, 1.35]} /><meshStandardMaterial map={texture} /></mesh>
  */
+/*
+ * Positioned as child of the screen mesh group ([0, 2.96, -0.13] rotation=[PI/2,0,0]).
+ * Inherits that group's exact world transform — no manual position/rotation needed.
+ * position Z=0.01 sits just in front of the mesh surface to avoid z-fighting.
+ * scale: 1px HTML ≈ 1 Three.js unit — tune until 900px div fills screen width.
+ */
 export default function ScreenContent() {
   return (
     <Html
       transform
       occlude
-      position={[0, 1.60, -1.81]}
-      rotation={[-0.256, Math.PI, 0]}
-      scale={0.135}
+      position={[0, 0, 0.01]}
+      scale={0.00256}
       zIndexRange={[1, 0]}
     >
       <FeaturesPreview />
