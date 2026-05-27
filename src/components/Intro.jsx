@@ -14,7 +14,8 @@ const Intro = ({ onComplete }) => {
   const textRef = useRef(null);
   const tailRef = useRef(null);   // "tartathon" — collapses in phase 5
   const dotRef  = useRef(null);   // "."         — radial wipe origin in phase 6
-  const proxyTweenRef = useRef(null);
+  const outroTweenRef = useRef(null);  // stores Phase 6 tween for skip() cleanup
+  const circleRef = useRef(null);     // circle element that scales up in phase 6
   const [currentIndex, setCurrentIndex] = useState(0);
   const skippedRef = useRef(false);
 
@@ -22,9 +23,7 @@ const Intro = ({ onComplete }) => {
     if (skippedRef.current) return;
     skippedRef.current = true;
     gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current, tailRef.current]);
-    if (proxyTweenRef.current) proxyTweenRef.current.kill();
-    containerRef.current.style.maskImage = '';
-    containerRef.current.style.webkitMaskImage = '';
+    if (outroTweenRef.current) outroTweenRef.current.kill();
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 0.4,
@@ -81,27 +80,50 @@ const Intro = ({ onComplete }) => {
           ease: "power2.in",
           onComplete: () => {
             if (skippedRef.current) return;
-
-            // Phase 6: radial wipe — grow a transparent hole from the dot outward
             if (!dotRef.current) return;
+
+            // Phase 6: circle scales up from dot position to fill screen, then fades
             const dotRect = dotRef.current.getBoundingClientRect();
-            const cx = dotRect.left + dotRect.width / 2;
-            const cy = dotRect.top  + dotRect.height / 2;
-            const proxy = { r: 0 };
-            proxyTweenRef.current = gsap.to(proxy, {
-              r: 2200,          // safely covers any viewport diagonal
-              delay: 0.3,       // brief pause on "S." before the wipe
-              duration: 0.9,
-              ease: "power2.in",
-              onUpdate() {
-                const val = `radial-gradient(circle at ${cx}px ${cy}px, transparent 0px, transparent ${proxy.r}px, black ${proxy.r}px)`;
-                containerRef.current.style.maskImage       = val;
-                containerRef.current.style.webkitMaskImage = val;
-              },
-              onComplete() {
-                if (!skippedRef.current) onComplete();
-              },
+            const containerRect = containerRef.current.getBoundingClientRect();
+
+            const dotSize = Math.max(dotRect.width, dotRect.height);
+            // Position relative to the container (which is position:fixed inset:0)
+            const cx = dotRect.left - containerRect.left + dotRect.width / 2;
+            const cy = dotRect.top  - containerRect.top  + dotRect.height / 2;
+
+            // Scale needed to cover the furthest viewport corner from the dot center
+            const maxCornerDist = Math.max(
+              Math.hypot(cx, cy),
+              Math.hypot(containerRect.width - cx, cy),
+              Math.hypot(cx, containerRect.height - cy),
+              Math.hypot(containerRect.width - cx, containerRect.height - cy),
+            );
+            const targetScale = ((maxCornerDist + dotSize) * 2) / dotSize;
+
+            // Place the circle exactly over the dot
+            gsap.set(circleRef.current, {
+              width: dotSize,
+              height: dotSize,
+              left: cx - dotSize / 2,
+              top:  cy - dotSize / 2,
+              scale: 1,
+              opacity: 1,
             });
+
+            outroTweenRef.current = gsap.timeline({ delay: 0.2 })
+              .to(circleRef.current, {
+                scale: targetScale,
+                duration: 0.75,
+                ease: "power3.in",
+              })
+              .to(circleRef.current, {
+                opacity: 0,
+                duration: 0.35,
+                ease: "power2.out",
+                onComplete() {
+                  if (!skippedRef.current) onComplete();
+                },
+              });
           },
         });
       });
@@ -131,6 +153,20 @@ const Intro = ({ onComplete }) => {
       <div
         ref={bgRef}
         style={{ position: "absolute", inset: 0, background: "#000", zIndex: 0 }}
+      />
+
+      {/* Phase 6 circle — scales up from dot position to fill screen */}
+      <div
+        ref={circleRef}
+        style={{
+          position: "absolute",
+          borderRadius: "50%",
+          background: "#3a3a3a",
+          pointerEvents: "none",
+          opacity: 0,
+          zIndex: 2,
+          transformOrigin: "center center",
+        }}
       />
 
       <p
