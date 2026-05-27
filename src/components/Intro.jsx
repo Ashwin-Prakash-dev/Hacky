@@ -15,7 +15,6 @@ const Intro = ({ onComplete }) => {
   const tailRef = useRef(null);   // "tartathon" — collapses in phase 5
   const dotRef  = useRef(null);   // "."         — radial wipe origin in phase 6
   const outroTweenRef = useRef(null);  // stores Phase 6 tween for skip() cleanup
-  const circleRef = useRef(null);     // circle element that scales up in phase 6
   const [currentIndex, setCurrentIndex] = useState(0);
   const skippedRef = useRef(false);
 
@@ -24,6 +23,7 @@ const Intro = ({ onComplete }) => {
     skippedRef.current = true;
     gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current, tailRef.current]);
     if (outroTweenRef.current) outroTweenRef.current.kill();
+    gsap.set(containerRef.current, { scale: 1, transformOrigin: "center center" });
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 0.4,
@@ -83,43 +83,25 @@ const Intro = ({ onComplete }) => {
             if (!dotRef.current) return;
             if (!containerRef.current) return;
 
-            // Phase 6: circle scales up from dot position to fill screen, then fades
+            // Phase 6: zoom into the dot — scale the whole overlay with dot as focal point
             const dotRect = dotRef.current.getBoundingClientRect();
             const containerRect = containerRef.current.getBoundingClientRect();
 
-            const dotSize = Math.max(dotRect.width, dotRect.height);
-            // Position relative to the container (which is position:fixed inset:0)
-            const cx = dotRect.left - containerRect.left + dotRect.width / 2;
-            const cy = dotRect.top  - containerRect.top  + dotRect.height / 2;
+            // Dot center relative to the container
+            const ox = dotRect.left - containerRect.left + dotRect.width  / 2;
+            const oy = dotRect.top  - containerRect.top  + dotRect.height / 2;
 
-            // Scale needed to cover the furthest viewport corner from the dot center
-            const maxCornerDist = Math.max(
-              Math.hypot(cx, cy),
-              Math.hypot(containerRect.width - cx, cy),
-              Math.hypot(cx, containerRect.height - cy),
-              Math.hypot(containerRect.width - cx, containerRect.height - cy),
-            );
-            const targetScale = ((maxCornerDist + dotSize) * 2) / dotSize;
+            containerRef.current.style.transformOrigin = `${ox}px ${oy}px`;
 
-            // Place the circle exactly over the dot
-            gsap.set(circleRef.current, {
-              width: dotSize,
-              height: dotSize,
-              left: cx - dotSize / 2,
-              top:  cy - dotSize / 2,
-              scale: 1,
-              opacity: 1,
-            });
-
-            outroTweenRef.current = gsap.timeline({ delay: 0.2 })
-              .to(circleRef.current, {
-                scale: targetScale,
-                duration: 0.75,
+            outroTweenRef.current = gsap.timeline({ delay: 0.15 })
+              .to(containerRef.current, {
+                scale: 8,
+                duration: 0.85,
                 ease: "power3.in",
               })
-              .to(circleRef.current, {
+              .to(containerRef.current, {
                 opacity: 0,
-                duration: 0.35,
+                duration: 0.3,
                 ease: "power2.out",
                 onComplete() {
                   if (!skippedRef.current) onComplete();
@@ -154,20 +136,6 @@ const Intro = ({ onComplete }) => {
       <div
         ref={bgRef}
         style={{ position: "absolute", inset: 0, background: "#000", zIndex: 0 }}
-      />
-
-      {/* Phase 6 circle — scales up from dot position to fill screen */}
-      <div
-        ref={circleRef}
-        style={{
-          position: "absolute",
-          borderRadius: "50%",
-          background: "#3a3a3a",
-          pointerEvents: "none",
-          opacity: 0,
-          zIndex: 2,
-          transformOrigin: "center center",
-        }}
       />
 
       <p
