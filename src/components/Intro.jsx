@@ -23,7 +23,7 @@ const Intro = ({ onComplete }) => {
     skippedRef.current = true;
     gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current, tailRef.current]);
     if (outroTweenRef.current) outroTweenRef.current.kill();
-    gsap.set(containerRef.current, { scale: 1, transformOrigin: "center center" });
+    gsap.set(containerRef.current, { scale: 1, x: 0, y: 0 });
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 0.4,
@@ -90,12 +90,15 @@ const Intro = ({ onComplete }) => {
             // Dot center relative to the container
             const ox = dotRect.left - containerRect.left + dotRect.width  / 2;
             const oy = dotRect.top  - containerRect.top  + dotRect.height / 2;
-
-            containerRef.current.style.transformOrigin = `${ox}px ${oy}px`;
+            const centerX = containerRect.width  / 2;
+            const centerY = containerRect.height / 2;
+            const scale = 8;
 
             outroTweenRef.current = gsap.timeline({ delay: 0.15 })
               .to(containerRef.current, {
-                scale: 8,
+                scale,
+                x: (centerX - ox) * scale,
+                y: (centerY - oy) * scale,
                 duration: 0.85,
                 ease: "power3.in",
               })
