@@ -1,0 +1,31 @@
+/* ─── Replace these rules in your index.css ─────────────────────────────── */
+
+.features-stack-section {
+  background: #0F0F11;            /* Zinc dark — replaces #000000 */
+  padding-bottom: clamp(5rem, 12vh, 10rem);
+}
+
+.stacked-card {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100svh;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;              /* was 1.25rem — taller card, less gap */
+}
+
+.stacked-card-panel {
+  position: relative;
+  width: min(100%, 70rem);
+  height: 86svh;                  /* was 60svh — fills almost full viewport */
+  background: #18181B;            /* Zinc 800 card bg — replaces #0a0a0a */
+  box-shadow: 0 24px 68px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 640px) {
+  .stacked-card-panel {
+    width: calc(100% - 0.5rem);
+    height: 82svh;
+  }
+}

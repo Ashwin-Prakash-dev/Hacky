@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { SignalPulseBg } from "./CanvasBg";
 
 /* ── Bento tilt wrapper ─────────────────────────────────────────────────── */
 export const BentoTilt = ({ children, className = "" }) => {
@@ -72,7 +73,6 @@ const PrizesCard = () => {
         transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
       }}
     >
-      {/* Subtle grid texture */}
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage: `linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px)`,
@@ -81,7 +81,6 @@ const PrizesCard = () => {
         transition: "opacity 0.4s ease",
       }} />
 
-      {/* Ghost text */}
       <div style={{
         position: "absolute", bottom: "-16px", right: "-8px",
         fontFamily: "'zentry', sans-serif",
@@ -93,7 +92,6 @@ const PrizesCard = () => {
         pointerEvents: "none",
       }}>WIN</div>
 
-      {/* Resting state */}
       <div style={{
         position: "absolute", inset: 0,
         display: "flex", flexDirection: "column", justifyContent: "space-between",
@@ -115,7 +113,6 @@ const PrizesCard = () => {
         </div>
       </div>
 
-      {/* Hovered state */}
       <div style={{
         position: "absolute", inset: 0, padding: "2rem",
         display: "flex", flexDirection: "column", justifyContent: "space-between",
@@ -173,7 +170,6 @@ const ExpectCard = () => {
         transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
       }}
     >
-      {/* Dot texture */}
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage: "radial-gradient(circle, rgba(200,255,0,0.08) 1px, transparent 1px)",
@@ -181,7 +177,6 @@ const ExpectCard = () => {
         opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
       }} />
 
-      {/* Resting */}
       <div style={{
         position: "absolute", inset: 0, padding: "2rem",
         display: "flex", flexDirection: "column", justifyContent: "space-between",
@@ -207,7 +202,6 @@ const ExpectCard = () => {
         </div>
       </div>
 
-      {/* Hovered */}
       <div style={{
         position: "absolute", inset: 0, padding: "2rem 2rem",
         display: "flex", flexDirection: "column",
@@ -237,12 +231,14 @@ const ExpectCard = () => {
 };
 
 /* ── FEATURES SECTION ────────────────────────────────────────────────────── */
-// TimelineCard removed — now rendered as a standalone Timeline section
 const featureCards = [PrizesCard, ExpectCard];
 
 const Features = () => (
-  <section id="perks" className="features-stack-section">
-    <div className="container mx-auto px-3 md:px-10">
+  <section id="perks" className="features-stack-section" style={{ position: "relative" }}>
+    {/* Signal pulse bg — covers the entire black features section */}
+    <SignalPulseBg />
+
+    <div className="container mx-auto px-3 md:px-10" style={{ position: "relative", zIndex: 1 }}>
       <div style={{ padding: "8rem 1.25rem 4rem" }}>
         <p style={{
           fontFamily: "var(--font-general, sans-serif)",
@@ -270,7 +266,7 @@ const Features = () => (
           <div
             className="stacked-card"
             key={Card.name}
-            style={{ zIndex: index + 1 }}
+            style={{ zIndex: index + 2 }}
           >
             <BentoTilt className="stacked-card-panel border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
               <Card />

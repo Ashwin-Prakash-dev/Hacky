@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 
 import AnimatedTitle from "./AnimatedTitle";
+import { CircuitGridBg } from "./CanvasBg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,10 +30,14 @@ const About = () => {
   return (
     <section id="about" className="about-section min-h-screen w-screen">
       <div className="about-lead relative flex h-[140vh] flex-col items-center justify-center gap-5">
+        {/* Canvas bg — fills the lead area */}
+        <CircuitGridBg />
 
         {/* Kicker */}
         <p
           style={{
+            position: "relative",
+            zIndex: 1,
             fontFamily: "var(--font-general, sans-serif)",
             fontSize: "0.65rem",
             letterSpacing: "0.22em",
@@ -47,11 +52,10 @@ const About = () => {
         <AnimatedTitle
           title="A platform for turning <br /> Projects into products"
           containerClass="mt-2 !text-black text-center"
+          style={{ position: "relative", zIndex: 1 }}
         />
 
-        <div className="about-subtext">
-
-        </div>
+        <div className="about-subtext" style={{ position: "relative", zIndex: 1 }} />
       </div>
 
       <div className="h-dvh w-screen" id="clip">
