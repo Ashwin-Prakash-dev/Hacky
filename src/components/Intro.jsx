@@ -81,6 +81,7 @@ const Intro = ({ onComplete }) => {
           onComplete: () => {
             if (skippedRef.current) return;
             if (!dotRef.current) return;
+            if (!containerRef.current) return;
 
             // Phase 6: circle scales up from dot position to fill screen, then fades
             const dotRect = dotRef.current.getBoundingClientRect();
