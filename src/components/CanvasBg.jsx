@@ -1,161 +1,5 @@
 import { useEffect, useRef } from "react";
 
-/* ─────────────────────────────────────────────────────────────────
-   Effect 01 — Circuit Grid  (About.jsx white section)
-   Blue nodes + edges illuminate outward from cursor.
-   ───────────────────────────────────────────────────────────────── */
-export const CircuitGridBg = () => {
-  const canvasRef = useRef(null);
-  const mouseRef = useRef({ x: -999, y: -999 });
-  const rafRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    const dpr = window.devicePixelRatio || 1;
-    const GRID = 38;
-
-    let W, H, cols, rows, nodes;
-
-    const build = () => {
-      W = canvas.parentElement.clientWidth;
-      H = canvas.parentElement.clientHeight;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
-      canvas.style.width = W + "px";
-      canvas.style.height = H + "px";
-      ctx.scale(dpr, dpr);
-
-      cols = Math.ceil(W / GRID) + 1;
-      rows = Math.ceil(H / GRID) + 1;
-      nodes = [];
-      for (let r = 0; r <= rows; r++) {
-        for (let c = 0; c <= cols; c++) {
-          nodes.push({ x: c * GRID, y: r * GRID, b: 0 });
-        }
-      }
-    };
-
-    build();
-
-    const onResize = () => {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      build();
-    };
-    window.addEventListener("resize", onResize);
-
-    const onMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      };
-    };
-    const onLeave = () => { mouseRef.current = { x: -999, y: -999 }; };
-
-    canvas.parentElement.addEventListener("mousemove", onMove);
-    canvas.parentElement.addEventListener("mouseleave", onLeave);
-
-    const frame = () => {
-      ctx.clearRect(0, 0, W, H);
-
-      const { x: mx, y: my } = mouseRef.current;
-      const stride = cols + 1;
-
-      nodes.forEach((n) => {
-        const dx = n.x - mx, dy = n.y - my;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const target = Math.max(0, 1 - dist / 160);
-        n.b += (target - n.b) * 0.1;
-      });
-
-      for (let r = 0; r <= rows; r++) {
-        for (let c = 0; c <= cols; c++) {
-          const n = nodes[r * stride + c];
-          const right = c < cols ? nodes[r * stride + (c + 1)] : null;
-          const down  = r < rows ? nodes[(r + 1) * stride + c] : null;
-
-          if (right) {
-            const b = (n.b + right.b) / 2;
-            if (b > 0.02) {
-              // Blue tones on white: dark blue for strong hits, mid-blue for dim
-              ctx.strokeStyle = `rgba(30,80,200,${b * 0.55})`;
-              ctx.lineWidth = b > 0.2 ? 1.2 : 0.4;
-              ctx.beginPath();
-              ctx.moveTo(n.x, n.y);
-              ctx.lineTo(right.x, right.y);
-              ctx.stroke();
-            }
-          }
-
-          if (down) {
-            const b = (n.b + down.b) / 2;
-            if (b > 0.02) {
-              ctx.strokeStyle = `rgba(30,80,200,${b * 0.55})`;
-              ctx.lineWidth = b > 0.2 ? 1.2 : 0.4;
-              ctx.beginPath();
-              ctx.moveTo(n.x, n.y);
-              ctx.lineTo(down.x, down.y);
-              ctx.stroke();
-            }
-          }
-
-          // Node dot
-          if (n.b > 0.04) {
-            // Bright core: royal blue; soft halo: lighter blue
-            const radius = n.b * 4;
-            ctx.fillStyle = `rgba(20,60,180,${n.b * 0.9})`;
-            ctx.beginPath();
-            ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            // Resting dot — very faint
-            ctx.fillStyle = "rgba(100,140,220,0.08)";
-            ctx.beginPath();
-            ctx.arc(n.x, n.y, 1.2, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-      }
-
-      rafRef.current = requestAnimationFrame(frame);
-    };
-
-    frame();
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", onResize);
-      if (canvas.parentElement) {
-        canvas.parentElement.removeEventListener("mousemove", onMove);
-        canvas.parentElement.removeEventListener("mouseleave", onLeave);
-      }
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 0,
-        opacity: 1,
-      }}
-    />
-  );
-};
-
-
-/* ─────────────────────────────────────────────────────────────────
-   Effect 02 — Signal Pulse Traces  (Features.jsx black section)
-   White orthogonal pulses radiate from cursor like data packets.
-   ───────────────────────────────────────────────────────────────── */
 export const SignalPulseBg = () => {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: -999, y: -999 });
@@ -182,7 +26,12 @@ export const SignalPulseBg = () => {
     };
 
     build();
-    window.addEventListener("resize", () => { ctx.setTransform(1, 0, 0, 1, 0, 0); build(); });
+
+    const onResize = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      build();
+    };
+    window.addEventListener("resize", onResize);
 
     const onMove = (e) => {
       const rect = canvas.getBoundingClientRect();
@@ -246,7 +95,6 @@ export const SignalPulseBg = () => {
 
         p.life -= 0.014;
 
-        // Draw trail
         for (let i = 1; i < p.trail.length; i++) {
           const frac = i / p.trail.length;
           ctx.strokeStyle = `rgba(255,255,255,${frac * p.life * 0.75})`;
@@ -257,7 +105,6 @@ export const SignalPulseBg = () => {
           ctx.stroke();
         }
 
-        // Head dot
         ctx.fillStyle = `rgba(255,255,255,${p.life * 0.95})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
@@ -271,6 +118,7 @@ export const SignalPulseBg = () => {
 
     return () => {
       cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", onResize);
       if (canvas.parentElement) {
         canvas.parentElement.removeEventListener("mousemove", onMove);
         canvas.parentElement.removeEventListener("mouseleave", onLeave);

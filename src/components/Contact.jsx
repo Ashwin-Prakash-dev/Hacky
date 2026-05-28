@@ -64,7 +64,6 @@ const Contact = () => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim()) return;
     // TODO: wire up to your backend / Formspree / Google Forms
-    console.log("Interest registered:", form);
     setSubmitted(true);
   };
 

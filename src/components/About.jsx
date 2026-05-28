@@ -1,4 +1,3 @@
-// src/components/About.jsx
 import AnimatedTitle from "./AnimatedTitle";
 import LaptopReveal from "./LaptopReveal";
 

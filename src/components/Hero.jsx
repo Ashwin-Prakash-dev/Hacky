@@ -15,7 +15,7 @@ const Hero = () => {
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
 
-  const totalVideos = 4;
+  const totalVideos = 3;
   const nextVdRef = useRef(null);
 
   const handleVideoLoad = () => {
@@ -134,14 +134,6 @@ const Hero = () => {
           />
         </div>
 
-        {/* Bottom-right accent */}
-        <h1
-          className="special-font hero-heading absolute bottom-5 right-5 z-40"
-          style={{ color: "rgba(200,255,0,0.15)", fontSize: "clamp(4rem,10vw,8rem)" }}
-        >
-
-        </h1>
-
         {/* Overlay content */}
         <div className="absolute left-0 top-0 z-40 size-full">
           <div className="mt-24 px-5 sm:px-10">
@@ -189,11 +181,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Stats strip below hero */}
-      <div
-        className="absolute bottom-5 left-5 z-40 flex items-center gap-8"
-        style={{ display: "none" }}
-      />
     </div>
   );
 };

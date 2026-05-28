@@ -8,7 +8,7 @@ import Stats from "./components/Stats";
 import About from "./components/About";
 import Marquee from "./components/Marquee";
 import Features from "./components/Features";
-import Timeline from "./components/timeline";
+import Timeline from "./components/Timeline";
 import FAQ from "./components/FAQ";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
