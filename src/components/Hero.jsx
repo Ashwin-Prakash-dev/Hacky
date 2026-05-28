@@ -32,7 +32,7 @@ const Hero = ({ introComplete }) => {
 
   useEffect(() => {
     if (introComplete && heroTitleRef.current) {
-      gsap.fromTo(heroTitleRef.current, { opacity: 0 }, { opacity: 1, duration: 0, ease: "power2.out" });
+      // gsap.fromTo(heroTitleRef.current, { opacity: 0 }, { opacity: 1, duration: 0, ease: "power2.out" });
     }
   }, [introComplete]);
 
@@ -196,7 +196,7 @@ const Hero = ({ introComplete }) => {
                 letterSpacing: "-0.03em",
                 lineHeight: 0.9,
                 color: "#c8c8c4",
-                opacity: 0,
+                // opacity: 0,
               }}
             >
               Startathon<span style={{ color: "#3a3a3a" }}>.</span>

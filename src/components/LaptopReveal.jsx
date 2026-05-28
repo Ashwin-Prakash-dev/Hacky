@@ -1,7 +1,7 @@
 // src/components/LaptopReveal.jsx
 import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, ContactShadows } from "@react-three/drei";
+import { Environment, ContactShadows, OrbitControls } from "@react-three/drei";
 import { Suspense } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -91,6 +91,7 @@ export default function LaptopReveal() {
               far={4.5}
             />
           </Suspense>
+          {/* <OrbitControls /> */}
         </Canvas>
       </div>
     </div>

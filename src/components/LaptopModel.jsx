@@ -21,6 +21,8 @@ export default function LaptopModel({ progressRef, ...props }) {
 
   const { nodes, materials } = useGLTF("/models/mac-draco.glb");
 
+  console.log(materials.keys.toJSON());
+
   useFrame(() => {
     if (!group.current || !hingeGroupRef.current) return;
 
@@ -52,7 +54,7 @@ export default function LaptopModel({ progressRef, ...props }) {
           <mesh material={materials.aluminium} geometry={nodes["Cube008"].geometry} />
           <mesh material={materials["matte.001"]} geometry={nodes["Cube008_1"].geometry} />
           {/* screen.001 hidden — replaced by Html overlay below */}
-          <mesh visible={false} geometry={nodes["Cube008_2"].geometry} />
+          <mesh material={materials["screen.001"]} geometry={nodes["Cube008_2"].geometry} />
           {/* Html inherits this group's exact position + rotation = pixel-perfect screen alignment */}
           <ScreenContent />
         </group>

@@ -76,7 +76,7 @@ const Intro = ({ onComplete }) => {
 
         gsap.to(tailRef.current, {
           width: 0,
-          duration: 0.6,
+          duration: 0.8,
           ease: "power2.in",
           onComplete: () => {
             if (skippedRef.current) return;
@@ -88,23 +88,24 @@ const Intro = ({ onComplete }) => {
             const containerRect = containerRef.current.getBoundingClientRect();
 
             // Dot center relative to the container
-            const ox = dotRect.left - containerRect.left + dotRect.width  / 2;
-            const oy = dotRect.top  - containerRect.top  + dotRect.height / 2;
+            const ox = dotRect.left - containerRect.left + 1.15*dotRect.width  / 2;
+            const oy = dotRect.top  - containerRect.top  + 1.5*dotRect.height / 2;
             const centerX = containerRect.width  / 2;
             const centerY = containerRect.height / 2;
-            const scale = 8;
+            const scale = 170;
 
             outroTweenRef.current = gsap.timeline({ delay: 0.15 })
               .to(containerRef.current, {
                 scale,
                 x: (centerX - ox) * scale,
                 y: (centerY - oy) * scale,
-                duration: 0.85,
+                duration: 1.5,
                 ease: "power3.in",
+                opacity: 1,
               })
               .to(containerRef.current, {
                 opacity: 0,
-                duration: 0.3,
+                duration: 1,
                 ease: "power2.out",
                 onComplete() {
                   if (!skippedRef.current) onComplete();
