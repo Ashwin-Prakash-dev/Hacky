@@ -12,13 +12,18 @@ const Intro = ({ onComplete }) => {
   const containerRef = useRef(null);
   const bgRef = useRef(null);
   const textRef = useRef(null);
+  const tailRef = useRef(null);   // "tartathon" — collapses in phase 5
+  const dotRef  = useRef(null);   // "."         — radial wipe origin in phase 6
+  const outroTweenRef = useRef(null);  // stores Phase 6 tween for skip() cleanup
   const [currentIndex, setCurrentIndex] = useState(0);
   const skippedRef = useRef(false);
 
   const skip = () => {
     if (skippedRef.current) return;
     skippedRef.current = true;
-    gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current]);
+    gsap.killTweensOf([containerRef.current, textRef.current, bgRef.current, tailRef.current]);
+    if (outroTweenRef.current) outroTweenRef.current.kill();
+    gsap.set(containerRef.current, { scale: 1, x: 0, y: 0 });
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 0.4,
@@ -62,46 +67,50 @@ const Intro = ({ onComplete }) => {
         },
       });
     } else {
-      // Linger 1.9s then morph text to hero title position
-      tl.to({}, { duration: 1.9 }).call(() => {
+      // Phase 5: linger 1.5s, then clip-wipe "tartathon" rightward → leaves "S."
+      tl.to({}, { duration: 1.5 }).call(() => {
         if (skippedRef.current) return;
 
-        const heroTitle = document.getElementById("hero-title");
-        if (!heroTitle) {
-          gsap.to(containerRef.current, {
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.inOut",
-            onComplete: () => { if (!skippedRef.current) onComplete(); },
-          });
-          return;
-        }
+        // Pin the natural width so GSAP has a numeric from-value to tween from
+        tailRef.current.style.width = tailRef.current.scrollWidth + "px";
 
-        const srcRect = textRef.current.getBoundingClientRect();
-        const dstRect = heroTitle.getBoundingClientRect();
-
-        // Same font-size as hero h1 — pure translation, no scale needed
-        const dx = dstRect.left - srcRect.left;
-        const dy = dstRect.top - srcRect.top;
-
-        // Fade background while text flies to hero position
-        gsap.to(bgRef.current, {
-          opacity: 0,
-          duration: 0.75,
-          ease: "power2.inOut",
-        });
-
-        // Fly text to hero title — translation only, pixel-perfect
-        gsap.to(textRef.current, {
-          x: dx,
-          y: dy,
-          duration: 0.95,
-          ease: "power3.inOut",
+        gsap.to(tailRef.current, {
+          width: 0,
+          duration: 0.8,
+          ease: "power2.in",
           onComplete: () => {
-            if (!skippedRef.current) {
-              gsap.to(textRef.current, { opacity: 0, duration: 0 });
-              onComplete();
-            }
+            if (skippedRef.current) return;
+            if (!dotRef.current) return;
+            if (!containerRef.current) return;
+
+            // Phase 6: zoom into the dot — scale the whole overlay with dot as focal point
+            const dotRect = dotRef.current.getBoundingClientRect();
+            const containerRect = containerRef.current.getBoundingClientRect();
+
+            // Dot center relative to the container
+            const ox = dotRect.left - containerRect.left + 1.15*dotRect.width  / 2;
+            const oy = dotRect.top  - containerRect.top  + 1.5*dotRect.height / 2;
+            const centerX = containerRect.width  / 2;
+            const centerY = containerRect.height / 2;
+            const scale = 170;
+
+            outroTweenRef.current = gsap.timeline({ delay: 0.15 })
+              .to(containerRef.current, {
+                scale,
+                x: (centerX - ox) * scale,
+                y: (centerY - oy) * scale,
+                duration: 1.5,
+                ease: "power3.in",
+                opacity: 1,
+              })
+              .to(containerRef.current, {
+                opacity: 0,
+                duration: 1,
+                ease: "power2.out",
+                onComplete() {
+                  if (!skippedRef.current) onComplete();
+                },
+              });
           },
         });
       });
@@ -127,7 +136,7 @@ const Intro = ({ onComplete }) => {
         cursor: "none",
       }}
     >
-      {/* Background — separate so we can fade it independently during morph */}
+      {/* Background layer — kept separate so opacity can be managed independently if needed */}
       <div
         ref={bgRef}
         style={{ position: "absolute", inset: 0, background: "#000", zIndex: 0 }}
@@ -152,8 +161,28 @@ const Intro = ({ onComplete }) => {
           whiteSpace: isLast ? "nowrap" : "normal",
         }}
       >
-        {current.text}
-        {current.dot && <span style={{ color: "#3a3a3a" }}>.</span>}
+        {isLast ? (
+          <>
+            S
+            <span
+              ref={tailRef}
+              style={{
+                display: "inline-block",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                verticalAlign: "top",
+              }}
+            >
+              tartathon
+            </span>
+            <span ref={dotRef} style={{ color: "#3a3a3a" }}>.</span>
+          </>
+        ) : (
+          <>
+            {current.text}
+            {current.dot && <span style={{ color: "#3a3a3a" }}>.</span>}
+          </>
+        )}
       </p>
 
       <p
