@@ -5,7 +5,7 @@ import { useGLTF } from "@react-three/drei";
 // Y coordinate where the desk's top surface should sit.
 // Tune if the laptop floats above or clips through the desk:
 //   raise (less negative) → desk moves up | lower (more negative) → desk moves down
-const DESK_TOP_Y = -3.35;
+const DESK_TOP_Y = -12.35;
 
 // Uniform scale multiplier — increase to make the desk bigger, decrease to shrink it.
 const DESK_SCALE = 14;
