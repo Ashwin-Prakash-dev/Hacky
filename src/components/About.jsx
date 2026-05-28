@@ -1,73 +1,34 @@
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/all";
-
+// src/components/About.jsx
 import AnimatedTitle from "./AnimatedTitle";
-import { CircuitGridBg } from "./CanvasBg";
-
-gsap.registerPlugin(ScrollTrigger);
+import LaptopReveal from "./LaptopReveal";
 
 const About = () => {
-  useGSAP(() => {
-    const clipAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#clip",
-        start: "center center",
-        end: "+=800 center",
-        scrub: 0.5,
-        pin: true,
-        pinSpacing: true,
-      },
-    });
-
-    clipAnimation.to(".mask-clip-path", {
-      width: "100vw",
-      height: "100vh",
-      borderRadius: 0,
-    });
-  });
-
   return (
-    <section id="about" className="about-section min-h-screen w-screen">
-      <div className="about-lead relative flex h-[140vh] flex-col items-center justify-center gap-5">
-        {/* Canvas bg — fills the lead area */}
-        <CircuitGridBg />
-
-        {/* Kicker */}
+    <div id="about" className="w-screen" style={{ background: "#ffffff" }}>
+      {/* Text header */}
+      <div className="relative mb-8 mt-36 flex flex-col items-center gap-5">
         <p
-          style={{
-            position: "relative",
-            zIndex: 1,
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "rgba(17,17,17,0.35)",
-            marginBottom: "0.25rem",
-          }}
+          className="font-general text-sm uppercase md:text-[10px]"
+          style={{ color: "rgba(0,0,0,0.4)" }}
         >
-          Our philosophy
+          Startathon 2026
         </p>
 
         <AnimatedTitle
-          title="A platform for turning <br /> Projects into products"
-          containerClass="mt-2 !text-black text-center"
-          style={{ position: "relative", zIndex: 1 }}
+          title="What's in it <br /> for you?"
+          containerClass="mt-5 !text-black text-center"
         />
 
-        <div className="about-subtext" style={{ position: "relative", zIndex: 1 }} />
-      </div>
-
-      <div className="h-dvh w-screen" id="clip">
-        <div className="mask-clip-path about-image">
-          <img
-            src="img/about.webp"
-            alt="Background"
-            className="absolute left-0 top-0 size-full object-cover"
-          />
+        <div className="about-subtext">
+          <p style={{ color: "rgba(0,0,0,0.5)" }}>
+            Prizes. Mentors. 30 hours. Kerala's most curated hackathon.
+          </p>
         </div>
       </div>
-    </section>
+
+      {/* 3D laptop scroll reveal */}
+      <LaptopReveal />
+    </div>
   );
 };
 
