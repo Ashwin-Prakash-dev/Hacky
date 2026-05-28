@@ -32,17 +32,10 @@ export default function LaptopModel({ progressRef, ...props }) {
       0.1
     );
 
-    // Rise from floor as lid opens — stays fixed once open
-    const targetY = THREE.MathUtils.lerp(-4.3, -2, lidProgress);
-    group.current.position.y = THREE.MathUtils.lerp(
-      group.current.position.y,
-      targetY,
-      0.1
-    );
   });
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} position={[0, -2, 0]} dispose={null}>
       {/* Hinge group — rotation.x controlled above */}
       <group ref={hingeGroupRef} position={[0, -0.04, 0.41]}>
         <group position={[0, 2.96, -0.13]} rotation={[Math.PI / 2, 0, 0]}>

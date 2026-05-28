@@ -6,6 +6,8 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import LaptopModel from "./LaptopModel";
+import DeskModel from "./DeskModel";
+import CoffeeModel from "./CoffeeModel";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -86,6 +88,8 @@ export default function LaptopReveal() {
           <Suspense fallback={null}>
             <group rotation={[0, Math.PI, 0]}>
               <LaptopModel progressRef={progressRef} />
+              <DeskModel />
+              <CoffeeModel />
             </group>
             <Environment preset="city" />
             <ContactShadows

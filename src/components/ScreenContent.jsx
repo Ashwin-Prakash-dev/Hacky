@@ -130,8 +130,8 @@ export default function ScreenContent() {
     <Html
       transform
       position={[0, 0, 0]}
-      rotation={[Math.PI / 2, Math.PI, 0]}
-      scale={0.255}
+      rotation={[Math.PI / 2, Math.PI, Math.PI]}
+      scale={0.170}
       zIndexRange={[100, 0]}
       style={{ pointerEvents: "none" }}
     >

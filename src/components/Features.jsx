@@ -53,7 +53,7 @@ const CardLabel = ({ text, dark = false }) => (
 );
 
 /* ── PRIZES CARD ─────────────────────────────────────────────────────────── */
-const PrizesCard = () => {
+export const PrizesCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const prizes = [
@@ -149,7 +149,7 @@ const PrizesCard = () => {
 };
 
 /* ── WHAT TO EXPECT CARD ─────────────────────────────────────────────────── */
-const ExpectCard = () => {
+export const ExpectCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const items = [

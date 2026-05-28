@@ -144,7 +144,7 @@ const Contact = () => {
                   </div>
                   <button
                     type="submit"
-                    className="w-full rounded px-6 py-3 font-general text-sm font-bold uppercase tracking-widest transition-opacity duration-200 hover:opacity-85"
+                    className="w-full rounded px-6 py-3 font-general text-sm font-bold uppercase tracking-widest transition- duration-200 hover:opacity-85"
                     style={{ background: "#C8FF00", color: "#000", cursor: "pointer" }}
                   >
                     Notify Me When Registrations Open
