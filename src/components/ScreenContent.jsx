@@ -20,18 +20,31 @@ const LINES = [
 const TERM_START = 0.35;
 const TERM_SPAN = 0.65;
 
+// Terminal fades in as scroll goes 0.30 → 0.45, content types from 0.35 → 1.0
+const FADE_START = 0.30;
+const FADE_END   = 0.45;
+
 function Terminal({ progressRef }) {
+  const containerRef = useRef(null);
   const linesRef = useRef([]);
   const typedRef = useRef(new Set());
   const tickersRef = useRef([]);
 
   useEffect(() => {
+    if (containerRef.current) containerRef.current.style.opacity = "0";
     linesRef.current.forEach((el) => { if (el) el.style.opacity = "0"; });
     typedRef.current.clear();
 
     let raf;
     const loop = () => {
       const p = progressRef?.current ?? 0;
+
+      // Fade the whole terminal in: progress 0.30 → 0.45
+      if (containerRef.current) {
+        const fade = Math.max(0, Math.min((p - FADE_START) / (FADE_END - FADE_START), 1));
+        containerRef.current.style.opacity = String(fade);
+      }
+
       const termProgress = Math.max(0, Math.min((p - TERM_START) / TERM_SPAN, 1));
       const targetCount = Math.floor(termProgress * LINES.length);
 
@@ -65,7 +78,7 @@ function Terminal({ progressRef }) {
   }, [progressRef]);
 
   return (
-    <div style={{
+    <div ref={containerRef} style={{
       width: "1440px",
       height: "900px",
       background: "#000000",
