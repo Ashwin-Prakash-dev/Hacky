@@ -44,7 +44,7 @@ const SponsorTeaser = () => (
           engagement. Not just logo placement.
         </p>
 
-        <a href="/sponsors" target="_blank" rel="noreferrer">
+        <a href="/sponsors">
           <Button
             title="View Sponsor Opportunities →"
             containerClass="mt-8 cursor-pointer border border-white/20 bg-transparent text-white hover:bg-white/5"

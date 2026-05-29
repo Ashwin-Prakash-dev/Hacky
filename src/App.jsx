@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import Intro from "./components/Intro";
 import CustomCursor from "./components/CustomCursor";
 import ScrollProgress from "./components/ScrollProgress";
@@ -11,10 +12,10 @@ import Timeline from "./components/Timeline";
 import FAQ from "./components/FAQ";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Sponsors from "./components/Sponsors";
 
-function App() {
+function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
-
   return (
     <>
       <ScrollProgress />
@@ -32,6 +33,15 @@ function App() {
         <Footer />
       </main>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainPage />} />
+      <Route path="/sponsors" element={<Sponsors />} />
+    </Routes>
   );
 }
 
