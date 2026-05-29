@@ -10,32 +10,32 @@ gsap.registerPlugin(ScrollTrigger);
 const CARDS = [
   {
     title: <>ANTHR<b>O</b>PIC</>,
-    label: "AI SAFETY",
-    category: "Frontier Artificial Intelligence",
+    label: "BUILDER",
+    category: "Started as a safety paper. Now shapes how the world thinks.",
     src: "/videos/feature-1.mp4",
   },
   {
     title: <>SP<b>A</b>CEX</>,
-    label: "AEROSPACE",
-    category: "Space Exploration Technology",
+    label: "BUILDER",
+    category: "Rockets were government projects. Until they weren't.",
     src: "/videos/feature-2.mp4",
   },
   {
     title: <>PAL<b>A</b>NTIR</>,
-    label: "DATA INTEL",
-    category: "Data & Intelligence",
+    label: "BUILDER",
+    category: "Unglamorous data work that ended up running the world.",
     src: "/videos/feature-3.mp4",
   },
   {
     title: <>OP<b>E</b>NAI</>,
-    label: "AI RESEARCH",
-    category: "General Purpose AI",
+    label: "BUILDER",
+    category: "A non-profit research lab that rewrote what AI means.",
     src: "/videos/feature-4.mp4",
   },
   {
     title: <><b>A</b>NDURIL</>,
-    label: "DEFENSE TECH",
-    category: "Autonomous Defense Systems",
+    label: "BUILDER",
+    category: "Defense tech was broken. They treated it like a startup.",
     src: "/videos/feature-5.mp4",
   },
 ];
@@ -298,7 +298,7 @@ const VideoCards = () => {
               opacity: 0,
             }}
           >
-            The Frontier
+            Our inspiration
           </p>
 
           <h2
@@ -314,7 +314,7 @@ const VideoCards = () => {
               opacity: 0,
             }}
           >
-            Some of the startups shaping the future of technology 
+            We took notes from the <b>b</b>uilders who ch<b>a</b>nged everything
           </h2>
 
           <p
@@ -328,8 +328,9 @@ const VideoCards = () => {
               opacity: 0,
             }}
           >
-            The companies shaping what comes next — in AI, space, data intelligence,
-            and autonomous systems. These are the builders of the next era.
+            We drew inspiration from the builders behind companies like these —
+            and the startup ecosystem they created. Startathon exists to find
+            the next ones.
           </p>
         </div>
 
