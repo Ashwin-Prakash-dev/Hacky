@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
 
 // Must match DESK_TOP_Y in DeskModel.jsx — this is the desk surface level
-const DESK_SURFACE_Y = -11.65;
+const DESK_SURFACE_Y = -8.15;
 
 // Uniform scale — tune to match the desk's proportions
 const CUP_SCALE = 7;

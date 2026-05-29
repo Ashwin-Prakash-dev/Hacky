@@ -50,7 +50,7 @@ export default function LaptopModel({ progressRef, ...props }) {
           {/* screen.001 hidden — replaced by Html overlay below */}
           <mesh visible={false} geometry={nodes["Cube008_2"].geometry} />
           {/* Html inherits this group's exact position + rotation = pixel-perfect screen alignment */}
-          <ScreenContent />
+          <ScreenContent progressRef={progressRef} />
         </group>
       </group>
 

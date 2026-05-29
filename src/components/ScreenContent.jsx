@@ -1,48 +1,68 @@
-// src/components/ScreenContent.jsx
 import { Html } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 
 const LINES = [
-  { prompt: "startathon@2026:~$", cmd: " init hackathon", delay: 0 },
-  { prompt: null, cmd: "› loading benefits...", delay: 700, color: "#C8FF00" },
-  { prompt: null, cmd: "  ✓ ₹X.XL prize pool", delay: 1200, color: "rgba(200,255,0,0.6)" },
-  { prompt: null, cmd: "  ✓ expert mentors on-site", delay: 1700, color: "rgba(200,255,0,0.6)" },
-  { prompt: null, cmd: "  ✓ 30-hour build sprint", delay: 2200, color: "rgba(200,255,0,0.6)" },
-  { prompt: null, cmd: "  ✓ demo day pitching", delay: 2700, color: "rgba(200,255,0,0.6)" },
-  { prompt: "startathon@2026:~$", cmd: " compile rewards", delay: 3300 },
-  { prompt: null, cmd: "› compiling...", delay: 3900, color: "#C8FF00" },
-  { prompt: null, cmd: "  [████████████████] 100%", delay: 4600, color: "rgba(200,255,0,0.75)" },
-  { prompt: null, cmd: "  ✓ build complete.", delay: 5200, color: "#C8FF00" },
-  { prompt: "startathon@2026:~$", cmd: " run startathon --date=july-2026", delay: 5800 },
-  { prompt: null, cmd: "  🚀 ready. build something real.", delay: 6600, color: "#C8FF00" },
+  { prompt: "startathon@2026:~$", cmd: " init hackathon" },
+  { prompt: null, cmd: "› loading benefits...", color: "#C8FF00" },
+  { prompt: null, cmd: "  ✓ ₹X.XL prize pool", color: "rgba(200,255,0,0.6)" },
+  { prompt: null, cmd: "  ✓ expert mentors on-site", color: "rgba(200,255,0,0.6)" },
+  { prompt: null, cmd: "  ✓ 30-hour build sprint", color: "rgba(200,255,0,0.6)" },
+  { prompt: null, cmd: "  ✓ demo day pitching", color: "rgba(200,255,0,0.6)" },
+  { prompt: "startathon@2026:~$", cmd: " compile rewards" },
+  { prompt: null, cmd: "› compiling...", color: "#C8FF00" },
+  { prompt: null, cmd: "  [████████████████] 100%", color: "rgba(200,255,0,0.75)" },
+  { prompt: null, cmd: "  ✓ build complete.", color: "#C8FF00" },
+  { prompt: "startathon@2026:~$", cmd: " run startathon --date=july-2026" },
+  { prompt: null, cmd: "  🚀 ready. build something real.", color: "#C8FF00" },
 ];
 
-function Terminal() {
+// Terminal content reveals across scroll progress 0.35 (lid open) → 1.0 (fully scrolled)
+const TERM_START = 0.35;
+const TERM_SPAN = 0.65;
+
+function Terminal({ progressRef }) {
   const linesRef = useRef([]);
+  const typedRef = useRef(new Set());
+  const tickersRef = useRef([]);
 
   useEffect(() => {
     linesRef.current.forEach((el) => { if (el) el.style.opacity = "0"; });
+    typedRef.current.clear();
 
-    const timers = LINES.map((line, i) =>
-      setTimeout(() => {
+    let raf;
+    const loop = () => {
+      const p = progressRef?.current ?? 0;
+      const termProgress = Math.max(0, Math.min((p - TERM_START) / TERM_SPAN, 1));
+      const targetCount = Math.floor(termProgress * LINES.length);
+
+      for (let i = 0; i < targetCount; i++) {
+        if (typedRef.current.has(i)) continue;
         const el = linesRef.current[i];
-        if (!el) return;
+        if (!el) continue;
+        typedRef.current.add(i);
         el.style.opacity = "1";
         const span = el.querySelector(".cmd-text");
-        if (!span) return;
+        if (!span) continue;
         const full = span.dataset.full;
         span.textContent = "";
         let j = 0;
-        const tick = setInterval(() => {
-          span.textContent += full[j];
-          j++;
-          if (j >= full.length) clearInterval(tick);
-        }, 22);
-      }, line.delay)
-    );
+        const ticker = setInterval(() => {
+          if (j < full.length) span.textContent += full[j++];
+          else clearInterval(ticker);
+        }, 20);
+        tickersRef.current.push(ticker);
+      }
 
-    return () => timers.forEach(clearTimeout);
-  }, []);
+      raf = requestAnimationFrame(loop);
+    };
+
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      tickersRef.current.forEach(clearInterval);
+      tickersRef.current = [];
+    };
+  }, [progressRef]);
 
   return (
     <div style={{
@@ -89,7 +109,7 @@ function Terminal() {
             ref={(el) => (linesRef.current[i] = el)}
             style={{
               opacity: 0,
-              transition: "opacity 0.12s ease",
+              transition: "opacity 0.1s ease",
               display: "flex",
               gap: "8px",
               marginBottom: "2px",
@@ -125,7 +145,7 @@ function Terminal() {
   );
 }
 
-export default function ScreenContent() {
+export default function ScreenContent({ progressRef }) {
   return (
     <Html
       transform
@@ -135,7 +155,7 @@ export default function ScreenContent() {
       zIndexRange={[100, 0]}
       style={{ pointerEvents: "none" }}
     >
-      <Terminal />
+      <Terminal progressRef={progressRef} />
     </Html>
   );
 }

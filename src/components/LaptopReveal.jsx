@@ -11,19 +11,14 @@ import CoffeeModel from "./CoffeeModel";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Tune this if the screen doesn't fill the viewport at scroll end
 const CAMERA_END_Z = 1.5;
 const CAMERA_START_Z = -30;
 
-// Camera animation timing
-const CAMERA_PHASE_START = 0.35; // scroll progress at which camera starts moving
-const CAMERA_PHASE_SPAN = 0.65; // remaining scroll span for camera motion (1 - CAMERA_PHASE_START)
+const CAMERA_PHASE_START = 0.35;
+const CAMERA_PHASE_SPAN = 0.65;
 
-/*
- * CameraController — lives inside the Canvas, reads progressRef each frame.
- * Phases:
- *   progress 0.35–1.0  camera moves from CAMERA_START_Z → CAMERA_END_Z
- */
+const ROOM_BG = "/img/wall.jpg";
+
 function CameraController({ progressRef }) {
   useFrame((state) => {
     const p = progressRef.current;
@@ -42,13 +37,29 @@ function CameraController({ progressRef }) {
 }
 
 export default function LaptopReveal() {
-  const wrapperRef = useRef(null);
-  const canvasWrapRef = useRef(null);
-  const progressRef = useRef(0);
+  const wrapperRef        = useRef(null);
+  const canvasWrapRef     = useRef(null);
+  const entranceOverlayRef = useRef(null);
+  const progressRef       = useRef(0);
 
   useGSAP(
     () => {
       if (!wrapperRef.current) return;
+
+      // Entrance: white overlay fades out as section scrolls up from below,
+      // matching the About section's white background for a seamless reveal.
+      gsap.to(entranceOverlayRef.current, {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapperRef.current,
+          start: "top 90%",   // overlay starts fading when section peeks into view
+          end: "top top",     // fully transparent once pinned at viewport top
+          scrub: 1,
+        },
+      });
+
+      // Pin + scroll-driven 3D animation
       ScrollTrigger.create({
         trigger: wrapperRef.current,
         start: "top top",
@@ -60,12 +71,10 @@ export default function LaptopReveal() {
           progressRef.current = self.progress;
         },
         onLeave: () => {
-          // Canvas hides — Features section takes over seamlessly
           if (canvasWrapRef.current)
             gsap.set(canvasWrapRef.current, { autoAlpha: 0 });
         },
         onEnterBack: () => {
-          // Restore canvas if user scrolls back up
           if (canvasWrapRef.current)
             gsap.set(canvasWrapRef.current, { autoAlpha: 1 });
         },
@@ -75,32 +84,108 @@ export default function LaptopReveal() {
   );
 
   return (
-    <div ref={wrapperRef} className="h-dvh w-screen" style={{ background: "#000" }}>
-      <div ref={canvasWrapRef} className="h-full w-full">
-        <Canvas
-          dpr={[1, 2]}
-          camera={{ position: [0, 0, CAMERA_START_Z], fov: 35 }}
-        >
-          <color attach="background" args={['#ffffff']} />
-          <CameraController progressRef={progressRef} />
-          <ambientLight intensity={0.3} />
-          <pointLight position={[10, 10, 10]} intensity={1.5} color="#f0f0f0" />
-          <Suspense fallback={null}>
-            <group rotation={[0, Math.PI, 0]}>
-              <LaptopModel progressRef={progressRef} />
-              <DeskModel />
-              <CoffeeModel />
-            </group>
-            <Environment preset="city" />
-            <ContactShadows
-              position={[0, -4.5, 0]}
-              opacity={0.4}
-              scale={20}
-              blur={1.75}
-              far={4.5}
+    <div ref={wrapperRef} className="h-dvh w-screen">
+      {/*
+       * canvasWrapRef wraps all layers — background, overlay, and canvas.
+       * autoAlpha on this div hides everything together on section leave.
+       */}
+      <div ref={canvasWrapRef} className="h-full w-full" style={{ position: "relative" }}>
+
+        {/* ── Layer 1: room background image — blurred for depth-of-field feel */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 0,
+          backgroundImage: `url('${ROOM_BG}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 35%",
+          filter: "blur(3px)",
+          transform: "scale(1.06)", // prevents blur from leaking at edges
+        }} />
+
+        {/* ── Layer 2: dark tint — improves contrast of 3D scene and text */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 1,
+          background: "rgba(18, 12, 6, 0.18)",
+        }} />
+
+        {/* ── Layer 3: entrance overlay — starts white (matches About bg), fades to reveal scene */}
+        <div
+          ref={entranceOverlayRef}
+          style={{
+            position: "absolute", inset: 0, zIndex: 10,
+            background: "#ffffff",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* ── Layer 4: transparent 3D canvas — models composite over the room */}
+        <div className="h-full w-full" style={{ position: "absolute", inset: 0, zIndex: 3 }}>
+          <Canvas
+            dpr={[1, 2]}
+            camera={{ position: [0, 0, CAMERA_START_Z], fov: 35 }}
+            gl={{ alpha: true, antialias: true }}
+          >
+            <CameraController progressRef={progressRef} />
+
+            {/*
+             * Lighting designed to match the room image:
+             *   — warm ambient for the bright white interior
+             *   — strong directional from the right (window bank on right wall)
+             *   — cool fill from the left (light bouncing off white left wall)
+             */}
+            <ambientLight intensity={0.55} color="#f8edd8" />
+
+            {/* Primary — right-side windows */}
+            <directionalLight
+              position={[7, 5, 3]}
+              intensity={1.8}
+              color="#fff8e6"
             />
-          </Suspense>
-        </Canvas>
+
+            {/* Fill — reflected from left white wall */}
+            <directionalLight
+              position={[-4, 3, 2]}
+              intensity={0.35}
+              color="#ddeeff"
+            />
+
+            {/* Subtle top fill to lift the desk surface */}
+            <directionalLight
+              position={[0, 8, 1]}
+              intensity={0.25}
+              color="#ffffff"
+            />
+
+            <Suspense fallback={null}>
+              <group rotation={[0, Math.PI, 0]}>
+                <LaptopModel progressRef={progressRef} />
+                <DeskModel />
+                <CoffeeModel />
+              </group>
+
+              {/* Interior HDRI — warm apartment lighting */}
+              <Environment preset="apartment" />
+
+              {/* Floor-level AO and contact shadows beneath desk legs */}
+              <ContactShadows
+                position={[0, -4.5, 0]}
+                opacity={0.6}
+                scale={22}
+                blur={2.8}
+                far={5.5}
+              />
+
+              {/* Desk-surface shadow from the laptop base */}
+              <ContactShadows
+                position={[0, -2.8, 0]}
+                opacity={0.22}
+                scale={5}
+                blur={1.8}
+                far={1.8}
+              />
+            </Suspense>
+          </Canvas>
+        </div>
+
       </div>
     </div>
   );
