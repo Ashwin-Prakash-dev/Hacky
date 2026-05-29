@@ -35,7 +35,7 @@ const MarqueeTrack = ({ reverse = false }) => {
             textTransform: "uppercase",
             color: i % ITEMS.length === 0
               ? "#C8FF00"
-              : "rgba(255,255,255,0.28)",
+              : "rgba(255,255,255,0.35)",
             whiteSpace: "nowrap",
           }}
         >
@@ -43,8 +43,8 @@ const MarqueeTrack = ({ reverse = false }) => {
           <span
             style={{
               marginLeft: "1.5rem",
-              color: "rgba(200,255,0,0.25)",
-              fontSize: "0.5rem",
+              color: "rgba(200,255,0,0.45)",
+              fontSize: "0.45rem",
             }}
           >
             ◆
@@ -60,22 +60,25 @@ const Marquee = ({ reverse = false }) => (
     style={{
       width: "100%",
       background: "#000",
-      borderTop: "1px solid rgba(255,255,255,0.05)",
-      borderBottom: "1px solid rgba(255,255,255,0.05)",
-      padding: "1.1rem 0",
+      borderTop: "1px solid rgba(255,255,255,0.07)",
+      borderBottom: "1px solid rgba(255,255,255,0.07)",
+      padding: "1.25rem 0",
       overflow: "hidden",
       position: "relative",
     }}
   >
+    {/* Center radial glow */}
+    <div style={{
+      position: "absolute", inset: 0,
+      background: "radial-gradient(ellipse 60% 100% at 50% 50%, rgba(200,255,0,0.04), transparent)",
+      pointerEvents: "none",
+    }} />
     {/* Fade edges */}
     <div
       style={{
-        position: "absolute",
-        inset: 0,
-        background:
-          "linear-gradient(90deg, #000 0%, transparent 8%, transparent 92%, #000 100%)",
-        zIndex: 1,
-        pointerEvents: "none",
+        position: "absolute", inset: 0,
+        background: "linear-gradient(90deg, #000 0%, transparent 10%, transparent 90%, #000 100%)",
+        zIndex: 1, pointerEvents: "none",
       }}
     />
     <MarqueeTrack reverse={reverse} />

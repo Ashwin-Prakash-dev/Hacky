@@ -75,6 +75,7 @@ const Stats = () => {
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       <div
+        id="stats-grid"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
@@ -83,35 +84,36 @@ const Stats = () => {
         {stats.map((stat, i) => (
           <div
             key={i}
+            className="stats-cell"
             style={{
               padding: "3.5rem clamp(1rem, 3vw, 2.5rem)",
-              borderRight:
-                i < stats.length - 1
-                  ? "1px solid rgba(255,255,255,0.06)"
-                  : "none",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-              position: "relative",
-              overflow: "hidden",
+              borderRight: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+              display: "flex", flexDirection: "column", gap: "0.5rem",
+              position: "relative", overflow: "hidden",
+              transition: "background 0.25s ease",
+              cursor: "default",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.025)";
+              e.currentTarget.querySelector(".stat-num").style.color = "#C8FF00";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.querySelector(".stat-num").style.color = i === 0 ? "#C8FF00" : "#fff";
             }}
           >
-            {/* Subtle lime glow on first stat (active) */}
-            {i === 0 && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0, left: 0, right: 0,
-                  height: "1px",
-                  background:
-                    "linear-gradient(90deg, transparent, #C8FF00, transparent)",
-                  opacity: 0.5,
-                }}
-              />
-            )}
+            {/* Top accent line on all stats, lime only on first */}
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: "1px",
+              background: i === 0
+                ? "linear-gradient(90deg, transparent, #C8FF00, transparent)"
+                : "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+              opacity: i === 0 ? 0.7 : 1,
+            }} />
 
             <span
               ref={(el) => (numRefs.current[i] = el)}
+              className="stat-num"
               style={{
                 fontFamily: "'zentry', sans-serif",
                 fontSize: "clamp(2.4rem, 5vw, 3.8rem)",
@@ -119,22 +121,19 @@ const Stats = () => {
                 color: i === 0 ? "#C8FF00" : "#fff",
                 lineHeight: 1,
                 letterSpacing: "-0.03em",
+                transition: "color 0.25s ease",
               }}
             >
               0
             </span>
 
-            <span
-              style={{
-                fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.62rem",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.22)",
-                lineHeight: 1.5,
-                whiteSpace: "pre-line",
-              }}
-            >
+            <span style={{
+              fontFamily: "var(--font-general, sans-serif)",
+              fontSize: "0.62rem", letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.3)",
+              lineHeight: 1.5, whiteSpace: "pre-line",
+            }}>
               {stat.label}
             </span>
           </div>

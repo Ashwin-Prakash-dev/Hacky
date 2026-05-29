@@ -129,10 +129,17 @@ const Hero = () => {
             loop
             muted
             className="absolute left-0 top-0 size-full object-cover object-center"
-            style={{ opacity: 0.35 }}
+            style={{ opacity: 0.55 }}
             onLoadedData={handleVideoLoad}
           />
         </div>
+
+        {/* Bottom vignette — bleeds into next section */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "35%",
+          background: "linear-gradient(to bottom, transparent, rgba(0,0,0,0.7))",
+          zIndex: 30, pointerEvents: "none",
+        }} />
 
         {/* Overlay content */}
         <div className="absolute left-0 top-0 z-40 size-full">
@@ -140,15 +147,22 @@ const Hero = () => {
             {/* Pill badge */}
             <div
               className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1"
-              style={{ borderColor: "rgba(200,255,0,0.3)" }}
+              style={{
+                borderColor: "rgba(200,255,0,0.25)",
+                background: "rgba(200,255,0,0.06)",
+                backdropFilter: "blur(8px)",
+              }}
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: "#C8FF00", animation: "pulse 2s infinite" }}
-              />
+              <span style={{
+                width: "6px", height: "6px", borderRadius: "50%",
+                background: "#C8FF00",
+                boxShadow: "0 0 6px rgba(200,255,0,0.8)",
+                animation: "pulse 2s infinite",
+                flexShrink: 0,
+              }} />
               <span
                 className="font-general text-xs uppercase tracking-widest"
-                style={{ color: "#C8FF00" }}
+                style={{ color: "rgba(200,255,0,0.9)", fontSize: "0.62rem" }}
               >
                 Applications opening soon · Kerala
               </span>
@@ -156,14 +170,14 @@ const Hero = () => {
 
             <h1
               className="special-font hero-heading text-blue-100"
-              style={{ lineHeight: 0.9 }}
+              style={{ lineHeight: 0.88 }}
             >
               start<b>a</b>thon
             </h1>
 
             <p
               className="mb-5 max-w-sm font-general text-sm text-blue-50"
-              style={{ opacity: 0.6, lineHeight: 1.7 }}
+              style={{ opacity: 0.55, lineHeight: 1.75, letterSpacing: "0.01em" }}
             >
               30 hours. Real problems.
               <br />
@@ -175,7 +189,6 @@ const Hero = () => {
               title="Register Interest"
               rightIcon={<TiLocationArrow />}
               containerClass="flex-center gap-1"
-              style={{ background: "#C8FF00", color: "#000" }}
             />
           </div>
         </div>

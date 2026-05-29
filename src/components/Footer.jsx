@@ -2,60 +2,73 @@ import { FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const socialLinks = [
   { href: "https://instagram.com", icon: <FaInstagram />, label: "Instagram" },
-  { href: "https://linkedin.com", icon: <FaLinkedin />, label: "LinkedIn" },
-  { href: "https://twitter.com", icon: <FaTwitter />, label: "Twitter" },
+  { href: "https://linkedin.com",  icon: <FaLinkedin />,  label: "LinkedIn"  },
+  { href: "https://twitter.com",   icon: <FaTwitter />,   label: "Twitter"   },
 ];
 
 const Footer = () => (
   <footer
-    className="w-screen py-10"
+    className="w-screen"
     style={{
       background: "#050505",
-      borderTop: "1px solid rgba(255,255,255,0.06)",
+      borderTop: "1px solid rgba(255,255,255,0.07)",
+      position: "relative",
+      paddingTop: "2.5rem",
+      paddingBottom: "2.5rem",
     }}
   >
+    {/* Gradient top accent */}
+    <div style={{
+      position: "absolute", top: 0, left: "10%", right: "10%", height: "1px",
+      background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.2), transparent)",
+      pointerEvents: "none",
+    }} />
+
     <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-6 md:flex-row md:gap-4">
       {/* Brand */}
       <div>
-        <p
-          className="font-general font-bold uppercase tracking-widest text-white"
-          style={{ fontSize: "0.85rem", letterSpacing: "0.1em" }}
-        >
-          startathon
-        </p>
-        <p
-          className="font-general text-xs mt-1"
-          style={{ color: "rgba(255,255,255,0.2)" }}
-        >
+        <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "4px" }}>
+          <span style={{
+            width: "5px", height: "5px", borderRadius: "50%",
+            background: "#C8FF00",
+            boxShadow: "0 0 6px rgba(200,255,0,0.6)",
+          }} />
+          <p
+            className="font-general font-bold uppercase"
+            style={{ fontSize: "0.8rem", letterSpacing: "0.14em", color: "#fff" }}
+          >
+            startathon
+          </p>
+        </div>
+        <p className="font-general text-xs" style={{ color: "rgba(255,255,255,0.18)", letterSpacing: "0.04em" }}>
           Coding Club · SCTCE · Thiruvananthapuram
         </p>
       </div>
 
       {/* Contact */}
-      <div className="flex flex-col items-center gap-1 text-center">
-        <a
-          href="mailto:hello@sctcoding.club"
-          className="font-general text-xs transition-colors duration-200 hover:text-white"
-          style={{ color: "rgba(255,255,255,0.35)" }}
-        >
-          hello@sctcoding.club
-        </a>
-        <a
-          href="tel:+917909190948"
-          className="font-general text-xs transition-colors duration-200 hover:text-white"
-          style={{ color: "rgba(255,255,255,0.35)" }}
-        >
-          +91 79091 90948
-        </a>
-        <a
-          href="https://www.sctcoding.club"
-          target="_blank"
-          rel="noreferrer"
-          className="font-general text-xs transition-colors duration-200 hover:text-white"
-          style={{ color: "rgba(255,255,255,0.35)" }}
-        >
-          www.sctcoding.club
-        </a>
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        {[
+          { href: "mailto:hello@sctcoding.club", label: "hello@sctcoding.club" },
+          { href: "tel:+917909190948",           label: "+91 79091 90948"      },
+          { href: "https://www.sctcoding.club",  label: "www.sctcoding.club", external: true },
+        ].map(({ href, label, external }) => (
+          <a
+            key={href}
+            href={href}
+            {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+            className="font-general text-xs"
+            style={{
+              color: "rgba(255,255,255,0.3)",
+              textDecoration: "none",
+              transition: "color 0.2s",
+              letterSpacing: "0.04em",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.8)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+          >
+            {label}
+          </a>
+        ))}
       </div>
 
       {/* Socials */}
@@ -67,8 +80,21 @@ const Footer = () => (
             target="_blank"
             rel="noopener noreferrer"
             aria-label={link.label}
-            className="text-lg transition-colors duration-200 hover:text-white"
-            style={{ color: "rgba(255,255,255,0.25)" }}
+            style={{
+              color: "rgba(255,255,255,0.22)",
+              fontSize: "1.1rem",
+              textDecoration: "none",
+              display: "flex",
+              transition: "color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#C8FF00";
+              e.currentTarget.style.transform = "translateY(-3px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "rgba(255,255,255,0.22)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
           >
             {link.icon}
           </a>
@@ -78,7 +104,7 @@ const Footer = () => (
 
     <p
       className="mt-8 text-center font-general text-xs"
-      style={{ color: "rgba(255,255,255,0.1)", letterSpacing: "0.06em" }}
+      style={{ color: "rgba(255,255,255,0.1)", letterSpacing: "0.07em" }}
     >
       © 2026 Startathon · Sree Chitra Thirunal College of Engineering
     </p>

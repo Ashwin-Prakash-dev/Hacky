@@ -69,66 +69,57 @@ const FAQItem = ({ question, answer, index }) => {
     <div
       style={{
         borderBottom: "1px solid rgba(255,255,255,0.07)",
-        padding: "0",
+        borderLeft: open ? "2px solid rgba(200,255,0,0.45)" : "2px solid transparent",
+        paddingLeft: "1rem",
+        marginLeft: "-1rem",
+        transition: "border-color 0.3s ease",
       }}
     >
       <button
         onClick={toggle}
         className="w-full text-left"
         style={{
-          display: "flex",
-          alignItems: "center",
+          display: "flex", alignItems: "center",
           justifyContent: "space-between",
-          padding: "1.4rem 0",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          gap: "1rem",
+          padding: "1.5rem 0",
+          background: "none", border: "none", cursor: "pointer",
+          gap: "1.25rem",
         }}
       >
         <span
           className="font-circular-web"
           style={{
             fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
-            color: open ? "#fff" : "rgba(255,255,255,0.7)",
+            color: open ? "#fff" : "rgba(255,255,255,0.65)",
             transition: "color 0.2s",
             lineHeight: 1.4,
           }}
         >
           {question}
         </span>
-        <span
-          style={{
-            flexShrink: 0,
-            width: "20px",
-            height: "20px",
-            borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: open ? "#C8FF00" : "rgba(255,255,255,0.4)",
-            fontSize: "1rem",
-            lineHeight: 1,
-            transition: "color 0.2s, border-color 0.2s, transform 0.3s",
-            transform: open ? "rotate(45deg)" : "rotate(0deg)",
-          }}
-        >
+        <span style={{
+          flexShrink: 0, width: "24px", height: "24px",
+          borderRadius: "50%",
+          border: open ? "1px solid rgba(200,255,0,0.5)" : "1px solid rgba(255,255,255,0.15)",
+          background: open ? "rgba(200,255,0,0.08)" : "transparent",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: open ? "#C8FF00" : "rgba(255,255,255,0.35)",
+          fontSize: "1rem", lineHeight: 1,
+          transition: "color 0.25s, border-color 0.25s, background 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+          transform: open ? "rotate(45deg)" : "rotate(0deg)",
+        }}>
           +
         </span>
       </button>
 
-      <div
-        ref={bodyRef}
-        style={{ height: 0, overflow: "hidden", opacity: 0 }}
-      >
+      <div ref={bodyRef} style={{ height: 0, overflow: "hidden", opacity: 0 }}>
         <p
           className="font-circular-web"
           style={{
             fontSize: "0.92rem",
-            color: "rgba(255,255,255,0.45)",
-            lineHeight: 1.75,
-            paddingBottom: "1.4rem",
+            color: "rgba(255,255,255,0.5)",
+            lineHeight: 1.8,
+            paddingBottom: "1.5rem",
             maxWidth: "680px",
           }}
         >

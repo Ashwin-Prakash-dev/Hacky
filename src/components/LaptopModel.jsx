@@ -47,8 +47,10 @@ export default function LaptopModel({ progressRef, ...props }) {
             material={materials["matte.001"]}
             geometry={nodes["Cube008_1"].geometry}
           />
-          {/* screen.001 hidden — replaced by Html overlay below */}
-          <mesh visible={false} geometry={nodes["Cube008_2"].geometry} />
+          {/* screen.001 — solid black so the room bg doesn't bleed through */}
+          <mesh geometry={nodes["Cube008_2"].geometry}>
+            <meshBasicMaterial color="#000000" />
+          </mesh>
           {/* Html inherits this group's exact position + rotation = pixel-perfect screen alignment */}
           <ScreenContent progressRef={progressRef} />
         </group>
