@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useGLTF } from "@react-three/drei";
 
 // Must match DESK_TOP_Y in DeskModel.jsx — this is the desk surface level
@@ -20,6 +20,15 @@ export default function CoffeeModel() {
     const box = new THREE.Box3().setFromObject(scene);
     // Align cup's bottom face to the desk surface
     return DESK_SURFACE_Y - box.min.y;
+  }, [scene]);
+
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
   }, [scene]);
 
   return (

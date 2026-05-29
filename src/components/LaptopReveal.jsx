@@ -1,4 +1,27 @@
-import { useRef, Suspense } from "react";
+import { useRef, Suspense, Component } from "react";
+
+// Detect WebGL support before attempting to create a Canvas
+function isWebGLAvailable() {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
+}
+
+// Error boundary — catches Canvas crash and shows a plain fallback
+class CanvasErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { failed: false }; }
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    if (this.state.failed) return this.props.fallback ?? null;
+    return this.props.children;
+  }
+}
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, ContactShadows } from "@react-three/drei";
 import gsap from "gsap";
@@ -6,18 +29,15 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import LaptopModel from "./LaptopModel";
-import DeskModel from "./DeskModel";
-import CoffeeModel from "./CoffeeModel";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CAMERA_END_Z = 1.5;
+const CAMERA_END_Z = 4.5;
 const CAMERA_START_Z = -30;
 
 const CAMERA_PHASE_START = 0.35;
 const CAMERA_PHASE_SPAN = 0.65;
 
-const ROOM_BG = "/img/wall.jpg";
 
 function CameraController({ progressRef }) {
   useFrame((state) => {
@@ -91,21 +111,6 @@ export default function LaptopReveal() {
        */}
       <div ref={canvasWrapRef} className="h-full w-full" style={{ position: "relative" }}>
 
-        {/* ── Layer 1: room background image — blurred for depth-of-field feel */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 0,
-          backgroundImage: `url('${ROOM_BG}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 35%",
-          filter: "blur(3px)",
-          transform: "scale(1.06)", // prevents blur from leaking at edges
-        }} />
-
-        {/* ── Layer 2: dark tint — improves contrast of 3D scene and text */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 1,
-          background: "rgba(18, 12, 6, 0.18)",
-        }} />
 
         {/* ── Layer 3: entrance overlay — starts white (matches About bg), fades to reveal scene */}
         <div
@@ -118,48 +123,54 @@ export default function LaptopReveal() {
         />
 
         {/* ── Layer 4: transparent 3D canvas — models composite over the room */}
+        {isWebGLAvailable() && (
+        <CanvasErrorBoundary fallback={null}>
         <div className="h-full w-full" style={{ position: "absolute", inset: 0, zIndex: 3 }}>
           <Canvas
             dpr={[1, 2]}
             camera={{ position: [0, 0, CAMERA_START_Z], fov: 35 }}
             gl={{ alpha: true, antialias: true }}
+            shadows
           >
             <CameraController progressRef={progressRef} />
 
-            {/*
-             * Lighting designed to match the room image:
-             *   — warm ambient for the bright white interior
-             *   — strong directional from the right (window bank on right wall)
-             *   — cool fill from the left (light bouncing off white left wall)
-             */}
-            <ambientLight intensity={0.55} color="#f8edd8" />
+            {/* Soft warm ambient — base indoor light */}
+            <ambientLight intensity={0.4} color="#f5ead8" />
 
-            {/* Primary — right-side windows */}
+            {/* Sunlight from right window — shadow-casting key light */}
             <directionalLight
-              position={[7, 5, 3]}
-              intensity={1.8}
-              color="#fff8e6"
+              position={[12, 10, 4]}
+              intensity={2.6}
+              color="#fff6e0"
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-near={1}
+              shadow-camera-far={80}
+              shadow-camera-left={-20}
+              shadow-camera-right={20}
+              shadow-camera-top={20}
+              shadow-camera-bottom={-20}
+              shadow-bias={-0.0008}
             />
 
-            {/* Fill — reflected from left white wall */}
+            {/* Cool fill — light bouncing off the white left wall */}
             <directionalLight
-              position={[-4, 3, 2]}
-              intensity={0.35}
-              color="#ddeeff"
+              position={[-5, 4, 2]}
+              intensity={0.28}
+              color="#dce8ff"
             />
 
-            {/* Subtle top fill to lift the desk surface */}
+            {/* Subtle overhead to lift desk surface */}
             <directionalLight
-              position={[0, 8, 1]}
-              intensity={0.25}
+              position={[0, 10, 1]}
+              intensity={0.18}
               color="#ffffff"
             />
 
             <Suspense fallback={null}>
               <group rotation={[0, Math.PI, 0]}>
                 <LaptopModel progressRef={progressRef} />
-                <DeskModel />
-                <CoffeeModel />
               </group>
 
               {/* Interior HDRI — warm apartment lighting */}
@@ -185,6 +196,8 @@ export default function LaptopReveal() {
             </Suspense>
           </Canvas>
         </div>
+        </CanvasErrorBoundary>
+        )}
 
       </div>
     </div>

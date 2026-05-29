@@ -1,0 +1,24 @@
+/* ── VideoCards responsive grid ─────────────────────────────────────────── */
+
+.vc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+}
+
+.vc-spacex {
+  grid-row: 1 / span 2;
+  /* Height = 2 × card height + gap — driven by siblings, no explicit height needed */
+}
+
+/* On mobile: single column, no row spanning */
+@media (max-width: 767px) {
+  .vc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vc-spacex {
+    grid-row: auto;
+    height: clamp(260px, 52vw, 420px) !important;
+  }
+}

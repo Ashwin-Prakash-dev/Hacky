@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import ScreenContent from "./ScreenContent";
@@ -18,6 +18,16 @@ export default function LaptopModel({ progressRef, ...props }) {
   const group = useRef();
   const hingeGroupRef = useRef();
   const { nodes, materials } = useGLTF("/models/mac-draco.glb");
+
+  useEffect(() => {
+    if (!group.current) return;
+    group.current.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, []);
 
   useFrame(() => {
     if (!group.current || !hingeGroupRef.current) return;

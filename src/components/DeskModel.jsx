@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useGLTF } from "@react-three/drei";
 
 // Y coordinate where the desk's top surface should sit.
@@ -16,6 +16,15 @@ export default function DeskModel() {
   const yOffset = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene);
     return DESK_TOP_Y - box.max.y;
+  }, [scene]);
+
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
   }, [scene]);
 
   return <primitive object={scene} position={[0, yOffset, 0]} scale={DESK_SCALE} />;
