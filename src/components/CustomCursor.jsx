@@ -9,6 +9,7 @@ const CustomCursor = () => {
     const dot = dotRef.current;
     const ring = ringRef.current;
 
+    if (window.matchMedia("(hover: none)").matches) return;
     document.body.classList.add("custom-cursor");
     gsap.set([dot, ring], { x: -100, y: -100 });
 
