@@ -277,7 +277,7 @@ const VideoCards = () => {
     <section
       ref={sectionRef}
       id="showcase"
-      style={{ backgroundColor: "#000", paddingBottom: "clamp(4rem, 8vw, 7rem)" }}
+      style={{ backgroundColor: "#000", paddingBottom: 0 }}
     >
       <div className="container mx-auto px-3 md:px-10">
 
@@ -376,6 +376,70 @@ const VideoCards = () => {
           <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
             <VideoCard {...CARDS[4]} />
           </BentoTilt>
+        </div>
+
+        {/* ── Hackathon intro — bridge into stats ──────────── */}
+        <div
+          className="vc-card-wrap"
+          style={{
+            padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(4rem, 8vw, 6rem)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "clamp(1.5rem, 3vw, 2.5rem)",
+          }}
+        >
+          {/* Top rule */}
+          <div style={{
+            width: "clamp(2rem, 6vw, 4rem)",
+            height: "1px",
+            background: "linear-gradient(90deg, #C8FF00, transparent)",
+          }} />
+
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "clamp(1rem, 2vw, 1.5rem)",
+            maxWidth: "52rem",
+          }}>
+            <p style={{
+              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontSize: "0.62rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#C8FF00",
+            }}>
+              Startathon 2026 · Kerala
+            </p>
+
+            <h2
+              className="special-font"
+              style={{
+                fontFamily: "'zentry', sans-serif",
+                fontSize: "clamp(2rem, 5.5vw, 4.5rem)",
+                fontWeight: 900,
+                color: "#ffffff",
+                lineHeight: 0.92,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              30 ho<b>u</b>rs.<br />
+              20 te<b>a</b>ms.<br />
+              Ze<b>r</b>o spectators.
+            </h2>
+
+            <p style={{
+              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontSize: "clamp(0.82rem, 1.5vw, 1rem)",
+              color: "rgba(255,255,255,0.38)",
+              lineHeight: 1.8,
+              maxWidth: "38rem",
+            }}>
+              Startathon is Kerala's most curated builder hackathon. We don't take
+              everyone — we select 20 teams, pair them with expert mentors from day one,
+              and give them 30 hours to ship working software. No pitch decks.
+              No half-built prototypes. Real products only.
+            </p>
+          </div>
         </div>
 
       </div>

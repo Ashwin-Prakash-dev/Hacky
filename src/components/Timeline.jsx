@@ -13,8 +13,9 @@ const milestones = [
   { id: 3, date: "Late June", label: "Tracks Released",     sub: "Problem domains announced", status: "upcoming" },
   { id: 4, date: "July 1",    label: "Registration Closes", sub: "Regular ₹1200",             status: "upcoming" },
   { id: 5, date: "Mid July",  label: "Idea Submission",     sub: "₹100 concept brief",        status: "upcoming" },
-  { id: 6, date: "July 26",   label: "Event Kickoff",       sub: "30-hour build sprint",      status: "upcoming" },
-  { id: 7, date: "July 27",   label: "Demo Day",            sub: "Awards & celebration",      status: "upcoming" },
+  { id: 6, date: "Late July", label: "Team Shortlisting",   sub: "Selected teams notified",   status: "upcoming" },
+  { id: 7, date: "July 26",   label: "Event Kickoff",       sub: "30-hour build sprint",      status: "upcoming" },
+  { id: 8, date: "July 27",   label: "Demo Day",            sub: "Awards & celebration",      status: "upcoming" },
 ];
 
 const flipCards = [
@@ -280,7 +281,7 @@ const Timeline = () => {
       {/* ── Feature cards: Prizes (L), Expect (R), Mentors (L), Rules (R) */}
       <div style={{
         position: "relative", zIndex: 3,
-        maxWidth: "900px", margin: "0 auto",
+        maxWidth: "1170px", margin: "0 auto",
         padding: "8rem clamp(1.25rem, 5vw, 3rem) 18rem",
       }}>
 
