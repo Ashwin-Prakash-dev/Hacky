@@ -53,7 +53,7 @@ const CardLabel = ({ text, dark = false }) => (
 );
 
 /* ── Animated prize counter ─────────────────────────────────────────────── */
-const AnimatedPrize = ({ target = 150, duration = 1800 }) => {
+const AnimatedPrize = ({ target = 100, duration = 1800 }) => {
   const [count, setCount] = useState(0);
   const animatedRef = useRef(false);
   const elRef = useRef(null);
@@ -105,10 +105,9 @@ export const PrizesCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const prizes = [
-    { rank: "01", label: "First Place", amount: "TBD", sub: "cash + incubation opportunity" },
-    { rank: "02", label: "Second Place", amount: "TBD", sub: "cash + cloud credits" },
-    { rank: "03", label: "Third Place", amount: "TBD", sub: "cash + swag" },
-    { rank: "★", label: "Special Tracks", amount: "TBD", sub: "domain-specific prizes" },
+    { rank: "01", label: "First Place",  amount: "₹50,000", sub: "cash + incubation opportunity" },
+    { rank: "02", label: "Second Place", amount: "₹30,000", sub: "cash + cloud credits"          },
+    { rank: "03", label: "Third Place",  amount: "₹20,000", sub: "cash + swag"                   },
   ];
 
   return (
@@ -155,7 +154,7 @@ export const PrizesCard = () => {
             Pr<b>i</b>zes
           </h2>
           <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <AnimatedPrize target={150} duration={1800} />
+            <AnimatedPrize target={100} duration={1800} />
             <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>total pool</span>
           </div>
         </div>
@@ -201,11 +200,11 @@ export const ExpectCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const items = [
-    { icon: "◈", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
-    { icon: "◎", title: "Expert Mentors", desc: "Technical founders and engineers guide you live" },
-    { icon: "◉", title: "Curated Teams Only", desc: "20 selected teams — builders, not attendees" },
-    { icon: "◆", title: "Demo Day Pitching", desc: "Top teams pitch to judges and ecosystem partners" },
-    { icon: "◇", title: "Meals & Hospitality", desc: "Food and logistics covered throughout the event" },
+    { icon: "◈", title: "30-Hour Build Sprint",        desc: "Work alongside the state's most ambitious builders in an intense product development sprint." },
+    { icon: "◎", title: "Demo Day Pitching",           desc: "Present your product to experienced builders, founders, and industry professionals." },
+    { icon: "◉", title: "High-Value Networking",       desc: "Connect with ambitious developers, innovators, and potential future co-founders from across the state." },
+    { icon: "◆", title: "Mentorship & Feedback",       desc: "Receive guidance and actionable feedback throughout the entire building process." },
+    { icon: "◇", title: "Meals & Accommodation",       desc: "All funds collected from participants will be used exclusively to cover meal and accommodation expenses." },
   ];
 
   return (
@@ -251,25 +250,25 @@ export const ExpectCard = () => {
       </div>
 
       <div style={{
-        position: "absolute", inset: 0, padding: "2rem 2rem",
-        display: "flex", flexDirection: "column",
+        position: "absolute", inset: 0, padding: "1.4rem 1.5rem",
+        display: "flex", flexDirection: "column", justifyContent: "flex-start",
         opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease 0.08s",
-        pointerEvents: hovered ? "auto" : "none", justifyContent: "center", gap: "0",
+        pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "1rem", display: "block" }}>What to Expect</span>
+        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "0.6rem", display: "block" }}>What to Expect</span>
         {items.map((item, i) => (
           <div key={i} style={{
-            display: "flex", gap: "14px", alignItems: "flex-start",
-            padding: "0.75rem 0",
+            display: "flex", gap: "10px", alignItems: "flex-start",
+            padding: "0.38rem 0",
             borderBottom: i < items.length - 1 ? "0.5px solid #ebebeb" : "none",
             transform: hovered ? "translateX(0)" : "translateX(-8px)",
             opacity: hovered ? 1 : 0,
             transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
           }}>
-            <span style={{ color: "#00aa55", fontSize: "0.75rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+            <span style={{ color: "#00aa55", fontSize: "0.65rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.5 }}>{item.icon}</span>
             <div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem", color: "#888", marginTop: "1px", lineHeight: 1.35 }}>{item.desc}</div>
             </div>
           </div>
         ))}

@@ -408,36 +408,47 @@ const VideoCards = () => {
               textTransform: "uppercase",
               color: "#C8FF00",
             }}>
-              Startathon 2026 · Kerala
+              Coding Club @ SCTCE · Kerala 2026
             </p>
 
             <h2
               className="special-font"
               style={{
                 fontFamily: "'zentry', sans-serif",
-                fontSize: "clamp(2rem, 5.5vw, 4.5rem)",
+                fontSize: "clamp(2.6rem, 6vw, 5.5rem)",
                 fontWeight: 900,
                 color: "#ffffff",
                 lineHeight: 0.92,
                 letterSpacing: "-0.02em",
               }}
             >
-              30 ho<b>u</b>rs.<br />
-              20 te<b>a</b>ms.<br />
-              Ze<b>r</b>o spectators.
+              What is<br />
+              Startath<b>o</b>n?
             </h2>
 
             <p style={{
               fontFamily: "var(--font-general, 'General Sans', sans-serif)",
-              fontSize: "clamp(0.82rem, 1.5vw, 1rem)",
+              fontSize: "clamp(0.82rem, 1.4vw, 0.98rem)",
               color: "rgba(255,255,255,0.38)",
-              lineHeight: 1.8,
-              maxWidth: "38rem",
+              lineHeight: 1.85,
+              maxWidth: "40rem",
             }}>
-              Startathon is Kerala's most curated builder hackathon. We don't take
-              everyone — we select 20 teams, pair them with expert mentors from day one,
-              and give them 30 hours to ship working software. No pitch decks.
-              No half-built prototypes. Real products only.
+              Startathon is the flagship innovation event by Coding Club @ SCTCE,
+              designed to bring together some of the most ambitious student builders
+              from across Kerala. The event provides a high-intensity, competitive
+              environment where participants innovate, and transform ideas into
+              scalable, real-world products.
+            </p>
+
+            <p style={{
+              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontSize: "clamp(0.82rem, 1.4vw, 0.98rem)",
+              color: "rgba(255,255,255,0.22)",
+              lineHeight: 1.85,
+              maxWidth: "40rem",
+            }}>
+              More than just a hackathon, Startathon challenges teams to focus on
+              product viability, execution, and impact.
             </p>
           </div>
         </div>

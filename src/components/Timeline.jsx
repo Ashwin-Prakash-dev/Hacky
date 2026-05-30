@@ -35,10 +35,10 @@ const flipCards = [
     titleFront: <>Rul<b>e</b>s</>,
     tagline: "Keep it real. Keep it yours.",
     back: [
-      { icon: "◈", title: "Teams of 2–4",      desc: "Solo entries not accepted — collaboration is core to this event" },
-      { icon: "◎", title: "Original work only", desc: "All code written during the 30-hour window; no pre-built projects" },
-      { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype — slides don't count" },
-      { icon: "◆", title: "Fair play",          desc: "Respect fellow builders, mentors, and the community you're in" },
+      { icon: "◈", title: "Team Size: 1–4 Members",  desc: "Participate solo or build a team of up to four members." },
+      { icon: "◎", title: "Be Original",              desc: "Existing ideas are fine, but submissions must show significant development during the event." },
+      { icon: "◉", title: "Play Fair",                desc: "Respect fellow participants, mentors, judges, and organizers." },
+      { icon: "◆", title: "Be Caffeine Tolerant",     desc: "No promises regarding your sleep schedule." },
     ],
   },
 ];

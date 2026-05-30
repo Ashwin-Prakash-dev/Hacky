@@ -5,10 +5,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { value: 20,  prefix: "",  suffix: "",   label: "Teams\nSelected"       },
-  { value: 30,  prefix: "",  suffix: "hrs", label: "Non-stop\nBuilding"   },
-  { value: 5,   prefix: "",  suffix: "+",  label: "Expert\nMentors"       },
-  { value: 100, prefix: "",  suffix: "+",  label: "Applicants\nExpected"  },
+  { value: null, display: "ALL",  suffix: "",    label: "Kerala"            },
+  { value: 20,   display: null,   suffix: "",    label: "Teams"             },
+  { value: 30,   display: null,   suffix: "HRS", label: "Non-stop\nBuilding" },
+  { value: 3,    display: null,   suffix: "",    label: "Winners"           },
 ];
 
 const Stats = () => {
@@ -20,8 +20,14 @@ const Stats = () => {
       numRefs.current.forEach((el, i) => {
         if (!el) return;
         const target = stats[i];
-        const counter = { val: 0 };
 
+        // Text-only stat — no animation needed
+        if (target.value === null) {
+          el.textContent = target.display;
+          return;
+        }
+
+        const counter = { val: 0 };
         gsap.to(counter, {
           val: target.value,
           duration: 2,
@@ -32,10 +38,7 @@ const Stats = () => {
             toggleActions: "play none none reset",
           },
           onUpdate: () => {
-            el.textContent =
-              target.prefix +
-              Math.round(counter.val) +
-              target.suffix;
+            el.textContent = Math.round(counter.val) + target.suffix;
           },
         });
       });
@@ -124,7 +127,7 @@ const Stats = () => {
                 transition: "color 0.25s ease",
               }}
             >
-              0
+              {stat.display ?? 0}
             </span>
 
             <span style={{
