@@ -37,10 +37,31 @@ const Footer = () => (
           fontSize: "0.7rem", color: "rgba(255,255,255,0.2)",
           letterSpacing: "0.04em", lineHeight: 1.7,
           maxWidth: "220px",
+          marginBottom: "1.25rem",
         }}>
           Kerala's most curated hackathon for builders.<br />
           Organized by Coding Club, SCTCE.
         </p>
+
+        {/* Associated logos */}
+        <p className="font-general" style={{
+          fontSize: "0.48rem", letterSpacing: "0.18em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.15)",
+          marginBottom: "0.65rem",
+        }}>Presented by</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <img
+            src="/Coding Club.png"
+            alt="Coding Club SCTCE"
+            style={{ height: "52px", width: "auto" }}
+          />
+          <span style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.1)" }} />
+          <img
+            src="/SCTCElogo.png"
+            alt="SCTCE"
+            style={{ height: "52px", width: "auto" }}
+          />
+        </div>
       </div>
 
       {/* Contact */}
