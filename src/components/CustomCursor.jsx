@@ -1,15 +1,18 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+const isTouchDevice = window.matchMedia("(hover: none)").matches;
+
 const CustomCursor = () => {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
 
   useEffect(() => {
+    if (isTouchDevice) return;
+
     const dot = dotRef.current;
     const ring = ringRef.current;
 
-    if (window.matchMedia("(hover: none)").matches) return;
     document.body.classList.add("custom-cursor");
     gsap.set([dot, ring], { x: -100, y: -100 });
 
@@ -18,7 +21,6 @@ const CustomCursor = () => {
       gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.45, ease: "power3.out" });
     };
 
-    // Single delegated listener instead of per-element listeners
     const onEnter = (e) => {
       if (!e.target.closest("a, button, [data-hover]")) return;
       gsap.to(ring, { scale: 1.8, opacity: 0.5, duration: 0.2 });
@@ -42,6 +44,8 @@ const CustomCursor = () => {
       document.removeEventListener("mouseout", onLeave);
     };
   }, []);
+
+  if (isTouchDevice) return null;
 
   return (
     <>
