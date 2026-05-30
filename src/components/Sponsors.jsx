@@ -238,7 +238,7 @@ function TierCard({ tier }) {
       </div>
 
       <a
-        href="mailto:hello@sctcoding.club?subject=Sponsorship%20Inquiry%20-%20Startathon%202026"
+        href="#sponsor-contact"
         style={{ textDecoration: "none", marginTop: "1.5rem" }}
       >
         <button style={{
@@ -424,7 +424,7 @@ const Sponsors = () => {
 
         {/* Stat pills */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginTop: "2.5rem", justifyContent: "center" }}>
-          {[["20", "Curated teams"], ["30 HRS", "Build sprint"], ["₹1.5L", "Prize pool"], ["All Kerala", "Reach"]].map(([n, l]) => (
+          {[["20", "Curated teams"], ["30 HRS", "Build sprint"], ["₹1L", "Prize pool"], ["All Kerala", "Reach"]].map(([n, l]) => (
             <div key={l} className="sp-hero-stat" style={{
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -599,7 +599,7 @@ const Sponsors = () => {
         </div>
 
         {/* CTA */}
-        <div style={{
+        <div id="sponsor-contact" style={{
           background: "linear-gradient(135deg, #0d0d0d 0%, #111 100%)",
           border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px",
           padding: "4rem 3rem", textAlign: "center", position: "relative", overflow: "hidden",

@@ -8,17 +8,47 @@
 
 .vc-spacex {
   grid-row: 1 / span 2;
-  /* Height = 2 × card height + gap — driven by siblings, no explicit height needed */
 }
 
-/* On mobile: single column, no row spanning */
+/* ── Mobile: single swipeable carousel ──────────────────────────────────── */
 @media (max-width: 767px) {
-  .vc-grid {
-    grid-template-columns: 1fr;
+  /* Hide the desktop bento cards */
+  .vc-desktop-grid {
+    display: none;
   }
 
-  .vc-spacex {
-    grid-row: auto;
-    height: clamp(260px, 52vw, 420px) !important;
+  /* Show the mobile carousel */
+  .vc-mobile-carousel {
+    display: block !important;
   }
+}
+
+@media (min-width: 768px) {
+  .vc-mobile-carousel {
+    display: none !important;
+  }
+}
+
+/* Carousel track */
+.vc-carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.vc-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.vc-carousel-slide {
+  flex: 0 0 85vw;
+  height: clamp(280px, 60vw, 420px);
+  scroll-snap-align: center;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
 }

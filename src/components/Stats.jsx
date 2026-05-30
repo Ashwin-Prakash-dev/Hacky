@@ -142,21 +142,23 @@ const Stats = () => {
 
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
-      {/* Mobile: 2×2 grid */}
       <style>{`
         @media (max-width: 640px) {
           #stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
           }
-          #stats-grid > div:nth-child(2) {
+          /* reset all right borders first */
+          #stats-grid > div {
             border-right: none !important;
           }
+          /* right border only on left column cells */
+          #stats-grid > div:nth-child(odd) {
+            border-right: 1px solid rgba(255,255,255,0.06) !important;
+          }
+          /* top border on bottom row */
           #stats-grid > div:nth-child(3),
           #stats-grid > div:nth-child(4) {
             border-top: 1px solid rgba(255,255,255,0.06);
-          }
-          #stats-grid > div:nth-child(4) {
-            border-right: none !important;
           }
         }
       `}</style>

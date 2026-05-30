@@ -334,48 +334,69 @@ const VideoCards = () => {
           </p>
         </div>
 
-        {/* ── Hero Card: ANTHROPIC (full width) ────────────── */}
-        <div
-          className="vc-card-wrap"
-          style={{ marginBottom: GAP, height: "clamp(300px, 58vh, 660px)" }}
-        >
-          <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
-            <VideoCard {...CARDS[0]} />
-          </BentoTilt>
+        {/* ── Desktop bento grid ───────────────────────────── */}
+        <div className="vc-desktop-grid">
+          {/* Hero Card: ANTHROPIC (full width) */}
+          <div
+            className="vc-card-wrap"
+            style={{ marginBottom: GAP, height: "clamp(300px, 58vh, 660px)" }}
+          >
+            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+              <VideoCard {...CARDS[0]} />
+            </BentoTilt>
+          </div>
+
+          {/* 2-col grid: SPACEX (tall) + PALANTIR / OPENAI */}
+          <div className="vc-grid" style={{ gap: GAP, marginBottom: GAP }}>
+            <div className="vc-card-wrap vc-spacex">
+              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+                <VideoCard {...CARDS[1]} />
+              </BentoTilt>
+            </div>
+            <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
+              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+                <VideoCard {...CARDS[2]} />
+              </BentoTilt>
+            </div>
+            <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
+              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+                <VideoCard {...CARDS[3]} />
+              </BentoTilt>
+            </div>
+          </div>
+
+          {/* ANDURIL — full width footer card */}
+          <div
+            className="vc-card-wrap"
+            style={{ height: "clamp(220px, 38vh, 400px)" }}
+          >
+            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+              <VideoCard {...CARDS[4]} />
+            </BentoTilt>
+          </div>
         </div>
 
-        {/* ── 2-col grid: SPACEX (tall) + PALANTIR / OPENAI ── */}
-        <div className="vc-grid" style={{ gap: GAP, marginBottom: GAP }}>
-          {/* SPACEX — spans 2 rows */}
-          <div className="vc-card-wrap vc-spacex">
-            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
-              <VideoCard {...CARDS[1]} />
-            </BentoTilt>
+        {/* ── Mobile carousel (single swipeable tile) ──────── */}
+        <div className="vc-mobile-carousel">
+          <div className="vc-carousel-track">
+            {CARDS.map((card) => (
+              <div key={card.src} className="vc-carousel-slide">
+                <VideoCard {...card} />
+              </div>
+            ))}
           </div>
-
-          {/* PALANTIR */}
-          <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
-            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
-              <VideoCard {...CARDS[2]} />
-            </BentoTilt>
-          </div>
-
-          {/* OPENAI */}
-          <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
-            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
-              <VideoCard {...CARDS[3]} />
-            </BentoTilt>
-          </div>
-        </div>
-
-        {/* ── ANDURIL — full width footer card ─────────────── */}
-        <div
-          className="vc-card-wrap"
-          style={{ height: "clamp(220px, 38vh, 400px)" }}
-        >
-          <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
-            <VideoCard {...CARDS[4]} />
-          </BentoTilt>
+          {/* Scroll hint */}
+          <p style={{
+            fontFamily: "var(--font-general)",
+            fontSize: "0.55rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.18)",
+            textAlign: "center",
+            marginTop: "0.75rem",
+          }}>
+            swipe to explore
+          </p>
         </div>
 
         {/* ── Hackathon intro — bridge into stats ──────────── */}

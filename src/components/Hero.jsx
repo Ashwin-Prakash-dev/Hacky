@@ -2,9 +2,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
-import { useEffect, useRef, useState } from "react";
-
-import Button from "./Button";
+import { useEffect, useState } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,8 +66,8 @@ const Hero = () => {
         }} />
 
         {/* Overlay content */}
-        <div className="absolute left-0 top-0 z-40 size-full">
-          <div className="mt-24 px-5 sm:px-10">
+        <div className="absolute left-0 top-0 z-40 size-full flex items-center sm:items-start">
+          <div className="px-5 sm:px-10 sm:mt-24 w-full">
             {/* Pill badge */}
             <div
               className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1"
@@ -107,15 +105,22 @@ const Hero = () => {
             >
               30 hours. Real problems.
               <br />
-              Kerala's most curated hackathon.
+              Kerala's most curated hackathon for builders.
             </p>
 
-            <Button
-              id="notify-btn"
-              title="Register Interest"
-              rightIcon={<TiLocationArrow />}
-              containerClass="flex-center gap-1"
-            />
+            <a href="#contact" style={{ textDecoration: "none" }}>
+              <button className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full bg-[#C8FF00] px-7 py-3 text-black flex items-center gap-1">
+                <span className="relative inline-flex overflow-hidden font-general text-xs uppercase">
+                  <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                    Register Interest
+                  </div>
+                  <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
+                    Register Interest
+                  </div>
+                </span>
+                <TiLocationArrow />
+              </button>
+            </a>
           </div>
         </div>
       </div>

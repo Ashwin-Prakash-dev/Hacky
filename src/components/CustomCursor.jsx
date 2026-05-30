@@ -9,6 +9,8 @@ const CustomCursor = () => {
     const dot = dotRef.current;
     const ring = ringRef.current;
 
+    document.body.classList.add("custom-cursor");
+
     // Set initial position off-screen
     gsap.set([dot, ring], { x: -100, y: -100 });
 
@@ -55,6 +57,7 @@ const CustomCursor = () => {
     const timer = setTimeout(attach, 500);
 
     return () => {
+      document.body.classList.remove("custom-cursor");
       clearTimeout(timer);
       window.removeEventListener("mousemove", onMouseMove);
       document.querySelectorAll("a, button, [data-hover]").forEach((el) => {

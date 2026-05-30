@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useWindowScroll } from "react-use";
 import { useEffect, useRef, useState } from "react";
 
-const navItems = ["About", "Perks", "FAQ", "Contact"];
+const navItems = ["About", "Perks", "FAQ"];
 
 const NavBar = () => {
   const navContainerRef = useRef(null);
@@ -113,16 +113,16 @@ const NavBar = () => {
                   fontFamily: "var(--font-general)",
                   fontSize: "0.7rem", fontWeight: 500,
                   letterSpacing: "0.08em", textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.22)",
+                  color: "rgba(255,255,255,0.38)",
                   textDecoration: "none",
                   padding: "0 1.1rem", height: "56px",
                   display: "flex", alignItems: "center",
                   transition: "color 0.2s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.22)")}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.38)")}
               >
-                Sponsors
+                For Sponsors
               </a>
             </div>
 

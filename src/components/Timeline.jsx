@@ -42,6 +42,7 @@ const FeatureCardPanel = ({ card }) => {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => setHovered((v) => !v)}
     >
       <div style={{
         position: "absolute", inset: 0, padding: "2rem",
@@ -166,7 +167,7 @@ const Timeline = () => {
       style={{ background: "#000", position: "relative", width: "100%", paddingBottom: "9rem" }}
     >
       {/* Faint axis track */}
-      <div style={{
+      <div className="fc-axis-track" style={{
         position: "absolute", left: "50%", top: 0, bottom: 0,
         width: "1px", background: "rgba(255,255,255,0.05)",
         transform: "translateX(-50%)", zIndex: 0, pointerEvents: "none",
@@ -175,6 +176,7 @@ const Timeline = () => {
       {/* Traced beam */}
       <div
         ref={beamRef}
+        className="fc-beam"
         style={{
           position: "absolute", left: "50%", top: 0, bottom: 0,
           width: "2px",
@@ -188,6 +190,7 @@ const Timeline = () => {
       {/* Moving head dot */}
       <div
         ref={headRef}
+        className="fc-head"
         style={{
           position: "absolute", left: "50%", top: 0,
           width: "8px", height: "8px", borderRadius: "50%",
@@ -198,8 +201,8 @@ const Timeline = () => {
         }}
       />
 
-      {/* Feature cards */}
-      <div style={{
+      {/* Desktop: zigzag cards */}
+      <div className="fc-desktop-cards fc-cards-wrap" style={{
         position: "relative", zIndex: 3,
         maxWidth: "1170px", margin: "0 auto",
         padding: "8rem clamp(1.25rem, 5vw, 3rem) 4rem",
@@ -253,11 +256,58 @@ const Timeline = () => {
         </div>
       </div>
 
+      {/* Mobile: swipeable carousel */}
+      <div className="fc-mobile-carousel" style={{ position: "relative", zIndex: 3 }}>
+        <div className="fc-mobile-track">
+          <div className="fc-mobile-slide"><PrizesCard /></div>
+          <div className="fc-mobile-slide"><ExpectCard /></div>
+          <div className="fc-mobile-slide"><FeatureCardPanel card={flipCards[0]} /></div>
+          <div className="fc-mobile-slide"><FeatureCardPanel card={flipCards[1]} /></div>
+        </div>
+        <p style={{
+          fontFamily: "var(--font-general)",
+          fontSize: "0.55rem", letterSpacing: "0.16em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.18)",
+          textAlign: "center", marginTop: "0.75rem",
+        }}>swipe to explore</p>
+      </div>
+
       <style>{`
         @media (max-width: 640px) {
-          .fc-row    { flex-direction: column !important; gap: 1.5rem; }
-          .fc-spacer { display: none !important; }
-          .fc-card   { padding: 0 !important; }
+          .fc-axis-track,
+          .fc-beam,
+          .fc-head,
+          .fc-desktop-cards { display: none !important; }
+
+          .fc-mobile-carousel {
+            display: block !important;
+            padding: 2rem 0 3rem;
+          }
+        }
+        @media (min-width: 641px) {
+          .fc-mobile-carousel { display: none !important; }
+        }
+
+        .fc-mobile-carousel { display: none; }
+
+        .fc-mobile-track {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          gap: 0.75rem;
+          padding: 0 1.25rem 0.5rem;
+        }
+        .fc-mobile-track::-webkit-scrollbar { display: none; }
+
+        .fc-mobile-slide {
+          flex: 0 0 82vw;
+          height: 340px;
+          scroll-snap-align: center;
+          border-radius: 10px;
+          overflow: hidden;
+          border: 1px solid rgba(255,255,255,0.08);
         }
       `}</style>
     </section>
