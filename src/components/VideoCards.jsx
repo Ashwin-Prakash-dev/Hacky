@@ -151,7 +151,7 @@ const VideoCard = ({ src, title, label, category }) => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <span
             style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "0.56rem",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
@@ -186,7 +186,7 @@ const VideoCard = ({ src, title, label, category }) => {
         <div>
           <p
             style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "0.58rem",
               letterSpacing: "0.18em",
               color: "rgba(255,255,255,0.32)",
@@ -289,7 +289,7 @@ const VideoCards = () => {
           <p
             className="vc-reveal"
             style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "0.62rem",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
@@ -304,7 +304,7 @@ const VideoCards = () => {
           <h2
             className="vc-reveal special-font"
             style={{
-              fontFamily: "'zentry', sans-serif",
+              fontFamily: "var(--font-general)",
               fontSize: "clamp(2.4rem, 6vw, 5.2rem)",
               fontWeight: 900,
               color: "#ffffff",
@@ -320,7 +320,7 @@ const VideoCards = () => {
           <p
             className="vc-reveal"
             style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "0.82rem",
               color: "rgba(255,255,255,0.28)",
               lineHeight: 1.78,
@@ -402,7 +402,7 @@ const VideoCards = () => {
             maxWidth: "52rem",
           }}>
             <p style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "0.62rem",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
@@ -414,7 +414,7 @@ const VideoCards = () => {
             <h2
               className="special-font"
               style={{
-                fontFamily: "'zentry', sans-serif",
+                fontFamily: "var(--font-general)",
                 fontSize: "clamp(2rem, 5.5vw, 4.5rem)",
                 fontWeight: 900,
                 color: "#ffffff",
@@ -428,7 +428,7 @@ const VideoCards = () => {
             </h2>
 
             <p style={{
-              fontFamily: "var(--font-general, 'General Sans', sans-serif)",
+              fontFamily: "var(--font-general)",
               fontSize: "clamp(0.82rem, 1.5vw, 1rem)",
               color: "rgba(255,255,255,0.38)",
               lineHeight: 1.8,

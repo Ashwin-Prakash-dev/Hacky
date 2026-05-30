@@ -7,7 +7,7 @@ const ITEMS = [
   "CURATED TEAMS",
   "DEMO DAY",
   "SCTCE",
-  "STARTATHON",
+  "Startathon",
 ];
 
 // Render items duplicated for seamless loop

@@ -115,7 +115,7 @@ const Stats = () => {
               ref={(el) => (numRefs.current[i] = el)}
               className="stat-num"
               style={{
-                fontFamily: "'zentry', sans-serif",
+                fontFamily: "var(--font-general)",
                 fontSize: "clamp(2.4rem, 5vw, 3.8rem)",
                 fontWeight: 900,
                 color: i === 0 ? "#C8FF00" : "#fff",

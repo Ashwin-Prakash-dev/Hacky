@@ -207,7 +207,7 @@ function TierCard({ tier }) {
           color: "rgba(255,255,255,0.22)",
         }}>{tier.tag}</span>
         <div style={{
-          fontFamily: "'zentry', sans-serif",
+          fontFamily: "var(--font-general)",
           fontSize: "clamp(2rem, 4vw, 3rem)",
           fontWeight: 900,
           color: tier.highlight ? "#C8FF00" : "#fff",
@@ -395,7 +395,7 @@ const Sponsors = () => {
               key={i}
               className="sp-hero-line"
               style={{
-                fontFamily: "'zentry', sans-serif",
+                fontFamily: "var(--font-general)",
                 fontSize: "clamp(4rem, 12vw, 10rem)",
                 fontWeight: 900, color: "#fff",
                 lineHeight: 0.9, letterSpacing: "-0.03em",
@@ -433,7 +433,7 @@ const Sponsors = () => {
               opacity: 0,
             }}>
               <span style={{
-                fontFamily: "'zentry', sans-serif",
+                fontFamily: "var(--font-general)",
                 fontSize: "1rem", fontWeight: 900, color: "#C8FF00",
               }}>{n}</span>
               <span style={{
@@ -553,7 +553,7 @@ const Sponsors = () => {
                           textTransform: "uppercase", letterSpacing: "0.06em",
                         }}>{label}</div>
                         <div style={{
-                          fontFamily: "'zentry', sans-serif",
+                          fontFamily: "var(--font-general)",
                           fontSize: "0.72rem",
                           color: accent ? "rgba(200,255,0,0.6)" : "rgba(255,255,255,0.22)",
                           marginTop: "2px",

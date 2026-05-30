@@ -27,17 +27,15 @@ const Footer = () => (
     <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-6 md:flex-row md:gap-4">
       {/* Brand */}
       <div>
-        <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "4px" }}>
-          <span style={{
-            width: "5px", height: "5px", borderRadius: "50%",
-            background: "#C8FF00",
-            boxShadow: "0 0 6px rgba(200,255,0,0.6)",
-          }} />
+        <div style={{ marginBottom: "4px" }}>
           <p
-            className="font-general font-bold uppercase"
-            style={{ fontSize: "0.8rem", letterSpacing: "0.14em", color: "#fff" }}
+            style={{
+              fontFamily: "var(--font-general)",
+              fontSize: "0.95rem", fontWeight: 700,
+              letterSpacing: "-0.01em", color: "#fff",
+            }}
           >
-            startathon
+            Startathon<span style={{ color: "#888888" }}>.</span>
           </p>
         </div>
         <p className="font-general text-xs" style={{ color: "rgba(255,255,255,0.18)", letterSpacing: "0.04em" }}>

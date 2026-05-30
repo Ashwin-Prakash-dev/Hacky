@@ -74,20 +74,13 @@ const NavBar = () => {
           <a
             href="#"
             style={{
-              fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.78rem", fontWeight: 700,
-              letterSpacing: "0.15em", textTransform: "uppercase",
+              fontFamily: "var(--font-general)",
+              fontSize: "0.95rem", fontWeight: 700,
+              letterSpacing: "-0.01em",
               color: "#fff", textDecoration: "none",
-              display: "flex", alignItems: "center", gap: "7px",
             }}
           >
-            <span style={{
-              width: "6px", height: "6px", borderRadius: "50%",
-              background: "#C8FF00",
-              boxShadow: "0 0 8px rgba(200,255,0,0.7)",
-              flexShrink: 0,
-            }} />
-            startathon
+            Startathon<span style={{ color: "#888888" }}>.</span>
           </a>
 
           {/* Nav links + CTA */}
@@ -99,7 +92,7 @@ const NavBar = () => {
                   onClick={() => scrollTo(item.toLowerCase())}
                   className="nav-link-btn"
                   style={{
-                    fontFamily: "var(--font-general, sans-serif)",
+                    fontFamily: "var(--font-general)",
                     fontSize: "0.7rem", fontWeight: 500,
                     letterSpacing: "0.08em", textTransform: "uppercase",
                     color: "rgba(255,255,255,0.38)",
@@ -117,7 +110,7 @@ const NavBar = () => {
               <a
                 href="/sponsors"
                 style={{
-                  fontFamily: "var(--font-general, sans-serif)",
+                  fontFamily: "var(--font-general)",
                   fontSize: "0.7rem", fontWeight: 500,
                   letterSpacing: "0.08em", textTransform: "uppercase",
                   color: "rgba(255,255,255,0.22)",
@@ -138,7 +131,7 @@ const NavBar = () => {
               onClick={() => scrollTo("contact")}
               style={{
                 marginLeft: "1.25rem",
-                fontFamily: "var(--font-general, sans-serif)",
+                fontFamily: "var(--font-general)",
                 fontSize: "0.68rem", fontWeight: 700,
                 letterSpacing: "0.1em", textTransform: "uppercase",
                 color: "#000", background: "#C8FF00",

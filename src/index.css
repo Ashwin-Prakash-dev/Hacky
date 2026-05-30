@@ -1,14 +1,115 @@
-@import url("https://fonts.cdnfonts.com/css/general-sans");
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-300-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-300-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-400-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-400-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-500-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-500-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-600-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-600-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-700-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-700-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-800-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-800-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-900-normal.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Open Sauce Sans';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/open-sauce-sans-latin-900-italic.ttf') format('truetype');
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-general: 'Open Sauce Sans', sans-serif;
+}
+
 body {
   width: 100dvw;
   overflow-x: hidden;
   background-color: #000000;
-  font-family: "General Sans", sans-serif;
+  font-family: var(--font-general);
   cursor: none; /* custom cursor active */
 }
 
@@ -17,28 +118,6 @@ body {
   body { cursor: auto; }
 }
 
-@layer base {
-  @font-face {
-    font-family: "circular-web";
-    src: url("/fonts/circularweb-book.woff2") format("woff2");
-  }
-  @font-face {
-    font-family: "general";
-    src: url("/fonts/general.woff2") format("woff2");
-  }
-  @font-face {
-    font-family: "robert-medium";
-    src: url("/fonts/robert-medium.woff2") format("woff2");
-  }
-  @font-face {
-    font-family: "robert-regular";
-    src: url("/fonts/robert-regular.woff2") format("woff2");
-  }
-  @font-face {
-    font-family: "zentry";
-    src: url("/fonts/zentry-regular.woff2") format("woff2");
-  }
-}
 
 @layer utilities {
   .border-hsla {
@@ -78,16 +157,17 @@ body {
   }
 
   .special-font b {
-    font-family: "Zentry";
-    font-feature-settings: "ss01" on;
+    font-family: "Open Sauce Sans", sans-serif;
   }
 
   .hero-heading {
-    @apply uppercase font-zentry font-black text-5xl sm:right-10 sm:text-7xl md:text-9xl lg:text-[12rem];
+    @apply font-general text-5xl sm:right-10 sm:text-7xl md:text-9xl lg:text-[12rem];
+    font-weight: 900;
+    letter-spacing: -0.03em;
   }
 
   .about-subtext {
-    @apply absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center font-circular-web text-lg md:max-w-[34rem];
+    @apply absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center font-general text-lg md:max-w-[34rem];
   }
 
   .about-image {
@@ -95,11 +175,12 @@ body {
   }
 
   .animated-title {
-    @apply flex flex-col gap-1 text-7xl uppercase leading-[.8] text-white sm:px-32 md:text-[6rem];
+    @apply flex flex-col gap-1 text-7xl leading-[.8] text-white sm:px-32 md:text-[6rem];
+    font-family: "Open Sauce Sans", sans-serif;
   }
 
   .animated-word {
-    @apply special-font font-zentry font-black opacity-0;
+    @apply special-font font-general font-bold opacity-0;
     transform: translate3d(10px, 51px, -60px) rotateY(60deg) rotateX(-40deg);
     transform-origin: 50% 50% -150px !important;
     will-change: opacity, transform;
@@ -114,7 +195,7 @@ body {
   }
 
   .bento-title {
-    @apply uppercase md:text-6xl text-4xl font-black font-zentry;
+    @apply md:text-6xl text-4xl font-bold font-general;
   }
 
   .story-img-container {

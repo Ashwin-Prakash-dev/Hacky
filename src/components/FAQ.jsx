@@ -4,31 +4,31 @@ import gsap from "gsap";
 const faqs = [
   {
     q: "Who can participate?",
-    a: "Startathon is open to students from engineering colleges across Kerala. We welcome developers, designers, and aspiring founders — anyone who wants to build something real.",
+    a: "Startathon is open to students from any college across Kerala. Whether you're a developer, designer, or aspiring founder — if you want to build something real, you're welcome here.",
   },
   {
-    q: "Do I need a full team to register?",
-    a: "You can register individually or as a partial team. Teams can have up to 4 members. We'll help with team formation during the pre-event phase if needed.",
+    q: "What is the team size?",
+    a: "Teams must have 3 to 4 members. Solo entries are not accepted — collaboration is core to what we're building here.",
   },
   {
     q: "Is it in-person or online?",
-    a: "Startathon is a fully in-person event at SCTCE, Thiruvananthapuram. We believe the energy of building in a room with other ambitious people is irreplaceable.",
+    a: "Startathon is a fully in-person event at SCTCE, Thiruvananthapuram. The energy of building in a room with other ambitious people is irreplaceable.",
   },
   {
     q: "What are the problem statements?",
-    a: "Problem tracks will be announced closer to the event. Expect open-ended, real-world challenges — not toy problems. Some tracks may be sponsored by partner companies.",
+    a: "Problem tracks will be announced closer to the event. Expect open-ended, real-world challenges — not toy problems.",
   },
   {
     q: "How are teams selected?",
-    a: "We curate for ambition and execution potential — not just GPA or college name. The ₹100 idea submission fee is designed to filter for serious teams. Selection is based on your idea brief and team profile.",
+    a: "We select 20 teams based on ambition and execution potential — not GPA or college name. Selection is based on your idea brief and team profile.",
   },
   {
-    q: "What do the participation fees cover?",
-    a: "The ₹750 early bird / ₹1200 regular fee covers food, materials, and hospitality for the full 30-hour event. The ₹100 idea registration is a separate, earlier step to submit your concept.",
+    q: "What are the prizes?",
+    a: "The total prize pool is ₹1,00,000. First place takes ₹50,000, second place ₹30,000, and third place ₹20,000.",
   },
   {
     q: "What happens at Demo Day?",
-    a: "The top 5–8 teams (selected through two mid-event evaluations) pitch their products to judges, sponsors, and ecosystem partners. All teams get to showcase; top teams compete for prizes.",
+    a: "Shortlisted teams pitch their products to judges and ecosystem partners. All teams get to showcase — top teams compete for prizes.",
   },
 ];
 
@@ -87,7 +87,7 @@ const FAQItem = ({ question, answer, index }) => {
         }}
       >
         <span
-          className="font-circular-web"
+          className="font-general"
           style={{
             fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
             color: open ? "#fff" : "rgba(255,255,255,0.65)",
@@ -114,7 +114,7 @@ const FAQItem = ({ question, answer, index }) => {
 
       <div ref={bodyRef} style={{ height: 0, overflow: "hidden", opacity: 0 }}>
         <p
-          className="font-circular-web"
+          className="font-general"
           style={{
             fontSize: "0.92rem",
             color: "rgba(255,255,255,0.5)",
@@ -145,10 +145,10 @@ const FAQ = () => (
           FAQ
         </p>
         <h2
-          className="special-font bento-title"
-          style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.03em" }}
+          className="bento-title"
+          style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.02em" }}
         >
-          Got qu<b>e</b>stions?
+          Got questions?
         </h2>
       </div>
 
