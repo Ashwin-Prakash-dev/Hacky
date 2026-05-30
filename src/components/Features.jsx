@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { SignalPulseBg } from "./CanvasBg";
 
 /* ── Bento tilt wrapper ─────────────────────────────────────────────────── */
@@ -51,6 +51,54 @@ const CardLabel = ({ text, dark = false }) => (
     {text}
   </span>
 );
+
+/* ── Animated prize counter ─────────────────────────────────────────────── */
+const AnimatedPrize = ({ target = 150, duration = 1800 }) => {
+  const [count, setCount] = useState(0);
+  const animatedRef = useRef(false);
+  const elRef = useRef(null);
+
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || animatedRef.current) return;
+        animatedRef.current = true;
+
+        const startTime = performance.now();
+        const tick = (now) => {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+          setCount(Math.round(eased * target));
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target, duration]);
+
+  return (
+    <span
+      ref={elRef}
+      style={{
+        fontFamily: "'zentry', sans-serif",
+        fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+        fontWeight: 900,
+        color: "#C8FF00",
+        lineHeight: 1,
+        fontVariantNumeric: "tabular-nums",
+      }}
+    >
+      ₹{count}K
+    </span>
+  );
+};
 
 /* ── PRIZES CARD ─────────────────────────────────────────────────────────── */
 export const PrizesCard = () => {
@@ -107,7 +155,7 @@ export const PrizesCard = () => {
             Pr<b>i</b>zes
           </h2>
           <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "clamp(2.8rem, 7vw, 5.5rem)", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>₹X.XL</span>
+            <AnimatedPrize target={150} duration={1800} />
             <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>total pool</span>
           </div>
         </div>

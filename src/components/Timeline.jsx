@@ -51,7 +51,7 @@ const FeatureCardPanel = ({ card }) => {
     <div
       className="relative overflow-hidden rounded-md border-hsla cursor-pointer"
       style={{
-        height: "260px",
+        height: "340px",
         backgroundColor: hovered ? "#f7f5f0" : "#0c0c0c",
         transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
       }}
@@ -131,7 +131,7 @@ const NowBadge = () => (
 
 const ImportedCardSlot = ({ children }) => (
   <div style={{
-    height: "260px", borderRadius: "8px", overflow: "hidden",
+    height: "340px", borderRadius: "8px", overflow: "hidden",
     border: "1px solid rgba(255,255,255,0.1)",
   }}>
     {children}
