@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 const ITEMS = [
   "BUILDER-FIRST",
   "PRODUCTS NOT DEMOS",
@@ -10,9 +12,9 @@ const ITEMS = [
   "Startathon",
 ];
 
-// Render items duplicated for seamless loop
 const MarqueeTrack = ({ reverse = false }) => {
-  const repeated = [...ITEMS, ...ITEMS, ...ITEMS];
+  const repeated = useMemo(() => [...ITEMS, ...ITEMS, ...ITEMS], []);
+
   return (
     <div
       style={{
@@ -27,28 +29,17 @@ const MarqueeTrack = ({ reverse = false }) => {
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "0",
             padding: "0 1.5rem",
             fontFamily: "var(--font-general, sans-serif)",
             fontSize: "0.62rem",
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: i % ITEMS.length === 0
-              ? "#C8FF00"
-              : "rgba(255,255,255,0.35)",
+            color: i % ITEMS.length === 0 ? "#C8FF00" : "rgba(255,255,255,0.35)",
             whiteSpace: "nowrap",
           }}
         >
           {item}
-          <span
-            style={{
-              marginLeft: "1.5rem",
-              color: "rgba(200,255,0,0.45)",
-              fontSize: "0.45rem",
-            }}
-          >
-            ◆
-          </span>
+          <span style={{ marginLeft: "1.5rem", color: "rgba(200,255,0,0.45)", fontSize: "0.45rem" }}>◆</span>
         </span>
       ))}
     </div>
@@ -56,43 +47,10 @@ const MarqueeTrack = ({ reverse = false }) => {
 };
 
 const Marquee = ({ reverse = false }) => (
-  <div
-    style={{
-      width: "100%",
-      background: "#000",
-      borderTop: "1px solid rgba(255,255,255,0.07)",
-      borderBottom: "1px solid rgba(255,255,255,0.07)",
-      padding: "1.25rem 0",
-      overflow: "hidden",
-      position: "relative",
-    }}
-  >
-    {/* Center radial glow */}
-    <div style={{
-      position: "absolute", inset: 0,
-      background: "radial-gradient(ellipse 60% 100% at 50% 50%, rgba(200,255,0,0.04), transparent)",
-      pointerEvents: "none",
-    }} />
-    {/* Fade edges */}
-    <div
-      style={{
-        position: "absolute", inset: 0,
-        background: "linear-gradient(90deg, #000 0%, transparent 10%, transparent 90%, #000 100%)",
-        zIndex: 1, pointerEvents: "none",
-      }}
-    />
+  <div className="marquee-wrap">
+    <div className="marquee-glow" />
+    <div className="marquee-fade" />
     <MarqueeTrack reverse={reverse} />
-
-    <style>{`
-      @keyframes marqueeFwd {
-        from { transform: translateX(0); }
-        to   { transform: translateX(calc(-100% / 3)); }
-      }
-      @keyframes marqueeRev {
-        from { transform: translateX(calc(-100% / 3)); }
-        to   { transform: translateX(0); }
-      }
-    `}</style>
   </div>
 );
 
