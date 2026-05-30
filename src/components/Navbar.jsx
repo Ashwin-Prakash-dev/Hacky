@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useWindowScroll } from "react-use";
 import { useEffect, useRef, useState } from "react";
 
-const navItems = ["About", "Perks", "FAQ", "Contact"];
+const navItems = ["About", "Perks", "FAQ"];
 
 const NavBar = () => {
   const navContainerRef = useRef(null);

@@ -380,6 +380,7 @@ const VideoCards = () => {
 
         {/* ── Hackathon intro — bridge into stats ──────────── */}
         <div
+          id="about"
           className="vc-card-wrap"
           style={{
             padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(4rem, 8vw, 6rem)",

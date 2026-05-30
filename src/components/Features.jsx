@@ -105,10 +105,12 @@ export const PrizesCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const prizes = [
-    { rank: "01", label: "First Place",  amount: "₹50,000", sub: "cash + incubation opportunity" },
-    { rank: "02", label: "Second Place", amount: "₹30,000", sub: "cash + cloud credits"          },
-    { rank: "03", label: "Third Place",  amount: "₹20,000", sub: "cash + swag"                   },
+    { rank: "01", label: "First Place",  amount: "₹50,000" },
+    { rank: "02", label: "Second Place", amount: "₹30,000" },
+    { rank: "03", label: "Third Place",  amount: "₹20,000" },
   ];
+
+  const additionalRewards = ["Sponsored challenge rewards", "Internship opportunities", "Swags"];
 
   return (
     <div
@@ -161,34 +163,62 @@ export const PrizesCard = () => {
       </div>
 
       <div style={{
-        position: "absolute", inset: 0, padding: "2rem",
-        display: "flex", flexDirection: "column", justifyContent: "space-between",
+        position: "absolute", inset: 0, padding: "1.75rem 2rem",
+        display: "flex", flexDirection: "column", justifyContent: "center",
+        gap: "0",
         opacity: hovered ? 1 : 0,
         transform: hovered ? "translateY(0)" : "translateY(8px)",
         transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Breakdown</span>
-        <div>
-          {prizes.map((p, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "0.85rem 0",
-              borderBottom: i < prizes.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
-              transform: hovered ? "translateX(0)" : "translateX(-8px)",
-              opacity: hovered ? 1 : 0,
-              transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "0.65rem", color: "#bbb", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
-                <div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", color: "#888", marginTop: "1px" }}>{p.sub}</div>
-                </div>
-              </div>
-              <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "0.9rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Prize Breakdown</span>
+          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.12em", color: "#bbb", textTransform: "uppercase" }}>Amount</span>
+        </div>
+
+        {/* Prize rows */}
+        {prizes.map((p, i) => (
+          <div key={i} style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "0.65rem 0",
+            borderTop: "0.5px solid rgba(0,0,0,0.08)",
+            transform: hovered ? "translateX(0)" : "translateX(-8px)",
+            opacity: hovered ? 1 : 0,
+            transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", color: "#bbb", letterSpacing: "0.08em", minWidth: "16px" }}>{p.rank}</span>
+              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.72rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.08em" }}>{p.label}</span>
             </div>
-          ))}
+            <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "0.95rem", fontWeight: 900, color: "#111", letterSpacing: "-0.01em" }}>{p.amount}</span>
+          </div>
+        ))}
+
+        {/* Additional rewards */}
+        <div style={{
+          borderTop: "0.5px solid rgba(0,0,0,0.08)",
+          paddingTop: "0.8rem",
+          marginTop: "0.1rem",
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? "translateX(0)" : "translateX(-8px)",
+          transition: "opacity 0.28s ease 0.32s, transform 0.28s ease 0.32s",
+        }}>
+          <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.52rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#aaa", marginBottom: "0.45rem" }}>
+            Additional Rewards
+          </div>
+          <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
+            {additionalRewards.map((r, i) => (
+              <span key={i} style={{
+                fontFamily: "var(--font-general, sans-serif)",
+                fontSize: "0.56rem", color: "#666",
+                border: "0.5px solid rgba(0,0,0,0.14)",
+                borderRadius: "2px", padding: "2px 8px",
+                backgroundColor: "rgba(0,0,0,0.03)",
+                letterSpacing: "0.02em",
+              }}>{r}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

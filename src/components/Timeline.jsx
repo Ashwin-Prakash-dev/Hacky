@@ -279,7 +279,7 @@ const Timeline = () => {
       />
 
       {/* ── Feature cards: Prizes (L), Expect (R), Mentors (L), Rules (R) */}
-      <div style={{
+      <div id="perks" style={{
         position: "relative", zIndex: 3,
         maxWidth: "1170px", margin: "0 auto",
         padding: "8rem clamp(1.25rem, 5vw, 3rem) 18rem",

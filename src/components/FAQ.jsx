@@ -23,8 +23,8 @@ const faqs = [
     a: "We curate for ambition and execution potential — not just GPA or college name. The ₹100 idea submission fee is designed to filter for serious teams. Selection is based on your idea brief and team profile.",
   },
   {
-    q: "What do the participation fees cover?",
-    a: "The ₹750 early bird / ₹1200 regular fee covers food, materials, and hospitality for the full 30-hour event. The ₹100 idea registration is a separate, earlier step to submit your concept.",
+    q: "Wait, I'm not caffeine tolerant. What do I do?",
+    a: "We recommend a rigorous training regimen involving coffee, deadlines, and poor life choices.",
   },
   {
     q: "What happens at Demo Day?",
