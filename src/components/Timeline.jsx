@@ -204,13 +204,19 @@ const Timeline = () => {
         .fromTo(focusDotRef.current, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 3.5, ease: "power2.out" })
         .to(focusDotRef.current, { opacity: 0, scale: 0, ease: "power2.in" });
 
-      // Timeline title: fades in when transition zone enters view
+      // Timeline title: scrubbed fade-in tied to scroll through transition zone
       gsap.fromTo(
         tlHeaderRef.current,
         { opacity: 0, x: 16 },
         {
-          opacity: 1, x: 0, duration: 0.75, ease: "power3.out",
-          scrollTrigger: { trigger: transitionRef.current, start: "top 60%", once: true },
+          opacity: 1, x: 0,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: transitionRef.current,
+            start: "top 48%",
+            end: "top 10%",
+            scrub: 0.7,
+          },
         }
       );
 
