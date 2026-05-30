@@ -204,24 +204,15 @@ const Timeline = () => {
         .fromTo(focusDotRef.current, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 3.5, ease: "power2.out" })
         .to(focusDotRef.current, { opacity: 0, scale: 0, ease: "power2.in" });
 
-      // Timeline title: fades in once transition zone clears, then fades out as section exits
+      // Timeline title: fades in when transition zone enters view
       gsap.fromTo(
         tlHeaderRef.current,
-        { opacity: 0, x: -16 },
+        { opacity: 0, x: 16 },
         {
           opacity: 1, x: 0, duration: 0.75, ease: "power3.out",
-          scrollTrigger: { trigger: transitionRef.current, start: "bottom 55%", once: true },
+          scrollTrigger: { trigger: transitionRef.current, start: "top 60%", once: true },
         }
       );
-      gsap.to(tlHeaderRef.current, {
-        opacity: 0, x: -12,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "bottom 85%",
-          end: "bottom 30%",
-          scrub: 0.6,
-        },
-      });
 
       // Milestone rows reveal alternating left/right
       rowRefs.current.forEach((el, i) => {
@@ -284,7 +275,7 @@ const Timeline = () => {
       <div style={{
         position: "relative", zIndex: 3,
         maxWidth: "900px", margin: "0 auto",
-        padding: "8rem clamp(1.25rem, 5vw, 3rem) 10rem",
+        padding: "8rem clamp(1.25rem, 5vw, 3rem) 18rem",
       }}>
 
         {/* 0 — Prizes · left */}
@@ -341,6 +332,7 @@ const Timeline = () => {
         ref={transitionRef}
         style={{ position: "relative", zIndex: 3, height: "220px", display: "flex", alignItems: "center", justifyContent: "center" }}
       >
+        {/* Center dot — unchanged */}
         <div
           ref={focusDotRef}
           style={{
@@ -350,32 +342,32 @@ const Timeline = () => {
             opacity: 0, position: "relative", zIndex: 4,
           }}
         />
-      </div>
 
-      {/* ── Timeline label — fixed top-left, lives for the duration of milestones */}
-      <div
-        ref={tlHeaderRef}
-        style={{
-          position: "fixed",
-          top: "4.5rem",
-          left: "clamp(1.25rem, 4vw, 3rem)",
-          zIndex: 50,
-          opacity: 0,
-          pointerEvents: "none",
-        }}
-      >
-        <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#C8FF00", marginBottom: "0.4rem" }}>
-          Schedule
-        </p>
-        <h2
-          className="special-font bento-title"
-          style={{ color: "#fff", fontSize: "clamp(1.4rem, 3vw, 2.2rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
+        {/* ── Timeline label — right of center dot ── */}
+        <div
+          ref={tlHeaderRef}
+          style={{
+            position: "absolute",
+            left: "calc(50% + clamp(4rem, 7vw, 9rem))",
+            top: "50%",
+            transform: "translateY(-50%)",
+            opacity: 0,
+            pointerEvents: "none",
+          }}
         >
-          Tim<b>e</b>line
-        </h2>
-        <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.62rem", color: "rgba(255,255,255,0.2)", marginTop: "0.5rem", letterSpacing: "0.04em" }}>
-          July 2026 · SCTCE
-        </p>
+          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#C8FF00", marginBottom: "0.4rem" }}>
+            Schedule
+          </p>
+          <h2
+            className="special-font bento-title"
+            style={{ color: "#fff", fontSize: "clamp(1.4rem, 3vw, 2.2rem)", letterSpacing: "-0.03em", lineHeight: 0.92 }}
+          >
+            Tim<b>e</b>line
+          </h2>
+          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.62rem", color: "rgba(255,255,255,0.2)", marginTop: "0.5rem", letterSpacing: "0.04em" }}>
+            July 2026 · SCTCE
+          </p>
+        </div>
       </div>
 
       {/* Spacer so milestones don't start flush after transition zone */}
