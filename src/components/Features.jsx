@@ -165,57 +165,45 @@ export const PrizesCard = () => {
       <div style={{
         position: "absolute", inset: 0, padding: "1.75rem 2rem",
         display: "flex", flexDirection: "column", justifyContent: "center",
-        gap: "0",
         opacity: hovered ? 1 : 0,
         transform: hovered ? "translateY(0)" : "translateY(8px)",
         transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Prize Breakdown</span>
-          <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.12em", color: "#bbb", textTransform: "uppercase" }}>Amount</span>
-        </div>
+        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#bbb", marginBottom: "0.75rem", display: "block" }}>Breakdown</span>
 
-        {/* Prize rows */}
         {prizes.map((p, i) => (
           <div key={i} style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "0.65rem 0",
-            borderTop: "0.5px solid rgba(0,0,0,0.08)",
+            display: "flex", gap: "12px", alignItems: "center",
+            padding: "0.55rem 0",
+            borderBottom: "0.5px solid #ebebeb",
             transform: hovered ? "translateX(0)" : "translateX(-8px)",
             opacity: hovered ? 1 : 0,
-            transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
+            transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", color: "#bbb", letterSpacing: "0.08em", minWidth: "16px" }}>{p.rank}</span>
-              <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.72rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.08em" }}>{p.label}</span>
+            <span style={{ color: "#00aa55", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6, minWidth: "16px" }}>{p.rank}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{p.label}</div>
             </div>
-            <span style={{ fontFamily: "'zentry', sans-serif", fontSize: "0.95rem", fontWeight: 900, color: "#111", letterSpacing: "-0.01em" }}>{p.amount}</span>
+            <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", fontWeight: 700, color: "#111", letterSpacing: "0.02em", flexShrink: 0 }}>{p.amount}</span>
           </div>
         ))}
 
         {/* Additional rewards */}
         <div style={{
-          borderTop: "0.5px solid rgba(0,0,0,0.08)",
-          paddingTop: "0.8rem",
-          marginTop: "0.1rem",
-          opacity: hovered ? 1 : 0,
+          paddingTop: "0.65rem",
           transform: hovered ? "translateX(0)" : "translateX(-8px)",
-          transition: "opacity 0.28s ease 0.32s, transform 0.28s ease 0.32s",
+          opacity: hovered ? 1 : 0,
+          transition: "opacity 0.28s ease 0.28s, transform 0.28s ease 0.28s",
         }}>
-          <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.52rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#aaa", marginBottom: "0.45rem" }}>
-            Additional Rewards
-          </div>
+          <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#bbb", marginBottom: "0.45rem" }}>Additional Rewards</div>
           <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
             {additionalRewards.map((r, i) => (
               <span key={i} style={{
                 fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.56rem", color: "#666",
-                border: "0.5px solid rgba(0,0,0,0.14)",
+                fontSize: "0.6rem", color: "#888",
+                border: "0.5px solid #ddd",
                 borderRadius: "2px", padding: "2px 8px",
-                backgroundColor: "rgba(0,0,0,0.03)",
-                letterSpacing: "0.02em",
               }}>{r}</span>
             ))}
           </div>
@@ -230,11 +218,9 @@ export const ExpectCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const items = [
-    { icon: "◈", title: "30-Hour Build Sprint",        desc: "Work alongside the state's most ambitious builders in an intense product development sprint." },
-    { icon: "◎", title: "Demo Day Pitching",           desc: "Present your product to experienced builders, founders, and industry professionals." },
-    { icon: "◉", title: "High-Value Networking",       desc: "Connect with ambitious developers, innovators, and potential future co-founders from across the state." },
-    { icon: "◆", title: "Mentorship & Feedback",       desc: "Receive guidance and actionable feedback throughout the entire building process." },
-    { icon: "◇", title: "Meals & Accommodation",       desc: "All funds collected from participants will be used exclusively to cover meal and accommodation expenses." },
+    { icon: "◉", title: "High-Value Networking",  desc: "Connect with ambitious developers, innovators, and potential future co-founders from across the state." },
+    { icon: "◆", title: "Mentorship & Feedback",  desc: "Receive guidance and actionable feedback throughout the entire building process." },
+    { icon: "◇", title: "Meals & Accommodation",  desc: "All funds collected from participants will be used exclusively to cover meal and accommodation expenses." },
   ];
 
   return (
@@ -280,25 +266,25 @@ export const ExpectCard = () => {
       </div>
 
       <div style={{
-        position: "absolute", inset: 0, padding: "1.4rem 1.5rem",
-        display: "flex", flexDirection: "column", justifyContent: "flex-start",
+        position: "absolute", inset: 0, padding: "1.75rem 2rem",
+        display: "flex", flexDirection: "column", justifyContent: "center",
         opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "0.6rem", display: "block" }}>What to Expect</span>
+        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#bbb", marginBottom: "0.75rem", display: "block" }}>What to Expect</span>
         {items.map((item, i) => (
           <div key={i} style={{
-            display: "flex", gap: "10px", alignItems: "flex-start",
-            padding: "0.38rem 0",
+            display: "flex", gap: "12px", alignItems: "flex-start",
+            padding: "0.55rem 0",
             borderBottom: i < items.length - 1 ? "0.5px solid #ebebeb" : "none",
             transform: hovered ? "translateX(0)" : "translateX(-8px)",
             opacity: hovered ? 1 : 0,
             transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
           }}>
-            <span style={{ color: "#00aa55", fontSize: "0.65rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.5 }}>{item.icon}</span>
+            <span style={{ color: "#00aa55", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
             <div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem", color: "#888", marginTop: "1px", lineHeight: 1.35 }}>{item.desc}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
             </div>
           </div>
         ))}
