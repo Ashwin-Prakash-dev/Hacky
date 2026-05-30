@@ -1,7 +1,6 @@
-import { useRef, useState, useEffect } from "react";
-import { SignalPulseBg } from "./CanvasBg";
+import { useRef, useState } from "react";
 
-/* ── Bento tilt wrapper ─────────────────────────────────────────────────── */
+/* ── Bento tilt wrapper (unchanged) ─────────────────────────────────────── */
 export const BentoTilt = ({ children, className = "" }) => {
   const [transformStyle, setTransformStyle] = useState("");
   const itemRef = useRef(null);
@@ -14,7 +13,7 @@ export const BentoTilt = ({ children, className = "" }) => {
     const tiltX = (relativeY - 0.5) * 5;
     const tiltY = (relativeX - 0.5) * -5;
     setTransformStyle(
-      `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(.98, .98, .98)`
+      `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(.95, .95, .95)`
     );
   };
 
@@ -33,81 +32,15 @@ export const BentoTilt = ({ children, className = "" }) => {
   );
 };
 
-/* ── Shared label pill ──────────────────────────────────────────────────── */
-const CardLabel = ({ text, dark = false }) => (
-  <span
-    style={{
-      display: "inline-block",
-      fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.6rem",
-      letterSpacing: "0.2em",
-      textTransform: "uppercase",
-      color: dark ? "#C8FF00" : "rgba(255,255,255,0.35)",
-      border: `0.5px solid ${dark ? "rgba(200,255,0,0.35)" : "rgba(255,255,255,0.12)"}`,
-      borderRadius: "2px",
-      padding: "3px 9px",
-    }}
-  >
-    {text}
-  </span>
-);
-
-/* ── Animated prize counter ─────────────────────────────────────────────── */
-const AnimatedPrize = ({ target = 150, duration = 1800 }) => {
-  const [count, setCount] = useState(0);
-  const animatedRef = useRef(false);
-  const elRef = useRef(null);
-
-  useEffect(() => {
-    const el = elRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting || animatedRef.current) return;
-        animatedRef.current = true;
-
-        const startTime = performance.now();
-        const tick = (now) => {
-          const progress = Math.min((now - startTime) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-          setCount(Math.round(eased * target));
-          if (progress < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      },
-      { threshold: 0.4 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target, duration]);
-
-  return (
-    <span
-      ref={elRef}
-      style={{
-        fontFamily: "var(--font-general)",
-        fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-        fontWeight: 900,
-        color: "#C8FF00",
-        lineHeight: 1,
-        fontVariantNumeric: "tabular-nums",
-      }}
-    >
-      ₹{count}K
-    </span>
-  );
-};
-
 /* ── PRIZES CARD ─────────────────────────────────────────────────────────── */
-export const PrizesCard = () => {
+const PrizesCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const prizes = [
-    { rank: "01", label: "First Place",  amount: "₹50,000", sub: "" },
-    { rank: "02", label: "Second Place", amount: "₹30,000", sub: "" },
-    { rank: "03", label: "Third Place",  amount: "₹20,000", sub: "" },
+    { rank: "01", label: "First Place", amount: "TBD", sub: "cash + incubation opportunity" },
+    { rank: "02", label: "Second Place", amount: "TBD", sub: "cash + cloud credits" },
+    { rank: "03", label: "Third Place", amount: "TBD", sub: "cash + swag" },
+    { rank: "★", label: "Special Tracks", amount: "TBD", sub: "domain-specific prizes" },
   ];
 
   return (
@@ -115,79 +48,97 @@ export const PrizesCard = () => {
       className="relative size-full overflow-hidden cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => setHovered((v) => !v)}
       style={{
-        backgroundColor: hovered ? "#f7f5f0" : "#0c0c0c",
-        transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
+        backgroundColor: hovered ? "#f5f0e8" : "#0a0a0a",
+        transition: "background-color 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
       }}
     >
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px)`,
-        backgroundSize: "40px 40px",
-        opacity: hovered ? 0 : 1,
-        transition: "opacity 0.4s ease",
-      }} />
+      {/* Diagonal texture */}
+      <div
+        style={{
+          position: "absolute", inset: 0,
+          backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 28px, rgba(200,255,0,0.04) 28px, rgba(200,255,0,0.04) 29px)`,
+          opacity: hovered ? 0 : 1,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+      {/* Ghost text */}
+      <div
+        style={{
+          position: "absolute", bottom: "-20px", right: "-10px",
+          fontFamily: "'Open Sauce One', sans-serif",
+          fontSize: "clamp(80px, 18vw, 160px)", fontWeight: 900,
+          color: "transparent",
+          WebkitTextStroke: "1px rgba(200,255,0,0.07)",
+          lineHeight: 1, userSelect: "none", letterSpacing: "-4px",
+          opacity: hovered ? 0 : 1, transition: "opacity 0.3s ease",
+          pointerEvents: "none",
+        }}
+      >
+        WIN
+      </div>
 
-      <div style={{
-        position: "absolute", bottom: "-16px", right: "-8px",
-        fontFamily: "var(--font-general)",
-        fontSize: "clamp(90px, 20vw, 170px)", fontWeight: 900,
-        color: "transparent",
-        WebkitTextStroke: "1px rgba(200,255,0,0.05)",
-        lineHeight: 1, userSelect: "none",
-        opacity: hovered ? 0 : 1, transition: "opacity 0.25s ease",
-        pointerEvents: "none",
-      }}>WIN</div>
-
-      <div style={{
-        position: "absolute", inset: 0,
-        display: "flex", flexDirection: "column", justifyContent: "space-between",
-        padding: "2rem",
-        opacity: hovered ? 0 : 1,
-        transform: hovered ? "translateY(-6px)" : "translateY(0)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
-        pointerEvents: hovered ? "none" : "auto",
-      }}>
-        <CardLabel text="Prize Pool" dark />
+      {/* Resting */}
+      <div
+        style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column", justifyContent: "space-between",
+          padding: "28px",
+          opacity: hovered ? 0 : 1,
+          transform: hovered ? "translateY(-8px)" : "translateY(0)",
+          transition: "opacity 0.3s ease, transform 0.3s ease",
+          pointerEvents: hovered ? "none" : "auto",
+        }}
+      >
         <div>
-          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2.2rem, 5.5vw, 3.8rem)", marginBottom: "0.75rem" }}>
+          <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", marginBottom: "16px" }}>
+            <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Prize Pool</span>
+          </div>
+          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
             Pr<b>i</b>zes
           </h2>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <AnimatedPrize target={100} duration={1800} />
-            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>total pool</span>
-          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "clamp(2.5rem, 7vw, 5rem)", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>
+            ₹X.XL
+          </span>
+          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "13px" }}>+</span>
         </div>
       </div>
 
-      <div style={{
-        position: "absolute", inset: 0, padding: "2rem",
-        display: "flex", flexDirection: "column", justifyContent: "space-between",
-        opacity: hovered ? 1 : 0,
-        transform: hovered ? "translateY(0)" : "translateY(8px)",
-        transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
-        pointerEvents: hovered ? "auto" : "none",
-      }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Breakdown</span>
-        <div>
+      {/* Hover */}
+      <div
+        style={{
+          position: "absolute", inset: 0, padding: "28px",
+          display: "flex", flexDirection: "column", justifyContent: "space-between",
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? "translateY(0)" : "translateY(10px)",
+          transition: "opacity 0.35s ease 0.1s, transform 0.35s ease 0.1s",
+          pointerEvents: hovered ? "auto" : "none",
+        }}
+      >
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase" }}>Prize Breakdown</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           {prizes.map((p, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "0.85rem 0",
-              borderBottom: i < prizes.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
-              transform: hovered ? "translateX(0)" : "translateX(-8px)",
-              opacity: hovered ? 1 : 0,
-              transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#bbb", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
+            <div
+              key={i}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "12px 0",
+                borderBottom: i < prizes.length - 1 ? "0.5px solid #d4cfc6" : "none",
+                transform: hovered ? "translateX(0)" : "translateX(-10px)",
+                opacity: hovered ? 1 : 0,
+                transition: `transform 0.3s ease ${0.12 + i * 0.07}s, opacity 0.3s ease ${0.12 + i * 0.07}s`,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "baseline", gap: "12px" }}>
+                <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#bbb", fontWeight: 700, minWidth: "20px" }}>{p.rank}</span>
                 <div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</div>
-                  {p.sub && <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", color: "#888", marginTop: "1px" }}>{p.sub}</div>}
+                  <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "12px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.label}</div>
+                  <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", color: "#888", marginTop: "1px" }}>{p.sub}</div>
                 </div>
               </div>
-              <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
+              <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "1rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
             </div>
           ))}
         </div>
@@ -197,13 +148,15 @@ export const PrizesCard = () => {
 };
 
 /* ── WHAT TO EXPECT CARD ─────────────────────────────────────────────────── */
-export const ExpectCard = () => {
+const ExpectCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const items = [
-    { icon: "◉", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
-    { icon: "◉", title: "Expert Mentors", desc: "Technical founders and engineers guide you live" },
-    { icon: "◉", title: "Curated Teams Only", desc: "20 selected teams — builders, not attendees" }
+    { icon: "◈", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
+    { icon: "◎", title: "Expert Mentors", desc: "Technical founders and engineers guide you live" },
+    { icon: "◉", title: "Curated Teams Only", desc: "20 selected teams — builders, not attendees" },
+    { icon: "◆", title: "Demo Day Pitching", desc: "Top teams pitch to judges and ecosystem partners" },
+    { icon: "◇", title: "Meals & Hospitality", desc: "Food and logistics covered throughout the event" },
   ];
 
   return (
@@ -211,64 +164,67 @@ export const ExpectCard = () => {
       className="relative size-full overflow-hidden cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => setHovered((v) => !v)}
       style={{
-        backgroundColor: hovered ? "#fff" : "#0c0c0c",
-        transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
+        backgroundColor: hovered ? "#fff" : "#0a0a0a",
+        transition: "background-color 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
       }}
     >
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "radial-gradient(circle, rgba(200,255,0,0.08) 1px, transparent 1px)",
-        backgroundSize: "22px 22px",
+        backgroundImage: "radial-gradient(circle, rgba(200,255,0,0.1) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
         opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
       }} />
 
+      {/* Resting */}
       <div style={{
-        position: "absolute", inset: 0, padding: "2rem",
+        position: "absolute", inset: 0, padding: "28px",
         display: "flex", flexDirection: "column", justifyContent: "space-between",
         opacity: hovered ? 0 : 1,
-        transform: hovered ? "translateY(-6px)" : "translateY(0)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
+        transform: hovered ? "translateY(-8px)" : "translateY(0)",
+        transition: "opacity 0.3s ease, transform 0.3s ease",
         pointerEvents: hovered ? "none" : "auto",
       }}>
-        <CardLabel text="Experience" dark />
+        <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", alignSelf: "flex-start" }}>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Experience</span>
+        </div>
         <div>
-          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(1.9rem, 4vw, 3.2rem)", marginBottom: "1rem" }}>
+          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>
             Wh<b>a</b>t to<br />Exp<b>e</b>ct
           </h2>
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+          <div style={{ marginTop: "16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
             {["30 HRS", "CURATED", "IRL"].map((tag, i) => (
               <span key={i} style={{
-                fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem",
-                letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)",
-                border: "0.5px solid rgba(255,255,255,0.1)", borderRadius: "2px", padding: "3px 8px",
+                fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px",
+                letterSpacing: "2px", color: "rgba(255,255,255,0.4)",
+                border: "0.5px solid rgba(255,255,255,0.12)", borderRadius: "2px", padding: "3px 8px",
               }}>{tag}</span>
             ))}
           </div>
         </div>
       </div>
 
+      {/* Hover */}
       <div style={{
-        position: "absolute", inset: 0, padding: "2rem 2rem",
-        display: "flex", flexDirection: "column",
-        opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease 0.08s",
-        pointerEvents: hovered ? "auto" : "none", justifyContent: "center", gap: "0",
+        position: "absolute", inset: 0, padding: "24px 28px",
+        display: "flex", flexDirection: "column", gap: "4px",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.35s ease 0.08s",
+        pointerEvents: hovered ? "auto" : "none", justifyContent: "center",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "1rem", display: "block" }}>What to Expect</span>
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "12px" }}>What to Expect</span>
         {items.map((item, i) => (
           <div key={i} style={{
             display: "flex", gap: "14px", alignItems: "flex-start",
-            padding: "0.75rem 0",
+            padding: "10px 0",
             borderBottom: i < items.length - 1 ? "0.5px solid #ebebeb" : "none",
-            transform: hovered ? "translateX(0)" : "translateX(-8px)",
+            transform: hovered ? "translateX(0)" : "translateX(-10px)",
             opacity: hovered ? 1 : 0,
-            transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
+            transition: `transform 0.3s ease ${0.1 + i * 0.06}s, opacity 0.3s ease ${0.1 + i * 0.06}s`,
           }}>
-            <span style={{ color: "#00aa55", fontSize: "0.75rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+            <span style={{ color: "#00aa55", fontSize: "14px", marginTop: "1px", flexShrink: 0 }}>{item.icon}</span>
             <div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
+              <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{item.title}</div>
+              <div style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#777", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
             </div>
           </div>
         ))}
@@ -277,121 +233,138 @@ export const ExpectCard = () => {
   );
 };
 
-/* ── Mobile flat cards ───────────────────────────────────────────────────── */
-const PrizesFlat = () => {
-  const prizes = [
-    { rank: "01", label: "First Place",  amount: "₹50,000" },
-    { rank: "02", label: "Second Place", amount: "₹30,000" },
-    { rank: "03", label: "Third Place",  amount: "₹20,000" },
-  ];
-  return (
-    <div style={{
-      background: "#f7f5f0", borderRadius: "12px",
-      padding: "1.75rem", border: "1px solid rgba(255,255,255,0.06)",
-    }}>
-      <CardLabel text="Prize Pool" dark />
-      <div style={{ margin: "1.25rem 0 1rem" }}>
-        <span style={{ fontFamily: "var(--font-general)", fontSize: "3rem", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>₹100K</span>
-        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.7rem", color: "rgba(0,0,0,0.35)", marginLeft: "8px" }}>total pool</span>
-      </div>
-      {prizes.map((p, i) => (
-        <div key={i} style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "0.75rem 0",
-          borderBottom: i < prizes.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#bbb", fontWeight: 700 }}>{p.rank}</span>
-            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</span>
-          </div>
-          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
+/* ── TIMELINE CARD ───────────────────────────────────────────────────────── */
+const TimelineCard = () => {
+  const [hovered, setHovered] = useState(false);
 
-const ExpectFlat = () => {
-  const items = [
-    { icon: "◉", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
-    { icon: "◉", title: "Expert Mentors",        desc: "Technical founders and engineers guide you live" },
-    { icon: "◉", title: "Curated Teams Only",    desc: "20 selected teams — builders, not attendees" },
+  const events = [
+    { time: "JUNE", label: "Interest Form Opens", live: false },
+    { time: "JUNE", label: "Early Bird Registration (₹750)", live: false },
+    { time: "JULY 1", label: "Regular Registration Closes (₹1200)", live: false },
+    { time: "JULY WK2/3", label: "Idea Submission (₹100 fee)", live: false },
+    { time: "DAY 1", label: "Kickoff + Build Sprint Begins", live: false },
+    { time: "DAY 1–2", label: "Mentor Rounds · Mid-hack Check-in", live: false },
+    { time: "DAY 2", label: "Final Submissions", live: true },
+    { time: "DAY 2", label: "Demo Day · Awards", live: false },
   ];
+
   return (
-    <div style={{
-      background: "#fff", borderRadius: "12px",
-      padding: "1.75rem", border: "1px solid rgba(255,255,255,0.06)",
-    }}>
-      <CardLabel text="Experience" dark />
-      <h2 className="bento-title special-font" style={{ color: "#111", lineHeight: 0.88, fontSize: "2rem", margin: "1.25rem 0 1rem" }}>
-        Wh<b>a</b>t to Exp<b>e</b>ct
-      </h2>
-      {items.map((item, i) => (
-        <div key={i} style={{
-          display: "flex", gap: "14px", alignItems: "flex-start",
-          padding: "0.75rem 0",
-          borderBottom: i < items.length - 1 ? "0.5px solid #ebebeb" : "none",
-        }}>
-          <span style={{ color: "#00aa55", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>{item.icon}</span>
-          <div>
-            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
-          </div>
+    <div
+      className="relative size-full overflow-hidden cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ backgroundColor: "#0a0a0a" }}
+    >
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(200,255,0,0.02) 22px, rgba(200,255,0,0.02) 23px)",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
+      }} />
+
+      <div style={{
+        position: "absolute", top: "50%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        fontFamily: "'Open Sauce One', sans-serif",
+        fontSize: "clamp(60px, 14vw, 120px)", fontWeight: 900,
+        color: "transparent",
+        WebkitTextStroke: "1px rgba(200,255,0,0.05)",
+        lineHeight: 1, userSelect: "none", whiteSpace: "nowrap",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.3s ease",
+        pointerEvents: "none",
+      }}>JUL 26</div>
+
+      {/* Resting */}
+      <div style={{
+        position: "absolute", inset: 0, padding: "28px",
+        display: "flex", flexDirection: "column", justifyContent: "space-between",
+        opacity: hovered ? 0 : 1,
+        transform: hovered ? "translateY(-8px)" : "translateY(0)",
+        transition: "opacity 0.3s ease, transform 0.3s ease",
+        pointerEvents: hovered ? "none" : "auto",
+      }}>
+        <div style={{ display: "inline-block", border: "0.5px solid rgba(200,255,0,0.4)", borderRadius: "2px", padding: "3px 10px", alignSelf: "flex-start" }}>
+          <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#C8FF00", textTransform: "uppercase" }}>Schedule</span>
         </div>
-      ))}
+        <div>
+          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.9, fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>
+            Tim<b>e</b>line
+          </h2>
+          <p style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.35)", marginTop: "10px" }}>
+            July 2026 · SCTCE, Thiruvananthapuram
+          </p>
+        </div>
+      </div>
+
+      {/* Hover timeline */}
+      <div style={{
+        position: "absolute", inset: 0, padding: "20px 24px",
+        display: "flex", flexDirection: "column",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.35s ease 0.08s",
+        pointerEvents: hovered ? "auto" : "none",
+        overflowY: "auto", backgroundColor: "#fff",
+      }}>
+        <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "9px", letterSpacing: "3px", color: "#999", textTransform: "uppercase", marginBottom: "16px" }}>Event Timeline</span>
+        <div style={{ position: "relative", paddingLeft: "16px" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "1px", background: "linear-gradient(to bottom, #C8FF00, rgba(200,255,0,0.1))" }} />
+          {events.map((ev, i) => (
+            <div key={i} style={{
+              display: "flex", gap: "12px", alignItems: "flex-start",
+              marginBottom: i < events.length - 1 ? "10px" : 0,
+              transform: hovered ? "translateX(0)" : "translateX(-8px)",
+              opacity: hovered ? 1 : 0,
+              transition: `transform 0.28s ease ${0.1 + i * 0.05}s, opacity 0.28s ease ${0.1 + i * 0.05}s`,
+            }}>
+              <div style={{
+                position: "absolute", left: "-4px",
+                width: "8px", height: "8px", borderRadius: "50%",
+                backgroundColor: ev.live ? "#C8FF00" : "#ccc",
+                marginTop: "3px", flexShrink: 0,
+                boxShadow: ev.live ? "0 0 8px rgba(200,255,0,0.6)" : "none",
+              }} />
+              <div style={{ paddingLeft: "16px" }}>
+                <span style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "9px", color: ev.live ? "#6a8800" : "#aaa", letterSpacing: "0.08em", display: "block", marginBottom: "1px" }}>
+                  {ev.time} {ev.live && "← LIVE"}
+                </span>
+                <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: "11px", color: "#111", fontWeight: ev.live ? 600 : 400, lineHeight: 1.4 }}>
+                  {ev.label}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
 /* ── FEATURES SECTION ────────────────────────────────────────────────────── */
-const featureCards = [PrizesCard, ExpectCard];
-
 const Features = () => (
-  <section id="perks" className="features-stack-section" style={{ position: "relative" }}>
-    <SignalPulseBg />
-
-    <div className="container mx-auto px-3 md:px-10" style={{ position: "relative", zIndex: 1 }}>
-      <div style={{ padding: "8rem 1.25rem 4rem" }}>
-        <p style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.62rem", letterSpacing: "0.2em",
-          textTransform: "uppercase", color: "#C8FF00", marginBottom: "0.75rem",
-        }}>What's inside</p>
-        <p style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.82rem", color: "rgba(255,255,255,0.3)",
-          lineHeight: 1.7, maxWidth: "28rem",
-        }}>
-          Scroll through the prizes and the full experience. Hover each card to explore.
+  <section id="perks" className="pb-52" style={{ background: "#000000" }}>
+    <div className="container mx-auto px-3 md:px-10">
+      <div className="px-5 py-32">
+        <p className="mt-3 max-w-md font-circular-web text-lg text-blue-50 opacity-50">
+          Hover each card to explore prizes, the full experience, and the event schedule.
         </p>
       </div>
 
-      {/* Desktop: sticky scroll stack */}
-      <div className="features-desktop">
-        {featureCards.map((Card, index) => (
-          <div className="stacked-card" key={Card.name} style={{ zIndex: index + 2 }}>
-            <BentoTilt className="stacked-card-panel border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
-              <Card />
-            </BentoTilt>
-          </div>
-        ))}
-      </div>
-
-      {/* Mobile: flat cards, always expanded */}
-      <div className="features-mobile" style={{ display: "flex", flexDirection: "column", gap: "1rem", paddingBottom: "4rem" }}>
-        <PrizesFlat />
-        <ExpectFlat />
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "24px",
+        height: "70vh",
+        minHeight: "500px",
+      }}>
+        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
+          <PrizesCard />
+        </BentoTilt>
+        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
+          <ExpectCard />
+        </BentoTilt>
+        <BentoTilt className="border-hsla overflow-hidden rounded-md transition-transform duration-300 ease-out">
+          <TimelineCard />
+        </BentoTilt>
       </div>
     </div>
-
-    <style>{`
-      .features-desktop { display: block; }
-      .features-mobile  { display: none;  }
-      @media (max-width: 767px) {
-        .features-desktop { display: none;  }
-        .features-mobile  { display: flex;  }
-      }
-    `}</style>
   </section>
 );
 

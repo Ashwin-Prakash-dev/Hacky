@@ -1,104 +1,199 @@
-import WaitlistForm from "./WaitlistForm";
+import { useState } from "react";
+import AnimatedTitle from "./AnimatedTitle";
+import Button from "./Button";
 
+/* ── Sponsor teaser section ──────────────────────────────────────────────── */
+const SponsorTeaser = () => (
+  <div
+    id="sponsors"
+    className="my-20 min-h-48 w-screen px-10"
+  >
+    <div
+      className="relative rounded-lg py-16 text-blue-50 overflow-hidden"
+      style={{ background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.06)" }}
+    >
+      {/* Subtle top accent line */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0, left: "10%", right: "10%",
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.3), transparent)",
+        }}
+      />
+
+      <div className="flex flex-col items-center text-center px-6">
+        <p
+          className="mb-4 font-general text-xs uppercase tracking-widest"
+          style={{ color: "#C8FF00", letterSpacing: "0.15em" }}
+        >
+          For companies & startups
+        </p>
+
+        <AnimatedTitle
+          title="Are you looking to hire,<br />build, or back the builders?"
+          className="special-font !md:text-[4rem] w-full font-zentry !text-3xl !font-black !leading-[.9]"
+        />
+
+        <p
+          className="mt-6 max-w-lg font-circular-web text-sm"
+          style={{ color: "rgba(255,255,255,0.4)", lineHeight: 1.75 }}
+        >
+          Startathon gives you meaningful access to Kerala's most ambitious
+          student builders — through mentorship, challenge tracks, and genuine
+          engagement. Not just logo placement.
+        </p>
+
+        <a href="/sponsors" target="_blank" rel="noreferrer">
+          <Button
+            title="View Sponsor Opportunities"
+            containerClass="mt-8 cursor-pointer"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+);
+
+/* ── Interest form ───────────────────────────────────────────────────────── */
 const Contact = () => {
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim()) return;
+    // TODO: wire up to your backend / Formspree / Google Forms
+    console.log("Interest registered:", form);
+    setSubmitted(true);
+  };
+
   return (
     <>
       <div
         id="contact"
         className="w-screen"
-        style={{ background: "#000000", padding: "7rem 0" }}
+        style={{ background: "#000000", padding: "6rem 0" }}
       >
         <div className="container mx-auto px-5 md:px-10">
-          <div style={{ maxWidth: "580px", margin: "0 auto" }}>
-            <WaitlistForm />
+          <div
+            className="rounded-lg px-8 py-16 md:px-16"
+            style={{
+              background: "#0a0a0a",
+              border: "1px solid rgba(255,255,255,0.06)",
+              maxWidth: "680px",
+              margin: "0 auto",
+            }}
+          >
+            {!submitted ? (
+              <>
+                <p
+                  className="mb-4 font-general text-xs uppercase tracking-widest"
+                  style={{ color: "#C8FF00", letterSpacing: "0.15em" }}
+                >
+                  Stay in the loop
+                </p>
+                <h2
+                  className="special-font bento-title mb-2"
+                  style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3rem)", letterSpacing: "0.03em" }}
+                >
+                  Be <b>f</b>irst in line.
+                </h2>
+                <p
+                  className="mb-10 font-circular-web text-sm"
+                  style={{ color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}
+                >
+                  We'll reach out the moment registrations open.
+                  <br />
+                  No spam. Just one email when we're ready.
+                </p>
+
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:gap-3">
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      required
+                      className="flex-1 rounded px-4 py-3 font-general text-sm outline-none"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#fff",
+                        transition: "border-color 0.2s",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "rgba(200,255,0,0.4)")}
+                      onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
+                    />
+                    <input
+                      type="email"
+                      placeholder="Your email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      required
+                      className="flex-1 rounded px-4 py-3 font-general text-sm outline-none"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#fff",
+                        transition: "border-color 0.2s",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "rgba(200,255,0,0.4)")}
+                      onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full rounded px-6 py-3 font-general text-sm font-bold uppercase tracking-widest transition-opacity duration-200 hover:opacity-85"
+                    style={{ background: "#C8FF00", color: "#000", cursor: "pointer" }}
+                  >
+                    Notify Me When Registrations Open
+                  </button>
+                </form>
+
+                <p
+                  className="mt-4 text-center font-general text-xs"
+                  style={{ color: "rgba(255,255,255,0.2)", letterSpacing: "0.06em" }}
+                >
+                  Organized by Coding Club · SCTCE · Thiruvananthapuram
+                </p>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <div
+                  style={{
+                    width: "48px", height: "48px", borderRadius: "50%",
+                    background: "rgba(200,255,0,0.1)",
+                    border: "1px solid rgba(200,255,0,0.4)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    margin: "0 auto 1.5rem",
+                    fontSize: "1.2rem", color: "#C8FF00",
+                  }}
+                >
+                  ✓
+                </div>
+                <h3
+                  className="special-font bento-title mb-3"
+                  style={{ color: "#fff", fontSize: "clamp(1.5rem,4vw,2.5rem)" }}
+                >
+                  You're <b>i</b>n.
+                </h3>
+                <p
+                  className="font-circular-web text-sm"
+                  style={{ color: "rgba(255,255,255,0.4)" }}
+                >
+                  We'll email you when registrations open.
+                  <br />
+                  Stay curious. Keep building.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ── Sponsor teaser ───────────────────────────────────────────────── */}
-      <div id="sponsors" style={{ padding: "0 clamp(1rem, 4vw, 2.5rem) 5rem", background: "#000" }}>
-        <div style={{
-          maxWidth: "1100px", margin: "0 auto",
-          background: "linear-gradient(135deg, #0d0d0d 0%, #0a0a0a 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: "14px",
-          padding: "clamp(2.5rem, 6vw, 4rem)",
-          display: "flex", flexWrap: "wrap",
-          alignItems: "center", justifyContent: "space-between",
-          gap: "2.5rem",
-          position: "relative", overflow: "hidden",
-        }}>
-          {/* Top accent */}
-          <div style={{
-            position: "absolute", top: 0, left: "8%", right: "8%", height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.25), transparent)",
-          }} />
-          {/* Ambient glow */}
-          <div style={{
-            position: "absolute", top: "-100px", right: "-100px",
-            width: "400px", height: "400px",
-            background: "radial-gradient(circle, rgba(200,255,0,0.05), transparent 70%)",
-            pointerEvents: "none",
-          }} />
-
-          <div style={{ flex: "1 1 300px" }}>
-            <p style={{
-              fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.55rem", letterSpacing: "0.22em",
-              textTransform: "uppercase", color: "#C8FF00",
-              marginBottom: "0.85rem",
-            }}>For companies & startups</p>
-            <h2
-              className="special-font bento-title"
-              style={{
-                color: "#fff",
-                fontSize: "clamp(1.8rem, 4vw, 3rem)",
-                letterSpacing: "-0.03em", lineHeight: 0.9,
-                marginBottom: "1rem",
-              }}
-            >
-              Back the<br /><b>B</b>uilders.
-            </h2>
-            <p style={{
-              fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.75rem", color: "rgba(255,255,255,0.35)",
-              lineHeight: 1.75, maxWidth: "360px",
-            }}>
-              Meaningful access to Kerala's most ambitious student builders
-              — through mentorship, challenge tracks, and genuine engagement.
-              Not just logo placement.
-            </p>
-          </div>
-
-          <a href="/sponsors" style={{ textDecoration: "none", flexShrink: 0 }}>
-            <button style={{
-              padding: "0.9rem 2.25rem",
-              background: "transparent",
-              color: "rgba(255,255,255,0.6)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: "50px",
-              fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.62rem", letterSpacing: "0.14em",
-              fontWeight: 700, textTransform: "uppercase",
-              cursor: "pointer",
-              transition: "color 0.2s, border-color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#C8FF00";
-              e.currentTarget.style.borderColor = "rgba(200,255,0,0.4)";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "rgba(255,255,255,0.6)";
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-            >
-              View Sponsor Opportunities →
-            </button>
-          </a>
-        </div>
-      </div>
+      <SponsorTeaser />
     </>
   );
 };
