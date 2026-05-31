@@ -5,45 +5,56 @@ import { PrizesCard, ExpectCard } from "./Features";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const flipCards = [
-  {
-    label: "Who guides you",
-    titleFront: <>Ment<b>o</b>rs</>,
-    tagline: "Builders who've shipped things.",
-    back: [
-      { icon: "◉", title: "Technical Founders", desc: "Startup builders who've shipped products to real users" },
-      { icon: "◉", title: "Domain Specialists",  desc: "Engineers with deep expertise in AI, fintech, healthtech" },
-      { icon: "◉", title: "Hands-on Help",       desc: "They sit with your team, look at your code, push you harder" },
-      { icon: "◉", title: "Career Connections",  desc: "Meaningful intros to companies and investors in the ecosystem" },
-    ],
-  },
-  {
-    label: "What we expect",
-    titleFront: <>Rul<b>e</b>s</>,
-    tagline: "Keep it real. Keep it yours.",
-    back: [
-      { icon: "◉", title: "Teams of 3–4",      desc: "Solo entries not accepted — collaboration is core to this event" },
-      { icon: "◉", title: "Original work only", desc: "All code written during the 30-hour window; no pre-built projects" },
-      { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype — slides don't count" },
-      { icon: "◉", title: "Fair play",          desc: "Respect fellow builders, mentors, and the community you're in" },
-    ],
-  },
+const mentorItems = [
+  { icon: "◉", title: "Technical Founders", desc: "Startup builders who've shipped products to real users" },
+  { icon: "◉", title: "Domain Specialists",  desc: "Engineers with deep expertise in AI, fintech, healthtech" },
+  { icon: "◉", title: "Hands-on Help",       desc: "They sit with your team, look at your code, push you harder" },
+  { icon: "◉", title: "Career Connections",  desc: "Meaningful intros to companies and investors in the ecosystem" },
 ];
 
-const FeatureCardPanel = ({ card }) => {
+const rulesItems = [
+  { icon: "◉", title: "Teams of 3–4",      desc: "Solo entries not accepted — collaboration is core to this event" },
+  { icon: "◉", title: "Original work only", desc: "All code written during the 30-hour window; no pre-built projects" },
+  { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype — slides don't count" },
+  { icon: "◉", title: "Fair play",          desc: "Respect fellow builders, mentors, and the community you're in" },
+];
+
+/* ── Mentors Card ─────────────────────────────────────────────────────────── */
+const MentorsCard = () => {
   const [hovered, setHovered] = useState(false);
+  const items = mentorItems;
   return (
     <div
-      className="relative overflow-hidden rounded-md border-hsla cursor-pointer"
-      style={{
-        height: "340px",
-        backgroundColor: hovered ? "#f7f5f0" : "#0c0c0c",
-        transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
-      }}
+      className="relative size-full overflow-hidden cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => setHovered((v) => !v)}
+      style={{
+        backgroundColor: hovered ? "#f7f5f0" : "#0c0c0c",
+        transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
+      }}
     >
+      {/* Background texture */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: "radial-gradient(circle, rgba(200,255,0,0.06) 1px, transparent 1px)",
+        backgroundSize: "28px 28px",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
+      }} />
+
+      {/* Ghost text */}
+      <div style={{
+        position: "absolute", bottom: "-20px", right: "-4px",
+        fontFamily: "var(--font-general)",
+        fontSize: "clamp(90px, 18vw, 160px)", fontWeight: 900,
+        color: "transparent",
+        WebkitTextStroke: "1px rgba(200,255,0,0.05)",
+        lineHeight: 1, userSelect: "none",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.25s ease",
+        pointerEvents: "none",
+      }}>GEN</div>
+
+      {/* Front face */}
       <div style={{
         position: "absolute", inset: 0, padding: "2rem",
         display: "flex", flexDirection: "column", justifyContent: "space-between",
@@ -53,51 +64,142 @@ const FeatureCardPanel = ({ card }) => {
         pointerEvents: hovered ? "none" : "auto",
       }}>
         <span style={{
-          display: "inline-block",
-          fontFamily: "var(--font-general)",
+          display: "inline-block", fontFamily: "var(--font-general)",
           fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
           color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
           borderRadius: "2px", padding: "3px 9px", alignSelf: "flex-start",
-        }}>{card.label}</span>
+        }}>Who guides you</span>
         <div>
-          <h2 className="bento-title special-font"
-            style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3rem)", marginBottom: "0.5rem" }}>
-            {card.titleFront}
+          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
+            Ment<b>o</b>rs
           </h2>
           <p style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
-            {card.tagline}
+            Builders who've shipped things.
           </p>
         </div>
       </div>
 
+      {/* Back face */}
       <div style={{
-        position: "absolute", inset: 0, padding: "1.75rem 2rem",
-        display: "flex", flexDirection: "column", justifyContent: "center",
+        position: "absolute", inset: 0, padding: "2rem",
+        display: "flex", flexDirection: "column", justifyContent: "space-between",
         opacity: hovered ? 1 : 0,
-        transition: "opacity 0.3s ease 0.08s",
+        transform: hovered ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{
-          fontFamily: "var(--font-general)",
-          fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "#bbb", marginBottom: "0.75rem", display: "block",
-        }}>{card.label}</span>
-        {card.back.map((item, i) => (
-          <div key={i} style={{
-            display: "flex", gap: "12px", alignItems: "flex-start",
-            padding: "0.55rem 0",
-            borderBottom: i < card.back.length - 1 ? "0.5px solid #ebebeb" : "none",
-            transform: hovered ? "translateX(0)" : "translateX(-8px)",
-            opacity: hovered ? 1 : 0,
-            transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
-          }}>
-            <span style={{ color: "#00aa55", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
-            <div>
-              <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
+        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Who guides you</span>
+        <div>
+          {items.map((item, i) => (
+            <div key={i} style={{
+              display: "flex", gap: "14px", alignItems: "flex-start",
+              padding: "0.65rem 0",
+              borderBottom: i < items.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
+              transform: hovered ? "translateX(0)" : "translateX(-8px)",
+              opacity: hovered ? 1 : 0,
+              transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
+            }}>
+              <span style={{ color: "#00aa55", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+              <div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Rules Card ───────────────────────────────────────────────────────────── */
+const RulesCard = () => {
+  const [hovered, setHovered] = useState(false);
+  const items = rulesItems;
+  return (
+    <div
+      className="relative size-full overflow-hidden cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => setHovered((v) => !v)}
+      style={{
+        backgroundColor: hovered ? "#fff" : "#0c0c0c",
+        transition: "background-color 0.45s cubic-bezier(0.76, 0, 0.24, 1)",
+      }}
+    >
+      {/* Background texture */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: `linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px)`,
+        backgroundSize: "32px 32px",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.4s ease",
+      }} />
+
+      {/* Ghost text */}
+      <div style={{
+        position: "absolute", bottom: "-20px", right: "-4px",
+        fontFamily: "var(--font-general)",
+        fontSize: "clamp(90px, 18vw, 160px)", fontWeight: 900,
+        color: "transparent",
+        WebkitTextStroke: "1px rgba(200,255,0,0.05)",
+        lineHeight: 1, userSelect: "none",
+        opacity: hovered ? 0 : 1, transition: "opacity 0.25s ease",
+        pointerEvents: "none",
+      }}>LAW</div>
+
+      {/* Front face */}
+      <div style={{
+        position: "absolute", inset: 0, padding: "2rem",
+        display: "flex", flexDirection: "column", justifyContent: "space-between",
+        opacity: hovered ? 0 : 1,
+        transform: hovered ? "translateY(-6px)" : "translateY(0)",
+        transition: "opacity 0.25s ease, transform 0.25s ease",
+        pointerEvents: hovered ? "none" : "auto",
+      }}>
+        <span style={{
+          display: "inline-block", fontFamily: "var(--font-general)",
+          fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+          color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
+          borderRadius: "2px", padding: "3px 9px", alignSelf: "flex-start",
+        }}>What we expect</span>
+        <div>
+          <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
+            Rul<b>e</b>s
+          </h2>
+          <p style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
+            Keep it real. Keep it yours.
+          </p>
+        </div>
+      </div>
+
+      {/* Back face */}
+      <div style={{
+        position: "absolute", inset: 0, padding: "2rem",
+        display: "flex", flexDirection: "column", justifyContent: "space-between",
+        opacity: hovered ? 1 : 0,
+        transform: hovered ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
+        pointerEvents: hovered ? "auto" : "none",
+      }}>
+        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>What we expect</span>
+        <div>
+          {items.map((item, i) => (
+            <div key={i} style={{
+              display: "flex", gap: "14px", alignItems: "flex-start",
+              padding: "0.65rem 0",
+              borderBottom: i < items.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
+              transform: hovered ? "translateX(0)" : "translateX(-8px)",
+              opacity: hovered ? 1 : 0,
+              transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
+            }}>
+              <span style={{ color: "#00aa55", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+              <div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -239,7 +341,7 @@ const Timeline = () => {
           style={{ display: "flex", alignItems: "center", padding: "2.5rem 0", opacity: 0 }}
         >
           <div className="fc-card" style={{ flex: 1, paddingRight: "2rem" }}>
-            <FeatureCardPanel card={flipCards[0]} />
+            <ImportedCardSlot><MentorsCard /></ImportedCardSlot>
           </div>
           <div className="fc-spacer" style={{ flex: 1 }} />
         </div>
@@ -252,7 +354,7 @@ const Timeline = () => {
         >
           <div className="fc-spacer" style={{ flex: 1 }} />
           <div className="fc-card" style={{ flex: 1, paddingLeft: "2rem" }}>
-            <FeatureCardPanel card={flipCards[1]} />
+            <ImportedCardSlot><RulesCard /></ImportedCardSlot>
           </div>
         </div>
       </div>
@@ -262,8 +364,8 @@ const Timeline = () => {
         <div className="fc-mobile-track">
           <div className="fc-mobile-slide"><PrizesCard /></div>
           <div className="fc-mobile-slide"><ExpectCard /></div>
-          <div className="fc-mobile-slide"><FeatureCardPanel card={flipCards[0]} /></div>
-          <div className="fc-mobile-slide"><FeatureCardPanel card={flipCards[1]} /></div>
+          <div className="fc-mobile-slide"><MentorsCard /></div>
+          <div className="fc-mobile-slide"><RulesCard /></div>
         </div>
         <p style={{
           fontFamily: "var(--font-general)",
