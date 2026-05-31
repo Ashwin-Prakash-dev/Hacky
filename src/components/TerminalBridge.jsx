@@ -401,10 +401,16 @@ const TerminalBridge = () => {
         </div>
       </div>
 
-      {/* Bottom transition gradient */}
+      {/* Bottom transition — scan-line sweep into Timeline */}
       <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, height: "120px",
-        background: "linear-gradient(to top, rgba(200,255,0,0.03) 0%, transparent 100%)",
+        position: "absolute", bottom: 0, left: 0, right: 0, height: "180px",
+        background: "linear-gradient(to bottom, transparent 0%, rgba(200,255,0,0.04) 60%, rgba(200,255,0,0.01) 100%)",
+        pointerEvents: "none",
+      }} />
+      {/* Hairline rule at the seam */}
+      <div style={{
+        position: "absolute", bottom: 0, left: "10%", right: "10%", height: "1px",
+        background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.18) 30%, rgba(200,255,0,0.35) 50%, rgba(200,255,0,0.18) 70%, transparent)",
         pointerEvents: "none",
       }} />
     </section>
