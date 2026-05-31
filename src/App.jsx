@@ -43,9 +43,9 @@ function MainPage() {
         <NavBar />
         <Hero />
         <VideoCards />
-        <TerminalBridge />
         <Stats />
         <Marquee />
+        <TerminalBridge />
         <Timeline />
         <FAQ />
         <Contact />
