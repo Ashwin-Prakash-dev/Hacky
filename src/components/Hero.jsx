@@ -44,7 +44,7 @@ const Hero = () => {
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
         <video
-          src="videos/hero-1.mp4"
+          src="videos/hero-1.webm"
           autoPlay
           loop
           muted

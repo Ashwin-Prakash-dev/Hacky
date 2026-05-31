@@ -12,31 +12,31 @@ const CARDS = [
     title: <>ANTHR<b>O</b>PIC</>,
     label: "BUILDER",
     category: "Started as a safety paper. Now shapes how the world thinks.",
-    src: "/videos/feature-1.mp4",
+    src: "/videos/feature-1.webm",
   },
   {
     title: <>SP<b>A</b>CEX</>,
     label: "BUILDER",
     category: "Rockets were government projects. Until they weren't.",
-    src: "/videos/feature-2.mp4",
+    src: "/videos/feature-2.webm",
   },
   {
     title: <>PAL<b>A</b>NTIR</>,
     label: "BUILDER",
     category: "Unglamorous data work that ended up running the world.",
-    src: "/videos/feature-3.mp4",
+    src: "/videos/feature-3.webm",
   },
   {
     title: <>OP<b>E</b>NAI</>,
     label: "BUILDER",
     category: "A non-profit research lab that rewrote what AI means.",
-    src: "/videos/feature-4.mp4",
+    src: "/videos/feature-4.webm",
   },
   {
     title: <><b>A</b>NDURIL</>,
     label: "BUILDER",
     category: "Defense tech was broken. They treated it like a startup.",
-    src: "/videos/feature-5.mp4",
+    src: "/videos/feature-5.webm",
   },
 ];
 
