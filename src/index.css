@@ -389,6 +389,10 @@ body.custom-cursor {
   transform: translate(-50%, -50%);
   will-change: transform;
 }
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+  body.custom-cursor { cursor: auto !important; }
+}
 
 /* ── Scroll progress bar ─────────────────────────────────────────────────── */
 .scroll-progress {
