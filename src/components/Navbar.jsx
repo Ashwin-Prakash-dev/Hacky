@@ -2,7 +2,11 @@ import gsap from "gsap";
 import { useWindowScroll } from "react-use";
 import { useEffect, useRef, useState } from "react";
 
-const navItems = ["About", "Perks", "FAQ"];
+const navItems = [
+  { label: "What is it", id: "what-is-it" },
+  { label: "Perks", id: "timeline" },
+  { label: "FAQ", id: "faq" },
+];
 
 const NavBar = () => {
   const navContainerRef = useRef(null);
@@ -61,11 +65,11 @@ const NavBar = () => {
             <div className="hidden md:flex items-center">
               {navItems.map((item) => (
                 <button
-                  key={item}
-                  onClick={() => scrollTo(item.toLowerCase())}
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
                   className="nav-link"
                 >
-                  {item}
+                  {item.label}
                 </button>
               ))}
               <a href="/sponsors" className="nav-link nav-link--anchor">

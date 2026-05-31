@@ -401,6 +401,7 @@ const VideoCards = () => {
 
         {/* ── Hackathon intro — bridge into stats ──────────── */}
         <div
+          id="what-is-it"
           className="vc-card-wrap vc-intro-grid"
           style={{
             padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2rem, 4vw, 3rem)",
