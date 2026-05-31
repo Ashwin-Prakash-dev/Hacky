@@ -16,11 +16,11 @@ const faqs = [
   },
   {
     q: "What are the problem statements?",
-    a: "Problem tracks will be announced closer to the event. Expect open-ended, real-world challenges — not toy problems.",
+    a: "Problem tracks will be announced upon application form opening. Expect open-ended, real-world challenges — not toy problems.",
   },
   {
     q: "How are teams selected?",
-    a: "We select 20 teams based on ambition and execution potential — not GPA or college name. Selection is based on your idea brief and team profile.",
+    a: "We select 20 teams based on ambition and execution potential. Selection is based on your idea brief and team profile.",
   },
   {
     q: "What are the prizes?",
