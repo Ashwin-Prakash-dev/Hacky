@@ -150,6 +150,8 @@ const Timeline = () => {
   const tlHeaderRef   = useRef(null);
   const cardRefs      = useRef([]);
   const rowRefs       = useRef([]);
+  const trackRef      = useRef(null);
+  const demoDayDotRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -160,6 +162,14 @@ const Timeline = () => {
         end: "bottom 20%",
         scrub: 0.8,
       });
+
+      // Cap faint axis track at Demo Day node
+      if (trackRef.current && demoDayDotRef.current) {
+        const sectionTop = sectionRef.current.getBoundingClientRect().top;
+        const dotRect    = demoDayDotRef.current.getBoundingClientRect();
+        const dotY       = dotRect.top - sectionTop + dotRect.height / 2;
+        gsap.set(trackRef.current, { height: dotY });
+      }
 
       // Beam reveals from top, gradient brightens as it descends
       gsap.fromTo(
@@ -245,12 +255,15 @@ const Timeline = () => {
       id="timeline"
       style={{ background: "#000", position: "relative", width: "100%", paddingBottom: "9rem" }}
     >
-      {/* ── Faint axis track (always visible) ─────────────────────────── */}
-      <div style={{
-        position: "absolute", left: "50%", top: 0, bottom: 0,
-        width: "1px", background: "rgba(255,255,255,0.05)",
-        transform: "translateX(-50%)", zIndex: 0, pointerEvents: "none",
-      }} />
+      {/* ── Faint axis track — height capped at Demo Day node via JS ─── */}
+      <div
+        ref={trackRef}
+        style={{
+          position: "absolute", left: "50%", top: 0,
+          width: "1px", background: "rgba(255,255,255,0.05)",
+          transform: "translateX(-50%)", zIndex: 0, pointerEvents: "none",
+        }}
+      />
 
       {/* ── Traced beam (grows top-to-bottom with scroll) ─────────────── */}
       <div
@@ -413,14 +426,17 @@ const Timeline = () => {
                   {isCurrent && (
                     <span style={{ position: "absolute", inset: "-7px", borderRadius: "50%", border: "1px solid rgba(200,255,0,0.28)", animation: "timelinePulse 2s ease-in-out infinite", pointerEvents: "none" }} />
                   )}
-                  <div style={{
-                    width: isCurrent ? "16px" : "13px",
-                    height: isCurrent ? "16px" : "13px",
-                    borderRadius: "50%",
-                    background: isDone || isCurrent ? "#C8FF00" : "transparent",
-                    border: `2px solid ${isDone || isCurrent ? "#C8FF00" : "rgba(255,255,255,0.18)"}`,
-                    boxShadow: isCurrent ? "0 0 0 4px rgba(200,255,0,0.1), 0 0 16px rgba(200,255,0,0.45)" : isDone ? "0 0 8px rgba(200,255,0,0.25)" : "none",
-                  }} />
+                  <div
+                    ref={i === milestones.length - 1 ? demoDayDotRef : null}
+                    style={{
+                      width: isCurrent ? "16px" : "13px",
+                      height: isCurrent ? "16px" : "13px",
+                      borderRadius: "50%",
+                      background: isDone || isCurrent ? "#C8FF00" : "transparent",
+                      border: `2px solid ${isDone || isCurrent ? "#C8FF00" : "rgba(255,255,255,0.18)"}`,
+                      boxShadow: isCurrent ? "0 0 0 4px rgba(200,255,0,0.1), 0 0 16px rgba(200,255,0,0.45)" : isDone ? "0 0 8px rgba(200,255,0,0.25)" : "none",
+                    }}
+                  />
                 </div>
                 {isLeft ? emptySlot : textBlock}
               </div>
