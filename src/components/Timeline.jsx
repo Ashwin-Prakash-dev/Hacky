@@ -376,7 +376,7 @@ const Timeline = () => {
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 767px) {
           .fc-axis-track,
           .fc-beam,
           .fc-head,
@@ -387,7 +387,7 @@ const Timeline = () => {
             padding: 1rem 0 1.5rem;
           }
         }
-        @media (min-width: 641px) {
+        @media (min-width: 768px) {
           .fc-mobile-carousel { display: none !important; }
         }
 
@@ -405,7 +405,7 @@ const Timeline = () => {
         .fc-mobile-track::-webkit-scrollbar { display: none; }
 
         .fc-mobile-slide {
-          flex: 0 0 82vw;
+          flex: 0 0 85vw;
           height: 340px;
           scroll-snap-align: center;
           border-radius: 10px;
