@@ -201,6 +201,7 @@ const Timeline = () => {
         }}
       />
 
+
       {/* Desktop: zigzag cards */}
       <div className="fc-desktop-cards fc-cards-wrap" style={{
         position: "relative", zIndex: 3,

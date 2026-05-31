@@ -24,11 +24,16 @@ const TERM_SPAN = 0.65;
 const FADE_START = 0.30;
 const FADE_END   = 0.45;
 
+const PROGRESS_BAR_LINE = LINES.findIndex((l) => l.isProgressBar);
+const TOTAL_BLOCKS = 16;
+
 function Terminal({ progressRef }) {
   const containerRef = useRef(null);
   const linesRef = useRef([]);
   const typedRef = useRef(new Set());
   const tickersRef = useRef([]);
+  const barFillRef = useRef(null);
+  const barPctRef = useRef(null);
 
   useEffect(() => {
     if (containerRef.current) containerRef.current.style.opacity = "0";

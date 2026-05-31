@@ -26,10 +26,10 @@ function MainPage() {
         <NavBar />
         <Hero />
         <VideoCards />
+        <TerminalBridge />
         <Stats />
         <Marquee />
         <Timeline />
-        <TerminalBridge />
         <FAQ />
         <Contact />
         <Footer />

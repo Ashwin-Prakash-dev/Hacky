@@ -401,59 +401,55 @@ const VideoCards = () => {
 
         {/* ── Hackathon intro — bridge into stats ──────────── */}
         <div
-          className="vc-card-wrap"
+          className="vc-card-wrap vc-intro-grid"
           style={{
-            padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(4rem, 8vw, 6rem)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(1.5rem, 3vw, 2.5rem)",
+            padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2rem, 4vw, 3rem)",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 6vw, 6rem)",
+            alignItems: "end",
           }}
         >
-          {/* Top rule */}
-          <div style={{
-            width: "clamp(2rem, 6vw, 4rem)",
-            height: "1px",
-            background: "linear-gradient(90deg, #C8FF00, transparent)",
-          }} />
-
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(1rem, 2vw, 1.5rem)",
-            maxWidth: "52rem",
-          }}>
+          {/* Left: heading */}
+          <div>
             <p style={{
               fontFamily: "var(--font-general)",
               fontSize: "0.62rem",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
               color: "#C8FF00",
+              marginBottom: "1.5rem",
             }}>
-              Startathon 2026 · Kerala
+              What is it actually?
             </p>
-
             <h2
               className="special-font"
               style={{
                 fontFamily: "var(--font-general)",
-                fontSize: "clamp(2rem, 5.5vw, 4.5rem)",
+                fontSize: "clamp(2.2rem, 5vw, 4.4rem)",
                 fontWeight: 900,
                 color: "#ffffff",
-                lineHeight: 0.92,
+                lineHeight: 0.9,
                 letterSpacing: "-0.02em",
               }}
             >
-              30 ho<b>u</b>rs.<br />
-              20 te<b>a</b>ms.<br />
-              Ze<b>r</b>o spectators.
+              What <b>is</b><br />
+              <span style={{ color: "#C8FF00" }}>Start<b>a</b>thon?</span>
             </h2>
+          </div>
 
+          {/* Right: body */}
+          <div style={{
+            borderLeft: "1px solid rgba(200,255,0,0.25)",
+            paddingLeft: "clamp(1.25rem, 2.5vw, 2rem)",
+            alignSelf: "end",
+            paddingBottom: "0.2rem",
+          }}>
             <p style={{
               fontFamily: "var(--font-general)",
-              fontSize: "clamp(0.82rem, 1.5vw, 1rem)",
-              color: "rgba(255,255,255,0.38)",
-              lineHeight: 1.8,
-              maxWidth: "38rem",
+              fontSize: "clamp(0.82rem, 1.3vw, 0.98rem)",
+              color: "rgba(255,255,255,0.4)",
+              lineHeight: 1.9,
             }}>
               Startathon is Kerala's most curated builder hackathon. We don't take
               everyone — we select 20 teams, pair them with expert mentors from day one,
