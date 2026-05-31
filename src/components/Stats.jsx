@@ -5,10 +5,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { value: 20,  prefix: "",  suffix: "",   label: "Teams\nSelected"       },
-  { value: 30,  prefix: "",  suffix: "hrs", label: "Non-stop\nBuilding"   },
-  { value: 5,   prefix: "",  suffix: "+",  label: "Expert\nMentors"       },
-  { value: 100, prefix: "",  suffix: "+",  label: "Applicants\nExpected"  },
+  { value: null, text: "ALL",  suffix: "",    label: "Kerala"             },
+  { value: 20,   prefix: "",   suffix: "",    label: "Teams\nSelected"    },
+  { value: 30,   prefix: "",   suffix: "hrs", label: "Non-stop\nBuilding" },
+  { value: 3,    prefix: "",   suffix: "",    label: "Winners"            },
 ];
 
 const Stats = () => {
@@ -20,6 +20,7 @@ const Stats = () => {
       numRefs.current.forEach((el, i) => {
         if (!el) return;
         const target = stats[i];
+        if (target.value === null) return;
         const counter = { val: 0 };
 
         gsap.to(counter, {
@@ -33,7 +34,7 @@ const Stats = () => {
           },
           onUpdate: () => {
             el.textContent =
-              target.prefix +
+              (target.prefix ?? "") +
               Math.round(counter.val) +
               target.suffix;
           },
@@ -124,7 +125,7 @@ const Stats = () => {
                 transition: "color 0.25s ease",
               }}
             >
-              0
+              {stat.value === null ? stat.text : "0"}
             </span>
 
             <span style={{
