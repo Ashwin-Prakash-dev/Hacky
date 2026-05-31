@@ -384,7 +384,7 @@ const Timeline = () => {
 
           .fc-mobile-carousel {
             display: block !important;
-            padding: 2rem 0 3rem;
+            padding: 1rem 0 1.5rem;
           }
         }
         @media (min-width: 641px) {
