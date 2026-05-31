@@ -397,7 +397,7 @@ body.custom-cursor {
   background: linear-gradient(90deg, #C8FF00, rgba(200,255,0,0.7));
   z-index: 999999;
   box-shadow: 0 0 10px rgba(200,255,0,0.6), 0 0 20px rgba(200,255,0,0.2);
-  transition: width 0.15s ease-out;
+  transition: none;
   transform-origin: left;
 }
 
