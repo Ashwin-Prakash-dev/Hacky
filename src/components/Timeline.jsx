@@ -63,12 +63,18 @@ const MentorsCard = () => {
         transition: "opacity 0.25s ease, transform 0.25s ease",
         pointerEvents: hovered ? "none" : "auto",
       }}>
-        <span style={{
-          display: "inline-block", fontFamily: "var(--font-general)",
-          fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
-          borderRadius: "2px", padding: "3px 9px", alignSelf: "flex-start",
-        }}>Who guides you</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{
+            display: "inline-block", fontFamily: "var(--font-general)",
+            fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
+            borderRadius: "2px", padding: "3px 9px",
+          }}>Who guides you</span>
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
+            tap to explore
+          </span>
+        </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
             Ment<b>o</b>rs
@@ -156,12 +162,18 @@ const RulesCard = () => {
         transition: "opacity 0.25s ease, transform 0.25s ease",
         pointerEvents: hovered ? "none" : "auto",
       }}>
-        <span style={{
-          display: "inline-block", fontFamily: "var(--font-general)",
-          fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
-          borderRadius: "2px", padding: "3px 9px", alignSelf: "flex-start",
-        }}>What we expect</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{
+            display: "inline-block", fontFamily: "var(--font-general)",
+            fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
+            borderRadius: "2px", padding: "3px 9px",
+          }}>What we expect</span>
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
+            tap to explore
+          </span>
+        </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
             Rul<b>e</b>s
@@ -219,6 +231,20 @@ const Timeline = () => {
   const beamRef    = useRef(null);
   const headRef    = useRef(null);
   const cardRefs   = useRef([]);
+
+  useEffect(() => {
+    const track = document.getElementById("fc-track");
+    if (!track) return;
+    const updateDots = () => {
+      const index = Math.round(track.scrollLeft / track.offsetWidth);
+      document.querySelectorAll(".fc-dot").forEach((dot, i) => {
+        dot.style.width = i === index ? "18px" : "6px";
+        dot.style.background = i === index ? "#C8FF00" : "rgba(255,255,255,0.18)";
+      });
+    };
+    track.addEventListener("scroll", updateDots, { passive: true });
+    return () => track.removeEventListener("scroll", updateDots);
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -361,18 +387,28 @@ const Timeline = () => {
 
       {/* Mobile: swipeable carousel */}
       <div className="fc-mobile-carousel" style={{ position: "relative", zIndex: 3 }}>
-        <div className="fc-mobile-track">
+        <div className="fc-mobile-track" id="fc-track">
           <div className="fc-mobile-slide"><PrizesCard /></div>
           <div className="fc-mobile-slide"><ExpectCard /></div>
           <div className="fc-mobile-slide"><MentorsCard /></div>
           <div className="fc-mobile-slide"><RulesCard /></div>
         </div>
-        <p style={{
-          fontFamily: "var(--font-general)",
-          fontSize: "0.55rem", letterSpacing: "0.16em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.18)",
-          textAlign: "center", marginTop: "0.75rem",
-        }}>swipe to explore</p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", marginTop: "1.25rem" }}>
+          <div style={{ display: "flex", gap: "6px" }}>
+            {[0,1,2,3].map(i => (
+              <div key={i} className={`fc-dot fc-dot-${i}`} style={{
+                width: i === 0 ? "18px" : "6px", height: "6px", borderRadius: "3px",
+                background: i === 0 ? "#C8FF00" : "rgba(255,255,255,0.18)",
+                transition: "width 0.3s ease, background 0.3s ease",
+              }} />
+            ))}
+          </div>
+          <span style={{
+            fontFamily: "var(--font-general)",
+            fontSize: "0.55rem", letterSpacing: "0.16em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.35)",
+          }}>swipe</span>
+        </div>
       </div>
 
       <style>{`

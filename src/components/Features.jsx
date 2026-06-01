@@ -149,7 +149,13 @@ export const PrizesCard = () => {
         transition: "opacity 0.25s ease, transform 0.25s ease",
         pointerEvents: hovered ? "none" : "auto",
       }}>
-        <CardLabel text="Prize Pool" dark />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <CardLabel text="Prize Pool" dark />
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
+            tap to explore
+          </span>
+        </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2.2rem, 5.5vw, 3.8rem)", marginBottom: "0.75rem" }}>
             Pr<b>i</b>zes
@@ -241,7 +247,13 @@ export const ExpectCard = () => {
         transition: "opacity 0.25s ease, transform 0.25s ease",
         pointerEvents: hovered ? "none" : "auto",
       }}>
-        <CardLabel text="Experience" dark />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <CardLabel text="Experience" dark />
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
+            tap to explore
+          </span>
+        </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(1.9rem, 4vw, 3.2rem)", marginBottom: "1rem" }}>
             Wh<b>a</b>t to<br />Exp<b>e</b>ct

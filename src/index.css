@@ -508,6 +508,10 @@ body.custom-cursor {
   background: linear-gradient(90deg, #000 0%, transparent 10%, transparent 90%, #000 100%);
   z-index: 1; pointer-events: none;
 }
+@keyframes tapPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.6); }
+}
 @keyframes marqueeFwd {
   from { transform: translateX(0); }
   to   { transform: translateX(calc(-100% / 3)); }
