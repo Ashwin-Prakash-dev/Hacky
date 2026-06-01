@@ -20,7 +20,7 @@ const About = () => {
 
         <div className="about-subtext">
           <p style={{ color: "rgba(0,0,0,0.5)" }}>
-            Prizes. Mentors. 30 hours. Kerala's most curated hackathon for builders.
+            30 hours. Real mentors. Real prizes. Build something you're proud of.
           </p>
         </div>
       </div>

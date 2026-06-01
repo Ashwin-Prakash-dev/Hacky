@@ -7,18 +7,18 @@ gsap.registerPlugin(ScrollTrigger);
 const outcomes = [
   {
     tag: "Career",
-    headline: "PPOs & Internships",
-    body: "Companies actually scout here. Sponsors and mentor firms extend pre-placement offers and internships to builders they like.",
+    headline: "Get hired on the spot.",
+    body: "Sponsors watch you build for 30 hours. If they like what they see, they make offers right there. No interviews. No waiting.",
   },
   {
     tag: "Access",
-    headline: "1:1s with C-Suite",
-    body: "Not a panel from 20 rows back. You sit across from founders, CTOs, and startup leaders who've built what you're trying to build.",
+    headline: "Talk to people who've done it.",
+    body: "Founders, CTOs, operators. Not a keynote from 50 rows back. They're in the room, and you can walk up and talk to them.",
   },
   {
     tag: "Network",
-    headline: "Fast-track Interviews",
-    body: "Top performers get referred straight into hiring pipelines. No cold applications, no getting ghosted.",
+    headline: "Skip the application queue.",
+    body: "Top builders get referred directly into hiring pipelines. The people in this room remember who impressed them.",
   },
 ];
 
@@ -117,9 +117,9 @@ const StudentHook = () => {
                 marginBottom: "2rem",
               }}
             >
-              Every great thing started with someone who just kept building.
-              Startathon is where we find those people in Kerala. 30 hours, real problems,
-              and the people who can actually change where your career goes. They're watching closely.
+              Every person behind those companies was a student once.
+              They just didn't stop building. Startathon is how we find
+              those people in Kerala. If that's you, you should be here.
             </p>
             <p className="font-general" style={{
               fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
@@ -222,8 +222,8 @@ const StudentHook = () => {
               fontStyle: "italic",
             }}
           >
-            "The builders who changed the world didn't wait for permission.
-            We're just making sure the ones from Kerala have a room to start in."
+            "Kerala has the talent. It's always had it.
+            We're just putting it in one room and letting it run."
           </p>
         </div>
       </div>

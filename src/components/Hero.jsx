@@ -61,7 +61,7 @@ const Hero = () => {
             <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1">
               <span className="hero-badge-dot" />
               <span className="font-general uppercase tracking-widest hero-badge-text">
-                Applications opening soon · Kerala
+                Kerala · July 2026 · 20 teams only
               </span>
             </div>
 
@@ -70,9 +70,9 @@ const Hero = () => {
             </h1>
 
             <p className="mb-5 max-w-sm font-general text-sm text-blue-50 hero-sub">
-              30 hours. Real problems.
+              30 hours. Ship something real.
               <br />
-              Kerala's most curated hackathon for builders.
+              Not everyone gets in.
             </p>
 
             <a href="#contact" style={{ textDecoration: "none", display: "inline-block" }}>

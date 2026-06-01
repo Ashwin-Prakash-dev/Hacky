@@ -3,32 +3,32 @@ import gsap from "gsap";
 
 const faqs = [
   {
-    q: "Who can participate?",
-    a: "Startathon is open to students from any college across Kerala. Developer, designer, aspiring founder. If you want to build something real, you're welcome here.",
+    q: "Who can apply?",
+    a: "Any student in Kerala. Developer, designer, aspiring founder — doesn't matter. If you want to build something real and you're serious about it, apply.",
   },
   {
-    q: "What is the team size?",
-    a: "Teams must have 3 to 4 members. Solo entries aren't accepted. Collaboration is core to what we're building here.",
+    q: "How big is the team?",
+    a: "3 to 4 people. No solo entries. You need a team.",
   },
   {
-    q: "Is it in-person or online?",
-    a: "Fully in-person at SCTCE, Thiruvananthapuram. The energy of building in a room with other ambitious people is hard to replicate online.",
+    q: "Is this in-person?",
+    a: "Yes. Fully in-person at SCTCE, Thiruvananthapuram. You have to be in the room. That's the whole point.",
   },
   {
     q: "What are the problem statements?",
-    a: "Problem tracks will be announced when applications open. Expect open-ended, real-world challenges. Not toy problems.",
+    a: "Announced when applications open. Real-world problems with real stakes. Not the kind of thing you can solve with a tutorial.",
   },
   {
-    q: "How are teams selected?",
-    a: "We pick 20 teams based on ambition and execution potential. Your idea brief and team profile are what matter.",
+    q: "How do you pick teams?",
+    a: "We look at your idea and your team. 20 spots. We're looking for people who are already building, not people who want to start someday.",
   },
   {
-    q: "What are the prizes?",
-    a: "The prize pool is ₹2L+*. First place takes ₹1L+, the biggest builder prize in Kerala's student hackathon circuit. Remaining prizes are announced closer to the event. (*subject to changes)",
+    q: "What's the prize pool?",
+    a: "₹2L+ total*. First place takes ₹1L+. Biggest builder prize in Kerala's student circuit. (*subject to changes)",
   },
   {
     q: "What happens at Demo Day?",
-    a: "Shortlisted teams pitch their products to judges and ecosystem partners. Everyone gets to showcase. Top teams compete for prizes.",
+    a: "You present to judges, sponsors, and ecosystem partners. Everyone shows their work. The top teams compete for prizes. Sponsors make offers.",
   },
 ];
 
