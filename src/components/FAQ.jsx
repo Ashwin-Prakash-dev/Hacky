@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "How big is the team?",
-    a: "3 to 4 people. No solo entries. You need a team.",
+    a: "1 to 4 people. Solo entries are welcome.",
   },
   {
     q: "Is this in-person?",

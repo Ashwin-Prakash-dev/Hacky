@@ -54,8 +54,8 @@ const WaitlistForm = () => {
           color: "rgba(255,255,255,0.35)",
           marginTop: "0.75rem", lineHeight: 1.7,
         }}>
-          We'll email you when registrations open.
-          <br />Stay curious. Keep building.
+          Check your email for a confirmation from us.
+          <br />We'll be in touch when registrations open.
         </p>
       </div>
     );
