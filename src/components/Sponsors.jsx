@@ -449,8 +449,8 @@ const Sponsors = () => {
           ))}
         </div>
 
-        {/* Scroll cue */}
-        <div style={{
+        {/* Scroll cue — hidden on mobile to avoid overlap */}
+        <div className="sp-scroll-cue" style={{
           position: "absolute", bottom: "2.5rem", left: "50%",
           transform: "translateX(-50%)",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
@@ -615,6 +615,10 @@ const Sponsors = () => {
         @keyframes marqueeScroll  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @keyframes marqueeScrollR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
         @keyframes scrollPulse    { 0%,100% { opacity: 0.6; } 50% { opacity: 0.15; } }
+
+        @media (max-width: 640px) {
+          .sp-scroll-cue { display: none !important; }
+        }
 
         .sp-tiers-grid {
           grid-template-columns: repeat(3, 1fr);
