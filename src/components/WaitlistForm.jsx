@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const WaitlistForm = () => {
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", college: "" });
   const [status, setStatus] = useState("idle"); // idle | loading | success | duplicate | error
 
   const handleSubmit = async (e) => {
@@ -10,6 +10,7 @@ const WaitlistForm = () => {
     setStatus("loading");
     const body = { name: form.name.trim(), email: form.email.trim() };
     if (form.phone.trim()) body.phone = form.phone.trim();
+    if (form.college.trim()) body.college = form.college.trim();
     try {
       const res = await fetch(import.meta.env.VITE_WAITLIST_API, {
         method: "POST",
@@ -110,7 +111,7 @@ const WaitlistForm = () => {
         lineHeight: 1.75, marginBottom: "2.25rem",
       }}>
         We'll reach out the moment registrations open.
-        No spam — just one email when we're ready.
+        No spam. Just one email when we're ready.
       </p>
 
       <form onSubmit={handleSubmit}>

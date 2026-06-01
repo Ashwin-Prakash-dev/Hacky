@@ -8,68 +8,54 @@ gsap.registerPlugin(ScrollTrigger);
 /* ─── Data ──────────────────────────────────────────────────────────────── */
 
 const VALUE_PROPS = [
-  { icon: "◎", title: "Talent Discovery",      desc: "Identify high-agency technical talent through real 30-hour product execution — not CVs." },
-  { icon: "◈", title: "Startup Discovery",      desc: "Gain early visibility into promising student ideas and high-potential builder teams." },
-  { icon: "◉", title: "Ecosystem Positioning",  desc: "Build genuine relationships with Kerala's next generation of engineers and founders." },
-  { icon: "◆", title: "Product Adoption",       desc: "Get developers building with your APIs, tools, and platforms during the sprint itself." },
+  { icon: "◎", title: "Watch them build",      desc: "30 hours of live execution. You don't read a CV, you watch them solve hard problems in real time. The signal is unambiguous." },
+  { icon: "◈", title: "Kerala's best, one room", desc: "We curate 20 teams from across Kerala. The most ambitious student builders in the state, all in one place." },
+  { icon: "◉", title: "Access, not ads",       desc: "Every tier is built around proximity to the builders. Walk the floor, sit with teams, make offers on the spot." },
+  { icon: "◆", title: "Hire before anyone else", desc: "You see them build before any other company does. Spot offers, PPOs, internships, all made in context." },
 ];
 
 const TIERS = [
   {
-    id: "title", name: "Title Sponsor", price: "₹1.5L+", tag: "Primary Partner",
-    highlight: true,
+    id: "t1", name: "T1", price: "₹1.5L+", tag: "On-Campus Access",
+    slots: null, highlight: true,
     perks: [
-      "Event naming rights (exclusive)", "Primary logo on all materials",
-      "15-min keynote / stage time",     "Full resume database access",
-      "Talent scouting session",         "Sponsored problem statement",
-      "API / tool integration",          "Mentorship slot",
-      "Social media features (custom)",  "Introductions to all teams",
+      "Walk the floor and approach any team directly",
+      "On-spot offers: internships, PPOs, full-time",
+      "Embedded as judge or mentor during the sprint",
+      "Dedicated stage time with all 20 teams",
+      "First look at every builder in the room",
+      "Sponsored problem statement + branded prize track",
+      "Primary logo on all event materials",
+      "Custom social media campaign",
     ],
   },
   {
-    id: "hiring", name: "Hiring Partner", price: "₹75k+", tag: "Talent Access",
-    highlight: false,
+    id: "t2", name: "T2", price: "₹75K+", tag: "Off-Campus Access",
+    slots: null, highlight: false,
     perks: [
-      "Secondary logo on all materials", "Full resume database access",
-      "Talent scouting session",         "3 social media posts",
-      "Introductions to top 10 teams",
+      "Curated shortlist with top team intros post-event",
+      "Intern / PPO offers through off-campus outreach",
+      "Up to 2 mentor slots during the sprint",
+      "Structured interview slots arranged post-event",
+      "Secondary logo on all event materials",
+      "3 social media posts",
     ],
   },
   {
-    id: "challenge", name: "Challenge Sponsor", price: "₹30k+", tag: "Technical Track",
-    highlight: false,
+    id: "strategic", name: "Custom", price: "Quote on request", tag: "Bespoke",
+    slots: null, highlight: false, bespoke: true,
+    cta: "Tell us what you need →",
     perks: [
-      "Secondary logo on all materials", "Branded problem statement",
-      "API / tool integration",          "Branded prize track",
-      "2 social media posts",
+      "Don't fit T1 or T2?",
+      "Tell us what you're looking for",
+      "We'll scope something that works",
     ],
   },
-  {
-    id: "ecosystem", name: "Ecosystem Partner", price: "Flexible", tag: "Community",
-    highlight: false,
-    perks: [
-      "Secondary logo on all materials", "Workshop / keynote slot",
-      "Mentorship slot",                 "1 social media post",
-    ],
-  },
-];
-
-const BENEFITS = [
-  { label: "Event naming rights",   title: "Exclusive",  hiring: "—",        challenge: "—",       ecosystem: "—" },
-  { label: "Logo on all materials", title: "Primary",    hiring: "Secondary", challenge: "Secondary", ecosystem: "Secondary" },
-  { label: "Keynote / stage time",  title: "15 min",     hiring: "—",        challenge: "—",       ecosystem: "Workshop" },
-  { label: "Resume database",       title: "Full",       hiring: "Full",     challenge: "—",       ecosystem: "—" },
-  { label: "Talent scouting",       title: "✓",          hiring: "✓",        challenge: "—",       ecosystem: "—" },
-  { label: "Sponsored problem",     title: "✓",          hiring: "—",        challenge: "✓",       ecosystem: "—" },
-  { label: "API/tool integration",  title: "✓",          hiring: "—",        challenge: "✓",       ecosystem: "—" },
-  { label: "Mentorship slot",       title: "✓",          hiring: "—",        challenge: "—",       ecosystem: "✓" },
-  { label: "Social media",          title: "Custom",     hiring: "3 posts",  challenge: "2 posts", ecosystem: "1 post" },
-  { label: "Team introductions",    title: "All teams",  hiring: "Top 10",   challenge: "—",       ecosystem: "—" },
 ];
 
 const MARQUEE_ITEMS = [
-  "TALENT DISCOVERY", "BUILDER-FIRST", "STARTUP SCOUTING", "REAL MENTORSHIP",
-  "PRODUCT BUILDS", "ALL KERALA", "30 HOURS", "CURATED TEAMS",
+  "ON-CAMPUS ACCESS", "CURATED TALENT", "SPOT OFFERS", "30 HOURS OF SIGNAL",
+  "PPO READY", "INTERN PIPELINE", "ALL KERALA", "2 SLOTS ONLY",
 ];
 
 /* ─── Animated noise canvas ─────────────────────────────────────────────── */
@@ -196,7 +182,7 @@ function TierCard({ tier }) {
           fontSize: "0.45rem", letterSpacing: "0.18em", textTransform: "uppercase",
           color: "#000", background: "#C8FF00",
           borderRadius: "2px", padding: "3px 9px",
-        }}>Most Complete</div>
+        }}>Full Access</div>
       )}
 
       {/* Price + name */}
@@ -208,16 +194,34 @@ function TierCard({ tier }) {
         }}>{tier.tag}</span>
         <div style={{
           fontFamily: "var(--font-general)",
-          fontSize: "clamp(2rem, 4vw, 3rem)",
+          fontSize: tier.bespoke ? "clamp(1.1rem, 2.5vw, 1.6rem)" : "clamp(2rem, 4vw, 3rem)",
           fontWeight: 900,
-          color: tier.highlight ? "#C8FF00" : "#fff",
+          color: tier.highlight ? "#C8FF00" : tier.bespoke ? "rgba(255,255,255,0.35)" : "#fff",
+          fontStyle: tier.bespoke ? "italic" : "normal",
           lineHeight: 1, marginTop: "0.4rem",
         }}>{tier.price}</div>
+        {tier.bespoke && (
+          <div style={{
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.45rem", letterSpacing: "0.16em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.2)", marginTop: "0.3rem",
+          }}>Quoted per engagement</div>
+        )}
         <div style={{
           fontFamily: "var(--font-general, sans-serif)",
           fontSize: "0.78rem", fontWeight: 600,
           color: "rgba(255,255,255,0.5)", marginTop: "0.3rem",
         }}>{tier.name}</div>
+        {tier.slots && (
+          <div style={{
+            display: "inline-block", marginTop: "0.55rem",
+            fontFamily: "var(--font-general, sans-serif)",
+            fontSize: "0.45rem", letterSpacing: "0.14em", textTransform: "uppercase",
+            color: tier.highlight ? "#C8FF00" : "rgba(255,255,255,0.3)",
+            border: `1px solid ${tier.highlight ? "rgba(200,255,0,0.25)" : "rgba(255,255,255,0.1)"}`,
+            borderRadius: "2px", padding: "2px 7px",
+          }}>{tier.slots}</div>
+        )}
       </div>
 
       {/* Perks */}
@@ -269,7 +273,7 @@ function TierCard({ tier }) {
           }
         }}
         >
-          Get in touch →
+          {tier.cta || "Get in touch →"}
         </button>
       </a>
     </div>
@@ -283,7 +287,6 @@ const Sponsors = () => {
   const heroRef   = useRef(null);
   const valRef    = useRef(null);
   const tiersRef  = useRef(null);
-  const tableRef  = useRef(null);
 
   // Scroll to top on mount
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -323,13 +326,6 @@ const Sponsors = () => {
       );
 
       // Table rows
-      gsap.fromTo(".sp-table-row",
-        { opacity: 0, x: -14 },
-        {
-          opacity: 1, x: 0, duration: 0.4, stagger: 0.04, ease: "power2.out",
-          scrollTrigger: { trigger: tableRef.current, start: "top 85%", toggleActions: "play none none reverse" },
-        }
-      );
     }, pageRef);
     return () => ctx.revert();
   }, []);
@@ -417,14 +413,22 @@ const Sponsors = () => {
           maxWidth: "520px", lineHeight: 1.85,
           marginTop: "2rem", opacity: 0,
         }}>
-          Startathon gives you meaningful access to Kerala's most ambitious student
-          builders — through mentorship, challenge tracks, and genuine engagement.
-          Not just logo placement.
+          The best student builders from across Kerala, in one room, building for 30 hours straight.
+          You get direct access to them. Watch them work, talk to them, hire them on the spot.
+        </p>
+        <p style={{
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "clamp(0.7rem, 1.4vw, 0.85rem)",
+          color: "rgba(255,255,255,0.28)",
+          maxWidth: "520px", margin: "0.9rem auto 0",
+          lineHeight: 1.65,
+        }}>
+          Limited slots per tier. The closer you want to be, the sooner you should reach out.
         </p>
 
         {/* Stat pills */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginTop: "2.5rem", justifyContent: "center" }}>
-          {[["20", "Curated teams"], ["30 HRS", "Build sprint"], ["₹1L", "Prize pool"], ["All Kerala", "Reach"]].map(([n, l]) => (
+          {[["20", "Curated teams"], ["30 HRS", "Build sprint"], ["₹2L+", "Prize pool"], ["All Kerala", "Reach"]].map(([n, l]) => (
             <div key={l} className="sp-hero-stat" style={{
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -477,9 +481,8 @@ const Sponsors = () => {
             fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase",
             color: "rgba(255,255,255,0.22)", marginBottom: "2rem",
           }}>Why sponsor</p>
-          <div style={{
+          <div className="sp-val-grid" style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
             gap: "1px", background: "rgba(255,255,255,0.06)",
             border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px",
             overflow: "hidden",
@@ -514,92 +517,19 @@ const Sponsors = () => {
             fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase",
             color: "rgba(255,255,255,0.22)", marginBottom: "2rem",
           }}>Sponsorship tiers</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1.1rem" }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1.1rem",
+          }}
+          className="sp-tiers-grid"
+          >
             {TIERS.map((t) => <TierCard key={t.id} tier={t} />)}
           </div>
         </div>
 
-        {/* Benefits table */}
-        <div ref={tableRef} style={{ marginBottom: "6rem" }}>
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.22)", marginBottom: "2rem",
-          }}>Full comparison</p>
-          <div style={{
-            background: "#080808", border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: "10px", overflow: "hidden",
-          }}>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "580px" }}>
-                <thead>
-                  <tr style={{ background: "#0f0f0f" }}>
-                    <th style={{
-                      textAlign: "left", padding: "1rem 1.25rem",
-                      fontFamily: "var(--font-general, sans-serif)",
-                      fontSize: "0.52rem", letterSpacing: "0.18em",
-                      textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
-                      borderBottom: "1px solid rgba(255,255,255,0.07)", width: "30%",
-                    }}>Benefit</th>
-                    {[["Title", "₹1.5L+", true], ["Hiring", "₹75k+", false], ["Challenge", "₹30k+", false], ["Ecosystem", "Flexible", false]].map(([label, price, accent]) => (
-                      <th key={label} style={{
-                        textAlign: "center", padding: "1rem 0.75rem",
-                        borderBottom: "1px solid rgba(255,255,255,0.07)",
-                      }}>
-                        <div style={{
-                          fontFamily: "var(--font-general, sans-serif)",
-                          fontSize: "0.58rem", fontWeight: 700,
-                          color: accent ? "#C8FF00" : "rgba(255,255,255,0.45)",
-                          textTransform: "uppercase", letterSpacing: "0.06em",
-                        }}>{label}</div>
-                        <div style={{
-                          fontFamily: "var(--font-general)",
-                          fontSize: "0.72rem",
-                          color: accent ? "rgba(200,255,0,0.6)" : "rgba(255,255,255,0.22)",
-                          marginTop: "2px",
-                        }}>{price}</div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {BENEFITS.map((row, i) => (
-                    <tr key={row.label} className="sp-table-row" style={{
-                      opacity: 0,
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.025)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                      <td style={{
-                        padding: "0.85rem 1.25rem",
-                        fontFamily: "var(--font-general, sans-serif)",
-                        fontSize: "0.66rem", color: "rgba(255,255,255,0.35)",
-                        borderBottom: i < BENEFITS.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                      }}>{row.label}</td>
-                      {(["title", "hiring", "challenge", "ecosystem"]).map((col) => (
-                        <td key={col} style={{
-                          textAlign: "center", padding: "0.85rem 0.75rem",
-                          borderBottom: i < BENEFITS.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                          fontFamily: "var(--font-general, sans-serif)",
-                          fontSize: "0.62rem",
-                          color: row[col] === "—"
-                            ? "rgba(255,255,255,0.1)"
-                            : col === "title"
-                            ? "#C8FF00"
-                            : "rgba(255,255,255,0.42)",
-                        }}>{row[col]}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         {/* CTA */}
-        <div id="sponsor-contact" style={{
+        <div id="sponsor-contact" className="sp-cta-box" style={{
           background: "linear-gradient(135deg, #0d0d0d 0%, #111 100%)",
           border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px",
           padding: "4rem 3rem", textAlign: "center", position: "relative", overflow: "hidden",
@@ -620,7 +550,7 @@ const Sponsors = () => {
             fontFamily: "var(--font-general, sans-serif)",
             fontSize: "0.55rem", letterSpacing: "0.28em", textTransform: "uppercase",
             color: "#C8FF00", marginBottom: "1rem",
-          }}>Ready to partner?</p>
+          }}>Get in the room</p>
 
           <h2
             className="special-font bento-title"
@@ -630,19 +560,19 @@ const Sponsors = () => {
               marginBottom: "1.25rem",
             }}
           >
-            Let's <b>b</b>uild<br />t<b>o</b>gether.
+            Meet Kerala's<br />best <b>b</b>uilders.
           </h2>
 
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
             fontSize: "0.75rem", color: "rgba(255,255,255,0.3)",
-            maxWidth: "400px", margin: "0 auto 2.5rem", lineHeight: 1.75,
+            maxWidth: "420px", margin: "0 auto 2.5rem", lineHeight: 1.75,
           }}>
-            We're actively looking for partners across all tiers.
-            Reach out and we'll build a custom package for you.
+            This is the densest concentration of top student builder talent in Kerala.
+            Reach out and we'll get you in.
           </p>
 
-          <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+          <div className="sp-cta-btns" style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
             <a href="mailto:hello@sctcoding.club?subject=Sponsorship%20Inquiry%20-%20Startathon%202026" style={{ textDecoration: "none" }}>
               <button style={{
                 padding: "0.9rem 2.5rem",
@@ -685,6 +615,40 @@ const Sponsors = () => {
         @keyframes marqueeScroll  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @keyframes marqueeScrollR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
         @keyframes scrollPulse    { 0%,100% { opacity: 0.6; } 50% { opacity: 0.15; } }
+
+        .sp-tiers-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .sp-val-grid {
+          grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        }
+
+        @media (max-width: 900px) {
+          .sp-tiers-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .sp-tiers-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .sp-val-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .sp-cta-box {
+            padding: 2.5rem 1.25rem !important;
+          }
+          .sp-cta-btns {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .sp-cta-btns a {
+            width: 100%;
+          }
+          .sp-cta-btns button {
+            width: 100% !important;
+          }
+        }
       `}</style>
     </div>
   );

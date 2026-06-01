@@ -4,31 +4,31 @@ import gsap from "gsap";
 const faqs = [
   {
     q: "Who can participate?",
-    a: "Startathon is open to students from any college across Kerala. Whether you're a developer, designer, or aspiring founder — if you want to build something real, you're welcome here.",
+    a: "Startathon is open to students from any college across Kerala. Developer, designer, aspiring founder. If you want to build something real, you're welcome here.",
   },
   {
     q: "What is the team size?",
-    a: "Teams must have 3 to 4 members. Solo entries are not accepted — collaboration is core to what we're building here.",
+    a: "Teams must have 3 to 4 members. Solo entries aren't accepted. Collaboration is core to what we're building here.",
   },
   {
     q: "Is it in-person or online?",
-    a: "Startathon is a fully in-person event at SCTCE, Thiruvananthapuram. The energy of building in a room with other ambitious people is irreplaceable.",
+    a: "Fully in-person at SCTCE, Thiruvananthapuram. The energy of building in a room with other ambitious people is hard to replicate online.",
   },
   {
     q: "What are the problem statements?",
-    a: "Problem tracks will be announced upon application form opening. Expect open-ended, real-world challenges — not toy problems.",
+    a: "Problem tracks will be announced when applications open. Expect open-ended, real-world challenges. Not toy problems.",
   },
   {
     q: "How are teams selected?",
-    a: "We select 20 teams based on ambition and execution potential. Selection is based on your idea brief and team profile.",
+    a: "We pick 20 teams based on ambition and execution potential. Your idea brief and team profile are what matter.",
   },
   {
     q: "What are the prizes?",
-    a: "The total prize pool is ₹1,00,000. First place takes ₹50,000, second place ₹30,000, and third place ₹20,000.",
+    a: "The prize pool is ₹2L+*. First place takes ₹1L+, the biggest builder prize in Kerala's student hackathon circuit. Remaining prizes are announced closer to the event. (*subject to changes)",
   },
   {
     q: "What happens at Demo Day?",
-    a: "Shortlisted teams pitch their products to judges and ecosystem partners. All teams get to showcase — top teams compete for prizes.",
+    a: "Shortlisted teams pitch their products to judges and ecosystem partners. Everyone gets to showcase. Top teams compete for prizes.",
   },
 ];
 

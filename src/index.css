@@ -513,3 +513,15 @@ body.custom-cursor {
   from { transform: translateX(calc(-100% / 3)); }
   to   { transform: translateX(0); }
 }
+
+/* Sponsor tier grid — 3-col desktop, stack on mobile */
+@media (max-width: 860px) {
+  .sp-tiers-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (min-width: 861px) and (max-width: 1100px) {
+  .sp-tiers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

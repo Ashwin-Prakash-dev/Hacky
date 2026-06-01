@@ -57,16 +57,15 @@ const Contact = () => {
                 marginBottom: "1rem",
               }}
             >
-              Back the<br /><b>B</b>uilders.
+              Kerala's best<br />talent. <b>O</b>ne room.
             </h2>
             <p style={{
               fontFamily: "var(--font-general, sans-serif)",
               fontSize: "0.75rem", color: "rgba(255,255,255,0.35)",
               lineHeight: 1.75, maxWidth: "360px",
             }}>
-              Meaningful access to Kerala's most ambitious student builders
-              — through mentorship, challenge tracks, and genuine engagement.
-              Not just logo placement.
+              20 curated teams. 30 hours of building. Direct access to the most
+              ambitious student builders in Kerala, all in one place.
             </p>
           </div>
 

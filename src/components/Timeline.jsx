@@ -9,13 +9,13 @@ const mentorItems = [
   { icon: "◉", title: "Technical Founders", desc: "Startup builders who've shipped products to real users" },
   { icon: "◉", title: "Domain Specialists",  desc: "Engineers with deep expertise in AI, fintech, healthtech" },
   { icon: "◉", title: "Hands-on Help",       desc: "They sit with your team, look at your code, push you harder" },
-  { icon: "◉", title: "Career Connections",  desc: "Meaningful intros to companies and investors in the ecosystem" },
+  { icon: "◉", title: "Real 1:1s",           desc: "Sit across from founders and CTOs. Not a panel from 20 rows back" },
 ];
 
 const rulesItems = [
-  { icon: "◉", title: "Teams of 3–4",      desc: "Solo entries not accepted — collaboration is core to this event" },
-  { icon: "◉", title: "Original work only", desc: "All code written during the 30-hour window; no pre-built projects" },
-  { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype — slides don't count" },
+  { icon: "◉", title: "Teams of 3–4",      desc: "Solo entries aren't accepted. Collaboration is core to this event" },
+  { icon: "◉", title: "Original work only", desc: "All code written during the 30-hour window. No pre-built projects" },
+  { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype. Slides don't count" },
   { icon: "◉", title: "Fair play",          desc: "Respect fellow builders, mentors, and the community you're in" },
 ];
 

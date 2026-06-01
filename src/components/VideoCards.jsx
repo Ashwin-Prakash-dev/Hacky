@@ -11,31 +11,31 @@ const CARDS = [
   {
     title: <>ANTHR<b>O</b>PIC</>,
     label: "BUILDER",
-    category: "Started as a safety paper. Now shapes how the world thinks.",
+    category: "A few people who believed AI should be built carefully. Now they're shaping the whole industry.",
     src: "/videos/feature-1.webm",
   },
   {
     title: <>SP<b>A</b>CEX</>,
     label: "BUILDER",
-    category: "Rockets were government projects. Until they weren't.",
+    category: "Everyone said private rockets were impossible. They just started building anyway.",
     src: "/videos/feature-2.webm",
   },
   {
     title: <>PAL<b>A</b>NTIR</>,
     label: "BUILDER",
-    category: "Unglamorous data work that ended up running the world.",
+    category: "Boring data infrastructure. Until governments couldn't run without it.",
     src: "/videos/feature-3.webm",
   },
   {
     title: <>OP<b>E</b>NAI</>,
     label: "BUILDER",
-    category: "A non-profit research lab that rewrote what AI means.",
+    category: "Started in a room with a research paper. Changed what a billion people think is possible.",
     src: "/videos/feature-4.webm",
   },
   {
     title: <><b>A</b>NDURIL</>,
     label: "BUILDER",
-    category: "Defense tech was broken. They treated it like a startup.",
+    category: "Defense tech hadn't changed in decades. They walked in like it was a startup.",
     src: "/videos/feature-5.webm",
   },
 ];
@@ -328,7 +328,7 @@ const VideoCards = () => {
               opacity: 0,
             }}
           >
-            We drew inspiration from the builders behind companies like these —
+            We drew inspiration from the builders behind companies like these
             and the startup ecosystem they created. Startathon exists to find
             the next ones.
           </p>
@@ -453,7 +453,7 @@ const VideoCards = () => {
               lineHeight: 1.9,
             }}>
               Startathon is Kerala's most curated builder hackathon. We don't take
-              everyone — we select 20 teams, pair them with expert mentors from day one,
+              everyone. We pick 20 teams, pair them with expert mentors from day one,
               and give them 30 hours to ship working software. No pitch decks.
               No half-built prototypes. Real products only.
             </p>

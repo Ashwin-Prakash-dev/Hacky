@@ -95,7 +95,7 @@ const AnimatedPrize = ({ target = 150, duration = 1800 }) => {
         fontVariantNumeric: "tabular-nums",
       }}
     >
-      ₹{count}K
+      ₹{count}K+
     </span>
   );
 };
@@ -105,9 +105,9 @@ export const PrizesCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const prizes = [
-    { rank: "01", label: "First Place",  amount: "₹50,000", sub: "" },
-    { rank: "02", label: "Second Place", amount: "₹30,000", sub: "" },
-    { rank: "03", label: "Third Place",  amount: "₹20,000", sub: "" },
+    { rank: "01", label: "First Place",  amount: "₹1L+",  blurred: null,    highlight: true },
+    { rank: "02", label: "Second Place", amount: "TBA",   blurred: "~₹60K", highlight: false },
+    { rank: "03", label: "Third Place",  amount: "TBA",   blurred: "~₹40K", highlight: false },
   ];
 
   return (
@@ -155,8 +155,11 @@ export const PrizesCard = () => {
             Pr<b>i</b>zes
           </h2>
           <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <AnimatedPrize target={100} duration={1800} />
-            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>total pool</span>
+            <AnimatedPrize target={200} duration={1800} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+              <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>prize pool</span>
+              <span style={{ color: "rgba(255,255,255,0.1)", fontSize: "0.55rem", letterSpacing: "0.04em" }}>*subject to changes</span>
+            </div>
           </div>
         </div>
       </div>
@@ -181,13 +184,18 @@ export const PrizesCard = () => {
               transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#bbb", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
-                <div>
-                  <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</div>
-                  {p.sub && <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.65rem", color: "#888", marginTop: "1px" }}>{p.sub}</div>}
-                </div>
+                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: p.highlight ? "#C8FF00" : "#bbb", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
+                <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</div>
               </div>
-              <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {p.blurred && (
+                  <span style={{
+                    fontFamily: "var(--font-general)", fontSize: "0.72rem", fontWeight: 700,
+                    color: "#555", filter: "blur(4px)", userSelect: "none", pointerEvents: "none",
+                  }}>{p.blurred}</span>
+                )}
+                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: p.highlight ? "#1a1a1a" : "#999" }}>{p.amount}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -201,9 +209,10 @@ export const ExpectCard = () => {
   const [hovered, setHovered] = useState(false);
 
   const items = [
-    { icon: "◉", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
-    { icon: "◉", title: "Expert Mentors", desc: "Technical founders and engineers guide you live" },
-    { icon: "◉", title: "Curated Teams Only", desc: "20 selected teams — builders, not attendees" }
+    { icon: "◉", title: "30-Hour Build Sprint",    desc: "Non-stop building from kickoff to demo day" },
+    { icon: "◉", title: "Expert Mentors",           desc: "Technical founders and engineers in the room with you" },
+    { icon: "◉", title: "Curated Teams Only",       desc: "20 selected teams. Builders, not attendees" },
+    { icon: "◉", title: "Fast-track Interviews",    desc: "Top performers skip the cold application queue entirely" },
   ];
 
   return (
@@ -313,9 +322,10 @@ const PrizesFlat = () => {
 
 const ExpectFlat = () => {
   const items = [
-    { icon: "◉", title: "30-Hour Build Sprint", desc: "Non-stop building from kickoff to demo day" },
-    { icon: "◉", title: "Expert Mentors",        desc: "Technical founders and engineers guide you live" },
-    { icon: "◉", title: "Curated Teams Only",    desc: "20 selected teams — builders, not attendees" },
+    { icon: "◉", title: "30-Hour Build Sprint",    desc: "Non-stop building from kickoff to demo day" },
+    { icon: "◉", title: "Expert Mentors",           desc: "Technical founders and engineers in the room with you" },
+    { icon: "◉", title: "Curated Teams Only",       desc: "20 selected teams. Builders, not attendees" },
+    { icon: "◉", title: "Fast-track Interviews",    desc: "Top performers skip the cold application queue entirely" },
   ];
   return (
     <div style={{

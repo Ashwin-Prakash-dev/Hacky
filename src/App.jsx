@@ -19,6 +19,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Sponsors from "./components/Sponsors";
 import VideoCards from "./components/VideoCards";
+import StudentHook from "./components/StudentHook";
 
 function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
@@ -45,6 +46,7 @@ function MainPage() {
         <Hero />
         <VideoCards />
         <Stats />
+        <StudentHook />
         <Marquee />
         <TerminalBridge />
         <Timeline />
