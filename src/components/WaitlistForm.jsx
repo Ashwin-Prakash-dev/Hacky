@@ -117,9 +117,10 @@ const WaitlistForm = () => {
       <form onSubmit={handleSubmit}>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginBottom: "1rem" }}>
           {[
-            { key: "name",  type: "text",  placeholder: "Your name"        },
-            { key: "email", type: "email", placeholder: "Your email"       },
-            { key: "phone", type: "tel",   placeholder: "Phone (optional)" },
+            { key: "name",    type: "text",  placeholder: "Your name"           },
+            { key: "email",   type: "email", placeholder: "Your email"          },
+            { key: "college", type: "text",  placeholder: "Your college"        },
+            { key: "phone",   type: "tel",   placeholder: "Phone (optional)"    },
           ].map(({ key, type, placeholder }) => (
             <input
               key={key}
