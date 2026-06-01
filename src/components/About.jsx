@@ -10,7 +10,7 @@ const About = () => {
           className="font-general text-sm uppercase md:text-[10px]"
           style={{ color: "rgba(0,0,0,0.4)" }}
         >
-          Startathon 2026
+          Startathon
         </p>
 
         <AnimatedTitle

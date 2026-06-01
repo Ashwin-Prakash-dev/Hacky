@@ -13,7 +13,7 @@ const mentorItems = [
 ];
 
 const rulesItems = [
-  { icon: "◉", title: "Teams of 3–4",      desc: "Solo entries aren't accepted. Collaboration is core to this event" },
+  { icon: "◉", title: "Teams of 1–4",      desc: "Build solo or with a crew. Up to 4 members per team" },
   { icon: "◉", title: "Original work only", desc: "All code written during the 30-hour window. No pre-built projects" },
   { icon: "◉", title: "Must be deployable", desc: "A working product or clear prototype. Slides don't count" },
   { icon: "◉", title: "Fair play",          desc: "Respect fellow builders, mentors, and the community you're in" },

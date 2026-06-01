@@ -61,7 +61,7 @@ const Hero = () => {
             <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1">
               <span className="hero-badge-dot" />
               <span className="font-general uppercase tracking-widest hero-badge-text">
-                Kerala · July 2026 · 20 teams only
+                Kerala · Limited teams only
               </span>
             </div>
 
