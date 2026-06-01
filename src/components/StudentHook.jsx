@@ -74,8 +74,7 @@ const StudentHook = () => {
       ref={sectionRef}
       style={{ background: "#000", padding: "7rem 0 6rem", width: "100%" }}
     >
-      {/* top rule */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "6rem" }} />
+      <div style={{ marginBottom: "6rem" }} />
 
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
@@ -200,27 +199,26 @@ const StudentHook = () => {
             paddingTop: "3rem",
             borderTop: "1px solid rgba(255,255,255,0.06)",
             display: "flex",
-            alignItems: "center",
-            gap: "1.5rem",
-            flexWrap: "wrap",
+            alignItems: "flex-start",
+            gap: "1.25rem",
           }}
         >
           <div
             style={{
               width: "3px",
-              height: "2.5rem",
-              background: "linear-gradient(180deg, #C8FF00, transparent)",
+              minHeight: "2.5rem",
               flexShrink: 0,
+              background: "linear-gradient(180deg, #C8FF00, transparent)",
               borderRadius: "2px",
+              marginTop: "0.2rem",
             }}
           />
           <p
             className="font-general"
             style={{
-              fontSize: "clamp(1rem, 2vw, 1.3rem)",
+              fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
               color: "rgba(255,255,255,0.55)",
-              lineHeight: 1.55,
-              maxWidth: "640px",
+              lineHeight: 1.6,
               fontStyle: "italic",
             }}
           >
@@ -234,6 +232,11 @@ const StudentHook = () => {
         @media (max-width: 767px) {
           .sh-grid {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .sh-video-row {
+            flex-direction: column !important;
           }
         }
       `}</style>

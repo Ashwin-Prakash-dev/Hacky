@@ -90,6 +90,7 @@ const Stats = () => {
               padding: "3.5rem clamp(1rem, 3vw, 2.5rem)",
               borderRight: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
               display: "flex", flexDirection: "column", gap: "0.5rem",
+              alignItems: "center", textAlign: "center",
               position: "relative", overflow: "hidden",
               transition: "background 0.25s ease",
               cursor: "default",
