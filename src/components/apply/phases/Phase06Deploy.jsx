@@ -94,8 +94,6 @@ const Phase06Deploy = ({ formData, onBack, onSubmitted }) => {
     } catch {
       setStatus("error");
       setErrMsg("transmission failed. try again.");
-    } finally {
-      if (status !== "idle") setStatus("idle");
     }
   };
 
