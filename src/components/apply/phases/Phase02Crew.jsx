@@ -108,7 +108,7 @@ const Phase02Crew = ({ formData, updateForm, onNext, onBack }) => {
 
         {/* Member rows — hidden when solo, but members state persists */}
         {!formData.solo && (
-          <div className="fi" style={{ opacity: 0 }}>
+          <div className="fi">
             {formData.members.map((m, i) => (
               <div key={i}>
                 <MemberRow
