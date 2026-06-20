@@ -5,7 +5,7 @@ const TerminalInput = ({ label, error, style: extStyle, onFocus, onBlur, ...prop
       fontFamily: "var(--font-general, sans-serif)",
       fontSize: "0.6rem",
       letterSpacing: "0.18em",
-      color: "rgba(255,255,255,0.3)",
+      color: "rgba(255,255,255,0.55)",
       textTransform: "uppercase",
       marginBottom: "0.55rem",
       userSelect: "none",

@@ -42,7 +42,7 @@ export const PhaseHeader = ({ label, tagline }) => {
         fontFamily: "var(--font-general, sans-serif)",
         fontSize: "0.58rem",
         letterSpacing: "0.22em",
-        color: "rgba(255,255,255,0.22)",
+        color: "rgba(255,255,255,0.45)",
         textTransform: "uppercase",
         marginBottom: "0.85rem",
       }}>
@@ -68,7 +68,7 @@ export const PhaseHeader = ({ label, tagline }) => {
         fontFamily: "var(--font-general, sans-serif)",
         fontSize: "0.85rem",
         fontStyle: "italic",
-        color: "rgba(255,255,255,0.25)",
+        color: "rgba(255,255,255,0.5)",
         lineHeight: 1.6,
       }}>
         {tagline}
@@ -99,7 +99,7 @@ export const PhaseNav = ({
         style={{
           background: "none",
           border: "none",
-          color: "rgba(255,255,255,0.25)",
+          color: "rgba(255,255,255,0.45)",
           cursor: "pointer",
           fontFamily: "var(--font-general, sans-serif)",
           fontSize: "0.7rem",
@@ -110,8 +110,8 @@ export const PhaseNav = ({
           alignItems: "center",
           gap: "0.4rem",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
       >
         ← back
       </button>

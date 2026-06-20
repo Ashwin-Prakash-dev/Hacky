@@ -15,7 +15,7 @@ const TerminalTextarea = ({
         fontFamily: "var(--font-general, sans-serif)",
         fontSize: "0.6rem",
         letterSpacing: "0.18em",
-        color: "rgba(255,255,255,0.3)",
+        color: "rgba(255,255,255,0.55)",
         textTransform: "uppercase",
         marginBottom: "0.55rem",
         userSelect: "none",
@@ -68,7 +68,7 @@ const TerminalTextarea = ({
             fontFamily: "var(--font-general, sans-serif)",
             fontSize: "0.6rem",
             letterSpacing: "0.06em",
-            color: over ? "rgba(255,75,75,0.7)" : "rgba(255,255,255,0.18)",
+            color: over ? "rgba(255,75,75,0.8)" : "rgba(255,255,255,0.38)",
             pointerEvents: "none",
           }}>
             {count} / {maxWords}

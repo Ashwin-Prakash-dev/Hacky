@@ -114,7 +114,7 @@ const ApplyPage = () => {
 
         <span style={{
           fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem",
-          letterSpacing: "0.18em", color: "rgba(255,255,255,0.22)",
+          letterSpacing: "0.18em", color: "rgba(255,255,255,0.45)",
           textTransform: "uppercase",
         }}>
           {String(phase).padStart(2, "0")} / {String(TOTAL).padStart(2, "0")}
@@ -201,7 +201,7 @@ const SuccessScreen = () => {
         style={{
           fontFamily: "var(--font-general, sans-serif)",
           fontSize: "0.9rem",
-          color: "rgba(255,255,255,0.38)",
+          color: "rgba(255,255,255,0.55)",
           opacity: 0,
         }}
       >
@@ -217,7 +217,7 @@ const SuccessScreen = () => {
           fontSize: "0.65rem",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "rgba(255,255,255,0.28)",
+          color: "rgba(255,255,255,0.5)",
           textDecoration: "none",
           transition: "color 0.2s",
           opacity: 0,

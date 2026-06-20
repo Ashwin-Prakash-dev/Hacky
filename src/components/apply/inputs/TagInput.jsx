@@ -18,7 +18,7 @@ const TagInput = ({ label, value = [], onChange, error }) => {
         fontFamily: "var(--font-general, sans-serif)",
         fontSize: "0.6rem",
         letterSpacing: "0.18em",
-        color: "rgba(255,255,255,0.3)",
+        color: "rgba(255,255,255,0.55)",
         textTransform: "uppercase",
         marginBottom: "0.55rem",
         userSelect: "none",
@@ -55,14 +55,14 @@ const TagInput = ({ label, value = [], onChange, error }) => {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  color: "rgba(255,255,255,0.25)",
+                  color: "rgba(255,255,255,0.45)",
                   fontSize: "0.6rem",
                   padding: 0,
                   lineHeight: 1,
                   transition: "color 0.15s",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,75,75,0.8)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
               >
                 ✕
               </button>

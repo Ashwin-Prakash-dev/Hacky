@@ -71,7 +71,7 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
         <div className="fi" style={{ opacity: 0 }}>
           <p style={{
             fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem",
-            letterSpacing: "0.18em", color: "rgba(255,255,255,0.22)",
+            letterSpacing: "0.18em", color: "rgba(255,255,255,0.45)",
             textTransform: "uppercase", marginBottom: "0.75rem", userSelect: "none",
           }}>
             Past Work — Optional
@@ -95,7 +95,7 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
               style={{
                 background: "none",
                 border: "0.5px solid rgba(255,255,255,0.12)",
-                color: "rgba(255,255,255,0.3)",
+                color: "rgba(255,255,255,0.5)",
                 cursor: "pointer",
                 borderRadius: "4px",
                 padding: "0.5rem 0.9rem",
