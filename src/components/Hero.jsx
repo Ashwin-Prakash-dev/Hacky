@@ -75,14 +75,14 @@ const Hero = () => {
               Not everyone gets in.
             </p>
 
-            <a href="#contact" style={{ textDecoration: "none", display: "inline-block" }}>
+            <a href="/apply" style={{ textDecoration: "none", display: "inline-block" }}>
               <button className="group relative z-10 w-fit cursor-pointer overflow-hidden rounded-full bg-[#C8FF00] px-7 py-3 text-black flex items-center gap-1">
                 <span className="relative inline-flex overflow-hidden font-general text-xs uppercase">
                   <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                    Register Interest
+                    Apply Now
                   </div>
                   <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
-                    Register Interest
+                    Apply Now
                   </div>
                 </span>
                 <TiLocationArrow />
