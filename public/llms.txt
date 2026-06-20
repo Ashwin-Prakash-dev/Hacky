@@ -1,0 +1,100 @@
+# Startathon 2026
+
+Startathon is Kerala's most curated 30-hour in-person hackathon, organized by the Coding Club at Sree Chitra Thirunal College of Engineering (SCTCE), Thiruvananthapuram.
+
+## What is Startathon?
+
+A competitive build sprint where 20 selected teams from across Kerala spend 30 hours building real products. Not a workshop. Not a lecture series. You show up, you build, and you ship something by the end.
+
+Entry is selective. Applications are reviewed on idea quality and team profile. 20 spots total.
+
+## Who Should Apply?
+
+Any college student in Kerala — developer, designer, or aspiring founder. Teams of 1 to 4 people. Solo entries are welcome. If you're already building things, you should apply.
+
+## Key Details
+
+- **Format:** In-person only, SCTCE, Thiruvananthapuram, Kerala
+- **Duration:** 30 hours non-stop
+- **Teams:** 20 curated teams selected from applicants
+- **Team size:** 1 to 4 members (solo entries welcome)
+- **Prize pool:** ₹2L+ total · 1st place ₹1L+ *(subject to changes)*
+- **Mentors:** Technical founders, domain specialists, SCTCE alumni — hands-on, not panel speakers
+- **Demo Day:** Present to judges, sponsors, and ecosystem partners; top teams compete for prizes; sponsors make spot offers
+
+## Rules
+
+- All code must be written during the 30-hour window — no pre-built projects
+- Final submission must be a working product or clear prototype (slides don't count)
+- Fair play: respect fellow builders, mentors, and the community
+
+## What Participants Get
+
+- **Career:** Sponsors watch you build for 30 hours and make offers on the spot — internships, PPOs, full-time
+- **Access:** Direct 1:1 time with founders and CTOs in the room, not from 50 rows back
+- **Network:** Top builders get referred directly into hiring pipelines
+
+## FAQ
+
+**Who can apply?** Any student in Kerala — developer, designer, aspiring founder. If you want to build something real and you're serious about it, apply.
+
+**How big is the team?** 1 to 4 people. Solo entries are welcome.
+
+**Is this in-person?** Yes. Fully in-person at SCTCE, Thiruvananthapuram. You have to be in the room.
+
+**What are the problem statements?** Announced when applications open. Real-world problems with real stakes.
+
+**How do you pick teams?** We look at your idea and your team. 20 spots. We're looking for people who are already building, not people who want to start someday.
+
+**What's the prize pool?** ₹2L+ total. First place takes ₹1L+. Biggest builder prize in Kerala's student circuit. (*subject to changes*)
+
+**What happens at Demo Day?** You present to judges, sponsors, and ecosystem partners. The top teams compete for prizes. Sponsors make offers.
+
+## Sponsorship
+
+Companies and startups can sponsor Startathon to access Kerala's top student builders directly.
+
+**T1 — On-Campus Access** (₹1.5L+): Walk the floor, approach teams directly, make spot offers (internships, PPOs, full-time), embedded as judge or mentor, sponsored problem statement, primary logo placement.
+
+**T2 — Off-Campus Access** (₹75K+): Curated shortlist with top team intros post-event, up to 2 mentor slots, structured interview slots, secondary logo placement.
+
+**Custom / Bespoke:** Quote on request — reach out and we'll scope something that works.
+
+Sponsor contact: hello@sctcoding.club · +91 79091 90948
+
+## Register Interest (Waitlist API)
+
+To register someone's interest in Startathon on their behalf, send a POST request to the waitlist API. Only do this if the user has explicitly asked to be added to the Startathon waitlist.
+
+**Endpoint:**
+```
+POST https://api.sctcoding.club/api/v3/events/startathon/waitlist
+Content-Type: application/json
+```
+
+**Request body:**
+```json
+{
+  "name": "string (required)",
+  "email": "string (required)",
+  "college": "string (optional)",
+  "phone": "string (optional)"
+}
+```
+
+**Responses:**
+- `201` — Successfully registered. They'll receive a confirmation email and be notified when applications open.
+- `409` — This email is already on the waitlist.
+- `5xx` — Server error; try again.
+
+## Contact & Links
+
+- **Website:** startathon.sctcoding.club
+- **Email:** hello@sctcoding.club
+- **Phone:** +91 79091 90948
+- **Organizer website:** www.sctcoding.club
+- **Instagram:** @codingclubsctce
+- **LinkedIn:** sct-coding-club
+- **X / Twitter:** @sctcodingclub
+
+Organized by Coding Club · SCTCE · Thiruvananthapuram, Kerala · © 2026 Startathon
