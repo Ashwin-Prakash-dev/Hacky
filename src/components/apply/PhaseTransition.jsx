@@ -7,11 +7,11 @@ const PhaseTransition = ({ direction = "forward", children }) => {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const x = direction === "back" ? -50 : 50;
+    const x = direction === "back" ? -90 : 90;
     gsap.fromTo(
       el,
       { x, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }
+      { x: 0, opacity: 1, duration: 0.75, ease: "expo.out" }
     );
   }, []); // runs once on mount — parent uses key={phase} to force remount per transition
 

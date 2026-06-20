@@ -56,14 +56,14 @@ const Phase06Deploy = ({ formData, onBack, onSubmitted }) => {
     const els = linesRef.current.filter(Boolean);
     if (!els.length) return;
     gsap.fromTo(els,
-      { opacity: 0, x: -12 },
-      { opacity: 1, x: 0, duration: 0.28, stagger: 0.04, ease: "power2.out", delay: 0.3 }
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.4, stagger: 0.07, ease: "power2.out", delay: 0.55 }
     );
     // Fade in the submit area after dossier prints
-    const delay = 0.3 + els.length * 0.04 + 0.2;
+    const delay = 0.55 + els.length * 0.07 + 0.3;
     gsap.fromTo(contentRef.current,
-      { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", delay }
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", delay }
     );
   }, []);
 

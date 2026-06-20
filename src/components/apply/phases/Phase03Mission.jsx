@@ -15,8 +15,8 @@ const Phase03Mission = ({ formData, updateForm, onNext, onBack }) => {
     const els = contentRef.current?.querySelectorAll(".fi");
     if (!els?.length) return;
     gsap.fromTo(els,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.45, stagger: 0.09, ease: "power3.out", delay: 0.35 }
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 0.65, stagger: 0.14, ease: "power3.out", delay: 0.7 }
     );
   }, []);
 
