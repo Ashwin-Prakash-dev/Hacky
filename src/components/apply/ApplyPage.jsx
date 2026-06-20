@@ -39,8 +39,8 @@ const ApplyPage = () => {
   const updateForm = (patch) =>
     setFormData((prev) => ({ ...prev, ...patch }));
 
-  const goNext = () => { setDirection("forward"); setPhase((p) => p + 1); };
-  const goPrev = () => { setDirection("back");    setPhase((p) => p - 1); };
+  const goNext = () => { setDirection("forward"); setPhase((p) => Math.min(p + 1, TOTAL)); };
+  const goPrev = () => { setDirection("back");    setPhase((p) => Math.max(p - 1, 1)); };
 
   const progress = ((phase - 1) / (TOTAL - 1)) * 100;
 
@@ -115,7 +115,6 @@ const ApplyPage = () => {
 
       {/* Phase area */}
       <main style={{
-        paddingTop: "58px",
         minHeight: "100dvh",
         display: "flex",
         alignItems: "center",
