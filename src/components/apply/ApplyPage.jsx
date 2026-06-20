@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import gsap from "gsap";
 import PhaseTransition from "./PhaseTransition";
 import Phase01Identity  from "./phases/Phase01Identity";
 import Phase02Crew      from "./phases/Phase02Crew";
@@ -136,12 +137,79 @@ const ApplyPage = () => {
   );
 };
 
-const SuccessScreen = () => (
-  <div style={{ textAlign: "center" }}>
-    <p style={{ fontFamily: "monospace", color: "#C8FF00", fontSize: "1.2rem", letterSpacing: "0.1em" }}>
-      ✓ ACCESS GRANTED.
-    </p>
-  </div>
-);
+const SuccessScreen = () => {
+  const line1Ref = useRef(null);
+  const line2Ref = useRef(null);
+  const linkRef  = useRef(null);
+
+  useEffect(() => {
+    const tl = gsap.timeline();
+    tl.fromTo(line1Ref.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }
+    )
+    .fromTo(line2Ref.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.4, ease: "power2.out" },
+      "+=0.15"
+    )
+    .fromTo(linkRef.current,
+      { opacity: 0, y: 8 },
+      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+      "+=1.5"
+    );
+  }, []);
+
+  return (
+    <div style={{ textAlign: "center", padding: "2rem" }}>
+      <p
+        ref={line1Ref}
+        style={{
+          fontFamily: "monospace",
+          fontSize: "clamp(1rem, 3vw, 1.5rem)",
+          fontWeight: 700,
+          letterSpacing: "0.12em",
+          color: "#C8FF00",
+          textTransform: "uppercase",
+          marginBottom: "0.75rem",
+          opacity: 0,
+        }}
+      >
+        ✓ ACCESS GRANTED. APPLICATION TRANSMITTED.
+      </p>
+      <p
+        ref={line2Ref}
+        style={{
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.9rem",
+          color: "rgba(255,255,255,0.38)",
+          opacity: 0,
+        }}
+      >
+        We&apos;ll be in touch.
+      </p>
+      <a
+        ref={linkRef}
+        href="/"
+        style={{
+          display: "inline-block",
+          marginTop: "2.5rem",
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.65rem",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.28)",
+          textDecoration: "none",
+          transition: "color 0.2s",
+          opacity: 0,
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+      >
+        ← Back to Startathon
+      </a>
+    </div>
+  );
+};
 
 export default ApplyPage;
