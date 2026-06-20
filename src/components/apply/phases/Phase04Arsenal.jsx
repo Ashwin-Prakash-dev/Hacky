@@ -70,11 +70,11 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
 
         <div className="fi" style={{ opacity: 0 }}>
           <p style={{
-            fontFamily: "monospace", fontSize: "0.7rem",
-            letterSpacing: "0.08em", color: "rgba(200,255,0,0.55)",
-            marginBottom: "0.75rem", userSelect: "none",
+            fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem",
+            letterSpacing: "0.18em", color: "rgba(255,255,255,0.22)",
+            textTransform: "uppercase", marginBottom: "0.75rem", userSelect: "none",
           }}>
-            &gt;_ past work — optional
+            Past Work — Optional
           </p>
           {links.map((link, i) => (
             <div key={i}>
@@ -99,9 +99,9 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
                 cursor: "pointer",
                 borderRadius: "4px",
                 padding: "0.5rem 0.9rem",
-                fontFamily: "monospace",
+                fontFamily: "var(--font-general, sans-serif)",
                 fontSize: "0.65rem",
-                letterSpacing: "0.07em",
+                letterSpacing: "0.1em",
                 marginBottom: "0.75rem",
                 transition: "border-color 0.2s, color 0.2s",
               }}

@@ -1,20 +1,5 @@
 import { useState } from "react";
 
-const inputStyle = {
-  width: "100%",
-  background: "rgba(255,255,255,0.04)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "6px",
-  padding: "0.75rem 1rem",
-  color: "#fff",
-  fontFamily: "var(--font-general, sans-serif)",
-  fontSize: "0.88rem",
-  outline: "none",
-  transition: "border-color 0.2s, background 0.2s",
-  boxSizing: "border-box",
-  caretColor: "#C8FF00",
-};
-
 const TagInput = ({ label, value = [], onChange, error }) => {
   const [input, setInput] = useState("");
 
@@ -27,38 +12,40 @@ const TagInput = ({ label, value = [], onChange, error }) => {
   const removeTag = (tag) => onChange(value.filter((t) => t !== tag));
 
   return (
-    <div style={{ marginBottom: "1.5rem" }}>
+    <div style={{ marginBottom: "1.75rem" }}>
       <label style={{
         display: "block",
-        fontFamily: "monospace",
-        fontSize: "0.7rem",
-        letterSpacing: "0.08em",
-        color: "rgba(200,255,0,0.55)",
-        marginBottom: "0.5rem",
+        fontFamily: "var(--font-general, sans-serif)",
+        fontSize: "0.6rem",
+        letterSpacing: "0.18em",
+        color: "rgba(255,255,255,0.3)",
+        textTransform: "uppercase",
+        marginBottom: "0.55rem",
         userSelect: "none",
       }}>
-        &gt;_ {label}
+        {label}
       </label>
 
       {value.length > 0 && (
         <div style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "0.5rem",
-          marginBottom: "0.65rem",
+          gap: "0.4rem",
+          marginBottom: "0.75rem",
         }}>
           {value.map((tag) => (
             <span key={tag} style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.4rem",
-              fontFamily: "monospace",
-              fontSize: "0.7rem",
-              color: "#C8FF00",
-              border: "0.5px solid rgba(200,255,0,0.4)",
-              borderRadius: "3px",
-              padding: "3px 8px",
-              background: "rgba(200,255,0,0.06)",
+              gap: "0.45rem",
+              fontFamily: "var(--font-general, sans-serif)",
+              fontSize: "0.72rem",
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.75)",
+              background: "rgba(255,255,255,0.07)",
+              borderRadius: "4px",
+              padding: "4px 10px",
+              letterSpacing: "0.02em",
             }}>
               {tag}
               <button
@@ -68,14 +55,14 @@ const TagInput = ({ label, value = [], onChange, error }) => {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  color: "rgba(200,255,0,0.5)",
-                  fontSize: "0.65rem",
+                  color: "rgba(255,255,255,0.25)",
+                  fontSize: "0.6rem",
                   padding: 0,
                   lineHeight: 1,
                   transition: "color 0.15s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,100,100,0.8)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(200,255,0,0.5)")}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,75,75,0.8)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
               >
                 ✕
               </button>
@@ -90,26 +77,33 @@ const TagInput = ({ label, value = [], onChange, error }) => {
         onKeyDown={(e) => {
           if (e.key === "Enter") { e.preventDefault(); addTag(); }
         }}
-        placeholder="type and press Enter to add"
-        style={inputStyle}
-        onFocus={(e) => {
-          e.target.style.borderColor = "rgba(200,255,0,0.45)";
-          e.target.style.background = "rgba(200,255,0,0.03)";
+        placeholder="type and press Enter"
+        style={{
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          borderBottom: "1.5px solid rgba(255,255,255,0.12)",
+          borderRadius: 0,
+          padding: "0.55rem 0",
+          color: "#fff",
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.95rem",
+          outline: "none",
+          transition: "border-color 0.25s",
+          boxSizing: "border-box",
+          caretColor: "#C8FF00",
         }}
-        onBlur={(e) => {
-          e.target.style.borderColor = "rgba(255,255,255,0.1)";
-          e.target.style.background = "rgba(255,255,255,0.04)";
-        }}
+        onFocus={(e) => (e.target.style.borderBottomColor = "#C8FF00")}
+        onBlur={(e) => (e.target.style.borderBottomColor = "rgba(255,255,255,0.12)")}
       />
       {error && (
         <p style={{
-          fontFamily: "monospace",
-          fontSize: "0.68rem",
-          color: "rgba(255,100,100,0.8)",
-          marginTop: "0.4rem",
-          letterSpacing: "0.03em",
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.7rem",
+          color: "rgba(255,75,75,0.8)",
+          marginTop: "0.45rem",
         }}>
-          {`// error: ${error}`}
+          {error}
         </p>
       )}
     </div>

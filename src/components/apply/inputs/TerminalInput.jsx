@@ -1,53 +1,53 @@
 const TerminalInput = ({ label, error, style: extStyle, onFocus, onBlur, ...props }) => (
-  <div style={{ marginBottom: "1.5rem" }}>
+  <div style={{ marginBottom: "1.75rem" }}>
     <label style={{
       display: "block",
-      fontFamily: "monospace",
-      fontSize: "0.7rem",
-      letterSpacing: "0.08em",
-      color: "rgba(200,255,0,0.55)",
-      marginBottom: "0.5rem",
+      fontFamily: "var(--font-general, sans-serif)",
+      fontSize: "0.6rem",
+      letterSpacing: "0.18em",
+      color: "rgba(255,255,255,0.3)",
+      textTransform: "uppercase",
+      marginBottom: "0.55rem",
       userSelect: "none",
     }}>
-      &gt;_ {label}
+      {label}
     </label>
     <input
       {...props}
       style={{
         width: "100%",
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: "6px",
-        padding: "0.75rem 1rem",
+        background: "transparent",
+        border: "none",
+        borderBottom: "1.5px solid rgba(255,255,255,0.12)",
+        borderRadius: 0,
+        padding: "0.55rem 0",
         color: "#fff",
         fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.88rem",
+        fontSize: "0.95rem",
+        fontWeight: 400,
         outline: "none",
-        transition: "border-color 0.2s, background 0.2s",
+        transition: "border-color 0.25s",
         boxSizing: "border-box",
         caretColor: "#C8FF00",
         ...extStyle,
       }}
       onFocus={(e) => {
-        e.target.style.borderColor = "rgba(200,255,0,0.45)";
-        e.target.style.background = "rgba(200,255,0,0.03)";
+        e.target.style.borderBottomColor = "#C8FF00";
         onFocus?.(e);
       }}
       onBlur={(e) => {
-        e.target.style.borderColor = "rgba(255,255,255,0.1)";
-        e.target.style.background = "rgba(255,255,255,0.04)";
+        e.target.style.borderBottomColor = "rgba(255,255,255,0.12)";
         onBlur?.(e);
       }}
     />
     {error && (
       <p style={{
-        fontFamily: "monospace",
-        fontSize: "0.68rem",
-        color: "rgba(255,100,100,0.8)",
-        marginTop: "0.4rem",
-        letterSpacing: "0.03em",
+        fontFamily: "var(--font-general, sans-serif)",
+        fontSize: "0.7rem",
+        color: "rgba(255,75,75,0.8)",
+        marginTop: "0.45rem",
       }}>
-        {`// error: ${error}`}
+        {error}
       </p>
     )}
   </div>

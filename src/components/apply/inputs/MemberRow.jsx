@@ -1,14 +1,15 @@
 const fieldStyle = {
   width: "100%",
-  background: "rgba(255,255,255,0.04)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "6px",
-  padding: "0.65rem 0.85rem",
+  background: "transparent",
+  border: "none",
+  borderBottom: "1.5px solid rgba(255,255,255,0.12)",
+  borderRadius: 0,
+  padding: "0.5rem 0",
   color: "#fff",
   fontFamily: "var(--font-general, sans-serif)",
-  fontSize: "0.84rem",
+  fontSize: "0.9rem",
   outline: "none",
-  transition: "border-color 0.2s, background 0.2s",
+  transition: "border-color 0.25s",
   boxSizing: "border-box",
   caretColor: "#C8FF00",
 };
@@ -20,48 +21,44 @@ const MemberRow = ({ index, value, onChange, onRemove }) => {
     <div style={{
       display: "grid",
       gridTemplateColumns: "1fr 1fr auto",
-      gap: "0.65rem",
-      marginBottom: "0.75rem",
+      gap: "1.25rem",
+      marginBottom: "1.25rem",
       alignItems: "end",
     }}>
       <div>
         <label style={{
           display: "block",
-          fontFamily: "monospace",
-          fontSize: "0.62rem",
-          letterSpacing: "0.08em",
-          color: "rgba(200,255,0,0.5)",
-          marginBottom: "0.35rem",
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.58rem",
+          letterSpacing: "0.16em",
+          color: "rgba(255,255,255,0.28)",
+          textTransform: "uppercase",
+          marginBottom: "0.4rem",
           userSelect: "none",
         }}>
-          &gt;_ member_{id} name
+          Member {id} — Name
         </label>
         <input
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
           placeholder="full name"
           style={fieldStyle}
-          onFocus={(e) => {
-            e.target.style.borderColor = "rgba(200,255,0,0.45)";
-            e.target.style.background = "rgba(200,255,0,0.03)";
-          }}
-          onBlur={(e) => {
-            e.target.style.borderColor = "rgba(255,255,255,0.1)";
-            e.target.style.background = "rgba(255,255,255,0.04)";
-          }}
+          onFocus={(e) => (e.target.style.borderBottomColor = "#C8FF00")}
+          onBlur={(e) => (e.target.style.borderBottomColor = "rgba(255,255,255,0.12)")}
         />
       </div>
       <div>
         <label style={{
           display: "block",
-          fontFamily: "monospace",
-          fontSize: "0.62rem",
-          letterSpacing: "0.08em",
-          color: "rgba(200,255,0,0.5)",
-          marginBottom: "0.35rem",
+          fontFamily: "var(--font-general, sans-serif)",
+          fontSize: "0.58rem",
+          letterSpacing: "0.16em",
+          color: "rgba(255,255,255,0.28)",
+          textTransform: "uppercase",
+          marginBottom: "0.4rem",
           userSelect: "none",
         }}>
-          &gt;_ member_{id} email
+          Member {id} — Email
         </label>
         <input
           type="email"
@@ -69,14 +66,8 @@ const MemberRow = ({ index, value, onChange, onRemove }) => {
           onChange={(e) => onChange({ ...value, email: e.target.value })}
           placeholder="email address"
           style={fieldStyle}
-          onFocus={(e) => {
-            e.target.style.borderColor = "rgba(200,255,0,0.45)";
-            e.target.style.background = "rgba(200,255,0,0.03)";
-          }}
-          onBlur={(e) => {
-            e.target.style.borderColor = "rgba(255,255,255,0.1)";
-            e.target.style.background = "rgba(255,255,255,0.04)";
-          }}
+          onFocus={(e) => (e.target.style.borderBottomColor = "#C8FF00")}
+          onBlur={(e) => (e.target.style.borderBottomColor = "rgba(255,255,255,0.12)")}
         />
       </div>
       <button
@@ -84,23 +75,17 @@ const MemberRow = ({ index, value, onChange, onRemove }) => {
         onClick={onRemove}
         style={{
           background: "none",
-          border: "0.5px solid rgba(255,255,255,0.1)",
-          color: "rgba(255,255,255,0.25)",
+          border: "none",
+          color: "rgba(255,255,255,0.2)",
           cursor: "pointer",
-          borderRadius: "4px",
-          padding: "0.5rem 0.65rem",
-          fontSize: "0.75rem",
-          transition: "color 0.2s, border-color 0.2s",
+          padding: "0.4rem",
+          fontSize: "0.8rem",
+          transition: "color 0.2s",
           lineHeight: 1,
+          marginBottom: "0.1rem",
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = "rgba(255,100,100,0.7)";
-          e.currentTarget.style.borderColor = "rgba(255,100,100,0.3)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = "rgba(255,255,255,0.25)";
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,75,75,0.8)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}
       >
         ✕
       </button>
