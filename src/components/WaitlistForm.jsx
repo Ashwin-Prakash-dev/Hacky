@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../lib/api";
 
 const WaitlistForm = () => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", college: "" });
@@ -12,11 +13,7 @@ const WaitlistForm = () => {
     if (form.phone.trim()) body.phone = form.phone.trim();
     if (form.college.trim()) body.college = form.college.trim();
     try {
-      const res = await fetch(import.meta.env.VITE_WAITLIST_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res = await api.waitlist(body);
       if (res.status === 201) setStatus("success");
       else if (res.status === 409) setStatus("duplicate");
       else setStatus("error");
