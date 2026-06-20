@@ -70,6 +70,7 @@ const Phase06Deploy = ({ formData, onBack, onSubmitted }) => {
   const handleSubmit = async () => {
     if (status === "loading") return;
     setErrMsg("");
+    setStatus("idle"); // clear prior error/duplicate before new attempt
 
     // Pulse button
     await new Promise((res) => {

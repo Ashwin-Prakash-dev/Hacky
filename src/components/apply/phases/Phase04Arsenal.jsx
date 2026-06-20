@@ -36,10 +36,10 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
     updateForm({ links: [...links, ""] });
   };
 
-  const validate = () => {
+  const validate = (linksToCheck = links) => {
     const e = {};
     if (formData.techStack.length === 0) e.techStack = "add at least one technology";
-    links.forEach((l, i) => {
+    linksToCheck.forEach((l, i) => {
       if (l.trim() && !isValidUrl(l.trim())) e[`link_${i}`] = "must be a valid URL";
     });
     setErrors(e);
@@ -47,8 +47,9 @@ const Phase04Arsenal = ({ formData, updateForm, onNext, onBack }) => {
   };
 
   const handleNext = () => {
-    updateForm({ links: links.filter((l) => l.trim()) }); // clean empty slots
-    if (validate()) onNext();
+    const cleanedLinks = links.filter((l) => l.trim());
+    updateForm({ links: cleanedLinks });
+    if (validate(cleanedLinks)) onNext();
   };
 
   return (

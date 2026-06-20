@@ -6,6 +6,7 @@ import MemberRow from "../inputs/MemberRow";
 const Phase02Crew = ({ formData, updateForm, onNext, onBack }) => {
   const [errors, setErrors] = useState({});
   const contentRef = useRef(null);
+  const memberSectionRef = useRef(null);
 
   useEffect(() => {
     const els = contentRef.current?.querySelectorAll(".fi");
@@ -16,6 +17,16 @@ const Phase02Crew = ({ formData, updateForm, onNext, onBack }) => {
       { opacity: 1, y: 0, duration: 0.45, stagger: 0.09, ease: "power3.out", delay: 0.35 }
     );
   }, []);
+
+  useEffect(() => {
+    if (!formData.solo && memberSectionRef.current) {
+      gsap.fromTo(
+        memberSectionRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" }
+      );
+    }
+  }, [formData.solo]);
 
   const addMember = () => {
     if (formData.members.length >= 3) return;
@@ -108,7 +119,7 @@ const Phase02Crew = ({ formData, updateForm, onNext, onBack }) => {
 
         {/* Member rows — hidden when solo, but members state persists */}
         {!formData.solo && (
-          <div className="fi">
+          <div className="fi" ref={memberSectionRef} style={{ opacity: 0 }}>
             {formData.members.map((m, i) => (
               <div key={i}>
                 <MemberRow
