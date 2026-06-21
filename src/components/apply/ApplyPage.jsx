@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
+import BackgroundCanvas from "./BackgroundCanvas";
 import PhaseTransition from "./PhaseTransition";
 import Phase01Identity  from "./phases/Phase01Identity";
 import Phase02Crew      from "./phases/Phase02Crew";
@@ -49,37 +50,36 @@ const ApplyPage = () => {
 
   if (submitted) {
     return (
-      <div style={{
-        minHeight: "100dvh", background: "#0a0a0a",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "2rem",
-      }}>
-        <SuccessScreen />
+      <div style={{ minHeight: "100dvh", background: "#0a0a0a", position: "relative" }}>
+        <BackgroundCanvas />
+        <div aria-hidden="true" style={{
+          position: "fixed", inset: 0, zIndex: 9999, pointerEvents: "none",
+          background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)",
+        }} />
+        <div style={{
+          position: "relative", zIndex: 10, minHeight: "100dvh",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem",
+        }}>
+          <SuccessScreen />
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{
-      minHeight: "100dvh",
-      background: "#0a0a0a",
-      position: "relative",
-      overflow: "hidden",
-    }}>
-      {/* Ambient radial glow */}
+    <div style={{ minHeight: "100dvh", background: "#0a0a0a", position: "relative" }}>
+      {/* Three.js warp-noise background */}
+      <BackgroundCanvas />
+
+      {/* Scanline overlay — CRT texture on everything */}
       <div aria-hidden="true" style={{
         position: "fixed",
-        top: "-20%",
-        right: "-10%",
-        width: "55vw",
-        height: "55vw",
-        maxWidth: "700px",
-        maxHeight: "700px",
-        borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(200,255,0,0.04) 0%, transparent 70%)",
+        inset: 0,
+        zIndex: 9999,
         pointerEvents: "none",
-        zIndex: 0,
+        background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)",
       }} />
+
       {/* Progress line */}
       <div style={{
         position: "fixed", top: 0, left: 0, right: 0,
@@ -113,11 +113,10 @@ const ApplyPage = () => {
         </a>
 
         <span style={{
-          fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem",
-          letterSpacing: "0.18em", color: "rgba(255,255,255,0.45)",
-          textTransform: "uppercase",
+          fontFamily: "monospace", fontSize: "0.65rem",
+          letterSpacing: "0.12em", color: "rgba(200,255,0,0.55)",
         }}>
-          {String(phase).padStart(2, "0")} / {String(TOTAL).padStart(2, "0")}
+          [{String(phase).padStart(2, "0")}/{String(TOTAL).padStart(2, "0")}]
         </span>
 
         <a href="/" style={{
@@ -135,6 +134,8 @@ const ApplyPage = () => {
 
       {/* Phase area */}
       <main style={{
+        position: "relative",
+        zIndex: 10,
         minHeight: "100dvh",
         display: "flex",
         alignItems: "center",
