@@ -249,10 +249,6 @@ export const ExpectCard = () => {
       }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <CardLabel text="Experience" dark />
-          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
-            tap to explore
-          </span>
         </div>
         <div>
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(1.9rem, 4vw, 3.2rem)", marginBottom: "1rem" }}>
@@ -286,7 +282,7 @@ export const ExpectCard = () => {
             opacity: hovered ? 1 : 0,
             transition: `transform 0.28s ease ${0.08 + i * 0.05}s, opacity 0.28s ease ${0.08 + i * 0.05}s`,
           }}>
-            <span style={{ color: "#00aa55", fontSize: "0.75rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+            <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.75rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
             <div>
               <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
               <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
@@ -354,7 +350,7 @@ const ExpectFlat = () => {
           padding: "0.75rem 0",
           borderBottom: i < items.length - 1 ? "0.5px solid #ebebeb" : "none",
         }}>
-          <span style={{ color: "#00aa55", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>{item.icon}</span>
+          <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>{item.icon}</span>
           <div>
             <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
             <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>

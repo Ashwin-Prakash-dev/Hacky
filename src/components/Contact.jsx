@@ -6,7 +6,7 @@ const Contact = () => {
       <div
         id="contact"
         className="w-screen"
-        style={{ background: "#000000", padding: "7rem 0" }}
+        style={{ background: "#0a0a0a", padding: "7rem 0" }}
       >
         <div className="container mx-auto px-5 md:px-10">
           <div style={{ maxWidth: "580px", margin: "0 auto" }}>
@@ -16,11 +16,11 @@ const Contact = () => {
       </div>
 
       {/* ── Sponsor teaser ───────────────────────────────────────────────── */}
-      <div id="sponsors" style={{ padding: "0 clamp(1rem, 4vw, 2.5rem) 5rem", background: "#000" }}>
+      <div id="sponsors" style={{ padding: "0 clamp(1rem, 4vw, 2.5rem) 5rem", background: "#0a0a0a" }}>
         <div style={{
           maxWidth: "1100px", margin: "0 auto",
-          background: "linear-gradient(135deg, #0d0d0d 0%, #0a0a0a 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "#141412",
+          border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: "14px",
           padding: "clamp(2.5rem, 6vw, 4rem)",
           display: "flex", flexWrap: "wrap",
@@ -31,13 +31,13 @@ const Contact = () => {
           {/* Top accent */}
           <div style={{
             position: "absolute", top: 0, left: "8%", right: "8%", height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.25), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.45), transparent)",
           }} />
           {/* Ambient glow */}
           <div style={{
             position: "absolute", top: "-100px", right: "-100px",
             width: "400px", height: "400px",
-            background: "radial-gradient(circle, rgba(200,255,0,0.05), transparent 70%)",
+            background: "radial-gradient(circle, rgba(200,255,0,0.08), transparent 70%)",
             pointerEvents: "none",
           }} />
 

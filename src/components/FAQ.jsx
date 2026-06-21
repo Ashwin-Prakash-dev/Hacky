@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 
 const faqs = [
@@ -32,7 +32,8 @@ const faqs = [
   },
 ];
 
-const FAQItem = ({ question, answer, index }) => {
+/* ── Mobile accordion item (used below 768px) ─────────────────────────────── */
+const FAQItem = ({ question, answer }) => {
   const [open, setOpen] = useState(false);
   const bodyRef = useRef(null);
   const tl = useRef(null);
@@ -40,66 +41,36 @@ const FAQItem = ({ question, answer, index }) => {
   const toggle = () => {
     const body = bodyRef.current;
     if (!body) return;
-
     if (tl.current) tl.current.kill();
-
     if (!open) {
       gsap.set(body, { height: "auto", opacity: 1 });
       const fullHeight = body.scrollHeight;
       gsap.set(body, { height: 0, opacity: 0 });
-      tl.current = gsap.to(body, {
-        height: fullHeight,
-        opacity: 1,
-        duration: 0.4,
-        ease: "power3.out",
-      });
+      tl.current = gsap.to(body, { height: fullHeight, opacity: 1, duration: 0.4, ease: "power3.out" });
     } else {
-      tl.current = gsap.to(body, {
-        height: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: "power3.in",
-      });
+      tl.current = gsap.to(body, { height: 0, opacity: 0, duration: 0.3, ease: "power3.in" });
     }
-
     setOpen((prev) => !prev);
   };
 
   return (
-    <div
-      style={{
-        borderBottom: "1px solid rgba(255,255,255,0.07)",
-        borderLeft: open ? "2px solid rgba(200,255,0,0.45)" : "2px solid transparent",
-        paddingLeft: "1rem",
-        marginLeft: "-1rem",
-        transition: "border-color 0.3s ease",
-      }}
-    >
-      <button
-        onClick={toggle}
-        className="w-full text-left"
-        style={{
-          display: "flex", alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1.5rem 0",
-          background: "none", border: "none", cursor: "pointer",
-          gap: "1.25rem",
-        }}
-      >
-        <span
-          className="font-general"
-          style={{
-            fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
-            color: open ? "#fff" : "rgba(255,255,255,0.65)",
-            transition: "color 0.2s",
-            lineHeight: 1.4,
-          }}
-        >
-          {question}
-        </span>
+    <div style={{
+      borderBottom: "1px solid rgba(255,255,255,0.07)",
+      borderLeft: open ? "2px solid rgba(200,255,0,0.45)" : "2px solid transparent",
+      paddingLeft: "1rem", marginLeft: "-1rem",
+      transition: "border-color 0.3s ease",
+    }}>
+      <button onClick={toggle} className="w-full text-left" style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "1.5rem 0", background: "none", border: "none", cursor: "pointer", gap: "1.25rem",
+      }}>
+        <span className="font-general" style={{
+          fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
+          color: open ? "#fff" : "rgba(255,255,255,0.65)",
+          transition: "color 0.2s", lineHeight: 1.4,
+        }}>{question}</span>
         <span style={{
-          flexShrink: 0, width: "24px", height: "24px",
-          borderRadius: "50%",
+          flexShrink: 0, width: "24px", height: "24px", borderRadius: "50%",
           border: open ? "1px solid rgba(200,255,0,0.5)" : "1px solid rgba(255,255,255,0.15)",
           background: open ? "rgba(200,255,0,0.08)" : "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -107,58 +78,131 @@ const FAQItem = ({ question, answer, index }) => {
           fontSize: "1rem", lineHeight: 1,
           transition: "color 0.25s, border-color 0.25s, background 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
           transform: open ? "rotate(45deg)" : "rotate(0deg)",
-        }}>
-          +
-        </span>
+        }}>+</span>
       </button>
-
       <div ref={bodyRef} style={{ height: 0, overflow: "hidden", opacity: 0 }}>
-        <p
-          className="font-general"
-          style={{
-            fontSize: "0.92rem",
-            color: "rgba(255,255,255,0.5)",
-            lineHeight: 1.8,
-            paddingBottom: "1.5rem",
-            maxWidth: "680px",
-          }}
-        >
-          {answer}
-        </p>
+        <p className="font-general" style={{
+          fontSize: "0.92rem", color: "rgba(255,255,255,0.5)",
+          lineHeight: 1.8, paddingBottom: "1.5rem", maxWidth: "680px",
+        }}>{answer}</p>
       </div>
     </div>
   );
 };
 
-const FAQ = () => (
-  <section
-    id="faq"
-    className="w-screen"
-    style={{ background: "#000000", padding: "6rem 0" }}
-  >
-    <div className="container mx-auto px-5 md:px-10">
-      <div className="mb-12">
-        <p
-          className="font-general text-xs uppercase tracking-widest mb-3"
-          style={{ color: "#C8FF00", letterSpacing: "0.15em" }}
-        >
-          FAQ
-        </p>
-        <h2
-          className="bento-title"
-          style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.02em" }}
-        >
-          Got questions?
-        </h2>
+/* ── Main FAQ component ──────────────────────────────────────────────────── */
+const FAQ = () => {
+  const [selected, setSelected] = useState(0);
+  const answerRef = useRef(null);
+
+  const handleSelect = (i) => {
+    if (i === selected) return;
+    setSelected(i);
+  };
+
+  useEffect(() => {
+    if (!answerRef.current) return;
+    gsap.fromTo(
+      answerRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" }
+    );
+  }, [selected]);
+
+  return (
+    <section id="faq" className="w-screen" style={{ background: "#0a0a0a", padding: "6rem 0" }}>
+      <div className="container mx-auto px-5 md:px-10">
+        <div style={{ marginBottom: "4rem" }}>
+          <h2
+            className="bento-title"
+            style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.02em" }}
+          >
+            Got questions?
+          </h2>
+        </div>
+
+        {/* ── Desktop 2-column panel ───────────────────────────── */}
+        <div className="faq-desktop" style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "clamp(2.5rem, 6vw, 5rem)",
+          alignItems: "start",
+        }}>
+          {/* Left: question list */}
+          <div>
+            {faqs.map((faq, i) => (
+              <button
+                key={i}
+                onClick={() => handleSelect(i)}
+                style={{
+                  width: "100%", textAlign: "left",
+                  display: "flex", alignItems: "baseline", gap: "1.25rem",
+                  padding: "1.25rem 0 1.25rem 1rem",
+                  marginLeft: "-1rem",
+                  background: "none", outline: "none",
+                  borderTop: "none", borderRight: "none",
+                  borderBottom: "1px solid rgba(255,255,255,0.07)",
+                  borderLeft: selected === i
+                    ? "2px solid rgba(200,255,0,0.5)"
+                    : "2px solid transparent",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s ease",
+                }}
+              >
+                <span style={{
+                  fontFamily: "var(--font-general)",
+                  fontSize: "0.6rem", fontWeight: 700,
+                  color: selected === i ? "rgba(200,255,0,0.65)" : "rgba(255,255,255,0.2)",
+                  minWidth: "1.8rem", flexShrink: 0,
+                  transition: "color 0.2s",
+                  letterSpacing: "0.04em",
+                }}>0{i + 1}</span>
+                <span className="font-general" style={{
+                  fontSize: "clamp(0.85rem, 1.4vw, 1rem)",
+                  color: selected === i ? "#fff" : "rgba(255,255,255,0.5)",
+                  lineHeight: 1.45,
+                  transition: "color 0.2s",
+                }}>{faq.q}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Right: sticky answer panel */}
+          <div style={{ position: "sticky", top: "8rem" }}>
+            <div ref={answerRef}>
+              <p className="font-general" style={{
+                fontSize: "clamp(0.95rem, 1.6vw, 1.1rem)",
+                color: "rgba(255,255,255,0.65)",
+                lineHeight: 1.9,
+              }}>
+                {faqs[selected].a}
+              </p>
+              <div style={{
+                marginTop: "2.5rem", height: "1px",
+                background: "linear-gradient(90deg, rgba(200,255,0,0.3), transparent)",
+              }} />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Mobile accordion ─────────────────────────────────── */}
+        <div className="faq-mobile" style={{ maxWidth: "760px" }}>
+          {faqs.map((faq, i) => (
+            <FAQItem key={i} question={faq.q} answer={faq.a} />
+          ))}
+        </div>
       </div>
 
-      <div style={{ maxWidth: "760px" }}>
-        {faqs.map((faq, i) => (
-          <FAQItem key={i} index={i} question={faq.q} answer={faq.a} />
-        ))}
-      </div>
-    </div>
-  </section>
-);
+      <style>{`
+        .faq-desktop { display: grid; }
+        .faq-mobile  { display: none; }
+        @media (max-width: 767px) {
+          .faq-desktop { display: none !important; }
+          .faq-mobile  { display: block !important; }
+        }
+      `}</style>
+    </section>
+  );
+};
 
 export default FAQ;

@@ -172,7 +172,7 @@ const TerminalBridge = () => {
       ref={sectionRef}
       style={{
         position: "relative",
-        backgroundColor: "#000",
+        backgroundColor: "#0a0a0a",
         overflow: "hidden",
         padding: "clamp(4.5rem, 9vw, 7.5rem) clamp(1rem, 5vw, 3rem)",
       }}

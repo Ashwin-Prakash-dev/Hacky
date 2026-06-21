@@ -277,7 +277,7 @@ const VideoCards = () => {
     <section
       ref={sectionRef}
       id="showcase"
-      style={{ backgroundColor: "#000", paddingBottom: 0 }}
+      style={{ backgroundColor: "#0a0a0a", paddingBottom: 0 }}
     >
       <div className="container mx-auto px-3 md:px-10">
 
@@ -322,7 +322,7 @@ const VideoCards = () => {
             style={{
               fontFamily: "var(--font-general)",
               fontSize: "0.82rem",
-              color: "rgba(255,255,255,0.28)",
+              color: "rgba(255,255,255,0.52)",
               lineHeight: 1.78,
               maxWidth: "31rem",
               opacity: 0,
@@ -449,7 +449,7 @@ const VideoCards = () => {
             <p style={{
               fontFamily: "var(--font-general)",
               fontSize: "clamp(0.82rem, 1.3vw, 0.98rem)",
-              color: "rgba(255,255,255,0.4)",
+              color: "rgba(255,255,255,0.52)",
               lineHeight: 1.9,
             }}>
               Startathon is Kerala's most curated builder hackathon. We don't take

@@ -66,7 +66,7 @@ const Stats = () => {
     <section
       ref={sectionRef}
       style={{
-        background: "#000",
+        background: "#0a0a0a",
         padding: "0",
         width: "100%",
         opacity: 0,
