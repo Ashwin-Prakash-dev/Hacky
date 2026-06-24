@@ -19,7 +19,7 @@ const TIERS = [
     id: "t1", name: "T1", price: "₹1.5L+", tag: "On-Campus Access",
     slots: null, highlight: true,
     perks: [
-      "Walk the floor and approach any team directly",
+      "Access the complete participant resume database and connect directly with any team.",
       "On-spot offers: internships, PPOs, full-time",
       "Embedded as judge or mentor during the sprint",
       "Dedicated stage time with all 20 teams",
