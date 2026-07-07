@@ -12,7 +12,7 @@ const WaitlistForm = () => {
     if (form.phone.trim()) body.phone = form.phone.trim();
     if (form.college.trim()) body.college = form.college.trim();
     try {
-      const res = await fetch(import.meta.env.VITE_WAITLIST_API, {
+      const res = await fetch("https://api.sctcoding.club/api/v3/events/startathon/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

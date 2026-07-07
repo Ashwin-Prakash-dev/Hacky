@@ -24,11 +24,9 @@ React + Vite landing page deployed on Cloudflare Pages. Two routes: the main lan
 - **Tailwind CSS 3** for utility classes
 - **Cloudflare Pages** via `wrangler` for deployment
 
-## Environment Variables
+## Waitlist API
 
-| Variable | Purpose |
-|---|---|
-| `VITE_WAITLIST_API` | POST endpoint for waitlist form (returns 201 success, 409 duplicate) |
+The waitlist form posts to `https://api.sctcoding.club/api/v3/events/startathon/waitlist` (returns 201 success, 409 duplicate).
 
 ## File Structure
 
@@ -125,7 +123,7 @@ BentoTilt (`Features.jsx`) applies perspective tilt on mouse move (max ±5deg, s
 ## WaitlistForm API Contract
 
 ```
-POST $VITE_WAITLIST_API
+POST https://api.sctcoding.club/api/v3/events/startathon/waitlist
 Content-Type: application/json
 
 { "name": string, "email": string, "college"?: string, "phone"?: string }
