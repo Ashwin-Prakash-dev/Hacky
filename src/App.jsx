@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import Lenis from "lenis";
 import gsap from "gsap";
@@ -25,18 +25,35 @@ import ApplyPage from "./components/apply/ApplyPage";
 
 function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
+  const lenisRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    const raf = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
     ScrollTrigger.refresh();
     return () => {
       lenis.destroy();
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(raf);
     };
   }, []);
+
+  // Keep the page from scrolling behind the fixed intro overlay.
+  useEffect(() => {
+    if (introComplete) {
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+    } else {
+      lenisRef.current?.stop();
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [introComplete]);
 
   return (
     <>
