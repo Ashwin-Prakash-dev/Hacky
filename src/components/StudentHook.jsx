@@ -8,8 +8,8 @@ const outcomes = [
   {
     num: "01",
     tag: "Career",
-    headline: "Get hired on the spot.",
-    body: "Sponsors watch you build for 30 hours. If they like what they see, they make offers right there. No interviews. No waiting.",
+    headline: "Be seen before anyone else.",
+    body: "Companies at the event watch you build for 30 hours. If something clicks, that's a conversation that doesn't happen anywhere else.",
   },
   {
     num: "02",
@@ -20,8 +20,8 @@ const outcomes = [
   {
     num: "03",
     tag: "Network",
-    headline: "Skip the application queue.",
-    body: "Top builders get referred directly into hiring pipelines. The people in this room remember who impressed them.",
+    headline: "Stand out to the right people.",
+    body: "The people in this room remember who impressed them. That's not something a CV can do.",
   },
 ];
 

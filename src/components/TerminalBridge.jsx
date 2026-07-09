@@ -110,10 +110,6 @@ const TerminalBridge = () => {
     return () => timersRef.current.forEach(clearTimeout);
   }, []);
 
-  useEffect(() => {
-    if (interactive) inputRef.current?.focus();
-  }, [interactive]);
-
   // Auto-scroll body when history grows
   useEffect(() => {
     if (bodyRef.current) {

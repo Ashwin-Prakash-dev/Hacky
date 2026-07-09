@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: "What happens at Demo Day?",
-    a: "You present to judges, sponsors, and ecosystem partners. Everyone shows their work. The top teams compete for prizes. Sponsors make offers.",
+    a: "You present to judges, sponsors, and ecosystem partners. Everyone shows their work. The top teams compete for prizes. Companies in the room are there to find builders.",
   },
 ];
 

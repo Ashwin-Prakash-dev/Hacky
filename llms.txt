@@ -1,0 +1,164 @@
+# Startathon — Landing Page
+
+> Kerala's most curated 30-hour in-person hackathon. Organized by Coding Club, SCTCE (Sree Chitra Thirunal College of Engineering), Thiruvananthapuram.
+
+## Project
+
+React + Vite landing page deployed on Cloudflare Pages. Two routes: the main landing page (`/`) and a dedicated sponsor page (`/sponsors`).
+
+**Event facts**
+- Format: 30-hour in-person build sprint
+- Venue: SCTCE, Thiruvananthapuram, Kerala
+- Teams: 20 curated teams, 1–4 members (solo entries welcome)
+- Prize pool: ₹2L+ total; ₹1L+ first place (*subject to changes*)
+- Edition: Startathon 2026
+- Organizer contact: hello@sctcoding.club · +91 79091 90948
+
+## Stack
+
+- **React 18** with React Router v7 (BrowserRouter, two routes)
+- **Vite 5** build tool
+- **Three.js** via `@react-three/fiber` and `@react-three/drei` (3D models)
+- **GSAP 3** with ScrollTrigger (scroll animations, clip-path, counters, stagger)
+- **Lenis** smooth scroll (lerp 0.08, integrated with GSAP ticker)
+- **Tailwind CSS 3** for utility classes
+- **Cloudflare Pages** via `wrangler` for deployment
+
+## Waitlist API
+
+The waitlist form posts to `https://api.sctcoding.club/api/v3/events/startathon/waitlist` (returns 201 success, 409 duplicate).
+
+## File Structure
+
+```
+src/
+  App.jsx                     # Root: Lenis + GSAP setup, route definitions
+  main.jsx                    # Entry point, BrowserRouter wrapper
+  index.css                   # Global styles, CSS variables, animations
+  components/
+    Intro.jsx                 # Animated loading/intro screen
+    CustomCursor.jsx          # Custom cursor overlay
+    ScrollProgress.jsx        # Scroll progress bar
+    Navbar.jsx                # Sticky nav, hides on scroll-down, shows on scroll-up
+    Hero.jsx                  # Full-screen video, GSAP clip-path animation on scroll
+    VideoCards.jsx            # Video cards section
+    Stats.jsx                 # Animated stat counters (ALL Kerala / 20 teams / 30hrs / 3 winners)
+    StudentHook.jsx           # Student-targeted section, outcome cards, Vimeo embed
+    Marquee.jsx               # Scrolling text marquee
+    TerminalBridge.jsx        # Interactive terminal (boot sequence + commands)
+    TerminalBridge.css        # Terminal-specific styles (scanlines, cursor blink, dots)
+    Timeline.jsx              # Zigzag feature cards with GSAP scroll trace beam
+    Features.jsx              # PrizesCard, ExpectCard, BentoTilt, flat mobile variants
+    FAQ.jsx                   # Accordion FAQ with GSAP height animation
+    Contact.jsx               # WaitlistForm + sponsor teaser card
+    WaitlistForm.jsx          # Waitlist signup form (name, email, college, phone)
+    Footer.jsx                # Links, social icons, organizer branding
+    Sponsors.jsx              # Full sponsor page (/sponsors route)
+    AnimatedTitle.jsx         # Animated heading component
+    LaptopReveal.jsx          # Scroll-driven 3D laptop reveal
+    LaptopModel.jsx           # Three.js laptop 3D model
+    DeskModel.jsx             # Three.js desk 3D model
+    CoffeeModel.jsx           # Three.js coffee cup 3D model
+    CanvasBg.jsx              # Canvas backgrounds (SignalPulseBg)
+    Button.jsx                # Reusable button component
+    VideoPreview.jsx          # Video preview component
+    ScreenContent.jsx         # Content rendered on 3D laptop screen
+    VideoCards.css            # Video cards styles
+    index-features-patch.css  # Feature section style overrides
+```
+
+## Page Sections (Main Route `/`)
+
+Rendered in order inside `<main>`:
+
+1. **ScrollProgress** — fixed top progress bar
+2. **CustomCursor** — replaces default cursor
+3. **Intro** — full-screen animated intro, dismissed via `onComplete` callback; `introComplete` state gates it
+4. **NavBar** — fixed, hides on scroll-down / shows on scroll-up via GSAP translate; links: "What is it" → `#what-is-it`, "Perks" → `#timeline`, "FAQ" → `#faq`, "For Sponsors" → `/sponsors`, "Get Notified" → `#contact`
+5. **Hero** — full-viewport video (`videos/hero-1.mp4/.webm`), `opacity: 0.55`; GSAP clip-path scrub collapses the polygon on scroll; headline: "Startathon." with badge "Kerala · Limited teams only"; CTA scrolls to `#contact`
+6. **VideoCards** — supplementary video cards
+7. **Stats** — 4-cell grid: ALL (Kerala) / 20 (Teams Selected) / 30hrs (Non-stop Building) / 3 (Winners); numbers count up on scroll via GSAP
+8. **StudentHook** — "Still in college. Already building." headline; Vimeo embed (`https://player.vimeo.com/video/1197348906`); 3 outcome cards (Career / Access / Network); pull-quote
+9. **Marquee** — infinite scrolling text strip
+10. **TerminalBridge** — fake terminal with boot sequence (8 lines, ~2.5s total); becomes interactive after "ACCESS GRANTED"; supports commands: `help`, `prizes`, `mentors`, `apply`, `clear`; up/down arrow key command history; IntersectionObserver triggers boot at 15% visibility; respects `prefers-reduced-motion`
+11. **Timeline** — section id `#timeline`; desktop: zigzag layout with traced beam (scaleY from 0 → 1 on scroll) + moving lime dot; 4 cards alternating left/right: Prizes (from Features.jsx), What to Expect (from Features.jsx), Mentors, Rules; mobile: horizontal snap carousel with dot indicators
+12. **FAQ** — section id `#faq`; 7 questions with GSAP height/opacity accordion; left lime border on open item
+13. **Contact** — section id `#contact`; WaitlistForm centered in a max-width container; sponsor teaser card below linking to `/sponsors`
+14. **Footer** — brand, contact column (email/phone/website), social column (Instagram/LinkedIn/X); copyright "© 2026 Startathon · Sree Chitra Thirunal College of Engineering"
+
+## Sponsor Page (`/sponsors`)
+
+Separate route, no shared Navbar/Footer.
+
+- Back button ("← Startathon") navigates to `/`
+- Hero: "Backing the Builders." with 4 stat pills (20 teams / 30 HRS / ₹2L+ / All Kerala)
+- MarqueeStrip (bidirectional)
+- Value props grid: Watch them build / Kerala's best, one room / Access, not ads / Hire before anyone else
+- Tier cards (3):
+  - **T1** ₹1.5L+ — On-Campus Access (highlighted, lime border); walk floor, spot offers, embedded as judge, sponsored problem statement, primary logo
+  - **T2** ₹75K+ — Off-Campus Access; curated shortlist, up to 2 mentor slots, secondary logo, 3 social posts
+  - **Custom** — Quote on request; bespoke engagement
+- CTA section (`#sponsor-contact`): email `hello@sctcoding.club?subject=Sponsorship%20Inquiry%20-%20Startathon%202026` and phone link
+- GrainOverlay: animated canvas noise (alpha 12, overlay blend mode)
+- All entrance animations via GSAP ScrollTrigger
+
+## Design System
+
+| Token | Value |
+|---|---|
+| Primary accent | `#C8FF00` (lime) |
+| Background (default) | `#000` / `#050505` |
+| Card dark | `#0a0a0a` / `#0c0c0c` |
+| Card light (hover flip) | `#f7f5f0` / `#fff` |
+| Font family | `var(--font-general)` |
+| Border (subtle) | `rgba(255,255,255,0.07–0.1)` |
+| Border (lime) | `rgba(200,255,0,0.12–0.4)` |
+
+Key CSS animations defined in `index.css`: `tapPulse` (pulsing dot on interactive cards), `scrollPulse` (scroll cue), `tb-cursor` blink, `tb-dot` loading dots.
+
+Interactive flip cards (PrizesCard, ExpectCard, MentorsCard, RulesCard) use hover + click toggle with front/back faces animated via opacity + translateY transitions. Desktop: `onMouseEnter/Leave`; mobile: `onClick` toggle.
+
+BentoTilt (`Features.jsx`) applies perspective tilt on mouse move (max ±5deg, scale 0.98).
+
+## WaitlistForm API Contract
+
+```
+POST https://api.sctcoding.club/api/v3/events/startathon/waitlist
+Content-Type: application/json
+
+{ "name": string, "email": string, "college"?: string, "phone"?: string }
+
+201 → success
+409 → duplicate email
+5xx → error
+```
+
+## FAQ Content
+
+1. Who can apply? — Any student in Kerala (developer, designer, aspiring founder)
+2. How big is the team? — 1 to 4 people; solo entries welcome
+3. Is this in-person? — Yes, fully in-person at SCTCE, Thiruvananthapuram
+4. What are the problem statements? — Announced when applications open
+5. How do you pick teams? — Idea + team quality; 20 spots; looking for people already building
+6. What's the prize pool? — ₹2L+ total; 1st place ₹1L+ (*subject to changes*)
+7. What happens at Demo Day? — Present to judges, sponsors, ecosystem partners; top teams compete for prizes
+
+## Terminal Commands
+
+| Command | Output |
+|---|---|
+| `help` | Lists available commands |
+| `prizes` | Prize pool breakdown (₹2L+, 1st ₹1L+, 2nd/3rd TBA) |
+| `mentors` | Mentor cohort info (startups, OSS, SCTCE alumni; full list at launch) |
+| `apply` | Eligibility, team size, format, registration info |
+| `clear` | Clears history |
+| anything else | `command not found: <cmd>` + suggestion |
+
+## Social & Contact
+
+- Instagram: `@codingclubsctce`
+- LinkedIn: `sct-coding-club`
+- X/Twitter: `@sctcodingclub`
+- Email: hello@sctcoding.club
+- Phone: +91 79091 90948
+- Website: www.sctcoding.club
