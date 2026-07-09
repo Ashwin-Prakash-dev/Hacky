@@ -10,6 +10,7 @@ import CustomCursor from "./components/CustomCursor";
 import ScrollProgress from "./components/ScrollProgress";
 import NavBar from "./components/Navbar";
 import Hero from "./components/Hero";
+import SponsorStrip from "./components/SponsorStrip";
 import Stats from "./components/Stats";
 import Marquee from "./components/Marquee";
 import TerminalBridge from "./components/TerminalBridge";
@@ -45,6 +46,7 @@ function MainPage() {
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
         <Hero />
+        <SponsorStrip />
         <VideoCards />
         <Stats />
         <StudentHook />
