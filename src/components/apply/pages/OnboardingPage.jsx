@@ -32,14 +32,17 @@ const OnboardingPage = () => {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     // Already on a team? Direct-navigation guard: bounce to the dashboard.
     api.getTeam()
-      .then(() => navigate("/team", { replace: true }))
+      .then(() => { if (!cancelled) navigate("/team", { replace: true }); })
       .catch((err) => {
+        if (cancelled) return;
         if (err.status === 401) navigate("/login", { replace: true });
         // 404 = teamless, the expected state — stay here
       });
     loadInvites();
+    return () => { cancelled = true; };
   }, [navigate, loadInvites]);
 
   const logout = () => {
