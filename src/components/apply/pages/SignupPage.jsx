@@ -103,8 +103,12 @@ const SignupPage = () => {
               onChange={set("college")} autoComplete="organization"
             />
             <ErrorLine>
-              {error}
-              {conflict && <> — <MonoLink to="/login">log in instead</MonoLink></>}
+              {error && (
+                <>
+                  {error}
+                  {conflict && <> — <MonoLink to="/login">log in instead</MonoLink></>}
+                </>
+              )}
             </ErrorLine>
             <PrimaryButton type="submit" disabled={busy}>
               {busy ? "creating…" : "Sign up"}
