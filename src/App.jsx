@@ -27,6 +27,8 @@ import LoginPage from "./components/apply/pages/LoginPage";
 import SignupPage from "./components/apply/pages/SignupPage";
 import ForgotPage from "./components/apply/pages/ForgotPage";
 import ResetPage from "./components/apply/pages/ResetPage";
+import RequireAuth from "./components/apply/RequireAuth";
+import OnboardingPage from "./components/apply/pages/OnboardingPage";
 
 function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
@@ -94,6 +96,9 @@ function App() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/forgot" element={<ForgotPage />} />
       <Route path="/reset" element={<ResetPage />} />
+      <Route element={<RequireAuth />}>
+        <Route path="/onboarding" element={<OnboardingPage />} />
+      </Route>
     </Routes>
   );
 }
