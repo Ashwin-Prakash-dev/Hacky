@@ -6,10 +6,11 @@ const PhaseTransition = ({ direction = "forward", children }) => {
 
   useEffect(() => {
     const x = direction === "back" ? -28 : 28;
-    gsap.fromTo(ref.current,
+    const tween = gsap.fromTo(ref.current,
       { opacity: 0, x },
       { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }
     );
+    return () => tween.kill();
   }, [direction]);
 
   return (
