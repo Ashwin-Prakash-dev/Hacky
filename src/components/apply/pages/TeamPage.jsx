@@ -73,6 +73,7 @@ const TeamPage = () => {
   };
 
   const invite = async (email, name, onSent) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setInviteError("enter a valid email");
       return;
@@ -93,6 +94,7 @@ const TeamPage = () => {
   };
 
   const kick = async (member) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     if (!window.confirm(`Kick ${member.name} from the team?`)) return;
     setKickBusyId(member.user_id);
     setActionError("");
@@ -107,6 +109,7 @@ const TeamPage = () => {
   };
 
   const pay = async (transactionId) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     setPayBusy(true);
     setPayError("");
     try {
@@ -120,6 +123,7 @@ const TeamPage = () => {
   };
 
   const leave = async () => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     const isLeader = team.your_role === "leader";
     const msg = isLeader
       ? "Disband the team? This deletes it and frees every member. This cannot be undone."
