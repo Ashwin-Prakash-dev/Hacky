@@ -29,6 +29,7 @@ import ForgotPage from "./components/apply/pages/ForgotPage";
 import ResetPage from "./components/apply/pages/ResetPage";
 import RequireAuth from "./components/apply/RequireAuth";
 import OnboardingPage from "./components/apply/pages/OnboardingPage";
+import TeamPage from "./components/apply/pages/TeamPage";
 
 function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
@@ -98,6 +99,7 @@ function App() {
       <Route path="/reset" element={<ResetPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/team" element={<TeamPage />} />
       </Route>
     </Routes>
   );
