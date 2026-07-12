@@ -20,10 +20,12 @@ const ResetPage = () => {
     e.preventDefault();
     if (password.length < 8 || password.length > 100) {
       setError("password must be 8–100 characters");
+      setExpired(false);
       return;
     }
     if (password !== confirm) {
       setError("passwords do not match");
+      setExpired(false);
       return;
     }
     setBusy(true);
