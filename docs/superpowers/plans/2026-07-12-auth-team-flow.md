@@ -701,8 +701,12 @@ const SignupPage = () => {
               onChange={set("college")} autoComplete="organization"
             />
             <ErrorLine>
-              {error}
-              {conflict && <> — <MonoLink to="/login">log in instead</MonoLink></>}
+              {error && (
+                <>
+                  {error}
+                  {conflict && <> — <MonoLink to="/login">log in instead</MonoLink></>}
+                </>
+              )}
             </ErrorLine>
             <PrimaryButton type="submit" disabled={busy}>
               {busy ? "creating…" : "Sign up"}
@@ -862,10 +866,12 @@ const ResetPage = () => {
     e.preventDefault();
     if (password.length < 8 || password.length > 100) {
       setError("password must be 8–100 characters");
+      setExpired(false);
       return;
     }
     if (password !== confirm) {
       setError("passwords do not match");
+      setExpired(false);
       return;
     }
     setBusy(true);
@@ -907,8 +913,12 @@ const ResetPage = () => {
                 autoComplete="new-password"
               />
               <ErrorLine>
-                {error}
-                {expired && <> — <MonoLink to="/forgot">request a new link</MonoLink></>}
+                {error && (
+                  <>
+                    {error}
+                    {expired && <> — <MonoLink to="/forgot">request a new link</MonoLink></>}
+                  </>
+                )}
               </ErrorLine>
               <PrimaryButton type="submit" disabled={busy}>
                 {busy ? "saving…" : "Set password"}
@@ -1225,13 +1235,16 @@ const OnboardingPage = () => {
 
   useEffect(() => {
     // Already on a team? Direct-navigation guard: bounce to the dashboard.
+    let cancelled = false;
     api.getTeam()
-      .then(() => navigate("/team", { replace: true }))
+      .then(() => { if (!cancelled) navigate("/team", { replace: true }); })
       .catch((err) => {
+        if (cancelled) return;
         if (err.status === 401) navigate("/login", { replace: true });
         // 404 = teamless, the expected state — stay here
       });
     loadInvites();
+    return () => { cancelled = true; };
   }, [navigate, loadInvites]);
 
   const logout = () => {
@@ -1756,6 +1769,7 @@ const TeamPage = () => {
   };
 
   const invite = async (email, name, onSent) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setInviteError("enter a valid email");
       return;
@@ -1776,6 +1790,7 @@ const TeamPage = () => {
   };
 
   const kick = async (member) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     if (!window.confirm(`Kick ${member.name} from the team?`)) return;
     setKickBusyId(member.user_id);
     setActionError("");
@@ -1790,6 +1805,7 @@ const TeamPage = () => {
   };
 
   const pay = async (transactionId) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     setPayBusy(true);
     setPayError("");
     try {
@@ -1803,6 +1819,7 @@ const TeamPage = () => {
   };
 
   const leave = async () => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
     const isLeader = team.your_role === "leader";
     const msg = isLeader
       ? "Disband the team? This deletes it and frees every member. This cannot be undone."
