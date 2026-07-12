@@ -22,6 +22,7 @@ import Sponsors from "./components/Sponsors";
 import VideoCards from "./components/VideoCards";
 import StudentHook from "./components/StudentHook";
 import ApplyPage from "./components/apply/ApplyPage";
+import CallbackPage from "./components/apply/pages/CallbackPage";
 import LoginPage from "./components/apply/pages/LoginPage";
 import SignupPage from "./components/apply/pages/SignupPage";
 import ForgotPage from "./components/apply/pages/ForgotPage";
@@ -87,6 +88,7 @@ function App() {
     <Routes>
       <Route path="/" element={<MainPage />} />
       <Route path="/sponsors" element={<><CustomCursor /><Sponsors /></>} />
+      <Route path="/auth/callback" element={<CallbackPage />} />
       <Route path="/apply" element={<ApplyPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
