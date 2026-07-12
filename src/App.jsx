@@ -24,6 +24,8 @@ import StudentHook from "./components/StudentHook";
 import ApplyPage from "./components/apply/ApplyPage";
 import LoginPage from "./components/apply/pages/LoginPage";
 import SignupPage from "./components/apply/pages/SignupPage";
+import ForgotPage from "./components/apply/pages/ForgotPage";
+import ResetPage from "./components/apply/pages/ResetPage";
 
 function MainPage() {
   const [introComplete, setIntroComplete] = useState(false);
@@ -88,6 +90,8 @@ function App() {
       <Route path="/apply" element={<ApplyPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/forgot" element={<ForgotPage />} />
+      <Route path="/reset" element={<ResetPage />} />
     </Routes>
   );
 }
