@@ -57,6 +57,10 @@ export const api = {
       body: { token, new_password: newPassword },
     }),
 
+  // account
+  getMe: () => request("/me"),
+  updateMe: (fields) => request("/me", { method: "PATCH", body: fields }),
+
   // team
   createTeam: (teamName) =>
     request("/team", { method: "POST", body: { team_name: teamName } }),

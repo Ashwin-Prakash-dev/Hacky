@@ -14,6 +14,7 @@ import ForgotPage from "./pages/ForgotPage";
 import ResetPage from "./pages/ResetPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   );

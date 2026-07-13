@@ -6,7 +6,7 @@ import TerminalInput from "../components/apply/inputs/TerminalInput";
 import InviteCards from "../components/apply/team/InviteCards";
 import {
   MONO, SANS, Panel, Eyebrow, Title, ErrorLine,
-  PrimaryButton, GhostButton,
+  PrimaryButton, GhostButton, MonoLink,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { getUser, clearAuth } from "../lib/auth";
@@ -115,7 +115,12 @@ const OnboardingPage = () => {
   return (
     <AuthShell
       label="FORM YOUR TEAM"
-      right={<GhostButton onClick={logout}>logout</GhostButton>}
+      right={
+        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+          <MonoLink to="/profile">profile</MonoLink>
+          <GhostButton onClick={logout}>logout</GhostButton>
+        </div>
+      }
     >
       <PhaseTransition>
         <div style={{ width: "100%", maxWidth: "760px" }}>

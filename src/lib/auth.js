@@ -32,4 +32,10 @@ export function getUser() {
   }
 }
 
+export function updateUser(partial) {
+  const merged = { ...getUser(), ...partial };
+  localStorage.setItem(KEY_USER, JSON.stringify(merged));
+  return merged;
+}
+
 export const isAuthed = () => getToken() !== null;

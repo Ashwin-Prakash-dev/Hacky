@@ -6,7 +6,7 @@ import JoinCodePanel from "../components/apply/team/JoinCodePanel";
 import RosterList from "../components/apply/team/RosterList";
 import InvitePanel from "../components/apply/team/InvitePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
-import { MONO, SANS, LIME, Panel, ErrorLine, PrimaryButton, GhostButton } from "../components/apply/ui";
+import { MONO, SANS, LIME, Panel, ErrorLine, PrimaryButton, GhostButton, MonoLink } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
 
@@ -142,7 +142,12 @@ const TeamPage = () => {
 
   if (loadError) {
     return (
-      <AuthShell label="TEAM" right={<GhostButton onClick={logout}>logout</GhostButton>}>
+      <AuthShell label="TEAM" right={
+        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+          <MonoLink to="/profile">profile</MonoLink>
+          <GhostButton onClick={logout}>logout</GhostButton>
+        </div>
+      }>
         <Panel>
           <ErrorLine>{loadError}</ErrorLine>
           <PrimaryButton onClick={refresh}>Retry</PrimaryButton>
@@ -165,7 +170,12 @@ const TeamPage = () => {
   const confirmed = team.status === "confirmed";
 
   return (
-    <AuthShell label="TEAM" right={<GhostButton onClick={logout}>logout</GhostButton>}>
+    <AuthShell label="TEAM" right={
+      <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+        <MonoLink to="/profile">profile</MonoLink>
+        <GhostButton onClick={logout}>logout</GhostButton>
+      </div>
+    }>
       <PhaseTransition>
         <div style={{
           width: "100%", maxWidth: "760px",
