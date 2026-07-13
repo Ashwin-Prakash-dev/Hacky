@@ -92,6 +92,7 @@ function App() {
       <Route path="/" element={<MainPage />} />
       <Route path="/sponsors" element={<><CustomCursor /><Sponsors /></>} />
       <Route path="/auth/callback" element={<CallbackPage />} />
+      <Route path="/auth/google/callback" element={<CallbackPage />} />
       <Route path="/apply" element={<ApplyPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
