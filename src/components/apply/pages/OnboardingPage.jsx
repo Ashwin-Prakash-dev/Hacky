@@ -140,34 +140,42 @@ const OnboardingPage = () => {
             gap: "1.25rem",
           }}>
             <Panel maxWidth="none">
-              <Eyebrow>CREATE A TEAM</Eyebrow>
-              <Title>Lead your own crew</Title>
-              <form onSubmit={createTeam} noValidate>
-                <TerminalInput
-                  label="Team name (2–60 characters)" value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                />
-                <ErrorLine>{createError}</ErrorLine>
-                <PrimaryButton type="submit" disabled={busy}>
-                  Create team
-                </PrimaryButton>
-              </form>
+              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                <Eyebrow>CREATE A TEAM</Eyebrow>
+                <Title>Lead your own crew</Title>
+                <form onSubmit={createTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                  <TerminalInput
+                    label="Team name (2–60 characters)" value={teamName}
+                    onChange={(e) => setTeamName(e.target.value)}
+                  />
+                  <ErrorLine>{createError}</ErrorLine>
+                  <div style={{ marginTop: "auto" }}>
+                    <PrimaryButton type="submit" disabled={busy}>
+                      Create team
+                    </PrimaryButton>
+                  </div>
+                </form>
+              </div>
             </Panel>
 
             <Panel maxWidth="none">
-              <Eyebrow>JOIN A TEAM</Eyebrow>
-              <Title>Have a join code?</Title>
-              <form onSubmit={joinTeam} noValidate>
-                <TerminalInput
-                  label="Join code" value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                  style={{ fontFamily: MONO, letterSpacing: "0.2em", textTransform: "uppercase" }}
-                />
-                <ErrorLine>{joinError}</ErrorLine>
-                <PrimaryButton type="submit" disabled={busy}>
-                  Join team
-                </PrimaryButton>
-              </form>
+              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                <Eyebrow>JOIN A TEAM</Eyebrow>
+                <Title>Have a join code?</Title>
+                <form onSubmit={joinTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                  <TerminalInput
+                    label="Join code" value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
+                    style={{ fontFamily: MONO, letterSpacing: "0.2em", textTransform: "uppercase" }}
+                  />
+                  <ErrorLine>{joinError}</ErrorLine>
+                  <div style={{ marginTop: "auto" }}>
+                    <PrimaryButton type="submit" disabled={busy}>
+                      Join team
+                    </PrimaryButton>
+                  </div>
+                </form>
+              </div>
             </Panel>
           </div>
 
