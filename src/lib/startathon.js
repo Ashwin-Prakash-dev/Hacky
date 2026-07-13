@@ -49,6 +49,8 @@ export const api = {
     request(
       `/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
     ),
+  googleCredential: (credential) =>
+    request("/auth/google/credential", { method: "POST", body: { credential } }),
   requestReset: (email) =>
     request("/auth/password/reset", { method: "POST", body: { email } }),
   verifyReset: (token, newPassword) =>

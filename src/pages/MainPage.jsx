@@ -3,11 +3,12 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Intro from "../components/Intro";
+import GoogleOneTap from "../components/GoogleOneTap";
 import CustomCursor from "../components/CustomCursor";
 import ScrollProgress from "../components/ScrollProgress";
 import NavBar from "../components/Navbar";
 import Hero from "../components/Hero";
-import SponsorStrip from "../components/SponsorStrip";
+import SponsorsSection from "../components/SponsorsSection";
 import Stats from "../components/Stats";
 import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
@@ -66,10 +67,11 @@ const MainPage = () => {
           }}
         />
       )}
+      {introComplete && <GoogleOneTap />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
         <Hero />
-        <SponsorStrip />
+        <SponsorsSection />
         <VideoCards />
         <Stats />
         <StudentHook />

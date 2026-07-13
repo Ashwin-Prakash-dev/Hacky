@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
@@ -25,6 +26,7 @@ const validate = ({ name, phone, college }) => {
 };
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [email, setEmail] = useState("");
@@ -33,12 +35,14 @@ const ProfilePage = () => {
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [phoneMissing, setPhoneMissing] = useState(false);
 
   useEffect(() => {
     api.getMe()
       .then((me) => {
         setEmail(me.email);
         setTeamId(me.team_id);
+        setPhoneMissing(!me.phone);
         setFields({
           name: me.name ?? "",
           phone: me.phone ?? "",
@@ -57,6 +61,9 @@ const ProfilePage = () => {
   const submit = async (e) => {
     e.preventDefault();
     const invalid = validate(fields);
+    if (phoneMissing && !fields.phone.trim()) {
+      invalid.push("phone is required to continue");
+    }
     if (invalid.length) {
       setErrors(invalid);
       setSaved(false);
@@ -75,6 +82,10 @@ const ProfilePage = () => {
     try {
       const me = await api.updateMe(body);
       updateUser(me);
+      if (phoneMissing && me.phone) {
+        navigate("/apply", { replace: true });
+        return;
+      }
       setFields({ name: me.name ?? "", phone: me.phone ?? "", college: me.college ?? "" });
       setSaved(true);
     } catch (err) {
@@ -101,6 +112,11 @@ const ProfilePage = () => {
           ) : (
             <>
               <Title>Edit your details</Title>
+              {phoneMissing && (
+                <NoticeLine>
+                  Add your phone number to continue — it&apos;s required before you can access your team.
+                </NoticeLine>
+              )}
               <p style={{
                 fontFamily: MONO, fontSize: "0.82rem",
                 color: "rgba(255,255,255,0.6)", marginBottom: "1.5rem",
@@ -126,9 +142,11 @@ const ProfilePage = () => {
                   {busy ? "saving…" : "Save changes"}
                 </PrimaryButton>
               </form>
-              <div style={{ marginTop: "1.5rem" }}>
-                <MonoLink to={teamId ? "/team" : "/onboarding"}>← back</MonoLink>
-              </div>
+              {!phoneMissing && (
+                <div style={{ marginTop: "1.5rem" }}>
+                  <MonoLink to={teamId ? "/team" : "/onboarding"}>← back</MonoLink>
+                </div>
+              )}
             </>
           )}
         </Panel>

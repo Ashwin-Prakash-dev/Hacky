@@ -4,8 +4,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 import RequireAuth from "./components/apply/RequireAuth";
+import RequirePhone from "./components/apply/RequirePhone";
 import MainPage from "./pages/MainPage";
-import SponsorsPage from "./pages/SponsorsPage";
 import ApplyPage from "./pages/ApplyPage";
 import CallbackPage from "./pages/CallbackPage";
 import LoginPage from "./pages/LoginPage";
@@ -20,7 +20,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<MainPage />} />
-      <Route path="/sponsors" element={<SponsorsPage />} />
       <Route path="/auth/callback" element={<CallbackPage />} />
       <Route path="/auth/google/callback" element={<CallbackPage />} />
       <Route path="/apply" element={<ApplyPage />} />
@@ -29,9 +28,11 @@ function App() {
       <Route path="/forgot" element={<ForgotPage />} />
       <Route path="/reset" element={<ResetPage />} />
       <Route element={<RequireAuth />}>
-        <Route path="/onboarding" element={<OnboardingPage />} />
-        <Route path="/team" element={<TeamPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route element={<RequirePhone />}>
+          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/team" element={<TeamPage />} />
+        </Route>
       </Route>
     </Routes>
   );

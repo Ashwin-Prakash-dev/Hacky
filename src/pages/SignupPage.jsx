@@ -3,9 +3,10 @@ import { Navigate, useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
+import GoogleSignInPanel from "../components/apply/GoogleSignInPanel";
 import {
   Panel, Eyebrow, Title, ErrorLine,
-  PrimaryButton, GoogleButton, MonoLink, Divider,
+  PrimaryButton, MonoLink, Divider,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
@@ -63,18 +64,6 @@ const SignupPage = () => {
     }
   };
 
-  const google = async () => {
-    setBusy(true);
-    setErrors([]);
-    try {
-      const { auth_url } = await api.googleInit();
-      window.location.assign(auth_url);
-    } catch (err) {
-      setErrors([err.message]);
-      setBusy(false);
-    }
-  };
-
   return (
     <AuthShell label="NEW OPERATIVE">
       <PhaseTransition>
@@ -116,7 +105,7 @@ const SignupPage = () => {
             </PrimaryButton>
           </form>
           <Divider />
-          <GoogleButton onClick={google} disabled={busy} />
+          <GoogleSignInPanel onError={(msg) => setErrors([msg])} disabled={busy} />
           <div style={{ textAlign: "right", marginTop: "1.5rem" }}>
             <MonoLink to="/login">have an account? log in →</MonoLink>
           </div>

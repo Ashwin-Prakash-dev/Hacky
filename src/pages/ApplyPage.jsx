@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import { Panel, Eyebrow, Title, ErrorLine, MONO, PrimaryButton } from "../components/apply/ui";
 import { api } from "../lib/startathon";
-import { isAuthed } from "../lib/auth";
+import { isAuthed, getUser } from "../lib/auth";
 
 const ApplyPage = () => {
   const navigate = useNavigate();
@@ -13,6 +13,10 @@ const ApplyPage = () => {
   useEffect(() => {
     if (!isAuthed()) {
       navigate("/login", { replace: true });
+      return;
+    }
+    if (!getUser()?.phone) {
+      navigate("/profile", { replace: true });
       return;
     }
     let cancelled = false;

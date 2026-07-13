@@ -1,6 +1,5 @@
-import gsap from "gsap";
 import { useWindowScroll } from "react-use";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { label: "What is it", id: "what-is-it" },
@@ -9,41 +8,13 @@ const navItems = [
 ];
 
 const NavBar = () => {
-  const navContainerRef = useRef(null);
   const { y: currentScrollY } = useWindowScroll();
-  const lastScrollY = useRef(0);
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [scrolled, setScrolled] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const nav = navContainerRef.current;
-    if (!nav) return;
-
     setScrolled(currentScrollY > 10);
-
-    if (currentScrollY === 0) {
-      setIsNavVisible(true);
-      nav.classList.remove("floating-nav");
-    } else if (currentScrollY > lastScrollY.current) {
-      setIsNavVisible(false);
-      nav.classList.add("floating-nav");
-      setMenuOpen(false);
-    } else {
-      setIsNavVisible(true);
-      nav.classList.add("floating-nav");
-    }
-
-    lastScrollY.current = currentScrollY;
   }, [currentScrollY]);
-
-  useEffect(() => {
-    gsap.to(navContainerRef.current, {
-      y: isNavVisible ? 0 : -100,
-      opacity: isNavVisible ? 1 : 0,
-      duration: 0.2,
-    });
-  }, [isNavVisible]);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -51,7 +22,6 @@ const NavBar = () => {
 
   return (
     <div
-      ref={navContainerRef}
       className="fixed inset-x-0 top-0 z-50 transition-all duration-300"
       style={{ height: "56px" }}
     >
@@ -76,9 +46,6 @@ const NavBar = () => {
                   {item.label}
                 </button>
               ))}
-              <a href="/sponsors" className="nav-link nav-link--anchor">
-                For Sponsors
-              </a>
             </div>
 
             <a href="/apply" className="nav-cta" style={{ textDecoration: "none" }}>
@@ -154,25 +121,6 @@ const NavBar = () => {
               {item.label}
             </button>
           ))}
-          <a
-            href="/sponsors"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              display: "block", marginTop: "0",
-              fontFamily: "var(--font-general)", fontSize: "0.85rem",
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.78)",
-              padding: "0.9rem 0",
-              textDecoration: "none", transition: "color 0.2s",
-              opacity: menuOpen ? 1 : 0,
-              transform: menuOpen ? "translateY(0)" : "translateY(-8px)",
-              transitionDelay: menuOpen ? `${navItems.length * 0.05}s` : "0s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.78)")}
-          >
-            For Sponsors
-          </a>
         </nav>
       </div>
     </div>
