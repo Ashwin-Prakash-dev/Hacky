@@ -31,15 +31,15 @@ const MarqueeTrack = ({ reverse = false }) => {
             alignItems: "center",
             padding: "0 1.5rem",
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.62rem",
-            letterSpacing: "0.22em",
+            fontSize: "0.8rem",
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
-            color: i % ITEMS.length === 0 ? "#C8FF00" : "rgba(255,255,255,0.35)",
+            color: i % ITEMS.length === 0 ? "#C8FF00" : "rgba(255,255,255,0.7)",
             whiteSpace: "nowrap",
           }}
         >
           {item}
-          <span style={{ marginLeft: "1.5rem", color: "rgba(200,255,0,0.45)", fontSize: "0.45rem" }}>◆</span>
+          <span style={{ marginLeft: "1.5rem", color: "rgba(200,255,0,0.6)", fontSize: "0.6rem" }}>◆</span>
         </span>
       ))}
     </div>

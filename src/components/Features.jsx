@@ -39,10 +39,10 @@ const CardLabel = ({ text, dark = false }) => (
     style={{
       display: "inline-block",
       fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.6rem",
-      letterSpacing: "0.2em",
+      fontSize: "0.78rem",
+      letterSpacing: "0.16em",
       textTransform: "uppercase",
-      color: dark ? "#C8FF00" : "rgba(255,255,255,0.35)",
+      color: dark ? "#C8FF00" : "rgba(255,255,255,0.75)",
       border: `0.5px solid ${dark ? "rgba(200,255,0,0.35)" : "rgba(255,255,255,0.12)"}`,
       borderRadius: "2px",
       padding: "3px 9px",
@@ -151,7 +151,7 @@ export const PrizesCard = () => {
       }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <CardLabel text="Prize Pool" dark />
-          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.85, display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
             tap to explore
           </span>
@@ -163,8 +163,8 @@ export const PrizesCard = () => {
           <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
             <AnimatedPrize target={200} duration={1800} />
             <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-              <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem", letterSpacing: "0.05em" }}>prize pool</span>
-              <span style={{ color: "rgba(255,255,255,0.1)", fontSize: "0.55rem", letterSpacing: "0.04em" }}>*subject to changes</span>
+              <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", letterSpacing: "0.03em" }}>prize pool</span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.7rem", letterSpacing: "0.02em" }}>*subject to changes</span>
             </div>
           </div>
         </div>
@@ -178,7 +178,7 @@ export const PrizesCard = () => {
         transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Breakdown</span>
+        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.78rem", letterSpacing: "0.16em", color: "#555", textTransform: "uppercase" }}>Breakdown</span>
         <div>
           {prizes.map((p, i) => (
             <div key={i} style={{
@@ -190,8 +190,8 @@ export const PrizesCard = () => {
               transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: p.highlight ? "#C8FF00" : "#bbb", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
-                <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</div>
+                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.8rem", color: p.highlight ? "#C8FF00" : "#666", fontWeight: 700, minWidth: "18px" }}>{p.rank}</span>
+                <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.85rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.label}</div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {p.blurred && (
@@ -200,7 +200,7 @@ export const PrizesCard = () => {
                     color: "#555", filter: "blur(4px)", userSelect: "none", pointerEvents: "none",
                   }}>{p.blurred}</span>
                 )}
-                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: p.highlight ? "#1a1a1a" : "#999" }}>{p.amount}</span>
+                <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: p.highlight ? "#1a1a1a" : "#666" }}>{p.amount}</span>
               </div>
             </div>
           ))}
@@ -257,8 +257,8 @@ export const ExpectCard = () => {
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
             {["30 HRS", "CURATED", "IRL"].map((tag, i) => (
               <span key={i} style={{
-                fontFamily: "var(--font-general, sans-serif)", fontSize: "0.58rem",
-                letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)",
+                fontFamily: "var(--font-general, sans-serif)", fontSize: "0.75rem",
+                letterSpacing: "0.12em", color: "rgba(255,255,255,0.7)",
                 border: "0.5px solid rgba(255,255,255,0.1)", borderRadius: "2px", padding: "3px 8px",
               }}>{tag}</span>
             ))}
@@ -272,7 +272,7 @@ export const ExpectCard = () => {
         opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none", justifyContent: "center", gap: "0",
       }}>
-        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#bbb", textTransform: "uppercase", marginBottom: "1rem", display: "block" }}>What to Expect</span>
+        <span style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.78rem", letterSpacing: "0.16em", color: "#555", textTransform: "uppercase", marginBottom: "1rem", display: "block" }}>What to Expect</span>
         {items.map((item, i) => (
           <div key={i} style={{
             display: "flex", gap: "14px", alignItems: "flex-start",
@@ -284,8 +284,8 @@ export const ExpectCard = () => {
           }}>
             <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.75rem", marginTop: "1px", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
             <div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.85rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.title}</div>
+              <div style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.85rem", color: "#555", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
             </div>
           </div>
         ))}
@@ -309,7 +309,7 @@ const PrizesFlat = () => {
       <CardLabel text="Prize Pool" dark />
       <div style={{ margin: "1.25rem 0 1rem" }}>
         <span style={{ fontFamily: "var(--font-general)", fontSize: "3rem", fontWeight: 900, color: "#C8FF00", lineHeight: 1 }}>₹100K</span>
-        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.7rem", color: "rgba(0,0,0,0.35)", marginLeft: "8px" }}>total pool</span>
+        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.85rem", color: "rgba(0,0,0,0.6)", marginLeft: "8px" }}>total pool</span>
       </div>
       {prizes.map((p, i) => (
         <div key={i} style={{
@@ -318,8 +318,8 @@ const PrizesFlat = () => {
           borderBottom: i < prizes.length - 1 ? "0.5px solid rgba(0,0,0,0.1)" : "none",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#bbb", fontWeight: 700 }}>{p.rank}</span>
-            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.label}</span>
+            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.8rem", color: "#666", fontWeight: 700 }}>{p.rank}</span>
+            <span style={{ fontFamily: "var(--font-general)", fontSize: "0.85rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.label}</span>
           </div>
           <span style={{ fontFamily: "var(--font-general)", fontSize: "0.9rem", fontWeight: 900, color: "#111" }}>{p.amount}</span>
         </div>
@@ -352,8 +352,8 @@ const ExpectFlat = () => {
         }}>
           <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>{item.icon}</span>
           <div>
-            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", color: "#888", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
+            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.85rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.title}</div>
+            <div style={{ fontFamily: "var(--font-general)", fontSize: "0.85rem", color: "#555", marginTop: "2px", lineHeight: 1.5 }}>{item.desc}</div>
           </div>
         </div>
       ))}
@@ -372,12 +372,12 @@ const Features = () => (
       <div style={{ padding: "8rem 1.25rem 4rem" }}>
         <p style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.62rem", letterSpacing: "0.2em",
+          fontSize: "0.78rem", letterSpacing: "0.16em",
           textTransform: "uppercase", color: "#C8FF00", marginBottom: "0.75rem",
         }}>What's inside</p>
         <p style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.82rem", color: "rgba(255,255,255,0.3)",
+          fontSize: "1rem", color: "rgba(255,255,255,0.75)",
           lineHeight: 1.7, maxWidth: "28rem",
         }}>
           Scroll through the prizes and the full experience. Hover each card to explore.

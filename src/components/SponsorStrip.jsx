@@ -72,10 +72,10 @@ const SponsorStrip = () => {
         <span
           style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem",
-            letterSpacing: "0.26em",
+            fontSize: "0.75rem",
+            letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.25)",
+            color: "rgba(255,255,255,0.65)",
           }}
         >
           Backed by

@@ -3,9 +3,9 @@ const TerminalInput = ({ label, error, style: extStyle, onFocus, onBlur, ...prop
     <label style={{
       display: "block",
       fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.6rem",
-      letterSpacing: "0.18em",
-      color: "rgba(255,255,255,0.55)",
+      fontSize: "0.78rem",
+      letterSpacing: "0.14em",
+      color: "rgba(255,255,255,0.8)",
       textTransform: "uppercase",
       marginBottom: "0.55rem",
       userSelect: "none",
@@ -43,8 +43,8 @@ const TerminalInput = ({ label, error, style: extStyle, onFocus, onBlur, ...prop
     {error && (
       <p style={{
         fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.7rem",
-        color: "rgba(255,75,75,0.8)",
+        fontSize: "0.85rem",
+        color: "rgba(255,120,120,0.95)",
         marginTop: "0.45rem",
       }}>
         {error}

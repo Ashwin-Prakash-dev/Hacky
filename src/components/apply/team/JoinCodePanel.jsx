@@ -31,8 +31,8 @@ const JoinCodePanel = ({ code }) => {
         <GhostButton onClick={copy}>{copied ? "copied ✓" : "copy"}</GhostButton>
       </div>
       <p style={{
-        fontFamily: MONO, fontSize: "0.7rem",
-        color: "rgba(255,255,255,0.4)", marginTop: "0.75rem", lineHeight: 1.6,
+        fontFamily: MONO, fontSize: "0.85rem",
+        color: "rgba(255,255,255,0.75)", marginTop: "0.75rem", lineHeight: 1.6,
       }}>
         {"// share this code — teammates enter it on the join screen"}
       </p>

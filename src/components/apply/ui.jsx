@@ -19,8 +19,8 @@ export const Panel = ({ maxWidth = "440px", children }) => (
 
 export const Eyebrow = ({ children }) => (
   <p style={{
-    fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.16em",
-    color: "rgba(200,255,0,0.75)", marginBottom: "0.6rem",
+    fontFamily: MONO, fontSize: "0.85rem", letterSpacing: "0.16em",
+    color: "rgba(200,255,0,0.9)", marginBottom: "0.6rem",
   }}>
     [{children}]
   </p>
@@ -38,8 +38,8 @@ export const Title = ({ children }) => (
 export const ErrorLine = ({ children }) =>
   children ? (
     <p style={{
-      fontFamily: MONO, fontSize: "0.75rem", lineHeight: 1.6,
-      color: "rgba(255,107,107,0.9)", margin: "0.25rem 0 1rem",
+      fontFamily: MONO, fontSize: "0.9rem", lineHeight: 1.6,
+      color: "rgba(255,120,120,0.95)", margin: "0.25rem 0 1rem",
     }}>
       {"// "}{children}
     </p>
@@ -48,8 +48,8 @@ export const ErrorLine = ({ children }) =>
 export const NoticeLine = ({ children }) =>
   children ? (
     <p style={{
-      fontFamily: MONO, fontSize: "0.75rem", lineHeight: 1.6,
-      color: "rgba(200,255,0,0.8)", margin: "0.25rem 0 1rem",
+      fontFamily: MONO, fontSize: "0.9rem", lineHeight: 1.6,
+      color: "rgba(200,255,0,0.9)", margin: "0.25rem 0 1rem",
     }}>
       {"// "}{children}
     </p>
@@ -67,7 +67,7 @@ export const PrimaryButton = ({ type = "button", disabled = false, onClick, chil
         width: "100%", padding: "0.9rem 2rem",
         background: disabled ? "rgba(200,255,0,0.35)" : LIME,
         color: "#000", border: "none", borderRadius: "4px",
-        fontFamily: MONO, fontSize: "0.68rem", letterSpacing: "0.14em",
+        fontFamily: MONO, fontSize: "0.8rem", letterSpacing: "0.14em",
         fontWeight: 700, textTransform: "uppercase",
         cursor: disabled ? "not-allowed" : "pointer",
         transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s",
@@ -84,7 +84,7 @@ export const PrimaryButton = ({ type = "button", disabled = false, onClick, chil
 
 export const GhostButton = ({ onClick, disabled = false, danger = false, children }) => {
   const [hover, setHover] = useState(false);
-  const base = danger ? "rgba(255,107,107,0.7)" : "rgba(255,255,255,0.45)";
+  const base = danger ? "rgba(255,140,140,0.9)" : "rgba(255,255,255,0.78)";
   return (
     <button
       type="button"
@@ -92,7 +92,7 @@ export const GhostButton = ({ onClick, disabled = false, danger = false, childre
       disabled={disabled}
       style={{
         background: "none", border: "none", padding: 0,
-        fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.06em",
+        fontFamily: MONO, fontSize: "0.85rem", letterSpacing: "0.06em",
         color: hover && !disabled ? (danger ? "#ff6b6b" : "#fff") : base,
         cursor: disabled ? "not-allowed" : "pointer",
         textDecoration: "underline", textUnderlineOffset: "3px",
@@ -142,8 +142,8 @@ export const MonoLink = ({ to, children }) => (
   <Link
     to={to}
     style={{
-      fontFamily: MONO, fontSize: "0.75rem", letterSpacing: "0.03em",
-      color: "rgba(200,255,0,0.7)", textDecoration: "underline",
+      fontFamily: MONO, fontSize: "0.85rem", letterSpacing: "0.03em",
+      color: "rgba(200,255,0,0.9)", textDecoration: "underline",
       textUnderlineOffset: "3px",
     }}
   >
@@ -154,7 +154,7 @@ export const MonoLink = ({ to, children }) => (
 export const Divider = () => (
   <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", margin: "1.4rem 0" }}>
     <span style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
-    <span style={{ fontFamily: MONO, fontSize: "0.65rem", color: "rgba(255,255,255,0.35)" }}>or</span>
+    <span style={{ fontFamily: MONO, fontSize: "0.78rem", color: "rgba(255,255,255,0.6)" }}>or</span>
     <span style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
   </div>
 );

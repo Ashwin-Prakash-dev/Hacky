@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthShell from "../AuthShell";
-import PhaseTransition from "../PhaseTransition";
-import JoinCodePanel from "../team/JoinCodePanel";
-import RosterList from "../team/RosterList";
-import InvitePanel from "../team/InvitePanel";
-import PaymentPanel from "../team/PaymentPanel";
-import { MONO, SANS, LIME, Panel, ErrorLine, PrimaryButton, GhostButton } from "../ui";
-import { api } from "../../../lib/startathon";
-import { clearAuth } from "../../../lib/auth";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import JoinCodePanel from "../components/apply/team/JoinCodePanel";
+import RosterList from "../components/apply/team/RosterList";
+import InvitePanel from "../components/apply/team/InvitePanel";
+import PaymentPanel from "../components/apply/team/PaymentPanel";
+import { MONO, SANS, LIME, Panel, ErrorLine, PrimaryButton, GhostButton } from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { clearAuth } from "../lib/auth";
 
 const StatusBadge = ({ status }) => {
   const confirmed = status === "confirmed";

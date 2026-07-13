@@ -65,8 +65,8 @@ const FAQItem = ({ question, answer }) => {
         padding: "1.5rem 0", background: "none", border: "none", cursor: "pointer", gap: "1.25rem",
       }}>
         <span className="font-general" style={{
-          fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)",
-          color: open ? "#fff" : "rgba(255,255,255,0.65)",
+          fontSize: "clamp(0.95rem, 1.5vw, 1.05rem)",
+          color: open ? "#fff" : "rgba(255,255,255,0.8)",
           transition: "color 0.2s", lineHeight: 1.4,
         }}>{question}</span>
         <span style={{
@@ -82,7 +82,7 @@ const FAQItem = ({ question, answer }) => {
       </button>
       <div ref={bodyRef} style={{ height: 0, overflow: "hidden", opacity: 0 }}>
         <p className="font-general" style={{
-          fontSize: "0.92rem", color: "rgba(255,255,255,0.5)",
+          fontSize: "0.95rem", color: "rgba(255,255,255,0.8)",
           lineHeight: 1.8, paddingBottom: "1.5rem", maxWidth: "680px",
         }}>{answer}</p>
       </div>
@@ -151,15 +151,15 @@ const FAQ = () => {
               >
                 <span style={{
                   fontFamily: "var(--font-general)",
-                  fontSize: "0.6rem", fontWeight: 700,
-                  color: selected === i ? "rgba(200,255,0,0.65)" : "rgba(255,255,255,0.2)",
+                  fontSize: "0.78rem", fontWeight: 700,
+                  color: selected === i ? "rgba(200,255,0,0.8)" : "rgba(255,255,255,0.5)",
                   minWidth: "1.8rem", flexShrink: 0,
                   transition: "color 0.2s",
                   letterSpacing: "0.04em",
                 }}>0{i + 1}</span>
                 <span className="font-general" style={{
-                  fontSize: "clamp(0.85rem, 1.4vw, 1rem)",
-                  color: selected === i ? "#fff" : "rgba(255,255,255,0.5)",
+                  fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
+                  color: selected === i ? "#fff" : "rgba(255,255,255,0.75)",
                   lineHeight: 1.45,
                   transition: "color 0.2s",
                 }}>{faq.q}</span>
@@ -172,7 +172,7 @@ const FAQ = () => {
             <div ref={answerRef}>
               <p className="font-general" style={{
                 fontSize: "clamp(0.95rem, 1.6vw, 1.1rem)",
-                color: "rgba(255,255,255,0.65)",
+                color: "rgba(255,255,255,0.85)",
                 lineHeight: 1.9,
               }}>
                 {faqs[selected].a}

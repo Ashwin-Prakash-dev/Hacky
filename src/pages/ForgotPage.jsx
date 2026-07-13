@@ -1,9 +1,9 @@
 import { useState } from "react";
-import AuthShell from "../AuthShell";
-import PhaseTransition from "../PhaseTransition";
-import TerminalInput from "../inputs/TerminalInput";
-import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, PrimaryButton, MonoLink } from "../ui";
-import { api } from "../../../lib/startathon";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import TerminalInput from "../components/apply/inputs/TerminalInput";
+import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, PrimaryButton, MonoLink } from "../components/apply/ui";
+import { api } from "../lib/startathon";
 
 const ForgotPage = () => {
   const [email, setEmail] = useState("");

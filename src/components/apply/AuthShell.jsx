@@ -34,16 +34,16 @@ const AuthShell = ({ label, right = null, children }) => (
       </Link>
 
       <span style={{
-        fontFamily: MONO, fontSize: "0.65rem",
-        letterSpacing: "0.12em", color: "rgba(200,255,0,0.55)",
+        fontFamily: MONO, fontSize: "0.8rem",
+        letterSpacing: "0.12em", color: "rgba(200,255,0,0.8)",
       }}>
         [{label}]
       </span>
 
       {right ?? (
         <Link to="/" style={{
-          fontFamily: SANS, fontSize: "0.65rem", letterSpacing: "0.1em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.28)",
+          fontFamily: SANS, fontSize: "0.8rem", letterSpacing: "0.1em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.7)",
           textDecoration: "none",
         }}>
           ✕ Exit

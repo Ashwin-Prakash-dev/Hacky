@@ -214,14 +214,14 @@ const TerminalBridge = () => {
           ))}
           <span style={{
             marginLeft: "auto", fontFamily: "monospace",
-            fontSize: "0.62rem", letterSpacing: "0.18em",
-            color: "rgba(200,255,0,0.45)", textTransform: "uppercase",
+            fontSize: "0.78rem", letterSpacing: "0.14em",
+            color: "rgba(200,255,0,0.75)", textTransform: "uppercase",
           }}>
             STARTATHON.SYS
           </span>
           <span style={{
-            fontFamily: "monospace", fontSize: "0.56rem",
-            letterSpacing: "0.12em", color: "rgba(255,255,255,0.18)",
+            fontFamily: "monospace", fontSize: "0.72rem",
+            letterSpacing: "0.1em", color: "rgba(255,255,255,0.55)",
           }}>
             v2026.1.0
           </span>
@@ -294,13 +294,13 @@ const TerminalBridge = () => {
                 {/* Text */}
                 {line.type === "process" ? (
                   <span style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flex: 1, minWidth: 0 }}>
-                    <span style={{ fontFamily: "monospace", fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)", color: "rgba(255,255,255,0.55)", whiteSpace: "nowrap", letterSpacing: "0.04em" }}>
+                    <span style={{ fontFamily: "monospace", fontSize: "clamp(0.82rem, 1.4vw, 0.95rem)", color: "rgba(255,255,255,0.8)", whiteSpace: "nowrap", letterSpacing: "0.04em" }}>
                       {line.text}
                     </span>
                     <span style={{ flex: 1, borderBottom: "1px dotted rgba(200,255,0,0.1)", marginBottom: "0.18em", minWidth: "1rem" }} />
                     <span style={{ flexShrink: 0 }}>
                       {isDone ? (
-                        <span style={{ fontFamily: "monospace", fontSize: "clamp(0.62rem, 1.2vw, 0.76rem)", letterSpacing: "0.12em", color: "#C8FF00", textTransform: "uppercase" }}>
+                        <span style={{ fontFamily: "monospace", fontSize: "clamp(0.75rem, 1.2vw, 0.85rem)", letterSpacing: "0.1em", color: "#C8FF00", textTransform: "uppercase" }}>
                           DONE
                         </span>
                       ) : (
@@ -340,7 +340,7 @@ const TerminalBridge = () => {
               {entry.output && entry.output.map((line, j) => (
                 <div key={j} style={{ display: "flex", marginTop: "0.2rem" }}>
                   <span style={{ minWidth: "1.6rem", flexShrink: 0 }} />
-                  <span style={{ fontFamily: "monospace", fontSize: "clamp(0.68rem, 1.3vw, 0.84rem)", color: line === "" ? "transparent" : "rgba(255,255,255,0.48)", letterSpacing: "0.03em", whiteSpace: "pre" }}>
+                  <span style={{ fontFamily: "monospace", fontSize: "clamp(0.78rem, 1.3vw, 0.9rem)", color: line === "" ? "transparent" : "rgba(255,255,255,0.8)", letterSpacing: "0.03em", whiteSpace: "pre" }}>
                     {line || " "}
                   </span>
                 </div>
@@ -388,10 +388,10 @@ const TerminalBridge = () => {
           background: "rgba(200,255,0,0.015)",
           borderRadius: "0 0 6px 6px",
         }}>
-          <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(255,255,255,0.18)", textTransform: "uppercase" }}>
+          <span style={{ fontFamily: "monospace", fontSize: "0.72rem", letterSpacing: "0.12em", color: "rgba(255,255,255,0.55)", textTransform: "uppercase" }}>
             BUILDER ACCESS TERMINAL
           </span>
-          <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(200,255,0,0.3)", textTransform: "uppercase" }}>
+          <span style={{ fontFamily: "monospace", fontSize: "0.72rem", letterSpacing: "0.12em", color: "rgba(200,255,0,0.6)", textTransform: "uppercase" }}>
             STARTATHON 2026 // KERALA
           </span>
         </div>

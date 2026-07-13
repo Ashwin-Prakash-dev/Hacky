@@ -5,8 +5,8 @@ const InviteCards = ({ invites, onAccept, onDecline, busyId }) => {
   return (
     <div style={{ marginBottom: "1.75rem" }}>
       <p style={{
-        fontFamily: MONO, fontSize: "0.68rem", letterSpacing: "0.14em",
-        color: "rgba(200,255,0,0.75)", marginBottom: "0.75rem",
+        fontFamily: MONO, fontSize: "0.85rem", letterSpacing: "0.14em",
+        color: "rgba(200,255,0,0.9)", marginBottom: "0.75rem",
       }}>
         [PENDING INVITES]
       </p>
@@ -23,7 +23,7 @@ const InviteCards = ({ invites, onAccept, onDecline, busyId }) => {
               <p style={{ fontFamily: MONO, fontSize: "0.9rem", fontWeight: 700, color: "#fff" }}>
                 {inv.team_name}
               </p>
-              <p style={{ fontFamily: SANS, fontSize: "0.75rem", color: "rgba(255,255,255,0.55)" }}>
+              <p style={{ fontFamily: SANS, fontSize: "0.85rem", color: "rgba(255,255,255,0.8)" }}>
                 invited by {inv.invited_by}
               </p>
             </div>

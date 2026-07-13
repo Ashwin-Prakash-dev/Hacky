@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthShell from "../AuthShell";
-import PhaseTransition from "../PhaseTransition";
-import TerminalInput from "../inputs/TerminalInput";
-import InviteCards from "../team/InviteCards";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import TerminalInput from "../components/apply/inputs/TerminalInput";
+import InviteCards from "../components/apply/team/InviteCards";
 import {
   MONO, SANS, Panel, Eyebrow, Title, ErrorLine,
   PrimaryButton, GhostButton,
-} from "../ui";
-import { api } from "../../../lib/startathon";
-import { getUser, clearAuth } from "../../../lib/auth";
+} from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { getUser, clearAuth } from "../lib/auth";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();

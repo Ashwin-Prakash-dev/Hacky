@@ -86,9 +86,9 @@ const StudentHook = () => {
             <p
               className="font-general"
               style={{
-                fontSize: "0.82rem",
+                fontSize: "0.95rem",
                 fontStyle: "italic",
-                color: "rgba(255,255,255,0.35)",
+                color: "rgba(255,255,255,0.7)",
                 marginBottom: "1.25rem",
                 letterSpacing: "0.01em",
               }}
@@ -113,8 +113,8 @@ const StudentHook = () => {
             <p
               className="font-general"
               style={{
-                fontSize: "0.88rem",
-                color: "rgba(255,255,255,0.52)",
+                fontSize: "1rem",
+                color: "rgba(255,255,255,0.82)",
                 lineHeight: 1.8,
                 marginBottom: "2rem",
               }}
@@ -125,7 +125,7 @@ const StudentHook = () => {
             </p>
             <p className="font-general" style={{
               fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(255,255,255,0.75)",
               lineHeight: 1.75,
               marginBottom: "1.5rem",
             }}>
@@ -138,7 +138,7 @@ const StudentHook = () => {
                   background: "#C8FF00", color: "#000",
                   border: "none", borderRadius: "5px",
                   fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.62rem", letterSpacing: "0.14em",
+                  fontSize: "0.78rem", letterSpacing: "0.12em",
                   fontWeight: 700, textTransform: "uppercase",
                   cursor: "pointer",
                   transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
@@ -199,7 +199,7 @@ const StudentHook = () => {
           }} />
           <p className="font-general" style={{
             fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
-            color: "rgba(255,255,255,0.55)",
+            color: "rgba(255,255,255,0.85)",
             lineHeight: 1.6, fontStyle: "italic",
           }}>
             "Kerala has the talent. It's always had it.
@@ -269,9 +269,9 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
         <span style={{
           display: "inline-block",
           fontFamily: "var(--font-general)",
-          fontSize: "0.55rem", letterSpacing: "0.2em",
+          fontSize: "0.72rem", letterSpacing: "0.16em",
           textTransform: "uppercase",
-          color: hovered ? "rgba(200,255,0,0.7)" : "rgba(255,255,255,0.25)",
+          color: hovered ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.65)",
           border: `0.5px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
           borderRadius: "2px", padding: "3px 8px",
           marginBottom: "0.65rem",
@@ -288,8 +288,8 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
 
       {/* Body */}
       <p className="font-general sh-row-body" style={{
-        fontSize: "0.8rem",
-        color: "rgba(255,255,255,0.42)",
+        fontSize: "0.95rem",
+        color: "rgba(255,255,255,0.75)",
         lineHeight: 1.78,
       }}>{item.body}</p>
     </div>

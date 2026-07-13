@@ -66,11 +66,11 @@ const MentorsCard = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{
             display: "inline-block", fontFamily: "var(--font-general)",
-            fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+            fontSize: "0.78rem", letterSpacing: "0.16em", textTransform: "uppercase",
             color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
             borderRadius: "2px", padding: "3px 9px",
           }}>Who guides you</span>
-          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#C8FF00", opacity: 0.85, display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#C8FF00", animation: "tapPulse 1.8s ease-in-out infinite" }} />
             tap to explore
           </span>
@@ -79,7 +79,7 @@ const MentorsCard = () => {
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
             Ment<b>o</b>rs
           </h2>
-          <p style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
+          <p style={{ fontFamily: "var(--font-general)", fontSize: "0.88rem", color: "rgba(255,255,255,0.7)" }}>
             Builders who've shipped things.
           </p>
         </div>
@@ -94,7 +94,7 @@ const MentorsCard = () => {
         transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>Who guides you</span>
+        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.78rem", letterSpacing: "0.16em", color: "#555", textTransform: "uppercase" }}>Who guides you</span>
         <div>
           {items.map((item, i) => (
             <div key={i} style={{
@@ -105,10 +105,10 @@ const MentorsCard = () => {
               opacity: hovered ? 1 : 0,
               transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
             }}>
-              <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+              <span style={{ color: "#7a9900", fontSize: "0.85rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
               <div>
-                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.82rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.title}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.8rem", color: "#555", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
               </div>
             </div>
           ))}
@@ -165,7 +165,7 @@ const RulesCard = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{
             display: "inline-block", fontFamily: "var(--font-general)",
-            fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
+            fontSize: "0.78rem", letterSpacing: "0.16em", textTransform: "uppercase",
             color: "#C8FF00", border: "0.5px solid rgba(200,255,0,0.35)",
             borderRadius: "2px", padding: "3px 9px",
           }}>What we expect</span>
@@ -174,7 +174,7 @@ const RulesCard = () => {
           <h2 className="bento-title special-font" style={{ color: "#fff", lineHeight: 0.88, fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "0.75rem" }}>
             Rul<b>e</b>s
           </h2>
-          <p style={{ fontFamily: "var(--font-general)", fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
+          <p style={{ fontFamily: "var(--font-general)", fontSize: "0.88rem", color: "rgba(255,255,255,0.7)" }}>
             Keep it real. Keep it yours.
           </p>
         </div>
@@ -189,7 +189,7 @@ const RulesCard = () => {
         transition: "opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s",
         pointerEvents: hovered ? "auto" : "none",
       }}>
-        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#999", textTransform: "uppercase" }}>What we expect</span>
+        <span style={{ fontFamily: "var(--font-general)", fontSize: "0.78rem", letterSpacing: "0.16em", color: "#555", textTransform: "uppercase" }}>What we expect</span>
         <div>
           {items.map((item, i) => (
             <div key={i} style={{
@@ -200,10 +200,10 @@ const RulesCard = () => {
               opacity: hovered ? 1 : 0,
               transition: `transform 0.28s ease ${0.1 + i * 0.06}s, opacity 0.28s ease ${0.1 + i * 0.06}s`,
             }}>
-              <span style={{ color: "rgba(200,255,0,0.75)", fontSize: "0.7rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
+              <span style={{ color: "#7a9900", fontSize: "0.85rem", flexShrink: 0, lineHeight: 1.6 }}>{item.icon}</span>
               <div>
-                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.68rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em" }}>{item.title}</div>
-                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.65rem", color: "#888", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.82rem", fontWeight: 600, color: "#111", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.title}</div>
+                <div style={{ fontFamily: "var(--font-general)", fontSize: "0.8rem", color: "#555", marginTop: "1px", lineHeight: 1.5 }}>{item.desc}</div>
               </div>
             </div>
           ))}
@@ -401,8 +401,8 @@ const Timeline = () => {
           </div>
           <span style={{
             fontFamily: "var(--font-general)",
-            fontSize: "0.55rem", letterSpacing: "0.16em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.35)",
+            fontSize: "0.75rem", letterSpacing: "0.14em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.65)",
           }}>swipe</span>
         </div>
       </div>

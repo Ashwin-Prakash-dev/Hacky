@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import AuthShell from "../AuthShell";
-import PhaseTransition from "../PhaseTransition";
-import TerminalInput from "../inputs/TerminalInput";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import TerminalInput from "../components/apply/inputs/TerminalInput";
 import {
   Panel, Eyebrow, Title, ErrorLine,
   PrimaryButton, GoogleButton, MonoLink, Divider,
-} from "../ui";
-import { api } from "../../../lib/startathon";
-import { saveAuth, isAuthed } from "../../../lib/auth";
+} from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { saveAuth, isAuthed } from "../lib/auth";
 
 const validate = ({ name, email, password, phone, college }) => {
-  if (!name.trim() || name.trim().length > 100) return "name must be 1–100 characters";
-  if (!/^\S+@\S+\.\S+$/.test(email.trim())) return "enter a valid email";
-  if (password.length < 8 || password.length > 100) return "password must be 8–100 characters";
+  const errors = [];
+  if (!name.trim() || name.trim().length > 100) errors.push("name must be 1–100 characters");
+  if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.push("enter a valid email");
+  if (password.length < 8 || password.length > 100) errors.push("password must be 8–100 characters");
   const digits = phone.replace(/\D/g, "");
-  if (digits.length < 10 || digits.length > 15) return "phone must be 10–15 digits";
-  if (!college.trim() || college.trim().length > 150) return "college must be 1–150 characters";
-  return null;
+  if (digits.length < 10 || digits.length > 15) errors.push("phone must be 10–15 digits");
+  if (!college.trim() || college.trim().length > 150) errors.push("college must be 1–150 characters");
+  return errors;
 };
 
 const SignupPage = () => {
@@ -25,7 +26,7 @@ const SignupPage = () => {
   const [fields, setFields] = useState({
     name: "", email: "", password: "", phone: "", college: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   const [conflict, setConflict] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -37,13 +38,13 @@ const SignupPage = () => {
   const submit = async (e) => {
     e.preventDefault();
     const invalid = validate(fields);
-    if (invalid) {
-      setError(invalid);
+    if (invalid.length) {
+      setErrors(invalid);
       setConflict(false);
       return;
     }
     setBusy(true);
-    setError("");
+    setErrors([]);
     setConflict(false);
     try {
       const data = await api.signup({
@@ -56,7 +57,7 @@ const SignupPage = () => {
       saveAuth(data);
       navigate("/apply", { replace: true });
     } catch (err) {
-      setError(err.message);
+      setErrors([err.message]);
       setConflict(err.status === 409);
       setBusy(false);
     }
@@ -64,12 +65,12 @@ const SignupPage = () => {
 
   const google = async () => {
     setBusy(true);
-    setError("");
+    setErrors([]);
     try {
       const { auth_url } = await api.googleInit();
       window.location.assign(auth_url);
     } catch (err) {
-      setError(err.message);
+      setErrors([err.message]);
       setBusy(false);
     }
   };
@@ -102,14 +103,14 @@ const SignupPage = () => {
               label="College" value={fields.college}
               onChange={set("college")} autoComplete="organization"
             />
-            <ErrorLine>
-              {error && (
-                <>
-                  {error}
-                  {conflict && <> — <MonoLink to="/login">log in instead</MonoLink></>}
-                </>
-              )}
-            </ErrorLine>
+            {errors.map((err, i) => (
+              <ErrorLine key={err}>
+                {err}
+                {conflict && i === errors.length - 1 && (
+                  <> — <MonoLink to="/login">log in instead</MonoLink></>
+                )}
+              </ErrorLine>
+            ))}
             <PrimaryButton type="submit" disabled={busy}>
               {busy ? "creating…" : "Sign up"}
             </PrimaryButton>

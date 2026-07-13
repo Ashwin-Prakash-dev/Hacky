@@ -44,7 +44,7 @@ const Contact = () => {
           <div style={{ flex: "1 1 300px" }}>
             <p style={{
               fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.55rem", letterSpacing: "0.22em",
+              fontSize: "0.75rem", letterSpacing: "0.18em",
               textTransform: "uppercase", color: "#C8FF00",
               marginBottom: "0.85rem",
             }}>For companies & startups</p>
@@ -61,7 +61,7 @@ const Contact = () => {
             </h2>
             <p style={{
               fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.75rem", color: "rgba(255,255,255,0.35)",
+              fontSize: "0.92rem", color: "rgba(255,255,255,0.75)",
               lineHeight: 1.75, maxWidth: "360px",
             }}>
               20 curated teams. 30 hours of building. Direct access to the most
@@ -73,11 +73,11 @@ const Contact = () => {
             <button style={{
               padding: "0.9rem 2.25rem",
               background: "transparent",
-              color: "rgba(255,255,255,0.6)",
+              color: "rgba(255,255,255,0.85)",
               border: "1px solid rgba(255,255,255,0.15)",
               borderRadius: "50px",
               fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.62rem", letterSpacing: "0.14em",
+              fontSize: "0.78rem", letterSpacing: "0.12em",
               fontWeight: 700, textTransform: "uppercase",
               cursor: "pointer",
               transition: "color 0.2s, border-color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)",
@@ -88,7 +88,7 @@ const Contact = () => {
               e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = "rgba(255,255,255,0.6)";
+              e.currentTarget.style.color = "rgba(255,255,255,0.85)";
               e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
               e.currentTarget.style.transform = "translateY(0)";
             }}

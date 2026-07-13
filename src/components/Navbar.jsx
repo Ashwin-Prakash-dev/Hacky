@@ -13,14 +13,14 @@ const NavBar = () => {
   const { y: currentScrollY } = useWindowScroll();
   const lastScrollY = useRef(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const nav = navContainerRef.current;
     if (!nav) return;
 
-    setScrolled(currentScrollY > 20);
+    setScrolled(currentScrollY > 10);
 
     if (currentScrollY === 0) {
       setIsNavVisible(true);
@@ -58,15 +58,15 @@ const NavBar = () => {
       <div className={`nav-bg ${scrolled ? "nav-bg--scrolled" : ""}`} />
       {scrolled && <div className="nav-hairline" />}
 
-      <header className="relative h-full w-full">
-        <nav className="flex h-full items-center justify-between nav-inner">
+      <header className="relative size-full">
+        <nav className="nav-inner flex h-full items-center justify-between">
           <a href="#" className="nav-logo">
             Startathon<span className="nav-logo-dot">.</span>
           </a>
 
           <div className="flex items-center">
             {/* Desktop links */}
-            <div className="hidden md:flex items-center">
+            <div className="hidden items-center md:flex">
               {navItems.map((item) => (
                 <button
                   key={item.id}
@@ -87,14 +87,9 @@ const NavBar = () => {
 
             {/* Hamburger — mobile only */}
             <button
-              className="md:hidden"
+              className="ml-2 flex cursor-pointer flex-col justify-center gap-[5px] border-none bg-transparent p-2 md:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                display: "flex", flexDirection: "column", justifyContent: "center",
-                gap: "5px", padding: "8px", marginLeft: "0.5rem",
-              }}
             >
               <span style={{
                 display: "block", width: "20px", height: "1.5px",
@@ -144,9 +139,9 @@ const NavBar = () => {
               style={{
                 textAlign: "left", background: "none", border: "none",
                 borderBottom: "1px solid rgba(255,255,255,0.05)",
-                fontFamily: "var(--font-general)", fontSize: "0.72rem",
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "rgba(255,255,255,0.45)",
+                fontFamily: "var(--font-general)", fontSize: "0.85rem",
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                color: "rgba(255,255,255,0.78)",
                 padding: "0.9rem 0", cursor: "pointer",
                 transition: "color 0.2s",
                 opacity: menuOpen ? 1 : 0,
@@ -154,7 +149,7 @@ const NavBar = () => {
                 transitionDelay: menuOpen ? `${i * 0.05}s` : "0s",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.78)")}
             >
               {item.label}
             </button>
@@ -164,9 +159,9 @@ const NavBar = () => {
             onClick={() => setMenuOpen(false)}
             style={{
               display: "block", marginTop: "0",
-              fontFamily: "var(--font-general)", fontSize: "0.72rem",
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.45)",
+              fontFamily: "var(--font-general)", fontSize: "0.85rem",
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.78)",
               padding: "0.9rem 0",
               textDecoration: "none", transition: "color 0.2s",
               opacity: menuOpen ? 1 : 0,
@@ -174,7 +169,7 @@ const NavBar = () => {
               transitionDelay: menuOpen ? `${navItems.length * 0.05}s` : "0s",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.78)")}
           >
             For Sponsors
           </a>

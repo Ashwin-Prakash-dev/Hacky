@@ -123,9 +123,9 @@ const Intro = ({ onComplete }) => {
           position: "absolute",
           bottom: "2.5rem",
           fontFamily: "var(--font-general)",
-          fontSize: "0.65rem",
-          letterSpacing: "0.18em",
-          color: "rgba(255,255,255,0.18)",
+          fontSize: "0.78rem",
+          letterSpacing: "0.14em",
+          color: "rgba(255,255,255,0.6)",
           textTransform: "uppercase",
         }}
       >

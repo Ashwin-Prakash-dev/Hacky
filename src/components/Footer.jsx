@@ -34,8 +34,8 @@ const Footer = () => (
           Startathon<span style={{ color: "#888888" }}>.</span>
         </p>
         <p className="font-general" style={{
-          fontSize: "0.7rem", color: "rgba(255,255,255,0.2)",
-          letterSpacing: "0.04em", lineHeight: 1.7,
+          fontSize: "0.85rem", color: "rgba(255,255,255,0.65)",
+          letterSpacing: "0.02em", lineHeight: 1.7,
           maxWidth: "220px",
           marginBottom: "1.25rem",
         }}>
@@ -45,8 +45,8 @@ const Footer = () => (
 
         {/* Associated logos */}
         <p className="font-general" style={{
-          fontSize: "0.48rem", letterSpacing: "0.18em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.15)",
+          fontSize: "0.7rem", letterSpacing: "0.14em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
           marginBottom: "0.65rem",
         }}>Presented by</p>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -79,7 +79,7 @@ const Footer = () => (
               {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
               className="font-general footer-link"
               onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
             >
               <span className="footer-link-icon">{icon}</span>
               {label}
@@ -104,7 +104,7 @@ const Footer = () => (
               rel="noopener noreferrer"
               className="font-general footer-link"
               onMouseEnter={(e) => (e.currentTarget.style.color = "#C8FF00")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
             >
               <span className="footer-link-icon">{icon}</span>
               {label}
@@ -134,26 +134,26 @@ const Footer = () => (
         align-items: start;
       }
       .footer-col-label {
-        font-size: 0.5rem;
-        letter-spacing: 0.2em;
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.2);
+        color: rgba(255,255,255,0.6);
         margin-bottom: 1rem;
       }
       .footer-link {
         display: flex;
         align-items: center;
         gap: 9px;
-        font-size: 0.72rem;
-        color: rgba(255,255,255,0.3);
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.7);
         text-decoration: none;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.02em;
         transition: color 0.2s;
         white-space: nowrap;
       }
       .footer-link-icon {
         font-size: 1rem;
-        color: rgba(255,255,255,0.2);
+        color: rgba(255,255,255,0.55);
         flex-shrink: 0;
         display: flex;
       }
@@ -163,9 +163,9 @@ const Footer = () => (
         justify-content: space-between;
       }
       .footer-bottom-text {
-        font-size: 0.62rem;
-        color: rgba(255,255,255,0.1);
-        letter-spacing: 0.06em;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 0.03em;
       }
 
       @media (max-width: 767px) {

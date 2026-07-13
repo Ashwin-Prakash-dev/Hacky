@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthShell from "./AuthShell";
-import { Panel, Eyebrow, Title, ErrorLine, MONO, PrimaryButton } from "./ui";
-import { api } from "../../lib/startathon";
-import { isAuthed } from "../../lib/auth";
+import AuthShell from "../components/apply/AuthShell";
+import { Panel, Eyebrow, Title, ErrorLine, MONO, PrimaryButton } from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { isAuthed } from "../lib/auth";
 
 const ApplyPage = () => {
   const navigate = useNavigate();

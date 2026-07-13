@@ -15,8 +15,8 @@ const PaymentPanel = ({ team, onSubmit, busy, error }) => {
       <Panel maxWidth="none">
         <Eyebrow>PAYMENT — ₹100</Eyebrow>
         <p style={{
-          fontFamily: MONO, fontSize: "0.78rem",
-          color: "rgba(255,255,255,0.5)", marginTop: "0.75rem", lineHeight: 1.6,
+          fontFamily: MONO, fontSize: "0.9rem",
+          color: "rgba(255,255,255,0.8)", marginTop: "0.75rem", lineHeight: 1.6,
         }}>
           {"// waiting for your leader to complete payment"}
         </p>

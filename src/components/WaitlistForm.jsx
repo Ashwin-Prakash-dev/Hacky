@@ -16,7 +16,7 @@ const WhatsAppLink = () => (
       borderRadius: "8px",
       color: "#25D366",
       fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.65rem", letterSpacing: "0.14em",
+      fontSize: "0.8rem", letterSpacing: "0.1em",
       fontWeight: 700, textTransform: "uppercase",
       textDecoration: "none",
       boxSizing: "border-box",
@@ -90,8 +90,8 @@ const WaitlistForm = () => {
         </h3>
         <p style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.75rem",
-          color: "rgba(255,255,255,0.35)",
+          fontSize: "0.92rem",
+          color: "rgba(255,255,255,0.75)",
           marginTop: "0.75rem", lineHeight: 1.7,
         }}>
           Check your email for a confirmation from us.
@@ -129,7 +129,7 @@ const WaitlistForm = () => {
 
       <p style={{
         fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.55rem", letterSpacing: "0.22em",
+        fontSize: "0.75rem", letterSpacing: "0.18em",
         textTransform: "uppercase", color: "#C8FF00",
         marginBottom: "0.75rem",
       }}>Stay in the loop</p>
@@ -149,8 +149,8 @@ const WaitlistForm = () => {
 
       <p style={{
         fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.75rem",
-        color: "rgba(255,255,255,0.35)",
+        fontSize: "0.92rem",
+        color: "rgba(255,255,255,0.75)",
         lineHeight: 1.75, marginBottom: "2.25rem",
       }}>
         We'll reach out the moment registrations open.
@@ -180,7 +180,7 @@ const WaitlistForm = () => {
                 borderRadius: "8px",
                 color: "#fff",
                 fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.78rem",
+                fontSize: "0.95rem",
                 outline: "none",
                 transition: "border-color 0.2s, background 0.2s",
                 boxSizing: "border-box",
@@ -198,12 +198,12 @@ const WaitlistForm = () => {
         </div>
 
         {status === "duplicate" && (
-          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", color: "#ff6b6b", marginBottom: "0.75rem" }}>
+          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.85rem", color: "#ff8080", marginBottom: "0.75rem" }}>
             This email is already registered.
           </p>
         )}
         {status === "error" && (
-          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.7rem", color: "#ff6b6b", marginBottom: "0.75rem" }}>
+          <p style={{ fontFamily: "var(--font-general, sans-serif)", fontSize: "0.85rem", color: "#ff8080", marginBottom: "0.75rem" }}>
             Something went wrong. Please try again.
           </p>
         )}
@@ -216,7 +216,7 @@ const WaitlistForm = () => {
             background: "#C8FF00", color: "#000",
             border: "none", borderRadius: "8px",
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.65rem", letterSpacing: "0.14em",
+            fontSize: "0.8rem", letterSpacing: "0.1em",
             fontWeight: 700, textTransform: "uppercase",
             cursor: status === "loading" ? "not-allowed" : "pointer",
             opacity: status === "loading" ? 0.6 : 1,
@@ -244,8 +244,8 @@ const WaitlistForm = () => {
         <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
         <span style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.55rem", letterSpacing: "0.18em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+          fontSize: "0.75rem", letterSpacing: "0.14em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.6)",
         }}>or</span>
         <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
       </div>
@@ -255,8 +255,8 @@ const WaitlistForm = () => {
       <p style={{
         marginTop: "1.25rem", textAlign: "center",
         fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.6rem", color: "rgba(255,255,255,0.15)",
-        letterSpacing: "0.06em",
+        fontSize: "0.78rem", color: "rgba(255,255,255,0.55)",
+        letterSpacing: "0.04em",
       }}>
         Organized by Coding Club · SCTCE · Thiruvananthapuram
       </p>

@@ -106,13 +106,13 @@ function MarqueeStrip({ reverse = false }) {
         {items.map((t, i) => (
           <span key={i} style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem", letterSpacing: "0.28em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.18)",
+            fontSize: "0.72rem", letterSpacing: "0.22em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.6)",
             padding: "0.85rem 0", whiteSpace: "nowrap",
             display: "flex", alignItems: "center", gap: "3rem",
           }}>
             {t}
-            <span style={{ color: "#C8FF00", fontSize: "0.4rem" }}>◆</span>
+            <span style={{ color: "#C8FF00", fontSize: "0.55rem" }}>◆</span>
           </span>
         ))}
       </div>
@@ -179,7 +179,7 @@ function TierCard({ tier }) {
         <div style={{
           position: "absolute", top: "1.1rem", right: "1.1rem",
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.45rem", letterSpacing: "0.18em", textTransform: "uppercase",
+          fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase",
           color: "#000", background: "#C8FF00",
           borderRadius: "2px", padding: "3px 9px",
         }}>Full Access</div>
@@ -189,35 +189,35 @@ function TierCard({ tier }) {
       <div style={{ marginBottom: "1.5rem" }}>
         <span style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.22)",
+          fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase",
+          color: "rgba(255,255,255,0.6)",
         }}>{tier.tag}</span>
         <div style={{
           fontFamily: "var(--font-general)",
           fontSize: tier.bespoke ? "clamp(1.1rem, 2.5vw, 1.6rem)" : "clamp(2rem, 4vw, 3rem)",
           fontWeight: 900,
-          color: tier.highlight ? "#C8FF00" : tier.bespoke ? "rgba(255,255,255,0.35)" : "#fff",
+          color: tier.highlight ? "#C8FF00" : tier.bespoke ? "rgba(255,255,255,0.7)" : "#fff",
           fontStyle: tier.bespoke ? "italic" : "normal",
           lineHeight: 1, marginTop: "0.4rem",
         }}>{tier.price}</div>
         {tier.bespoke && (
           <div style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.45rem", letterSpacing: "0.16em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.2)", marginTop: "0.3rem",
+            fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.55)", marginTop: "0.3rem",
           }}>Quoted per engagement</div>
         )}
         <div style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.78rem", fontWeight: 600,
-          color: "rgba(255,255,255,0.5)", marginTop: "0.3rem",
+          fontSize: "0.85rem", fontWeight: 600,
+          color: "rgba(255,255,255,0.75)", marginTop: "0.3rem",
         }}>{tier.name}</div>
         {tier.slots && (
           <div style={{
             display: "inline-block", marginTop: "0.55rem",
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.45rem", letterSpacing: "0.14em", textTransform: "uppercase",
-            color: tier.highlight ? "#C8FF00" : "rgba(255,255,255,0.3)",
+            fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase",
+            color: tier.highlight ? "#C8FF00" : "rgba(255,255,255,0.65)",
             border: `1px solid ${tier.highlight ? "rgba(200,255,0,0.25)" : "rgba(255,255,255,0.1)"}`,
             borderRadius: "2px", padding: "2px 7px",
           }}>{tier.slots}</div>
@@ -232,10 +232,10 @@ function TierCard({ tier }) {
             padding: "0.45rem 0",
             borderBottom: "0.5px solid rgba(255,255,255,0.04)",
           }}>
-            <span style={{ color: "#C8FF00", fontSize: "0.55rem", marginTop: "2px", flexShrink: 0 }}>✓</span>
+            <span style={{ color: "#C8FF00", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>✓</span>
             <span style={{
               fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.65rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.5,
+              fontSize: "0.82rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.5,
             }}>{p}</span>
           </div>
         ))}
@@ -248,11 +248,11 @@ function TierCard({ tier }) {
         <button style={{
           width: "100%", padding: "0.75rem",
           background: tier.highlight ? "#C8FF00" : "transparent",
-          color: tier.highlight ? "#000" : "rgba(255,255,255,0.45)",
+          color: tier.highlight ? "#000" : "rgba(255,255,255,0.8)",
           border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)",
           borderRadius: "5px",
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.58rem", letterSpacing: "0.14em",
+          fontSize: "0.75rem", letterSpacing: "0.12em",
           fontWeight: 700, textTransform: "uppercase",
           cursor: "pointer", transition: "background 0.2s, color 0.2s, border-color 0.2s",
         }}
@@ -267,7 +267,7 @@ function TierCard({ tier }) {
         onMouseLeave={(e) => {
           if (!tier.highlight) {
             e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-            e.currentTarget.style.color = "rgba(255,255,255,0.45)";
+            e.currentTarget.style.color = "rgba(255,255,255,0.8)";
           } else {
             e.currentTarget.style.opacity = "1";
           }
@@ -347,14 +347,14 @@ const Sponsors = () => {
             border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
             borderRadius: "50px", padding: "0.5rem 1rem",
-            color: "rgba(255,255,255,0.55)",
+            color: "rgba(255,255,255,0.8)",
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.58rem", letterSpacing: "0.12em",
+            fontSize: "0.75rem", letterSpacing: "0.1em",
             textTransform: "uppercase", cursor: "pointer",
             transition: "color 0.2s, border-color 0.2s",
           }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "#C8FF00"; e.currentTarget.style.borderColor = "rgba(200,255,0,0.35)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.55)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
         >
           ← Startathon
         </button>
@@ -378,7 +378,7 @@ const Sponsors = () => {
 
         <span className="sp-hero-sub" style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.55rem", letterSpacing: "0.28em", textTransform: "uppercase",
+          fontSize: "0.72rem", letterSpacing: "0.22em", textTransform: "uppercase",
           color: "#C8FF00", background: "rgba(200,255,0,0.08)",
           border: "0.5px solid rgba(200,255,0,0.25)", borderRadius: "2px",
           padding: "4px 14px", marginBottom: "2.5rem", display: "inline-block",
@@ -408,8 +408,8 @@ const Sponsors = () => {
 
         <p className="sp-hero-sub" style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "clamp(0.82rem, 1.3vw, 0.97rem)",
-          color: "rgba(255,255,255,0.35)",
+          fontSize: "clamp(0.9rem, 1.3vw, 1.02rem)",
+          color: "rgba(255,255,255,0.8)",
           maxWidth: "520px", lineHeight: 1.85,
           marginTop: "2rem", opacity: 0,
         }}>
@@ -418,8 +418,8 @@ const Sponsors = () => {
         </p>
         <p style={{
           fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "clamp(0.7rem, 1.4vw, 0.85rem)",
-          color: "rgba(255,255,255,0.28)",
+          fontSize: "clamp(0.82rem, 1.4vw, 0.92rem)",
+          color: "rgba(255,255,255,0.65)",
           maxWidth: "520px", margin: "0.9rem auto 0",
           lineHeight: 1.65,
         }}>
@@ -442,8 +442,8 @@ const Sponsors = () => {
               }}>{n}</span>
               <span style={{
                 fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.55rem", letterSpacing: "0.14em",
-                textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+                fontSize: "0.72rem", letterSpacing: "0.1em",
+                textTransform: "uppercase", color: "rgba(255,255,255,0.7)",
               }}>{l}</span>
             </div>
           ))}
@@ -457,8 +457,8 @@ const Sponsors = () => {
         }}>
           <span style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.5rem", letterSpacing: "0.18em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+            fontSize: "0.68rem", letterSpacing: "0.14em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
           }}>Scroll</span>
           <div style={{
             width: "1px", height: "36px",
@@ -478,8 +478,8 @@ const Sponsors = () => {
         <div ref={valRef} style={{ marginBottom: "6rem" }}>
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.22)", marginBottom: "2rem",
+            fontSize: "0.72rem", letterSpacing: "0.18em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.65)", marginBottom: "2rem",
           }}>Why sponsor</p>
           <div className="sp-val-grid" style={{
             display: "grid",
@@ -503,7 +503,7 @@ const Sponsors = () => {
                 }}>{v.title}</h3>
                 <p style={{
                   fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.68rem", color: "rgba(255,255,255,0.28)", lineHeight: 1.75,
+                  fontSize: "0.85rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.75,
                 }}>{v.desc}</p>
               </div>
             ))}
@@ -514,8 +514,8 @@ const Sponsors = () => {
         <div ref={tiersRef} style={{ marginBottom: "6rem" }}>
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem", letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.22)", marginBottom: "2rem",
+            fontSize: "0.72rem", letterSpacing: "0.18em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.65)", marginBottom: "2rem",
           }}>Sponsorship tiers</p>
           <div style={{
             display: "grid",
@@ -548,7 +548,7 @@ const Sponsors = () => {
 
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.55rem", letterSpacing: "0.28em", textTransform: "uppercase",
+            fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase",
             color: "#C8FF00", marginBottom: "1rem",
           }}>Get in the room</p>
 
@@ -565,7 +565,7 @@ const Sponsors = () => {
 
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.75rem", color: "rgba(255,255,255,0.3)",
+            fontSize: "0.9rem", color: "rgba(255,255,255,0.75)",
             maxWidth: "420px", margin: "0 auto 2.5rem", lineHeight: 1.75,
           }}>
             This is the densest concentration of top student builder talent in Kerala.
@@ -579,7 +579,7 @@ const Sponsors = () => {
                 background: "#C8FF00", color: "#000",
                 border: "none", borderRadius: "5px",
                 fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.62rem", letterSpacing: "0.14em",
+                fontSize: "0.78rem", letterSpacing: "0.12em",
                 fontWeight: 700, textTransform: "uppercase",
                 cursor: "pointer", transition: "opacity 0.2s",
               }}
@@ -590,23 +590,23 @@ const Sponsors = () => {
             <a href="tel:+917909190948" style={{ textDecoration: "none" }}>
               <button style={{
                 padding: "0.9rem 2.5rem",
-                background: "transparent", color: "rgba(255,255,255,0.45)",
+                background: "transparent", color: "rgba(255,255,255,0.8)",
                 border: "1px solid rgba(255,255,255,0.12)", borderRadius: "5px",
                 fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.62rem", letterSpacing: "0.14em",
+                fontSize: "0.78rem", letterSpacing: "0.12em",
                 fontWeight: 700, textTransform: "uppercase",
                 cursor: "pointer", transition: "border-color 0.2s, color 0.2s",
               }}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(200,255,0,0.4)"; e.currentTarget.style.color = "#C8FF00"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.45)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
               >+91 79091 90948</button>
             </a>
           </div>
 
           <p style={{
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.58rem", color: "rgba(255,255,255,0.15)",
-            marginTop: "2rem", letterSpacing: "0.06em",
+            fontSize: "0.75rem", color: "rgba(255,255,255,0.55)",
+            marginTop: "2rem", letterSpacing: "0.04em",
           }}>Organized by Coding Club · SCTCE · Thiruvananthapuram</p>
         </div>
       </div>

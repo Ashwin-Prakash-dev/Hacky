@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import AuthShell from "../AuthShell";
-import PhaseTransition from "../PhaseTransition";
-import TerminalInput from "../inputs/TerminalInput";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import TerminalInput from "../components/apply/inputs/TerminalInput";
 import {
   Panel, Eyebrow, Title, ErrorLine, NoticeLine,
   PrimaryButton, GoogleButton, MonoLink, Divider,
-} from "../ui";
-import { api } from "../../../lib/startathon";
-import { saveAuth, isAuthed } from "../../../lib/auth";
+} from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { saveAuth, isAuthed } from "../lib/auth";
 
 const LoginPage = () => {
   const navigate = useNavigate();

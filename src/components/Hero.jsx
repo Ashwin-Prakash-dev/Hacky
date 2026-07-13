@@ -69,7 +69,7 @@ const Hero = () => {
               Startathon<span className="hero-dot">.</span>
             </h1>
 
-            <p className="mb-5 max-w-sm font-general text-sm text-blue-50 hero-sub">
+            <p className="mb-5 max-w-sm font-general text-base text-blue-50 hero-sub">
               30 hours. Ship something real.
               <br />
               Not everyone gets in.

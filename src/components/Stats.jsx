@@ -131,9 +131,9 @@ const Stats = () => {
 
             <span style={{
               fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.62rem", letterSpacing: "0.14em",
+              fontSize: "0.8rem", letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.72)",
               lineHeight: 1.5, whiteSpace: "pre-line",
             }}>
               {stat.label}

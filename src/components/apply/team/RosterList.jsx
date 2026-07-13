@@ -22,7 +22,7 @@ const RosterList = ({ team, onKick, busyId }) => {
                 {m.name}
                 {m.role === "leader" && (
                   <span style={{
-                    fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.12em",
+                    fontFamily: MONO, fontSize: "0.75rem", letterSpacing: "0.12em",
                     color: "#C8FF00", marginLeft: "0.6rem",
                   }}>
                     [LEADER]
@@ -30,7 +30,7 @@ const RosterList = ({ team, onKick, busyId }) => {
                 )}
               </p>
               <p style={{
-                fontFamily: MONO, fontSize: "0.7rem", color: "rgba(255,255,255,0.4)",
+                fontFamily: MONO, fontSize: "0.82rem", color: "rgba(255,255,255,0.7)",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
                 {m.email}
@@ -52,7 +52,7 @@ const RosterList = ({ team, onKick, busyId }) => {
             padding: "0.75rem 1rem",
             border: "1px dashed rgba(255,255,255,0.12)", borderRadius: "6px",
           }}>
-            <p style={{ fontFamily: MONO, fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>
+            <p style={{ fontFamily: MONO, fontSize: "0.85rem", color: "rgba(255,255,255,0.6)" }}>
               {"// open slot"}
             </p>
           </div>

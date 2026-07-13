@@ -152,10 +152,10 @@ const VideoCard = ({ src, title, label, category }) => {
           <span
             style={{
               fontFamily: "var(--font-general)",
-              fontSize: "0.56rem",
-              letterSpacing: "0.22em",
+              fontSize: "0.72rem",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: hovered ? "#C8FF00" : "rgba(255,255,255,0.42)",
+              color: hovered ? "#C8FF00" : "rgba(255,255,255,0.75)",
               border: `0.5px solid ${hovered ? "rgba(200,255,0,0.42)" : "rgba(255,255,255,0.14)"}`,
               borderRadius: "2px",
               padding: "3px 10px",
@@ -187,9 +187,9 @@ const VideoCard = ({ src, title, label, category }) => {
           <p
             style={{
               fontFamily: "var(--font-general)",
-              fontSize: "0.58rem",
-              letterSpacing: "0.18em",
-              color: "rgba(255,255,255,0.32)",
+              fontSize: "0.78rem",
+              letterSpacing: "0.14em",
+              color: "rgba(255,255,255,0.72)",
               textTransform: "uppercase",
               marginBottom: "0.5rem",
               opacity: hovered ? 1 : 0,
@@ -290,8 +290,8 @@ const VideoCards = () => {
             className="vc-reveal"
             style={{
               fontFamily: "var(--font-general)",
-              fontSize: "0.62rem",
-              letterSpacing: "0.22em",
+              fontSize: "0.78rem",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: "#C8FF00",
               marginBottom: "1.25rem",
@@ -321,8 +321,8 @@ const VideoCards = () => {
             className="vc-reveal"
             style={{
               fontFamily: "var(--font-general)",
-              fontSize: "0.82rem",
-              color: "rgba(255,255,255,0.52)",
+              fontSize: "1rem",
+              color: "rgba(255,255,255,0.82)",
               lineHeight: 1.78,
               maxWidth: "31rem",
               opacity: 0,
@@ -388,10 +388,10 @@ const VideoCards = () => {
           {/* Scroll hint */}
           <p style={{
             fontFamily: "var(--font-general)",
-            fontSize: "0.55rem",
-            letterSpacing: "0.16em",
+            fontSize: "0.75rem",
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.18)",
+            color: "rgba(255,255,255,0.6)",
             textAlign: "center",
             marginTop: "0.75rem",
           }}>
@@ -415,8 +415,8 @@ const VideoCards = () => {
           <div>
             <p style={{
               fontFamily: "var(--font-general)",
-              fontSize: "0.62rem",
-              letterSpacing: "0.22em",
+              fontSize: "0.78rem",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: "#C8FF00",
               marginBottom: "1.5rem",
@@ -448,8 +448,8 @@ const VideoCards = () => {
           }}>
             <p style={{
               fontFamily: "var(--font-general)",
-              fontSize: "clamp(0.82rem, 1.3vw, 0.98rem)",
-              color: "rgba(255,255,255,0.52)",
+              fontSize: "clamp(0.95rem, 1.3vw, 1.05rem)",
+              color: "rgba(255,255,255,0.82)",
               lineHeight: 1.9,
             }}>
               Startathon is Kerala's most curated builder hackathon. We don't take

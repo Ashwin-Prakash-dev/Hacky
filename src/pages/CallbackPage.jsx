@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import AuthShell from "../AuthShell";
-import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, MonoLink } from "../ui";
-import { api } from "../../../lib/startathon";
-import { saveAuth } from "../../../lib/auth";
+import AuthShell from "../components/apply/AuthShell";
+import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, MonoLink } from "../components/apply/ui";
+import { api } from "../lib/startathon";
+import { saveAuth } from "../lib/auth";
 
 const CallbackPage = () => {
   const navigate = useNavigate();
