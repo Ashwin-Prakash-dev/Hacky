@@ -142,7 +142,9 @@ const OnboardingPage = () => {
             <Panel maxWidth="none">
               <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <Eyebrow>CREATE A TEAM</Eyebrow>
-                <Title>Lead your own crew</Title>
+                <div style={{ minHeight: "4.6rem" }}>
+                  <Title>Lead your own crew</Title>
+                </div>
                 <form onSubmit={createTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
                   <TerminalInput
                     label="Team name (2–60 characters)" value={teamName}
@@ -161,7 +163,9 @@ const OnboardingPage = () => {
             <Panel maxWidth="none">
               <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <Eyebrow>JOIN A TEAM</Eyebrow>
-                <Title>Have a join code?</Title>
+                <div style={{ minHeight: "4.6rem" }}>
+                  <Title>Have a join code?</Title>
+                </div>
                 <form onSubmit={joinTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
                   <TerminalInput
                     label="Join code" value={joinCode}
