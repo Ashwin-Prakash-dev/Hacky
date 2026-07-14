@@ -85,12 +85,10 @@ const Hero = () => {
               </span>
             </h1>
 
-            <p className="hero-sub mb-5 max-w-md font-general text-base text-blue-50">
-              Kerala&rsquo;s most curated hackathon. 30 hours in one room,
-              <br className="hidden sm:block" />
-              20 teams, real mentors, sponsors hiring on the spot.
+            <p className="hero-sub mb-5 max-w-sm font-general text-base text-blue-50">
+              30 hours. Ship something real.
               <br />
-              Ship something real. Not everyone gets in.
+              Not everyone gets in.
             </p>
 
             <div className="mb-6 flex max-w-md flex-wrap items-center gap-2">
