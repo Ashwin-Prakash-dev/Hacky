@@ -46,6 +46,9 @@ async function sampleWordTargets(count) {
   ctx.fillStyle = "#fff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  // Zentry glyphs are extremely heavy; spacing keeps letters separable
+  // once they inflate into spheres
+  ctx.letterSpacing = "22px";
   let px = 330;
   ctx.font = `${weight} ${px}px ${family}`;
   const w = ctx.measureText(WORD).width;
@@ -84,10 +87,21 @@ async function sampleWordTargets(count) {
 
 const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 
+// Debug/testing hook: ?heroT=12 starts the choreography clock at 12s so the
+// converged state can be inspected without waiting through the sequence.
+function initialTime() {
+  try {
+    const v = parseFloat(new URLSearchParams(window.location.search).get("heroT"));
+    return Number.isFinite(v) ? v : 0;
+  } catch {
+    return 0;
+  }
+}
+
 function VoxelWord({ started, count }) {
   const meshRef = useRef();
   const groupRef = useRef();
-  const timeRef = useRef(0);
+  const timeRef = useRef(initialTime());
   const pointer = useRef(new THREE.Vector2(999, 999));
   const pointerTarget = useRef(new THREE.Vector2(999, 999));
   const pointerNdc = useRef(new THREE.Vector2(0, 0));
@@ -189,7 +203,7 @@ function VoxelWord({ started, count }) {
 
     const scale = Math.min(viewport.width * 1.02, 18);
     const repulseR = scale * 0.16;
-    const baseSize = scale * 0.021;
+    const baseSize = scale * 0.0055;
     const { starts, rands, offsets, vels, dummy } = inst;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
@@ -244,7 +258,7 @@ function VoxelWord({ started, count }) {
       const spin = t * (0.3 + r * 0.7) + r * 10 + agitation * 2;
       dummy.position.set(x, y, z);
       dummy.rotation.set(spin, spin * 0.8, 0);
-      dummy.scale.setScalar(baseSize * (0.7 + r * 0.9));
+      dummy.scale.setScalar(baseSize * (0.8 + r * 0.4));
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
     }
@@ -339,7 +353,7 @@ const HeroParticles = ({ started = true }) => {
           <ambientLight intensity={0.55} />
           <directionalLight position={[4, 6, 8]} intensity={1.3} />
           <directionalLight position={[-6, -2, -4]} intensity={0.4} color="#C8FF00" />
-          <VoxelWord started={started} count={isMobile ? 300 : 600} />
+          <VoxelWord started={started} count={isMobile ? 1400 : 3200} />
         </Canvas>
       </CanvasErrorBoundary>
     </div>
