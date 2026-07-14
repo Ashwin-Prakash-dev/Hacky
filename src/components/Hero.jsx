@@ -2,11 +2,19 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
-import HeroShader from "./HeroShader";
+import { useState } from "react";
+import HeroParticles, {
+  canUseParticles,
+  StaticHeroBackground,
+} from "./HeroParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Hero = () => {
+const Hero = ({ started = true }) => {
+  // When WebGL/motion is unavailable, the particle headline can't render —
+  // fall back to the visible DOM headline over a static gradient.
+  const [particlesOk] = useState(canUseParticles);
+
   useGSAP(() => {
     gsap.set("#video-frame", {
       clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
@@ -41,12 +49,12 @@ const Hero = () => {
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
-        <HeroShader />
+        {particlesOk ? <HeroParticles started={started} /> : <StaticHeroBackground />}
 
         <div className="hero-vignette" />
 
-        <div className="absolute left-0 top-0 z-40 flex size-full items-center sm:items-start">
-          <div className="w-full px-5 sm:mt-24 sm:px-10">
+        <div className="absolute left-0 top-0 z-40 flex size-full flex-col justify-between px-5 pb-10 pt-24 sm:px-10 sm:pb-14">
+          <div>
             <div className="hero-badge mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1">
               <span className="hero-badge-dot" />
               <span className="hero-badge-text font-general uppercase tracking-widest">
@@ -54,14 +62,16 @@ const Hero = () => {
               </span>
             </div>
 
-            <h1 className="hero-heading text-blue-100">
-              Startathon<span className="hero-dot">.</span>
+            <h1 className={particlesOk ? "sr-only" : "hero-heading text-blue-100"}>
+              Startathon{!particlesOk && <span className="hero-dot">.</span>}
               <span className="sr-only">
                 {" "}— Kerala&rsquo;s most curated 30-hour hackathon at SCTCE,
                 Thiruvananthapuram
               </span>
             </h1>
+          </div>
 
+          <div>
             <p className="hero-sub mb-5 max-w-sm font-general text-base text-blue-50">
               30 hours. Ship something real.
               <br />

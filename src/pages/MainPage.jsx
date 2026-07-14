@@ -72,7 +72,7 @@ const MainPage = () => {
       {introComplete && <GoogleOneTap />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
-        <Hero />
+        <Hero started={introComplete} />
         <SponsorsSection />
         <VideoCards />
         <Stats />
