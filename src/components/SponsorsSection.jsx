@@ -29,7 +29,7 @@ const SPONSORS = [
   },
 ];
 
-const SponsorCard = ({ sponsor }) => {
+const SponsorCard = ({ sponsor, idx }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -38,6 +38,7 @@ const SponsorCard = ({ sponsor }) => {
       target="_blank"
       rel="noopener noreferrer"
       className="sponsor-card"
+      data-particle-hover={`sponsor-${idx}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -136,7 +137,11 @@ const SponsorsSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: "#0a0a0a", width: "100%" }}>
+    <section
+      ref={sectionRef}
+      data-particles="sponsors"
+      style={{ background: "#0a0a0a", width: "100%" }}
+    >
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       <div
@@ -177,8 +182,8 @@ const SponsorsSection = () => {
             gap: "1.25rem",
           }}
         >
-          {SPONSORS.map((s) => (
-            <SponsorCard key={s.name} sponsor={s} />
+          {SPONSORS.map((s, i) => (
+            <SponsorCard key={s.name} sponsor={s} idx={i} />
           ))}
         </div>
       </div>

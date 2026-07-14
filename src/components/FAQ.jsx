@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
+import { faqDelta, emit as emitParticleEvent } from "./particles/registry";
 
 const faqs = [
   {
@@ -50,6 +51,7 @@ const FAQItem = ({ question, answer }) => {
     } else {
       tl.current = gsap.to(body, { height: 0, opacity: 0, duration: 0.3, ease: "power3.in" });
     }
+    faqDelta(open ? -1 : 1);
     setOpen((prev) => !prev);
   };
 
@@ -97,6 +99,7 @@ const FAQ = () => {
 
   const handleSelect = (i) => {
     if (i === selected) return;
+    emitParticleEvent("faq-select");
     setSelected(i);
   };
 
@@ -110,7 +113,12 @@ const FAQ = () => {
   }, [selected]);
 
   return (
-    <section id="faq" className="w-screen" style={{ background: "#0a0a0a", padding: "6rem 0" }}>
+    <section
+      id="faq"
+      data-particles="faq"
+      className="w-screen"
+      style={{ background: "#0a0a0a", padding: "6rem 0" }}
+    >
       <div className="container mx-auto px-5 md:px-10">
         <div style={{ marginBottom: "4rem" }}>
           <h2

@@ -69,6 +69,7 @@ const StudentHook = () => {
   return (
     <section
       ref={sectionRef}
+      data-particles="studenthook"
       style={{ background: "#0a0a0a", padding: "7rem 0 6rem", width: "100%" }}
     >
       <div className="container mx-auto px-5 md:px-10">
@@ -237,6 +238,7 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="sh-outcome-grid"
+      data-particle-target={`hook-${Number(item.num) - 1}`}
       style={{
         display: "grid",
         gridTemplateColumns: "3.5rem 1fr 1.6fr",

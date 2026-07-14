@@ -47,7 +47,7 @@ const MarqueeTrack = ({ reverse = false }) => {
 };
 
 const Marquee = ({ reverse = false }) => (
-  <div className="marquee-outer">
+  <div className="marquee-outer" data-particles="marquee">
     <div className="marquee-wrap">
       <div className="marquee-glow" />
       <div className="marquee-fade" />

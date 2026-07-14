@@ -6,10 +6,13 @@
 ## Goal
 
 Promote the hero's particle system (`src/components/HeroParticles.jsx`) to a single site-wide
-system on the main page. Particles persist for the whole visit: the hero movie plays as today,
-particles flow as a vertical stream while scrolling, and each section down the page has a
-bespoke particle interaction — most importantly the sponsor cards, where the flock rushes to
-and orbits whichever card is hovered.
+system on the main page. Particles persist for the whole visit and the flock is finite — it
+lives in exactly one section at a time. The hero movie plays as today; when ownership moves to
+another section the whole flock migrates there, pouring through a narrow vertical stream before
+fanning into the new section's formation. Each section has a bespoke interaction — most
+importantly the sponsor cards, where the flock rushes to and orbits whichever card is hovered.
+(Revised 2026-07-14: the stream is transit-only — it exists during section handoffs, not as a
+constant ambient river.)
 
 ## Decisions made
 
@@ -17,7 +20,8 @@ and orbits whichever card is hovered.
 - **Architecture:** one fixed full-viewport canvas + per-frame director (option A).
 - **Hero movie on scroll-away:** abandon into stream; scrolling back up shows the settled
   "Startathon." wordmark (movie does not resume).
-- **Mobile:** hero movie + stream only; hover-driven behaviors and formations disabled.
+- **Mobile:** hero movie only (flock rests in the cloud past the hero); hover-driven behaviors
+  and formations disabled.
 - **Perf priority:** smoothness first — 3200 particles desktop / 1400 mobile, adaptive DPR.
 
 ## Architecture
@@ -59,12 +63,15 @@ A per-frame state machine inside the r3f render loop:
    center (ties broken by page order), else the default **stream**. Exactly one section behavior + the stream are active
    at a time.
 3. Calls the behavior's target-generator: for each particle index it may claim the particle and
-   return a target `(x, y, z)` plus urgency; unclaimed particles ride the stream.
+   return a target `(x, y, z)` plus urgency; unclaimed particles rest in a loose drifting cloud
+   around the active section.
 4. Existing per-particle machinery is reused unchanged: spring/wake physics, ambient breathing,
    `rands`-based stagger, `easeOutCubic` morphs, toon material, instanced mesh.
 
-**Transitions:** on ownership change, particles retarget with per-particle stagger (existing
-`rands`), so handoffs read as a flock redirecting, not a cut.
+**Transitions (the stream):** on ownership change, every particle's target pinches into a
+narrow vertical column for ~1.6s (staggered per particle) with capped travel speed, so the
+finite flock visibly streams from the old section to the new one, then fans out into the new
+formation. Once settled there is no ambient stream.
 
 ### Behaviors are target generators
 
@@ -75,14 +82,14 @@ Each behavior is one function `(ctx) => claims` of ~30–60 lines. Shared primit
 - `silhouette(text | draw)` — rasterized shape sampling (existing `samplePoints` machinery).
 - `underline(rect, t)` — thin line beneath an element.
 - `burst(center, t)` — outward explosion with decay.
-- `stream(scrollVel, t)` — the default vertical river.
+(The transit stream is engine-level, not a primitive: target pinching during handoffs.)
 
 ## Behavior catalog
 
 | Section | Behavior |
 |---|---|
-| **Stream** (default) | Loose vertical river along viewport edges; speed tied to Lenis scroll velocity — fast scroll = torrent, idle = lazy drift. Connective tissue between all sections. |
-| **Hero** | Current movie unchanged (KEYS timeline, analytic walk/table scenes, static rasterized scenes). Scroll-away dissolves to stream; return forms resting "Startathon." wordmark. |
+| **Transit stream** (handoff only) | When section ownership changes, all particles pinch into a narrow vertical column and pour to the new section at capped speed, then fan out. No constant ambient stream — settled particles rest in a loose cloud around the active section. |
+| **Hero** | Current movie unchanged (KEYS timeline, analytic walk/table scenes, static rasterized scenes). Scroll-away streams the flock to the next section; return forms resting "Startathon." wordmark. |
 | **Sponsors** | Idle: thin halo drifting around all three cards. Hover: flock rushes to the hovered card, orbits its border (racetrack); switching cards re-rushes. Touch: skipped. |
 | **VideoCards** | Marching-ants racetrack border around the hovered builder card — frames, never covers the video. |
 | **Stats** | As counters tick, particles condense into the digits' silhouettes, then burst outward when each counter lands. |
@@ -98,14 +105,15 @@ Each behavior is one function `(ctx) => claims` of ~30–60 lines. Shared primit
 
 - Single instanced-mesh pool: 3200 desktop / 1400 mobile. No per-section allocation.
 - Adaptive DPR + `PerformanceMonitor` kept exactly as today.
-- One behavior + stream active per frame; unclaimed particles cost only the stream math.
+- One behavior active per frame; unclaimed particles cost only the resting-cloud math.
 - DOM rect reads cached per scroll tick and resize, not per frame.
 - Silhouette shapes (digits, `?`, `!`, `@`, `S.`) rasterized once at startup alongside the
   existing hero shapes; no runtime canvas sampling during scroll.
 
 ## Mobile & fallbacks
 
-- **Mobile** (`max-width: 767px`): hero movie + stream only; all hover/formation behaviors off.
+- **Mobile** (`max-width: 767px`): hero movie only; past the hero the flock rests in the
+  drifting cloud. All hover/formation behaviors off.
 - **Reduced motion / no WebGL** (`canUseParticles()` false): `StaticHeroBackground` gradient in
   the hero, nothing elsewhere. `CanvasErrorBoundary` wraps the canvas with the same fallback.
 
@@ -113,15 +121,18 @@ Each behavior is one function `(ctx) => claims` of ~30–60 lines. Shared primit
 
 `src/components/HeroParticles.jsx` splits into `src/components/particles/`:
 
-- `GlobalParticles.jsx` — canvas, director, particle pool (evolves `VoxelWord`).
-- `behaviors/*.js` — one target generator per section + `stream.js`.
-- `primitives.js` — racetrack, silhouette, underline, burst, stream helpers.
-- `registry.js` — target registry + hover/event state.
-- `shapes.js` — existing rasterizer, analytic walk/table scenes, `buildTargets` (moved, unchanged).
-- `useParticleTarget.js` — section-side hook.
+- `GlobalParticles.jsx` — canvas, director, particle pool, transit-stream integration.
+- `behaviors.js` — one target generator per section (single module).
+- `primitives.js` — racetrack, glyph formation, underline, burst helpers.
+- `registry.js` — DOM scan + hover delegation + event state.
+- `shapes.js` — existing rasterizer, analytic walk/table scenes, `buildTargets` (moved,
+  unchanged) + glyph rasterizer.
 
-`Hero.jsx` loses its canvas; `MainPage.jsx` renders `<GlobalParticles started={introComplete} />`.
-`canUseParticles`, `StaticHeroBackground`, and the error boundary move with the canvas.
+Sections integrate via data attributes (`data-particles`, `data-particle-target`,
+`data-particle-hover`) scanned by the registry — no per-section hook needed; FAQ and
+TerminalBridge additionally call the registry's `faqDelta`/`emit` directly.
+`Hero.jsx` loses its canvas (keeps the static gradient backdrop); `MainPage.jsx` renders
+`<GlobalParticles started={introComplete} />` behind `<main>`.
 
 ## Testing
 

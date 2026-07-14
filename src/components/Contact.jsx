@@ -3,6 +3,7 @@ import WaitlistForm from "./WaitlistForm";
 const Contact = () => (
   <div
     id="contact"
+    data-particles="contact"
     className="w-screen"
     style={{ background: "#0a0a0a", padding: "7rem 0" }}
   >

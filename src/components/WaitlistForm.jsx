@@ -210,6 +210,7 @@ const WaitlistForm = () => {
 
         <button
           type="submit"
+          data-particle-hover="contact-cta"
           disabled={status === "loading"}
           style={{
             width: "100%", padding: "0.9rem",

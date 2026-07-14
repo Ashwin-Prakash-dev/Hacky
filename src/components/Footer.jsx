@@ -5,6 +5,7 @@ import { MdOutlineEmail, MdOutlinePhone, MdOutlineLanguage } from "react-icons/m
 const Footer = () => (
   <footer
     className="w-screen"
+    data-particles="footer"
     style={{
       background: "#050505",
       borderTop: "1px solid rgba(255,255,255,0.07)",

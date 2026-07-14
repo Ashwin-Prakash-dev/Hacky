@@ -2,12 +2,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
-import { lazy, Suspense, useState } from "react";
-import HeroParticles from "./HeroParticles";
+import { useState } from "react";
 
-// Lazy chunk: keeps three.js out of the main bundle so the page paints
-// text-first on slow devices; the gradient shows until the canvas loads.
-// const HeroParticles = lazy(() => import("./HeroParticles"));
+// The particle headline is drawn by the site-wide canvas (GlobalParticles,
+// mounted in MainPage); this section supplies the dark backdrop it floats
+// over and the DOM fallback headline when WebGL/motion is unavailable.
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,7 +37,7 @@ function canUseParticles() {
   }
 }
 
-const Hero = ({ started = true }) => {
+const Hero = () => {
   // When WebGL/motion is unavailable, the particle headline can't render —
   // fall back to the visible DOM headline over a static gradient.
   const [particlesOk] = useState(canUseParticles);
@@ -71,19 +70,14 @@ const Hero = ({ started = true }) => {
   return (
     <section
       aria-label="Startathon — Kerala's most curated 30-hour hackathon"
+      data-particles="hero"
       className="relative h-dvh w-screen overflow-x-hidden"
     >
       <div
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
-        {particlesOk ? (
-          <Suspense fallback={<StaticHeroBackground />}>
-            <HeroParticles started={started} />
-          </Suspense>
-        ) : (
-          <StaticHeroBackground />
-        )}
+        <StaticHeroBackground />
 
         <div className="hero-vignette" />
 

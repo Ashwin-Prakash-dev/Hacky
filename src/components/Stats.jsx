@@ -65,6 +65,7 @@ const Stats = () => {
   return (
     <section
       ref={sectionRef}
+      data-particles="stats"
       style={{
         background: "#0a0a0a",
         padding: "0",
@@ -86,6 +87,7 @@ const Stats = () => {
           <div
             key={i}
             className="stats-cell"
+            data-particle-target={`stat-${i}`}
             style={{
               padding: "3.5rem clamp(1rem, 3vw, 2.5rem)",
               borderRight: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",

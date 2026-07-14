@@ -50,6 +50,7 @@ const VideoCard = ({ src, title, label, category }) => {
     <div
       ref={cardRef}
       className="relative size-full overflow-hidden"
+      data-particle-hover={`video-${src}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onMouseMove={(e) => {
@@ -277,6 +278,7 @@ const VideoCards = () => {
     <section
       ref={sectionRef}
       id="showcase"
+      data-particles="videocards"
       style={{ backgroundColor: "#0a0a0a", paddingBottom: 0 }}
     >
       <div className="container mx-auto px-3 md:px-10">

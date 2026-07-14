@@ -8,6 +8,7 @@ import CustomCursor from "../components/CustomCursor";
 import ScrollProgress from "../components/ScrollProgress";
 import NavBar from "../components/Navbar";
 import Hero from "../components/Hero";
+import GlobalParticles, { canUseParticles } from "../components/particles/GlobalParticles";
 import SponsorsSection from "../components/SponsorsSection";
 import Stats from "../components/Stats";
 import Marquee from "../components/Marquee";
@@ -27,6 +28,7 @@ const MainPage = () => {
   const [introComplete, setIntroComplete] = useState(
     () => sessionStorage.getItem(INTRO_SEEN_KEY) === "1"
   );
+  const [particlesOk] = useState(canUseParticles);
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -70,9 +72,10 @@ const MainPage = () => {
         />
       )}
       {introComplete && <GoogleOneTap />}
+      {particlesOk && <GlobalParticles started={introComplete} />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
-        <Hero started={introComplete} />
+        <Hero />
         <SponsorsSection />
         <VideoCards />
         <Stats />
