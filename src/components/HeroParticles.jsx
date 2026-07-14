@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unknown-property -- react-three-fiber JSX props */
 import { useEffect, useMemo, useRef, useState, Component } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 
 // Choreography on an InstancedMesh of toon-shaded spheres (~9s):
@@ -150,10 +151,12 @@ function VoxelWord({ started, count }) {
     return tex;
   }, []);
 
-  // Per-instance flat colors: moss → lime range, a few near-white accents
+  // Per-instance flat colors: moss → lime range, a few near-white accents.
+  // Also hint GL that instance matrices are rewritten every frame.
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh || !targets) return;
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     const moss = new THREE.Color("#3d5c0a");
     const lime = new THREE.Color("#C8FF00");
     const hot = new THREE.Color("#f2ffd0");
@@ -311,8 +314,15 @@ function VoxelWord({ started, count }) {
     }
     mesh.instanceMatrix.needsUpdate = true;
 
-    // fade the whole system in over the first 1.2s
-    mesh.material.opacity = Math.min(t * 0.85, 1);
+    // fade the whole system in over the first 1.2s, then drop transparency
+    // entirely so the material renders in the cheaper opaque pass
+    if (t < 1.5) {
+      mesh.material.opacity = Math.min(t * 0.85, 1);
+    } else if (mesh.material.transparent) {
+      mesh.material.opacity = 1;
+      mesh.material.transparent = false;
+      mesh.material.needsUpdate = true;
+    }
   });
 
   if (!targets) return null;
@@ -320,7 +330,9 @@ function VoxelWord({ started, count }) {
   return (
     <group ref={groupRef}>
       <instancedMesh ref={meshRef} args={[null, null, count]} frustumCulled={false}>
-        <sphereGeometry args={[0.5, 16, 12]} />
+        {/* 10x8 segments ≈ 60% fewer triangles; toon banding hides the
+            low-poly silhouette at these sphere sizes */}
+        <sphereGeometry args={[0.5, 10, 8]} />
         <meshToonMaterial gradientMap={gradientMap} transparent opacity={0} />
       </instancedMesh>
     </group>
@@ -376,6 +388,12 @@ const HeroParticles = ({ started = true }) => {
     []
   );
 
+  // Adaptive resolution: start at full DPR, step down when the frame rate
+  // sags and back up when it recovers.
+  const maxDpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+  const minDpr = isMobile ? 0.7 : 0.85;
+  const [dpr, setDpr] = useState(maxDpr);
+
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -391,12 +409,19 @@ const HeroParticles = ({ started = true }) => {
     <div ref={wrapRef} aria-hidden="true" className="absolute left-0 top-0 size-full">
       <CanvasErrorBoundary fallback={<StaticHeroBackground />}>
         <Canvas
+          flat
           camera={{ position: [0, 0, 8], fov: 50 }}
           gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
-          dpr={isMobile ? 1 : [1, 1.5]}
+          dpr={dpr}
           frameloop={inView ? "always" : "never"}
           style={{ position: "absolute", inset: 0, background: "#050505" }}
         >
+          <PerformanceMonitor
+            onDecline={() => setDpr(minDpr)}
+            onIncline={() => setDpr(maxDpr)}
+            flipflops={3}
+            onFallback={() => setDpr(minDpr)}
+          />
           <ambientLight intensity={0.55} />
           <directionalLight position={[4, 6, 8]} intensity={1.3} />
           <directionalLight position={[-6, -2, -4]} intensity={0.4} color="#C8FF00" />
