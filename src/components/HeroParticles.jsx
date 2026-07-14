@@ -7,8 +7,9 @@ import * as THREE from "three";
 //   0.0s – 2.6s  spheres drift in from depth, swirling in a slow vortex
 //   2.6s – 4.8s  staggered convergence into the "S." monogram
 //   6.6s – 9.0s  the S. dissolves outward into "Startathon."
-//   9.0s –  ∞    idle tumble; the white accent spheres detach and swarm
-//                after the cursor, returning to their slots when it leaves
+//   9.0s –  ∞    every sphere breathes with a gentle ambient wobble, and
+//                cursor motion drags nearby spheres along its path (a
+//                flowing wake that springs back into the letterforms)
 const WORD_FULL = "Startathon.";
 const WORD_MONO = "S.";
 const TWO_PI = Math.PI * 2;
@@ -93,17 +94,13 @@ function initialTime() {
   }
 }
 
-// Spheres with rand above this detach and follow the cursor (~4% — the
-// same near-white accents colored "hot" below, so the swarm reads as the
-// bright ones leaving the word).
-const FOLLOWER_R = 0.955;
-const FOLLOW_START = 9.0;
-
 function VoxelWord({ started, count }) {
   const meshRef = useRef();
   const groupRef = useRef();
   const timeRef = useRef(initialTime());
   const pointer = useRef(new THREE.Vector2(999, 999));
+  const pointerPrev = useRef(new THREE.Vector2(999, 999));
+  const pointerVel = useRef(new THREE.Vector2(0, 0));
   const pointerTarget = useRef(new THREE.Vector2(999, 999));
   const pointerNdc = useRef(new THREE.Vector2(0, 0));
   const { viewport } = useThree();
@@ -117,13 +114,10 @@ function VoxelWord({ started, count }) {
     };
   }, [count]);
 
-  // Per-instance state: scatter start, randomness, follower swarm state
+  // Per-instance state: scatter start, randomness, wake spring state
   const inst = useMemo(() => {
     const starts = new Float32Array(count * 3);
     const rands = new Float32Array(count);
-    const orbitR = new Float32Array(count);
-    const orbitSpeed = new Float32Array(count);
-    const orbitPhase = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       const th = Math.random() * TWO_PI;
       const rad = 4 + Math.random() * 7;
@@ -131,19 +125,13 @@ function VoxelWord({ started, count }) {
       starts[i * 3 + 1] = (Math.random() - 0.5) * 8;
       starts[i * 3 + 2] = Math.sin(th) * rad - 3;
       rands[i] = Math.random();
-      orbitR[i] = 0.25 + Math.random() * 0.6;
-      orbitSpeed[i] = 1.2 + Math.random() * 2.2;
-      orbitPhase[i] = Math.random() * TWO_PI;
     }
     return {
       starts,
       rands,
-      orbitR,
-      orbitSpeed,
-      orbitPhase,
-      // follower positions/velocities, lazily initialized (NaN = not yet)
-      fpos: new Float32Array(count * 2).fill(NaN),
-      fvel: new Float32Array(count * 2),
+      // spring offsets/velocities for the cursor wake
+      offsets: new Float32Array(count * 2),
+      vels: new Float32Array(count * 2),
       dummy: new THREE.Object3D(),
     };
   }, [count]);
@@ -162,7 +150,7 @@ function VoxelWord({ started, count }) {
     return tex;
   }, []);
 
-  // Per-instance flat colors: moss → lime range, near-white for followers
+  // Per-instance flat colors: moss → lime range, a few near-white accents
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh || !targets) return;
@@ -207,10 +195,30 @@ function VoxelWord({ started, count }) {
     if (started) timeRef.current += dt;
     const t = timeRef.current;
 
+    const pointerActive = pointerTarget.current.x < 900;
+    if (pointerActive && pointer.current.x > 900) {
+      // pointer just entered: snap, so it doesn't streak across the scene
+      pointer.current.copy(pointerTarget.current);
+      pointerPrev.current.copy(pointerTarget.current);
+    }
+    pointerPrev.current.copy(pointer.current);
     pointer.current.lerp(pointerTarget.current, 0.14);
     const px = pointer.current.x;
     const py = pointer.current.y;
-    const pointerActive = pointerTarget.current.x < 900;
+    // smoothed cursor velocity in world units/s, capped so fast flicks
+    // don't launch spheres off-screen
+    if (pointerActive) {
+      pointerVel.current
+        .copy(pointer.current)
+        .sub(pointerPrev.current)
+        .divideScalar(Math.max(dt, 1e-3));
+      const vmag = pointerVel.current.length();
+      if (vmag > 26) pointerVel.current.multiplyScalar(26 / vmag);
+    } else {
+      pointerVel.current.set(0, 0);
+    }
+    const pvx = pointerVel.current.x;
+    const pvy = pointerVel.current.y;
 
     // gentle parallax tilt of the whole word toward the cursor
     if (groupRef.current) {
@@ -222,7 +230,9 @@ function VoxelWord({ started, count }) {
 
     const scale = Math.min(viewport.width * 0.92, 17);
     const baseSize = scale * 0.0055;
-    const { starts, rands, orbitR, orbitSpeed, orbitPhase, fpos, fvel, dummy } = inst;
+    const wakeR = scale * 0.14;
+    const wobAmp = scale * 0.0045;
+    const { starts, rands, offsets, vels, dummy } = inst;
     const { mono, full } = targets;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
@@ -254,41 +264,44 @@ function VoxelWord({ started, count }) {
 
       let spin = t * (0.3 + r * 0.7) + r * 10;
 
-      // follower swarm: the bright spheres chase the cursor once the word
-      // has formed, and spring back to their slots when it leaves
-      if (r > FOLLOWER_R && t > FOLLOW_START) {
-        let fx = fpos[i * 2];
-        let fy = fpos[i * 2 + 1];
-        if (Number.isNaN(fx)) {
-          fx = x;
-          fy = y;
+      // ambient breathing: every settled sphere drifts on its own small
+      // orbit so the letterforms shimmer instead of freezing
+      const settle = p1;
+      x += Math.sin(t * (0.7 + r * 0.9) + r * 40.0) * wobAmp * settle;
+      y += Math.cos(t * (0.9 + r * 0.7) + r * 27.0) * wobAmp * settle;
+
+      // cursor wake: spheres near the pointer get dragged along with its
+      // motion, then spring back into place
+      let ox = offsets[i * 2];
+      let oy = offsets[i * 2 + 1];
+      let vx = vels[i * 2];
+      let vy = vels[i * 2 + 1];
+      if (pointerActive && settle > 0.5) {
+        const ddx = x + ox - px;
+        const ddy = y + oy - py;
+        const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (dist < wakeR) {
+          const fall = 1 - dist / wakeR;
+          const drag = fall * fall * 1.1 * dt;
+          vx += pvx * drag;
+          vy += pvy * drag;
         }
-        let dx;
-        let dy;
-        if (pointerActive) {
-          const oa = t * orbitSpeed[i] + orbitPhase[i];
-          dx = px + Math.cos(oa) * orbitR[i] - fx;
-          dy = py + Math.sin(oa) * orbitR[i] * 0.7 - fy;
-        } else {
-          dx = x - fx;
-          dy = y - fy;
-        }
-        let vx = fvel[i * 2] + dx * 14 * dt;
-        let vy = fvel[i * 2 + 1] + dy * 14 * dt;
-        const dmp = 1 - Math.min(3.2 * dt, 0.85);
-        vx *= dmp;
-        vy *= dmp;
-        fx += vx * dt;
-        fy += vy * dt;
-        fpos[i * 2] = fx;
-        fpos[i * 2 + 1] = fy;
-        fvel[i * 2] = vx;
-        fvel[i * 2 + 1] = vy;
-        x = fx;
-        y = fy;
-        z = 0.6; // ride slightly in front of the word
-        spin += Math.sqrt(vx * vx + vy * vy) * 0.6;
       }
+      // spring home + damping
+      vx += -ox * 11 * dt;
+      vy += -oy * 11 * dt;
+      const dmp = 1 - Math.min(3.4 * dt, 0.85);
+      vx *= dmp;
+      vy *= dmp;
+      ox += vx * dt;
+      oy += vy * dt;
+      offsets[i * 2] = ox;
+      offsets[i * 2 + 1] = oy;
+      vels[i * 2] = vx;
+      vels[i * 2 + 1] = vy;
+      x += ox;
+      y += oy;
+      spin += Math.sqrt(vx * vx + vy * vy) * 0.4;
 
       dummy.position.set(x, y, z);
       dummy.rotation.set(spin, spin * 0.8, 0);
