@@ -77,7 +77,7 @@ async function sampleWordTargets(count) {
     const j = order[i % n];
     targets[i * 3] = (pts[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.003;
     targets[i * 3 + 1] = -(pts[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.003;
-    targets[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+    targets[i * 3 + 2] = 0; // single flat layer — no depth stacking in the word
   }
   return targets;
 }
