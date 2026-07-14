@@ -19,6 +19,7 @@ const VERTEX = /* glsl */ `
 
   varying float vAlpha;
   varying float vHot;
+  varying float vRand;
 
   float easeOutCubic(float x) { return 1.0 - pow(1.0 - x, 3.0); }
 
@@ -54,41 +55,72 @@ const VERTEX = /* glsl */ `
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
-    gl_PointSize = uSize * (0.6 + aRand * 0.8) * (6.0 / -mv.z);
+    // bimodal sizes: mostly fine pixels, ~20% chunky blocks
+    float chunk = step(0.8, aRand);
+    gl_PointSize = uSize * mix(0.45 + aRand * 0.5, 1.6, chunk) * (6.0 / -mv.z);
 
     vAlpha = clamp(t * 0.8, 0.0, 1.0) * (0.30 + 0.70 * p);
     vHot = p;
+    vRand = aRand;
   }
 `;
 
 const FRAGMENT = /* glsl */ `
   precision mediump float;
+  uniform float uTime;
   varying float vAlpha;
   varying float vHot;
+  varying float vRand;
 
   void main() {
-    vec2 c = gl_PointCoord - 0.5;
-    float d = length(c);
-    float a = smoothstep(0.5, 0.12, d) * vAlpha;
+    // crisp square "pixel" with a thin soft edge — terminal aesthetic
+    vec2 c = abs(gl_PointCoord - 0.5);
+    float edge = max(c.x, c.y);
+    float a = (1.0 - smoothstep(0.42, 0.5, edge)) * vAlpha;
     if (a < 0.01) discard;
+
     vec3 lime = vec3(0.784, 1.0, 0.0);
-    vec3 col = mix(lime, vec3(1.0), smoothstep(0.22, 0.0, d) * 0.55 * vHot);
+    vec3 moss = vec3(0.30, 0.44, 0.05);
+    // depth variation: some particles sit darker, some run white-hot
+    vec3 col = mix(moss, lime, smoothstep(0.15, 0.6, vRand));
+    col = mix(col, vec3(1.0), step(0.93, vRand) * 0.7 * vHot);
+
+    // sparse random flicker once the word has formed
+    float flicker = step(0.985, fract(vRand * 91.7 + uTime * (1.5 + vRand * 3.0)));
+    col += vec3(0.4, 0.5, 0.2) * flicker * vHot;
+
     gl_FragColor = vec4(col, a);
   }
 `;
 
 const WORD = "STARTATHON";
 
+// The Zentry display font ships in /public/fonts but has no CSS @font-face;
+// load it directly for the offscreen rasterization, falling back to the
+// body font if the load fails.
+async function loadDisplayFont() {
+  try {
+    const font = new FontFace("zentry", 'url(/fonts/zentry-regular.woff2)');
+    await font.load();
+    document.fonts.add(font);
+    return '"zentry", sans-serif';
+  } catch {
+    try {
+      await document.fonts.ready;
+    } catch {
+      /* sample with whatever is available */
+    }
+    return '"Open Sauce Sans", sans-serif';
+  }
+}
+
 // Rasterize the word offscreen and return `count` normalized target
 // positions (x in [-0.5, 0.5], y aspect-correct, slight z jitter).
 async function sampleWordTargets(count) {
-  try {
-    await document.fonts.ready;
-  } catch {
-    /* sample with fallback font */
-  }
-  const W = 1400;
-  const H = 320;
+  const family = await loadDisplayFont();
+  const weight = family.startsWith('"zentry"') ? 400 : 900;
+  const W = 1800;
+  const H = 460;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
@@ -96,12 +128,12 @@ async function sampleWordTargets(count) {
   ctx.fillStyle = "#fff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  let px = 230;
-  ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
+  let px = 330;
+  ctx.font = `${weight} ${px}px ${family}`;
   const w = ctx.measureText(WORD).width;
-  if (w > W * 0.96) {
-    px = Math.floor((px * W * 0.96) / w);
-    ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
+  if (w > W * 0.97) {
+    px = Math.floor((px * W * 0.97) / w);
+    ctx.font = `${weight} ${px}px ${family}`;
   }
   ctx.fillText(WORD, W / 2, H / 2);
 
@@ -172,8 +204,8 @@ function ParticleWord({ started, count }) {
     if (!mat) return;
     if (started) timeRef.current += Math.min(delta, 0.05);
     mat.uniforms.uTime.value = timeRef.current;
-    mat.uniforms.uScale.value = Math.min(viewport.width * 0.94, 15);
-    mat.uniforms.uSize.value = 30 * gl.getPixelRatio();
+    mat.uniforms.uScale.value = Math.min(viewport.width * 1.02, 18);
+    mat.uniforms.uSize.value = 34 * gl.getPixelRatio();
     pointer.current.lerp(pointerTarget.current, 0.08);
     mat.uniforms.uPointer.value.copy(pointer.current);
   });
@@ -200,7 +232,7 @@ function ParticleWord({ started, count }) {
         transparent
         depthTest={false}
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={THREE.NormalBlending}
       />
     </points>
   );
