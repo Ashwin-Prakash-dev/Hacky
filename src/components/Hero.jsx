@@ -2,13 +2,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
-import { useState } from "react";
+import HeroShader from "./HeroShader";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  const [loading, setLoading] = useState(true);
-
   useGSAP(() => {
     gsap.set("#video-frame", {
       clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
@@ -39,32 +37,11 @@ const Hero = () => {
       aria-label="Startathon — Kerala's most curated 30-hour hackathon"
       className="relative h-dvh w-screen overflow-x-hidden"
     >
-      {loading && (
-        <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-black">
-          <div className="three-body">
-            <div className="three-body__dot"></div>
-            <div className="three-body__dot"></div>
-            <div className="three-body__dot"></div>
-          </div>
-        </div>
-      )}
-
       <div
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
-        <video
-          src="videos/hero-1.webm"
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden="true"
-          tabIndex={-1}
-          className="absolute left-0 top-0 size-full object-cover object-center"
-          style={{ opacity: 0.55 }}
-          onLoadedData={() => setLoading(false)}
-        />
+        <HeroShader />
 
         <div className="hero-vignette" />
 
