@@ -3,10 +3,11 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
 import { lazy, Suspense, useState } from "react";
+import HeroParticles from "./HeroParticles";
 
 // Lazy chunk: keeps three.js out of the main bundle so the page paints
 // text-first on slow devices; the gradient shows until the canvas loads.
-const HeroParticles = lazy(() => import("./HeroParticles"));
+// const HeroParticles = lazy(() => import("./HeroParticles"));
 
 gsap.registerPlugin(ScrollTrigger);
 
