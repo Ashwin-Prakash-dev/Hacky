@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef, useState, Component } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-// ~7.5s choreography on an InstancedMesh of toon-shaded voxel cubes:
+// ~7.5s choreography on an InstancedMesh of toon-shaded spheres:
 //   0.0s – 3.2s  cubes drift in from depth, swirling in a slow vortex
-//   3.2s – 7.5s  staggered convergence: each cube peels off the vortex and
+//   3.2s – 7.5s  staggered convergence: each sphere peels off the vortex and
 //                locks into its glyph position spelling STARTATHON
 //   7.5s –  ∞    idle: slow tumble, spring-physics cursor repulsion, and
 //                the whole word tilts parallax-style with the pointer
@@ -259,7 +259,7 @@ function VoxelWord({ started, count }) {
   return (
     <group ref={groupRef}>
       <instancedMesh ref={meshRef} args={[null, null, count]} frustumCulled={false}>
-        <boxGeometry args={[1, 1, 1]} />
+        <sphereGeometry args={[0.5, 16, 12]} />
         <meshToonMaterial gradientMap={gradientMap} transparent opacity={0} />
       </instancedMesh>
     </group>
