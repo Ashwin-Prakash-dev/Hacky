@@ -189,7 +189,7 @@ function VoxelWord({ started, count }) {
 
     const scale = Math.min(viewport.width * 1.02, 18);
     const repulseR = scale * 0.16;
-    const baseSize = scale * 0.013;
+    const baseSize = scale * 0.021;
     const { starts, rands, offsets, vels, dummy } = inst;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
@@ -339,7 +339,7 @@ const HeroParticles = ({ started = true }) => {
           <ambientLight intensity={0.55} />
           <directionalLight position={[4, 6, 8]} intensity={1.3} />
           <directionalLight position={[-6, -2, -4]} intensity={0.4} color="#C8FF00" />
-          <VoxelWord started={started} count={isMobile ? 500 : 1000} />
+          <VoxelWord started={started} count={isMobile ? 300 : 600} />
         </Canvas>
       </CanvasErrorBoundary>
     </div>
