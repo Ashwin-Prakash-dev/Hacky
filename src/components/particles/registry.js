@@ -86,7 +86,15 @@ export function initRegistry() {
     "mouseover",
     (e) => {
       const el = e.target?.closest?.("[data-particle-hover]");
-      hovered = el ? el.dataset.particleHover : null;
+      if (el) hovered = el.dataset.particleHover;
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    "mouseout",
+    (e) => {
+      const el = e.target?.closest?.("[data-particle-hover]");
+      if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) hovered = null;
     },
     { passive: true }
   );

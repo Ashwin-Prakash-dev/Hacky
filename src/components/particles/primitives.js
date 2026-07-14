@@ -35,7 +35,7 @@ export function racetrack(ctx, r, i0, m, pad, speed, k) {
   for (let i = i0; i < i0 + m && i < ctx.count; i++) {
     const rd = ctx.rands[i];
     const dir = rd > 0.85 ? -1 : 1;
-    perimeterPoint(r, rd + ctx.t * speed * (0.7 + rd * 0.6) * dir, pad + rd * 0.25, seg);
+    perimeterPoint(r, rd + ctx.t * speed * (0.7 + rd * 0.6) * dir, pad + ctx.rands2[i] * 0.12, seg);
     ctx.claim(i, seg[0], seg[1], (rd - 0.5) * 0.5, k);
   }
 }

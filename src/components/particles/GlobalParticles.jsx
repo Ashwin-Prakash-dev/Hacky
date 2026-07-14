@@ -89,6 +89,11 @@ function ParticleEngine({ started, count, isMobile }) {
   const inst = useMemo(() => {
     const starts = new Float32Array(count * 3);
     const rands = new Float32Array(count);
+    // independent random streams — deriving several "randoms" from one
+    // value via fract(r * k) correlates x/y and collapses scatter onto
+    // visible diagonal lines
+    const rands2 = new Float32Array(count);
+    const rands3 = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       const th = Math.random() * TWO_PI;
       const rad = 4 + Math.random() * 7;
@@ -96,6 +101,8 @@ function ParticleEngine({ started, count, isMobile }) {
       starts[i * 3 + 1] = (Math.random() - 0.5) * 8;
       starts[i * 3 + 2] = Math.sin(th) * rad - 3;
       rands[i] = Math.random();
+      rands2[i] = Math.random();
+      rands3[i] = Math.random();
     }
     const slots = {};
     for (const name of Object.keys(ANIM_SCENES)) {
@@ -104,6 +111,8 @@ function ParticleEngine({ started, count, isMobile }) {
     return {
       starts,
       rands,
+      rands2,
+      rands3,
       slots,
       cur: starts.slice(),
       offsets: new Float32Array(count * 2),
@@ -111,6 +120,7 @@ function ParticleEngine({ started, count, isMobile }) {
       claimK: new Float32Array(count),
       claimT: new Float32Array(count * 3),
       claimS: new Float32Array(count),
+      scaleCur: new Float32Array(count).fill(1),
       dummy: new THREE.Object3D(),
     };
   }, [count]);
@@ -215,6 +225,12 @@ function ParticleEngine({ started, count, isMobile }) {
     // ---- director -------------------------------------------------------
     if (phover) setHovered(phover);
     let act = pstate || sectionAt(sy + window.innerHeight / 2);
+    // short final sections (the footer) can never contain the viewport
+    // center — at the bottom of the page, the last section wins
+    const docH = document.documentElement.scrollHeight;
+    if (!pstate && sy + window.innerHeight >= docH - 8) {
+      act = sectionAt(docH - 10) || act;
+    }
     if (isMobile && act !== "hero") act = null;
     if (!started) act = "hero";
     if (act !== activeRef.current.id) activeRef.current = { id: act, since: t };
@@ -230,7 +246,21 @@ function ParticleEngine({ started, count, isMobile }) {
     }
     const movieActive = heroOwns && !hs.abandoned && movieT.current < MOVIE_END;
 
-    const { starts, rands, slots, cur, offsets, vels, claimK, claimT, claimS, dummy } = inst;
+    const {
+      starts,
+      rands,
+      rands2,
+      rands3,
+      slots,
+      cur,
+      offsets,
+      vels,
+      claimK,
+      claimT,
+      claimS,
+      scaleCur,
+      dummy,
+    } = inst;
     const scale = Math.min(vw * 0.92, 17);
     const baseSize = scale * 0.0055;
     const wakeR = scale * 0.14;
@@ -300,6 +330,8 @@ function ParticleEngine({ started, count, isMobile }) {
         dt,
         count,
         rands,
+        rands2,
+        rands3,
         scale,
         vw,
         vh,
@@ -321,26 +353,30 @@ function ParticleEngine({ started, count, isMobile }) {
     }
 
     // ---- integrate ------------------------------------------------------
-    // The flock is finite and lives in one section at a time. Unclaimed
-    // particles rest in a loose cloud around the active section; on a
-    // section handoff every target pinches into a narrow vertical column
-    // with capped travel speed, so the migration reads as a stream pouring
-    // from the old section into the new one before fanning out.
-    const actRect = act ? rectW(`section:${act}`) : null;
-    const idleCy = actRect ? THREE.MathUtils.clamp(actRect.cy, -vh * 0.45, vh * 0.45) : 0;
+    // The flock is finite and lives in one section at a time. Outside the
+    // hero the system stays subtle: claimed particles render small, only a
+    // sparse remainder keeps drifting in the side gutters, and the rest
+    // fade out entirely. On a section handoff, targets pinch into a narrow
+    // vertical column with capped travel speed, so the migration reads as
+    // a stream pouring between sections before fanning out.
+    const idleVis = Math.floor(count * 0.12);
     for (let i = 0; i < count; i++) {
       const r = rands[i];
+      const r2 = rands2[i];
+      const r3 = rands3[i];
       const i3 = i * 3;
       let x = cur[i3];
       let y = cur[i3 + 1];
       let z = cur[i3 + 2];
       const k = claimK[i];
       let settle = 1;
+      let scTarget;
       if (k >= 90) {
         x = claimT[i3];
         y = claimT[i3 + 1];
         z = claimT[i3 + 2];
         settle = claimS[i];
+        scTarget = 1;
       } else {
         let tx;
         let ty;
@@ -351,17 +387,17 @@ function ParticleEngine({ started, count, isMobile }) {
           ty = claimT[i3 + 1];
           tz = claimT[i3 + 2];
           kk = k;
+          scTarget = heroOwns ? 1 : 0.7;
         } else {
-          // resting cloud drifting around the active section
-          tx =
-            (fract(r * 3.7) - 0.5) * vw * 0.92 +
-            Math.sin(t * (0.3 + r * 0.4) + r * 21) * 0.6;
+          // sparse resting drift in the side gutters, clear of content
+          const side = r2 < 0.5 ? -1 : 1;
+          tx = side * vw * (0.4 + 0.08 * r3) + Math.sin(t * (0.2 + r * 0.3) + r * 21) * 0.3;
           ty =
-            idleCy +
-            (fract(r * 5.9) - 0.5) * vh * 0.85 +
-            Math.cos(t * (0.25 + r * 0.3) + r * 17) * 0.4;
-          tz = (r - 0.5) * 2;
-          kk = 1.3;
+            (r2 < 0.5 ? r2 * 2 - 0.5 : r2 * 2 - 1.5) * vh * 0.92 +
+            Math.cos(t * (0.15 + r * 0.2) + r * 17) * 0.5;
+          tz = (r3 - 0.5) * 1.5;
+          kk = 1.1;
+          scTarget = heroOwns ? 1 : i < idleVis ? 0.45 : 0;
         }
         // migration stream: staggered per particle so the column flows
         const p = clamp01((at - r * 0.55) / 1.1);
@@ -389,6 +425,8 @@ function ParticleEngine({ started, count, isMobile }) {
         y += dy;
         z += dz;
       }
+      const sc = scaleCur[i] + (scTarget - scaleCur[i]) * Math.min(1, dt * 2.2);
+      scaleCur[i] = sc;
       cur[i3] = x;
       cur[i3 + 1] = y;
       cur[i3 + 2] = z;
@@ -433,7 +471,7 @@ function ParticleEngine({ started, count, isMobile }) {
 
       dummy.position.set(x, y, z);
       dummy.rotation.set(spin, spin * 0.8, 0);
-      dummy.scale.setScalar(baseSize * (0.8 + r * 0.4));
+      dummy.scale.setScalar(baseSize * (0.8 + r * 0.4) * sc);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
     }
@@ -512,7 +550,14 @@ const GlobalParticles = ({ started = true }) => {
           camera={{ position: [0, 0, 8], fov: 50 }}
           gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
           dpr={dpr}
-          style={{ position: "absolute", inset: 0, background: "transparent" }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "transparent",
+            // r3f re-enables pointer events on its container; without this
+            // the canvas eats every hover/click on the page beneath it
+            pointerEvents: "none",
+          }}
         >
           <PerformanceMonitor
             onDecline={() => setDpr(minDpr)}
