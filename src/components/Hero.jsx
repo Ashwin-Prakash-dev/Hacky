@@ -2,13 +2,40 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { TiLocationArrow } from "react-icons/ti";
-import { useState } from "react";
-import HeroParticles, {
-  canUseParticles,
-  StaticHeroBackground,
-} from "./HeroParticles";
+import { lazy, Suspense, useState } from "react";
+
+// Lazy chunk: keeps three.js out of the main bundle so the page paints
+// text-first on slow devices; the gradient shows until the canvas loads.
+const HeroParticles = lazy(() => import("./HeroParticles"));
 
 gsap.registerPlugin(ScrollTrigger);
+
+const StaticHeroBackground = () => (
+  <div
+    aria-hidden="true"
+    className="absolute left-0 top-0 size-full"
+    style={{
+      background:
+        "radial-gradient(ellipse 80% 60% at 30% 25%, rgba(200,255,0,0.09), transparent 65%)," +
+        "radial-gradient(ellipse 70% 55% at 75% 70%, rgba(200,255,0,0.05), transparent 60%)," +
+        "#050505",
+    }}
+  />
+);
+
+function canUseParticles() {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
+}
 
 const Hero = ({ started = true }) => {
   // When WebGL/motion is unavailable, the particle headline can't render —
@@ -49,7 +76,13 @@ const Hero = ({ started = true }) => {
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
-        {particlesOk ? <HeroParticles started={started} /> : <StaticHeroBackground />}
+        {particlesOk ? (
+          <Suspense fallback={<StaticHeroBackground />}>
+            <HeroParticles started={started} />
+          </Suspense>
+        ) : (
+          <StaticHeroBackground />
+        )}
 
         <div className="hero-vignette" />
 
