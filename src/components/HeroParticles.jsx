@@ -4,16 +4,27 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 
-// Choreography on an InstancedMesh of toon-shaded spheres (~9s):
-//   0.0s – 2.6s  spheres drift in from depth, swirling in a slow vortex
-//   2.6s – 4.8s  staggered convergence into the "S." monogram
-//   6.6s – 9.0s  the S. dissolves outward into "Startathon."
-//   9.0s –  ∞    every sphere breathes with a gentle ambient wobble, and
-//                cursor motion drags nearby spheres along its path (a
-//                flowing wake that springs back into the letterforms)
+// A particle "movie" on an InstancedMesh of toon-shaded spheres. The
+// spheres drift in from a vortex, then morph through a sequence of
+// keyframe silhouettes before settling on the wordmark:
+//   S.  →  Startathon.  →  figure walking with a laptop  →  figure
+//   opening the laptop  →  laptop open on a table  →  Startathon.
+// Throughout, every sphere breathes on a small sine orbit and cursor
+// motion drags nearby spheres along its path (a wake that springs back).
 const WORD_FULL = "Startathon.";
 const WORD_MONO = "S.";
 const TWO_PI = Math.PI * 2;
+
+// Morph timeline: shapes[k] forms at KEYS[k].at over KEYS[k].dur seconds
+// (plus up to ~1s of per-particle stagger). Holds are the gaps between.
+const KEYS = [
+  { at: 2.6, dur: 2.0 }, // vortex -> S.
+  { at: 6.6, dur: 1.8 }, // -> Startathon.
+  { at: 11.2, dur: 1.8 }, // -> walker with laptop
+  { at: 15.8, dur: 1.8 }, // -> opening the laptop
+  { at: 20.4, dur: 1.8 }, // -> laptop on a table
+  { at: 25.0, dur: 1.8 }, // -> Startathon. (resting state)
+];
 
 // Open Sauce Sans 900 — the site's headline font, declared in index.css.
 async function loadDisplayFont() {
@@ -26,19 +37,9 @@ async function loadDisplayFont() {
   return '900';
 }
 
-// Rasterize `text` offscreen and return `count` normalized target positions
-// (x in [-0.5, 0.5], y aspect-correct, z = 0), evenly spread across glyphs.
-function sampleTextTargets(ctx, W, H, text, px, count) {
-  ctx.clearRect(0, 0, W, H);
-  ctx.letterSpacing = "14px";
-  ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
-  const w = ctx.measureText(text).width;
-  if (w > W * 0.97) {
-    px = Math.floor((px * W * 0.97) / w);
-    ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
-  }
-  ctx.fillText(text, W / 2, H / 2);
-
+// Sample whatever is currently drawn on the canvas into `count` normalized
+// target positions (x in [-0.5, 0.5], y aspect-correct), evenly spread.
+function samplePoints(ctx, W, H, count) {
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
   for (let y = 0; y < H; y += 3) {
@@ -64,6 +65,90 @@ function sampleTextTargets(ctx, W, H, text, px, count) {
   return targets;
 }
 
+function drawText(ctx, W, H, text, px) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.letterSpacing = "14px";
+  ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
+  const w = ctx.measureText(text).width;
+  if (w > W * 0.97) {
+    px = Math.floor((px * W * 0.97) / w);
+    ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
+  }
+  ctx.fillText(text, W / 2, H / 2);
+}
+
+// Pictogram scenes, drawn as bold rounded strokes so the silhouettes stay
+// readable when rebuilt from spheres.
+function strokeSetup(ctx) {
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 46;
+}
+
+function line(ctx, x1, y1, x2, y2) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+// A figure mid-stride, laptop tucked under the leading arm
+function drawWalker(ctx, W, H) {
+  ctx.clearRect(0, 0, W, H);
+  strokeSetup(ctx);
+  const cx = W / 2 - 40;
+  ctx.beginPath();
+  ctx.arc(cx, H * 0.17, H * 0.085, 0, TWO_PI);
+  ctx.fill();
+  line(ctx, cx, H * 0.30, cx - 8, H * 0.56); // torso, slight lean
+  line(ctx, cx - 8, H * 0.56, cx + 105, H * 0.90); // front leg
+  line(ctx, cx - 8, H * 0.56, cx - 110, H * 0.90); // back leg
+  line(ctx, cx - 4, H * 0.37, cx - 115, H * 0.53); // back arm swings
+  line(ctx, cx - 4, H * 0.37, cx + 115, H * 0.50); // front arm carries
+  ctx.save();
+  ctx.translate(cx + 175, H * 0.54);
+  ctx.rotate(-0.14);
+  ctx.fillRect(-80, -50, 160, 100); // laptop under the arm
+  ctx.restore();
+}
+
+// The figure kneeling, lifting the laptop lid toward themselves
+function drawOpening(ctx, W, H) {
+  ctx.clearRect(0, 0, W, H);
+  strokeSetup(ctx);
+  const cx = W / 2 - 210;
+  const ground = H * 0.86;
+  ctx.beginPath();
+  ctx.arc(cx, H * 0.26, H * 0.08, 0, TWO_PI);
+  ctx.fill();
+  line(ctx, cx, H * 0.38, cx + 6, H * 0.60); // torso
+  line(ctx, cx + 6, H * 0.60, cx + 85, H * 0.63); // front thigh
+  line(ctx, cx + 85, H * 0.63, cx + 85, ground); // front shin
+  line(ctx, cx + 6, H * 0.60, cx - 20, ground); // back leg kneeling
+  line(ctx, cx + 2, H * 0.44, cx + 165, H * 0.50); // arm on the lid
+  const bx = cx + 150;
+  const by = ground;
+  ctx.fillRect(bx, by - 26, 250, 26); // laptop base on the ground
+  ctx.save();
+  ctx.translate(bx + 244, by - 26); // hinge at the far end of the base
+  ctx.rotate(-1.85); // lid half-open, rising away from the figure
+  ctx.fillRect(0, -12, 215, 24);
+  ctx.restore();
+}
+
+// Laptop open on a table
+function drawLaptopTable(ctx, W, H) {
+  ctx.clearRect(0, 0, W, H);
+  const cx = W / 2;
+  ctx.fillRect(cx - 360, H * 0.74, 720, 26); // table top
+  ctx.fillRect(cx - 330, H * 0.74 + 26, 28, H * 0.18); // legs
+  ctx.fillRect(cx + 302, H * 0.74 + 26, 28, H * 0.18);
+  ctx.fillRect(cx - 160, H * 0.695, 320, 22); // laptop base
+  ctx.fillRect(cx - 145, H * 0.38, 290, 140); // screen
+}
+
 async function buildTargets(count) {
   await loadDisplayFont();
   const W = 1800;
@@ -73,12 +158,24 @@ async function buildTargets(count) {
   canvas.height = H;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   ctx.fillStyle = "#fff";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  const mono = sampleTextTargets(ctx, W, H, WORD_MONO, 460, count);
-  const full = sampleTextTargets(ctx, W, H, WORD_FULL, 330, count);
-  if (!mono || !full) return null;
-  return { mono, full };
+  ctx.strokeStyle = "#fff";
+
+  const shapes = [];
+  const scenes = [
+    () => drawText(ctx, W, H, WORD_MONO, 460),
+    () => drawText(ctx, W, H, WORD_FULL, 330),
+    () => drawWalker(ctx, W, H),
+    () => drawOpening(ctx, W, H),
+    () => drawLaptopTable(ctx, W, H),
+    () => drawText(ctx, W, H, WORD_FULL, 330),
+  ];
+  for (const draw of scenes) {
+    draw();
+    const s = samplePoints(ctx, W, H, count);
+    if (!s) return null;
+    shapes.push(s);
+  }
+  return shapes;
 }
 
 const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
@@ -236,14 +333,13 @@ function VoxelWord({ started, count }) {
     const wakeR = scale * 0.14;
     const wobAmp = scale * 0.0045;
     const { starts, rands, offsets, vels, dummy } = inst;
-    const { mono, full } = targets;
+    const shapes = targets;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
     for (let i = 0; i < count; i++) {
       const r = rands[i];
-      // phase 1: vortex → "S."   phase 2: "S." → "Startathon."
-      const p1 = easeOutCubic(clamp01((t - 2.6 - r * 1.2) / 2.0));
-      const p2 = easeOutCubic(clamp01((t - 6.6 - r * 1.0) / 1.8));
+      // keyframe 0: vortex → first shape
+      const p0 = easeOutCubic(clamp01((t - KEYS[0].at - r * 1.2) / KEYS[0].dur));
 
       // vortex drift
       const ang = t * (0.18 + r * 0.25) + r * TWO_PI;
@@ -253,23 +349,26 @@ function VoxelWord({ started, count }) {
       const sy0 = starts[i * 3 + 1];
       const sz0 = starts[i * 3 + 2];
       const sx = (ca * sx0 + sa * sz0) * shrink;
-      const sy = (sy0 + Math.sin(t * 0.6 + r * 12) * 0.4 * (1 - p1)) * shrink;
+      const sy = (sy0 + Math.sin(t * 0.6 + r * 12) * 0.4 * (1 - p0)) * shrink;
       const sz = (-sa * sx0 + ca * sz0) * shrink;
 
-      // vortex → S. → word
-      const mx = mono[i * 2] * scale;
-      const my = mono[i * 2 + 1] * scale;
-      let x = sx + (mx - sx) * p1;
-      let y = sy + (my - sy) * p1;
-      let z = sz * (1 - p1);
-      x += (full[i * 2] * scale - x) * p2;
-      y += (full[i * 2 + 1] * scale - y) * p2;
+      let x = sx + (shapes[0][i * 2] * scale - sx) * p0;
+      let y = sy + (shapes[0][i * 2 + 1] * scale - sy) * p0;
+      let z = sz * (1 - p0);
+
+      // chained morphs through the remaining keyframe shapes
+      for (let k = 1; k < KEYS.length; k++) {
+        const pk = easeOutCubic(clamp01((t - KEYS[k].at - r) / KEYS[k].dur));
+        if (pk <= 0) break;
+        x += (shapes[k][i * 2] * scale - x) * pk;
+        y += (shapes[k][i * 2 + 1] * scale - y) * pk;
+      }
 
       let spin = t * (0.3 + r * 0.7) + r * 10;
 
       // ambient breathing: every settled sphere drifts on its own small
-      // orbit so the letterforms shimmer instead of freezing
-      const settle = p1;
+      // orbit so the silhouettes shimmer instead of freezing
+      const settle = p0;
       x += Math.sin(t * (0.7 + r * 0.9) + r * 40.0) * wobAmp * settle;
       y += Math.cos(t * (0.9 + r * 0.7) + r * 27.0) * wobAmp * settle;
 
