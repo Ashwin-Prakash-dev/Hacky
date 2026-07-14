@@ -3,97 +3,15 @@ import { useEffect, useMemo, useRef, useState, Component } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-// ~7.5s choreography, all computed on the GPU from uTime:
-//   0.0s – 3.2s  particles drift in from depth, swirling in a slow vortex
-//   3.2s – 7.5s  staggered convergence: each particle peels off the vortex
-//                and locks into its glyph position spelling STARTATHON
-//   7.5s –  ∞    idle shimmer + pointer repulsion around the cursor
-const VERTEX = /* glsl */ `
-  attribute vec3 aStart;
-  attribute float aRand;
-
-  uniform float uTime;
-  uniform float uScale;
-  uniform vec2 uPointer;
-  uniform float uSize;
-
-  varying float vAlpha;
-  varying float vHot;
-  varying float vRand;
-
-  float easeOutCubic(float x) { return 1.0 - pow(1.0 - x, 3.0); }
-
-  void main() {
-    float t = uTime;
-    float delay = aRand * 1.8;
-    float p = clamp((t - 3.2 - delay) / 2.5, 0.0, 1.0);
-    p = easeOutCubic(p);
-
-    // vortex: rotate the scatter cloud around Y, pulling slowly inward
-    vec3 s = aStart;
-    float ang = t * (0.18 + aRand * 0.25) + aRand * 6.28318;
-    float ca = cos(ang), sa = sin(ang);
-    s = vec3(ca * s.x + sa * s.z, s.y, -sa * s.x + ca * s.z);
-    s *= mix(1.0, 0.5, clamp(t / 4.0, 0.0, 1.0));
-    s.y += sin(t * 0.6 + aRand * 12.0) * 0.4 * (1.0 - p);
-
-    vec3 target = position * uScale;
-    vec3 pos = mix(s, target, p);
-
-    // settled shimmer
-    pos += vec3(
-      sin(t * 1.4 + aRand * 43.0),
-      cos(t * 1.7 + aRand * 29.0),
-      sin(t * 1.1 + aRand * 17.0)
-    ) * 0.012 * uScale * 0.08 * p;
-
-    // pointer repulsion once converged
-    vec2 d = pos.xy - uPointer;
-    float dist = length(d);
-    float rep = smoothstep(0.14 * uScale, 0.0, dist) * p;
-    pos.xy += (d / max(dist, 1e-4)) * rep * 0.05 * uScale;
-
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    gl_Position = projectionMatrix * mv;
-    // bimodal sizes: mostly fine pixels, ~20% chunky blocks
-    float chunk = step(0.8, aRand);
-    gl_PointSize = uSize * mix(0.45 + aRand * 0.5, 1.6, chunk) * (6.0 / -mv.z);
-
-    vAlpha = clamp(t * 0.8, 0.0, 1.0) * (0.30 + 0.70 * p);
-    vHot = p;
-    vRand = aRand;
-  }
-`;
-
-const FRAGMENT = /* glsl */ `
-  precision mediump float;
-  uniform float uTime;
-  varying float vAlpha;
-  varying float vHot;
-  varying float vRand;
-
-  void main() {
-    // crisp square "pixel" with a thin soft edge — terminal aesthetic
-    vec2 c = abs(gl_PointCoord - 0.5);
-    float edge = max(c.x, c.y);
-    float a = (1.0 - smoothstep(0.42, 0.5, edge)) * vAlpha;
-    if (a < 0.01) discard;
-
-    vec3 lime = vec3(0.784, 1.0, 0.0);
-    vec3 moss = vec3(0.30, 0.44, 0.05);
-    // depth variation: some particles sit darker, some run white-hot
-    vec3 col = mix(moss, lime, smoothstep(0.15, 0.6, vRand));
-    col = mix(col, vec3(1.0), step(0.93, vRand) * 0.7 * vHot);
-
-    // sparse random flicker once the word has formed
-    float flicker = step(0.985, fract(vRand * 91.7 + uTime * (1.5 + vRand * 3.0)));
-    col += vec3(0.4, 0.5, 0.2) * flicker * vHot;
-
-    gl_FragColor = vec4(col, a);
-  }
-`;
+// ~7.5s choreography on an InstancedMesh of toon-shaded voxel cubes:
+//   0.0s – 3.2s  cubes drift in from depth, swirling in a slow vortex
+//   3.2s – 7.5s  staggered convergence: each cube peels off the vortex and
+//                locks into its glyph position spelling STARTATHON
+//   7.5s –  ∞    idle: slow tumble, spring-physics cursor repulsion, and
+//                the whole word tilts parallax-style with the pointer
 
 const WORD = "STARTATHON";
+const TWO_PI = Math.PI * 2;
 
 // The Zentry display font ships in /public/fonts but has no CSS @font-face;
 // load it directly for the offscreen rasterization, falling back to the
@@ -103,22 +21,22 @@ async function loadDisplayFont() {
     const font = new FontFace("zentry", 'url(/fonts/zentry-regular.woff2)');
     await font.load();
     document.fonts.add(font);
-    return '"zentry", sans-serif';
+    return { family: '"zentry", sans-serif', weight: 400 };
   } catch {
     try {
       await document.fonts.ready;
     } catch {
       /* sample with whatever is available */
     }
-    return '"Open Sauce Sans", sans-serif';
+    return { family: '"Open Sauce Sans", sans-serif', weight: 900 };
   }
 }
 
 // Rasterize the word offscreen and return `count` normalized target
-// positions (x in [-0.5, 0.5], y aspect-correct, slight z jitter).
+// positions (x in [-0.5, 0.5], y aspect-correct, slight z jitter),
+// evenly spread across the glyphs.
 async function sampleWordTargets(count) {
-  const family = await loadDisplayFont();
-  const weight = family.startsWith('"zentry"') ? 400 : 900;
+  const { family, weight } = await loadDisplayFont();
   const W = 1800;
   const H = 460;
   const canvas = document.createElement("canvas");
@@ -139,30 +57,41 @@ async function sampleWordTargets(count) {
 
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
-  for (let y = 0; y < H; y += 2) {
-    for (let x = 0; x < W; x += 2) {
+  for (let y = 0; y < H; y += 3) {
+    for (let x = 0; x < W; x += 3) {
       if (data[(y * W + x) * 4 + 3] > 128) pts.push(x, y);
     }
   }
   const n = pts.length / 2;
   if (n === 0) return null;
 
+  // Fisher–Yates shuffle of point indices, then take `count` evenly
+  const order = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+
   const targets = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const j = Math.floor(Math.random() * n);
-    targets[i * 3] = (pts[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.002;
-    targets[i * 3 + 1] = -(pts[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.002;
-    targets[i * 3 + 2] = (Math.random() - 0.5) * 0.03;
+    const j = order[i % n];
+    targets[i * 3] = (pts[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.003;
+    targets[i * 3 + 1] = -(pts[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.003;
+    targets[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
   }
   return targets;
 }
 
-function ParticleWord({ started, count }) {
-  const materialRef = useRef();
+const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+
+function VoxelWord({ started, count }) {
+  const meshRef = useRef();
+  const groupRef = useRef();
   const timeRef = useRef(0);
   const pointer = useRef(new THREE.Vector2(999, 999));
   const pointerTarget = useRef(new THREE.Vector2(999, 999));
-  const { viewport, gl } = useThree();
+  const pointerNdc = useRef(new THREE.Vector2(0, 0));
+  const { viewport } = useThree();
   const [targets, setTargets] = useState(null);
 
   useEffect(() => {
@@ -173,26 +102,66 @@ function ParticleWord({ started, count }) {
     };
   }, [count]);
 
-  const { starts, rands } = useMemo(() => {
-    const s = new Float32Array(count * 3);
-    const r = new Float32Array(count);
+  // Per-instance state: scatter start, randomness, spring offset + velocity
+  const inst = useMemo(() => {
+    const starts = new Float32Array(count * 3);
+    const rands = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      // scatter cloud: wide shell around the camera axis, pushed into depth
-      const th = Math.random() * Math.PI * 2;
+      const th = Math.random() * TWO_PI;
       const rad = 4 + Math.random() * 7;
-      s[i * 3] = Math.cos(th) * rad;
-      s[i * 3 + 1] = (Math.random() - 0.5) * 8;
-      s[i * 3 + 2] = Math.sin(th) * rad - 3;
-      r[i] = Math.random();
+      starts[i * 3] = Math.cos(th) * rad;
+      starts[i * 3 + 1] = (Math.random() - 0.5) * 8;
+      starts[i * 3 + 2] = Math.sin(th) * rad - 3;
+      rands[i] = Math.random();
     }
-    return { starts: s, rands: r };
+    return {
+      starts,
+      rands,
+      offsets: new Float32Array(count * 2),
+      vels: new Float32Array(count * 2),
+      dummy: new THREE.Object3D(),
+    };
   }, [count]);
+
+  // Flat 3-step toon ramp — hard bands, no glow
+  const gradientMap = useMemo(() => {
+    const tex = new THREE.DataTexture(
+      new Uint8Array([70, 165, 255]),
+      3,
+      1,
+      THREE.RedFormat
+    );
+    tex.minFilter = THREE.NearestFilter;
+    tex.magFilter = THREE.NearestFilter;
+    tex.needsUpdate = true;
+    return tex;
+  }, []);
+
+  // Per-instance flat colors: moss → lime range, a few near-white accents
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh || !targets) return;
+    const moss = new THREE.Color("#3d5c0a");
+    const lime = new THREE.Color("#C8FF00");
+    const hot = new THREE.Color("#f2ffd0");
+    const c = new THREE.Color();
+    for (let i = 0; i < count; i++) {
+      const r = inst.rands[i];
+      if (r > 0.94) c.copy(hot);
+      else c.copy(moss).lerp(lime, Math.min(1, r * 1.4));
+      mesh.setColorAt(i, c);
+    }
+    mesh.instanceColor.needsUpdate = true;
+  }, [targets, count, inst]);
 
   useEffect(() => {
     const onMove = (e) => {
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
+      const ny = -((e.clientY / window.innerHeight) * 2 - 1);
+      pointerNdc.current.set(nx, ny);
       pointerTarget.current.set(
-        ((e.clientX / window.innerWidth) * 2 - 1) * (viewport.width / 2),
-        -((e.clientY / window.innerHeight) * 2 - 1) * (viewport.height / 2)
+        nx * (viewport.width / 2),
+        ny * (viewport.height / 2)
       );
     };
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -200,41 +169,100 @@ function ParticleWord({ started, count }) {
   }, [viewport.width, viewport.height]);
 
   useFrame((_, delta) => {
-    const mat = materialRef.current;
-    if (!mat) return;
-    if (started) timeRef.current += Math.min(delta, 0.05);
-    mat.uniforms.uTime.value = timeRef.current;
-    mat.uniforms.uScale.value = Math.min(viewport.width * 1.02, 18);
-    mat.uniforms.uSize.value = 34 * gl.getPixelRatio();
-    pointer.current.lerp(pointerTarget.current, 0.08);
-    mat.uniforms.uPointer.value.copy(pointer.current);
+    const mesh = meshRef.current;
+    if (!mesh || !targets) return;
+    const dt = Math.min(delta, 0.05);
+    if (started) timeRef.current += dt;
+    const t = timeRef.current;
+
+    pointer.current.lerp(pointerTarget.current, 0.12);
+    const px = pointer.current.x;
+    const py = pointer.current.y;
+
+    // parallax tilt of the whole word toward the cursor
+    if (groupRef.current) {
+      groupRef.current.rotation.y +=
+        (pointerNdc.current.x * 0.16 - groupRef.current.rotation.y) * 0.04;
+      groupRef.current.rotation.x +=
+        (-pointerNdc.current.y * 0.10 - groupRef.current.rotation.x) * 0.04;
+    }
+
+    const scale = Math.min(viewport.width * 1.02, 18);
+    const repulseR = scale * 0.16;
+    const baseSize = scale * 0.0075;
+    const { starts, rands, offsets, vels, dummy } = inst;
+    const shrink = 1 - Math.min(t / 4, 1) * 0.5;
+
+    for (let i = 0; i < count; i++) {
+      const r = rands[i];
+      const p = easeOutCubic(Math.min(Math.max((t - 3.2 - r * 1.8) / 2.5, 0), 1));
+
+      // vortex drift
+      const ang = t * (0.18 + r * 0.25) + r * TWO_PI;
+      const ca = Math.cos(ang);
+      const sa = Math.sin(ang);
+      const sx0 = starts[i * 3];
+      const sy0 = starts[i * 3 + 1];
+      const sz0 = starts[i * 3 + 2];
+      const sx = (ca * sx0 + sa * sz0) * shrink;
+      const sy = (sy0 + Math.sin(t * 0.6 + r * 12) * 0.4 * (1 - p)) * shrink;
+      const sz = (-sa * sx0 + ca * sz0) * shrink;
+
+      let x = sx + (targets[i * 3] * scale - sx) * p;
+      let y = sy + (targets[i * 3 + 1] * scale - sy) * p;
+      const z = sz + (targets[i * 3 + 2] * scale - sz) * p;
+
+      // spring-physics cursor repulsion (only once converged)
+      let ox = offsets[i * 2];
+      let oy = offsets[i * 2 + 1];
+      let vx = vels[i * 2];
+      let vy = vels[i * 2 + 1];
+      const dx = x + ox - px;
+      const dy = y + oy - py;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1e-4;
+      if (dist < repulseR && p > 0.5) {
+        const f = ((repulseR - dist) / repulseR) * 30 * p;
+        vx += (dx / dist) * f * dt;
+        vy += (dy / dist) * f * dt;
+      }
+      // spring back to rest + damping
+      vx += -ox * 14 * dt;
+      vy += -oy * 14 * dt;
+      vx *= 1 - Math.min(4.5 * dt, 0.9);
+      vy *= 1 - Math.min(4.5 * dt, 0.9);
+      ox += vx * dt;
+      oy += vy * dt;
+      offsets[i * 2] = ox;
+      offsets[i * 2 + 1] = oy;
+      vels[i * 2] = vx;
+      vels[i * 2 + 1] = vy;
+      x += ox;
+      y += oy;
+
+      // tumble: slow idle spin, faster while displaced by the cursor
+      const agitation = Math.min(Math.sqrt(ox * ox + oy * oy) * 3, 2);
+      const spin = t * (0.3 + r * 0.7) + r * 10 + agitation * 2;
+      dummy.position.set(x, y, z);
+      dummy.rotation.set(spin, spin * 0.8, 0);
+      dummy.scale.setScalar(baseSize * (0.7 + r * 0.9));
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+
+    // fade the whole system in over the first 1.2s
+    mesh.material.opacity = Math.min(t * 0.85, 1);
   });
 
   if (!targets) return null;
 
   return (
-    <points frustumCulled={false}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[targets, 3]} />
-        <bufferAttribute attach="attributes-aStart" args={[starts, 3]} />
-        <bufferAttribute attach="attributes-aRand" args={[rands, 1]} />
-      </bufferGeometry>
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={VERTEX}
-        fragmentShader={FRAGMENT}
-        uniforms={{
-          uTime: { value: 0 },
-          uScale: { value: 10 },
-          uPointer: { value: new THREE.Vector2(999, 999) },
-          uSize: { value: 30 },
-        }}
-        transparent
-        depthTest={false}
-        depthWrite={false}
-        blending={THREE.NormalBlending}
-      />
-    </points>
+    <group ref={groupRef}>
+      <instancedMesh ref={meshRef} args={[null, null, count]} frustumCulled={false}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshToonMaterial gradientMap={gradientMap} transparent opacity={0} />
+      </instancedMesh>
+    </group>
   );
 }
 
@@ -303,12 +331,15 @@ const HeroParticles = ({ started = true }) => {
       <CanvasErrorBoundary fallback={<StaticHeroBackground />}>
         <Canvas
           camera={{ position: [0, 0, 8], fov: 50 }}
-          gl={{ antialias: false, powerPreference: "high-performance", alpha: true }}
-          dpr={isMobile ? 1 : [1, 1.75]}
+          gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+          dpr={isMobile ? 1 : [1, 1.5]}
           frameloop={inView ? "always" : "never"}
           style={{ position: "absolute", inset: 0, background: "#050505" }}
         >
-          <ParticleWord started={started} count={isMobile ? 6000 : 20000} />
+          <ambientLight intensity={0.55} />
+          <directionalLight position={[4, 6, 8]} intensity={1.3} />
+          <directionalLight position={[-6, -2, -4]} intensity={0.4} color="#C8FF00" />
+          <VoxelWord started={started} count={isMobile ? 900 : 2800} />
         </Canvas>
       </CanvasErrorBoundary>
     </div>
