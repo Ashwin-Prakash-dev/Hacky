@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -80,9 +81,12 @@ const SponsorCard = ({ sponsor }) => {
           textTransform: "uppercase",
           color: hovered ? "#C8FF00" : "rgba(255,255,255,0.45)",
           transition: "color 0.25s ease",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.35em",
         }}
       >
-        Visit site {hovered ? "→" : "↗"}
+        Visit site {hovered ? <FiArrowRight aria-hidden="true" /> : <FiArrowUpRight aria-hidden="true" />}
       </span>
     </a>
   );
