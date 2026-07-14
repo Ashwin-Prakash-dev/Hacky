@@ -10,8 +10,10 @@ import {
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
+import { usePageMeta } from "../lib/seo";
 
 const LoginPage = () => {
+  usePageMeta({ title: "Log in", path: "/login", noindex: true });
   const navigate = useNavigate();
   const { state } = useLocation();
   const [email, setEmail] = useState("");

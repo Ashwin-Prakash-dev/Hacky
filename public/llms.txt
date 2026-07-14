@@ -87,6 +87,16 @@ Content-Type: application/json
 - `409` — This email is already on the waitlist.
 - `5xx` — Server error; try again.
 
+## How to Apply
+
+Applications go through the website: create an account at https://startathon.sctcoding.club/apply, complete your profile, and form or join a team (1–4 members). Only 20 teams are selected.
+
+## Machine-Readable Resources
+
+- **Sitemap:** https://startathon.sctcoding.club/sitemap.xml
+- **Robots:** https://startathon.sctcoding.club/robots.txt
+- **This file:** https://startathon.sctcoding.club/llms.txt
+
 ## Contact & Links
 
 - **Website:** startathon.sctcoding.club

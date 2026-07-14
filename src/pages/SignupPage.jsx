@@ -10,6 +10,7 @@ import {
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
+import { usePageMeta } from "../lib/seo";
 
 const validate = ({ name, email, password, phone, college }) => {
   const errors = [];
@@ -23,6 +24,7 @@ const validate = ({ name, email, password, phone, college }) => {
 };
 
 const SignupPage = () => {
+  usePageMeta({ title: "Sign up", path: "/signup", noindex: true });
   const navigate = useNavigate();
   const [fields, setFields] = useState({
     name: "", email: "", password: "", phone: "", college: "",

@@ -18,10 +18,12 @@ import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import VideoCards from "../components/VideoCards";
 import StudentHook from "../components/StudentHook";
+import { usePageMeta } from "../lib/seo";
 
 const INTRO_SEEN_KEY = "startathon:intro-seen";
 
 const MainPage = () => {
+  usePageMeta({ path: "/" });
   const [introComplete, setIntroComplete] = useState(
     () => sessionStorage.getItem(INTRO_SEEN_KEY) === "1"
   );

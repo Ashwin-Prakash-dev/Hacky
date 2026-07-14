@@ -4,8 +4,15 @@ import AuthShell from "../components/apply/AuthShell";
 import { Panel, Eyebrow, Title, ErrorLine, MONO, PrimaryButton } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { isAuthed, getUser } from "../lib/auth";
+import { usePageMeta } from "../lib/seo";
 
 const ApplyPage = () => {
+  usePageMeta({
+    title: "Apply",
+    description:
+      "Apply to Startathon 2026 — Kerala's most curated 30-hour hackathon at SCTCE, Thiruvananthapuram. Teams of 1–4, only 20 spots.",
+    path: "/apply",
+  });
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
