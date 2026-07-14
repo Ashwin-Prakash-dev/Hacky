@@ -5,10 +5,12 @@ import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 
 // A particle "movie" on an InstancedMesh of toon-shaded spheres. The
-// spheres drift in from a vortex, then morph through a sequence of
-// keyframe silhouettes before settling on the wordmark:
-//   S.  →  Startathon.  →  figure walking with a laptop  →  figure
-//   opening the laptop  →  laptop open on a table  →  Startathon.
+// spheres drift in from a vortex, then morph through the builder's
+// journey before settling on the wordmark:
+//   S. → Startathon. → man walking with a laptop (animated stride) →
+//   the team around a table, laptop lids swinging open (animated) →
+//   presenter with a pointer stick at the demo-day screen →
+//   the team raising the trophy together → Startathon.
 // Throughout, every sphere breathes on a small sine orbit and cursor
 // motion drags nearby spheres along its path (a wake that springs back).
 const WORD_FULL = "Startathon.";
@@ -17,102 +19,145 @@ const TWO_PI = Math.PI * 2;
 
 // Morph timeline: shapes[k] forms at KEYS[k].at over KEYS[k].dur seconds
 // (plus up to ~1s of per-particle stagger). Holds are the gaps between.
-// The walker scene is an animated cycle of WALK_FRAMES poses.
 const KEYS = [
   { at: 2.6, dur: 2.0 }, // vortex -> S.
   { at: 6.6, dur: 1.8 }, // -> Startathon.
-  { at: 11.2, dur: 1.8 }, // -> man walking with laptop (animated stride)
-  { at: 17.0, dur: 1.8 }, // -> kneeling, opening the laptop
-  { at: 21.6, dur: 1.8 }, // -> laptop on a desk, code on screen
-  { at: 26.2, dur: 1.8 }, // -> presenting at the podium (demo day)
-  { at: 30.8, dur: 1.8 }, // -> raising the trophy
-  { at: 35.4, dur: 1.8 }, // -> Startathon. (resting state)
+  { at: 11.2, dur: 1.8 }, // -> man walking with laptop (animated)
+  { at: 17.0, dur: 1.8 }, // -> team at the table, lids opening (animated)
+  { at: 23.0, dur: 1.8 }, // -> presenting at the demo-day screen
+  { at: 27.6, dur: 1.8 }, // -> team raising the trophy
+  { at: 32.2, dur: 1.8 }, // -> Startathon. (resting state)
 ];
 const WALK_SCENE = 2;
+const TABLE_SCENE = 3;
 const STRIDE_TIME = 1.05; // seconds per full gait cycle
 const SHAPE_W = 1800;
 const SHAPE_H = 520;
 
-// The walking figure is analytic rather than rasterized: every particle
-// owns a fixed slot on the skeleton (segment, fraction along it, offset
-// across it) and its position is computed from the stride phase each
-// frame — so the man genuinely walks instead of crossfading poses.
-// Joint layout mirrors the other pictograms' proportions.
-function walkerJoints(ph) {
+// ---------------------------------------------------------------------------
+// Animated scenes are analytic: a scene is a list of primitive elements
+// (disc / stroke segment / rotated rect) recomputed each frame from the
+// scene-local time. Every particle owns a fixed slot (element index + a
+// spot on it), so motion is perfectly continuous — no pose crossfading.
+
+const disc = (x, y, r) => ({ k: 0, x, y, r, wt: Math.PI * r * r });
+const seg = (x1, y1, x2, y2, w = 46) => ({
+  k: 1,
+  x1,
+  y1,
+  x2,
+  y2,
+  w,
+  wt: (Math.hypot(x2 - x1, y2 - y1) + w) * w,
+});
+const rect = (x, y, w, h, a = 0) => ({ k: 2, x, y, w, h, a, wt: w * h });
+
+function evalElem(e, u, v, out) {
+  if (e.k === 0) {
+    const a = u * TWO_PI;
+    const rr = e.r * Math.sqrt(v);
+    out[0] = e.x + Math.cos(a) * rr;
+    out[1] = e.y + Math.sin(a) * rr;
+  } else if (e.k === 1) {
+    const dx = e.x2 - e.x1;
+    const dy = e.y2 - e.y1;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const off = (v - 0.5) * e.w;
+    out[0] = e.x1 + dx * u + (-dy / len) * off;
+    out[1] = e.y1 + dy * u + (dx / len) * off;
+  } else {
+    const lx = (u - 0.5) * e.w;
+    const ly = (v - 0.5) * e.h;
+    const c = Math.cos(e.a);
+    const s = Math.sin(e.a);
+    out[0] = e.x + lx * c - ly * s;
+    out[1] = e.y + lx * s + ly * c;
+  }
+}
+
+const smooth01 = (x) => {
+  const c = Math.min(Math.max(x, 0), 1);
+  return c * c * (3 - 2 * c);
+};
+
+// The walking figure: legs and free arm swing, body bobs, laptop steady.
+function walkerElems(ts) {
   const W = SHAPE_W;
   const H = SHAPE_H;
+  const ph = (ts / STRIDE_TIME) * TWO_PI;
   const cx = W / 2 - 40;
   const bob = Math.sin(ph * 2) * H * 0.018;
+  const hipX = cx - 8;
   const hipY = H * 0.56 + bob;
   const legL = H * 0.36;
   const swing = 0.62 * Math.sin(ph);
   const armY = H * 0.37 + bob;
   const armSw = 0.7 * Math.sin(ph + Math.PI);
-  return {
-    headX: cx,
-    headY: H * 0.17 + bob,
-    headR: H * 0.085,
-    neckX: cx,
-    neckY: H * 0.3 + bob,
-    hipX: cx - 8,
-    hipY,
-    f1x: cx - 8 + Math.sin(swing) * legL,
-    f1y: hipY + Math.cos(swing) * legL,
-    f2x: cx - 8 - Math.sin(swing) * legL,
-    f2y: hipY + Math.cos(swing) * legL,
-    shX: cx - 4,
-    shY: armY,
-    h1x: cx - 4 + Math.sin(armSw - 0.5) * H * 0.24,
-    h1y: armY + Math.cos(armSw - 0.5) * H * 0.24,
-    h2x: cx + 115,
-    h2y: H * 0.5 + bob,
-    lapX: cx + 175,
-    lapY: H * 0.54 + bob,
-  };
+  return [
+    disc(cx, H * 0.17 + bob, H * 0.085),
+    seg(cx, H * 0.3 + bob, hipX, hipY),
+    seg(hipX, hipY, hipX + Math.sin(swing) * legL, hipY + Math.cos(swing) * legL),
+    seg(hipX, hipY, hipX - Math.sin(swing) * legL, hipY + Math.cos(swing) * legL),
+    seg(
+      cx - 4,
+      armY,
+      cx - 4 + Math.sin(armSw - 0.5) * H * 0.24,
+      armY + Math.cos(armSw - 0.5) * H * 0.24
+    ),
+    seg(cx - 4, armY, cx + 115, H * 0.5 + bob),
+    rect(cx + 175, H * 0.54 + bob, 160, 100, -0.14),
+  ];
 }
 
-// Cumulative particle share per segment:
-// head, torso, front leg, back leg, free arm, laptop arm, laptop slab
-const WALK_SEG_CDF = [0.11, 0.22, 0.37, 0.52, 0.62, 0.72, 1.0];
-
-const STROKE_HALF = 23; // half of the 46px pictogram stroke width
-
-function segPoint(J, seg, u, v, out) {
-  let x1;
-  let y1;
-  let x2;
-  let y2;
-  switch (seg) {
-    case 0: {
-      const a = u * TWO_PI;
-      const rr = J.headR * Math.sqrt(v);
-      out[0] = J.headX + Math.cos(a) * rr;
-      out[1] = J.headY + Math.sin(a) * rr;
-      return;
-    }
-    case 1: x1 = J.neckX; y1 = J.neckY; x2 = J.hipX; y2 = J.hipY; break;
-    case 2: x1 = J.hipX; y1 = J.hipY; x2 = J.f1x; y2 = J.f1y; break;
-    case 3: x1 = J.hipX; y1 = J.hipY; x2 = J.f2x; y2 = J.f2y; break;
-    case 4: x1 = J.shX; y1 = J.shY; x2 = J.h1x; y2 = J.h1y; break;
-    case 5: x1 = J.shX; y1 = J.shY; x2 = J.h2x; y2 = J.h2y; break;
-    default: {
-      // laptop slab under the arm, slightly tilted
-      const lx = (u - 0.5) * 160;
-      const ly = (v - 0.5) * 100;
-      const c = Math.cos(-0.14);
-      const s = Math.sin(-0.14);
-      out[0] = J.lapX + lx * c - ly * s;
-      out[1] = J.lapY + lx * s + ly * c;
-      return;
-    }
-  }
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const len = Math.sqrt(dx * dx + dy * dy) || 1;
-  const off = (v - 0.5) * 2 * STROKE_HALF;
-  out[0] = x1 + dx * u + (-dy / len) * off;
-  out[1] = y1 + dy * u + (dx / len) * off;
+// The team around a table (side view): two seated in profile, two behind,
+// two laptops on the tabletop whose lids swing open over the scene.
+function tableElems(ts) {
+  const W = SHAPE_W;
+  const H = SHAPE_H;
+  const cx = W / 2;
+  const topY = H * 0.6;
+  // lids: closed on arrival, swing open once the team has formed, then
+  // a faint sway so the scene stays alive
+  const open = smooth01((ts - 1.6) / 2.6);
+  const lid = 0.08 + 1.32 * open + Math.sin(ts * 1.8) * 0.03 * open;
+  const lc = Math.cos(lid) * 140;
+  const ls = Math.sin(lid) * 140;
+  const lhx = cx - 225; // left laptop hinge (inner end of its base)
+  const rhx = cx + 225;
+  const hy = topY - 24;
+  return [
+    rect(cx, topY + 13, 780, 26), // tabletop
+    rect(cx - 350, topY + 98, 28, 144), // legs
+    rect(cx + 350, topY + 98, 28, 144),
+    // left teammate, seated profile facing right
+    disc(cx - 560, H * 0.29, 42),
+    seg(cx - 560, H * 0.37, cx - 545, H * 0.52),
+    seg(cx - 552, H * 0.41, cx - 455, H * 0.49, 40), // arm to the table
+    seg(cx - 545, H * 0.52, cx - 470, H * 0.52), // thigh
+    seg(cx - 470, H * 0.52, cx - 465, H * 0.76, 40), // shin
+    // right teammate, mirrored
+    disc(cx + 560, H * 0.29, 42),
+    seg(cx + 560, H * 0.37, cx + 545, H * 0.52),
+    seg(cx + 552, H * 0.41, cx + 455, H * 0.49, 40),
+    seg(cx + 545, H * 0.52, cx + 470, H * 0.52),
+    seg(cx + 470, H * 0.52, cx + 465, H * 0.76, 40),
+    // two teammates behind the table
+    disc(cx - 150, H * 0.245, 38),
+    seg(cx - 150, H * 0.32, cx - 150, H * 0.58),
+    disc(cx + 140, H * 0.265, 38),
+    seg(cx + 140, H * 0.34, cx + 140, H * 0.58),
+    // laptops: bases on the tabletop, lids opening outward
+    rect(cx - 310, topY - 14, 175, 26),
+    seg(lhx, hy, lhx - lc, hy - ls, 30), // left lid
+    rect(cx + 310, topY - 14, 175, 26),
+    seg(rhx, hy, rhx + lc, hy - ls, 30), // right lid
+  ];
 }
+
+const ANIM_SCENES = { walk: walkerElems, table: tableElems };
+
+// ---------------------------------------------------------------------------
+// Static scenes are rasterized offscreen and sampled once.
 
 // Open Sauce Sans 900 — the site's headline font, declared in index.css.
 async function loadDisplayFont() {
@@ -122,11 +167,8 @@ async function loadDisplayFont() {
   } catch {
     /* sample with whatever is available */
   }
-  return '900';
 }
 
-// Sample whatever is currently drawn on the canvas into `count` normalized
-// target positions (x in [-0.5, 0.5], y aspect-correct), evenly spread.
 function samplePoints(ctx, W, H, count) {
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
@@ -167,8 +209,6 @@ function drawText(ctx, W, H, text, px) {
   ctx.fillText(text, W / 2, H / 2);
 }
 
-// Pictogram scenes, drawn as bold rounded strokes so the silhouettes stay
-// readable when rebuilt from spheres.
 function strokeSetup(ctx) {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -182,91 +222,87 @@ function line(ctx, x1, y1, x2, y2) {
   ctx.stroke();
 }
 
-
-// The figure kneeling, lifting the laptop lid toward themselves
-function drawOpening(ctx, W, H) {
-  ctx.clearRect(0, 0, W, H);
-  strokeSetup(ctx);
-  const cx = W / 2 - 210;
-  const ground = H * 0.86;
-  ctx.beginPath();
-  ctx.arc(cx, H * 0.26, H * 0.08, 0, TWO_PI);
-  ctx.fill();
-  line(ctx, cx, H * 0.38, cx + 6, H * 0.60); // torso
-  line(ctx, cx + 6, H * 0.60, cx + 85, H * 0.63); // front thigh
-  line(ctx, cx + 85, H * 0.63, cx + 85, ground); // front shin
-  line(ctx, cx + 6, H * 0.60, cx - 20, ground); // back leg kneeling
-  line(ctx, cx + 2, H * 0.44, cx + 165, H * 0.50); // arm on the lid
-  const bx = cx + 150;
-  const by = ground;
-  ctx.fillRect(bx, by - 26, 250, 26); // laptop base on the ground
-  ctx.save();
-  ctx.translate(bx + 244, by - 26); // hinge at the far end of the base
-  ctx.rotate(-1.85); // lid half-open, rising away from the figure
-  ctx.fillRect(0, -12, 215, 24);
-  ctx.restore();
-}
-
-// Laptop open on a desk, "</>" cut out of the glowing screen
-function drawDesk(ctx, W, H) {
-  ctx.clearRect(0, 0, W, H);
-  const cx = W / 2;
-  ctx.fillRect(cx - 360, H * 0.74, 720, 26); // desk top
-  ctx.fillRect(cx - 330, H * 0.74 + 26, 28, H * 0.18); // legs
-  ctx.fillRect(cx + 302, H * 0.74 + 26, 28, H * 0.18);
-  ctx.fillRect(cx - 160, H * 0.695, 320, 22); // laptop base
-  ctx.fillRect(cx - 145, H * 0.38, 290, 140); // screen
-  ctx.save();
-  ctx.globalCompositeOperation = "destination-out"; // punch the code glyph
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = '900 96px "Open Sauce Sans", sans-serif';
-  ctx.fillText("</>", cx, H * 0.38 + 72);
-  ctx.restore();
-}
-
-// Demo day: presenter at a podium gesturing at a big screen, audience below
+// Demo day: presenter (full figure, pointer stick in hand) beside a
+// lectern, big screen with S., audience heads below.
 function drawPodium(ctx, W, H) {
   ctx.clearRect(0, 0, W, H);
   strokeSetup(ctx);
   const cx = W / 2;
+  const px = cx - 320;
   ctx.beginPath();
-  ctx.arc(cx - 330, H * 0.24, H * 0.075, 0, TWO_PI); // presenter head
+  ctx.arc(px, H * 0.2, H * 0.075, 0, TWO_PI);
   ctx.fill();
-  line(ctx, cx - 330, H * 0.35, cx - 330, H * 0.58); // torso
-  line(ctx, cx - 328, H * 0.42, cx - 195, H * 0.28); // arm toward screen
-  ctx.fillRect(cx - 415, H * 0.58, 190, H * 0.30); // podium
-  ctx.fillRect(cx - 90, H * 0.16, 470, 290); // big screen
+  line(ctx, px, H * 0.31, px, H * 0.55); // torso
+  line(ctx, px, H * 0.55, px + 60, H * 0.88); // legs
+  line(ctx, px, H * 0.55, px - 60, H * 0.88);
+  line(ctx, px - 2, H * 0.38, px - 90, H * 0.52); // relaxed arm
+  line(ctx, px - 2, H * 0.38, px + 118, H * 0.31); // pointing arm
+  ctx.save();
+  ctx.lineWidth = 18; // pointer stick
+  line(ctx, px + 118, H * 0.31, px + 255, H * 0.235);
+  ctx.restore();
+  ctx.fillRect(px - 265, H * 0.52, 160, H * 0.36); // lectern
+  ctx.fillRect(cx - 20, H * 0.14, 470, 290); // big screen
   ctx.save();
   ctx.globalCompositeOperation = "destination-out";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.font = '900 150px "Open Sauce Sans", sans-serif';
-  ctx.fillText("S.", cx - 90 + 235, H * 0.16 + 145);
+  ctx.fillText("S.", cx - 20 + 235, H * 0.14 + 145);
   ctx.restore();
   for (let k = 0; k < 4; k++) {
     ctx.beginPath(); // audience heads
-    ctx.arc(cx - 40 + k * 130, H * 0.90, H * 0.05, 0, TWO_PI);
+    ctx.arc(cx + 20 + k * 130, H * 0.9, H * 0.05, 0, TWO_PI);
     ctx.fill();
   }
 }
 
-// Winning: figure with both arms up raising the trophy
-function drawTrophy(ctx, W, H) {
+// Winning together: a proper cup (bowl, handles, stem, base) raised by
+// the center figure, flanked by two celebrating teammates.
+function drawTrophyTeam(ctx, W, H) {
   ctx.clearRect(0, 0, W, H);
   strokeSetup(ctx);
   const cx = W / 2;
-  ctx.beginPath();
-  ctx.arc(cx, H * 0.36, H * 0.08, 0, TWO_PI); // head
+  const ty = H * 0.05;
+  ctx.beginPath(); // bowl, tapered
+  ctx.moveTo(cx - 100, ty);
+  ctx.lineTo(cx + 100, ty);
+  ctx.lineTo(cx + 44, ty + 92);
+  ctx.lineTo(cx - 44, ty + 92);
+  ctx.closePath();
   ctx.fill();
-  line(ctx, cx, H * 0.47, cx, H * 0.68); // torso
-  line(ctx, cx, H * 0.68, cx + 85, H * 0.94); // legs
-  line(ctx, cx, H * 0.68, cx - 85, H * 0.94);
-  line(ctx, cx, H * 0.52, cx - 110, H * 0.26); // arms in a V
-  line(ctx, cx, H * 0.52, cx + 110, H * 0.26);
-  ctx.fillRect(cx - 90, H * 0.04, 180, 74); // trophy bowl
-  ctx.fillRect(cx - 20, H * 0.04 + 74, 40, 40); // stem
-  ctx.fillRect(cx - 62, H * 0.04 + 114, 124, 26); // base
+  ctx.save();
+  ctx.lineWidth = 20; // handles
+  ctx.beginPath();
+  ctx.arc(cx - 112, ty + 34, 40, Math.PI * 0.5, Math.PI * 1.5);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx + 112, ty + 34, 40, Math.PI * 1.5, Math.PI * 0.5);
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillRect(cx - 14, ty + 92, 28, 34); // stem
+  ctx.fillRect(cx - 58, ty + 126, 116, 22); // base
+
+  ctx.beginPath(); // center figure holding it up
+  ctx.arc(cx, H * 0.44, 40, 0, TWO_PI);
+  ctx.fill();
+  line(ctx, cx, H * 0.52, cx, H * 0.7);
+  line(ctx, cx, H * 0.7, cx + 70, H * 0.94);
+  line(ctx, cx, H * 0.7, cx - 70, H * 0.94);
+  line(ctx, cx, H * 0.56, cx - 62, H * 0.32); // arms to the trophy base
+  line(ctx, cx, H * 0.56, cx + 62, H * 0.32);
+
+  for (const side of [-1, 1]) {
+    const fx = cx + side * 195; // celebrating teammates
+    ctx.beginPath();
+    ctx.arc(fx, H * 0.5, 36, 0, TWO_PI);
+    ctx.fill();
+    line(ctx, fx, H * 0.57, fx, H * 0.74);
+    line(ctx, fx, H * 0.74, fx + 55, H * 0.95);
+    line(ctx, fx, H * 0.74, fx - 55, H * 0.95);
+    line(ctx, fx, H * 0.61, fx + side * 95, H * 0.37); // outer arm up
+    line(ctx, fx, H * 0.61, fx - side * 60, H * 0.55); // inner arm
+  }
 }
 
 async function buildTargets(count) {
@@ -288,11 +324,10 @@ async function buildTargets(count) {
   const shapes = [
     sample(() => drawText(ctx, W, H, WORD_MONO, 460)),
     sample(() => drawText(ctx, W, H, WORD_FULL, 330)),
-    { walk: true }, // analytic walking figure, computed per frame
-    sample(() => drawOpening(ctx, W, H)),
-    sample(() => drawDesk(ctx, W, H)),
+    { anim: "walk" },
+    { anim: "table" },
     sample(() => drawPodium(ctx, W, H)),
-    sample(() => drawTrophy(ctx, W, H)),
+    sample(() => drawTrophyTeam(ctx, W, H)),
     sample(() => drawText(ctx, W, H, WORD_FULL, 330)),
   ];
   if (shapes.some((s) => !s)) return null;
@@ -311,6 +346,30 @@ function initialTime() {
   } catch {
     return 0;
   }
+}
+
+// Fixed particle slots for an animated scene: element index chosen by
+// area-weighted CDF, plus a spot along/across that element.
+function assignSlots(elems, count) {
+  const total = elems.reduce((a, e) => a + e.wt, 0);
+  const cdf = [];
+  let acc = 0;
+  for (const e of elems) {
+    acc += e.wt / total;
+    cdf.push(acc);
+  }
+  const idx = new Uint16Array(count);
+  const u = new Float32Array(count);
+  const v = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    const pick = Math.random();
+    let s = 0;
+    while (pick > cdf[s] && s < cdf.length - 1) s++;
+    idx[i] = s;
+    u[i] = Math.random();
+    v[i] = Math.random();
+  }
+  return { idx, u, v };
 }
 
 function VoxelWord({ started, count }) {
@@ -333,7 +392,8 @@ function VoxelWord({ started, count }) {
     };
   }, [count]);
 
-  // Per-instance state: scatter start, randomness, wake spring state
+  // Per-instance state: scatter start, randomness, animated-scene slots,
+  // wake spring state
   const inst = useMemo(() => {
     const starts = new Float32Array(count * 3);
     const rands = new Float32Array(count);
@@ -345,26 +405,14 @@ function VoxelWord({ started, count }) {
       starts[i * 3 + 2] = Math.sin(th) * rad - 3;
       rands[i] = Math.random();
     }
-    // walking-figure slots: segment via the weighted CDF, then a spot
-    // along/across it
-    const walkSeg = new Uint8Array(count);
-    const walkU = new Float32Array(count);
-    const walkV = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      const pick = Math.random();
-      let seg = 0;
-      while (pick > WALK_SEG_CDF[seg]) seg++;
-      walkSeg[i] = seg;
-      walkU[i] = Math.random();
-      walkV[i] = Math.random();
+    const slots = {};
+    for (const name of Object.keys(ANIM_SCENES)) {
+      slots[name] = assignSlots(ANIM_SCENES[name](0), count);
     }
     return {
       starts,
       rands,
-      walkSeg,
-      walkU,
-      walkV,
-      // spring offsets/velocities for the cursor wake
+      slots,
       offsets: new Float32Array(count * 2),
       vels: new Float32Array(count * 2),
       dummy: new THREE.Object3D(),
@@ -457,7 +505,7 @@ function VoxelWord({ started, count }) {
     const pvx = pointerVel.current.x;
     const pvy = pointerVel.current.y;
 
-    // gentle parallax tilt of the whole word toward the cursor
+    // gentle parallax tilt of the whole scene toward the cursor
     if (groupRef.current) {
       const tx = pointerActive ? pointerNdc.current.x : 0;
       const ty = pointerActive ? pointerNdc.current.y : 0;
@@ -469,15 +517,15 @@ function VoxelWord({ started, count }) {
     const baseSize = scale * 0.0055;
     const wakeR = scale * 0.14;
     const wobAmp = scale * 0.0045;
-    const { starts, rands, walkSeg, walkU, walkV, offsets, vels, dummy } = inst;
+    const { starts, rands, slots, offsets, vels, dummy } = inst;
     const shapes = targets;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
-    // walking-figure joints for this frame (shared by all particles)
-    const J =
-      t > KEYS[WALK_SCENE].at
-        ? walkerJoints(((t - KEYS[WALK_SCENE].at) / STRIDE_TIME) * TWO_PI)
-        : null;
+    // animated-scene elements for this frame (shared by all particles)
+    const animEls = {
+      walk: t > KEYS[WALK_SCENE].at ? walkerElems(t - KEYS[WALK_SCENE].at) : null,
+      table: t > KEYS[TABLE_SCENE].at ? tableElems(t - KEYS[TABLE_SCENE].at) : null,
+    };
     const segOut = [0, 0];
 
     for (let i = 0; i < count; i++) {
@@ -507,9 +555,9 @@ function VoxelWord({ started, count }) {
         const s = shapes[k];
         let tx;
         let ty;
-        if (s.walk) {
-          // animated scene: this particle's slot on the walking skeleton
-          segPoint(J, walkSeg[i], walkU[i], walkV[i], segOut);
+        if (s.anim) {
+          const slot = slots[s.anim];
+          evalElem(animEls[s.anim][slot.idx[i]], slot.u[i], slot.v[i], segOut);
           tx = (segOut[0] - SHAPE_W / 2) / SHAPE_W;
           ty = -(segOut[1] - SHAPE_H / 2) / SHAPE_W;
         } else {
