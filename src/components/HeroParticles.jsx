@@ -13,23 +13,16 @@ import * as THREE from "three";
 const WORD = "STARTATHON";
 const TWO_PI = Math.PI * 2;
 
-// The Zentry display font ships in /public/fonts but has no CSS @font-face;
-// load it directly for the offscreen rasterization, falling back to the
-// body font if the load fails.
+// Open Sauce Sans 900 — the site's headline font, declared in index.css.
+// Make sure it's actually loaded before rasterizing offscreen.
 async function loadDisplayFont() {
   try {
-    const font = new FontFace("zentry", 'url(/fonts/zentry-regular.woff2)');
-    await font.load();
-    document.fonts.add(font);
-    return { family: '"zentry", sans-serif', weight: 400 };
+    await document.fonts.load('900 330px "Open Sauce Sans"');
+    await document.fonts.ready;
   } catch {
-    try {
-      await document.fonts.ready;
-    } catch {
-      /* sample with whatever is available */
-    }
-    return { family: '"Open Sauce Sans", sans-serif', weight: 900 };
+    /* sample with whatever is available */
   }
+  return { family: '"Open Sauce Sans", sans-serif', weight: 900 };
 }
 
 // Rasterize the word offscreen and return `count` normalized target
@@ -46,9 +39,8 @@ async function sampleWordTargets(count) {
   ctx.fillStyle = "#fff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  // Zentry glyphs are extremely heavy; spacing keeps letters separable
-  // once they inflate into spheres
-  ctx.letterSpacing = "22px";
+  // extra tracking keeps letters separable once they inflate into spheres
+  ctx.letterSpacing = "14px";
   let px = 330;
   ctx.font = `${weight} ${px}px ${family}`;
   const w = ctx.measureText(WORD).width;
@@ -201,7 +193,7 @@ function VoxelWord({ started, count }) {
         (-pointerNdc.current.y * 0.10 - groupRef.current.rotation.x) * 0.04;
     }
 
-    const scale = Math.min(viewport.width * 1.02, 18);
+    const scale = Math.min(viewport.width * 0.92, 17);
     const repulseR = scale * 0.16;
     const baseSize = scale * 0.0055;
     const { starts, rands, offsets, vels, dummy } = inst;
