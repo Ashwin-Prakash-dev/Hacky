@@ -3,18 +3,17 @@ import { useEffect, useMemo, useRef, useState, Component } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-// ~7.5s choreography on an InstancedMesh of toon-shaded spheres:
-//   0.0s – 3.2s  cubes drift in from depth, swirling in a slow vortex
-//   3.2s – 7.5s  staggered convergence: each sphere peels off the vortex and
-//                locks into its glyph position spelling STARTATHON
-//   7.5s –  ∞    idle: slow tumble, spring-physics cursor repulsion, and
-//                the whole word tilts parallax-style with the pointer
-
-const WORD = "STARTATHON";
+// Choreography on an InstancedMesh of toon-shaded spheres (~9s):
+//   0.0s – 2.6s  spheres drift in from depth, swirling in a slow vortex
+//   2.6s – 4.8s  staggered convergence into the "S." monogram
+//   6.6s – 9.0s  the S. dissolves outward into "Startathon."
+//   9.0s –  ∞    idle tumble; the white accent spheres detach and swarm
+//                after the cursor, returning to their slots when it leaves
+const WORD_FULL = "Startathon.";
+const WORD_MONO = "S.";
 const TWO_PI = Math.PI * 2;
 
 // Open Sauce Sans 900 — the site's headline font, declared in index.css.
-// Make sure it's actually loaded before rasterizing offscreen.
 async function loadDisplayFont() {
   try {
     await document.fonts.load('900 330px "Open Sauce Sans"');
@@ -22,33 +21,21 @@ async function loadDisplayFont() {
   } catch {
     /* sample with whatever is available */
   }
-  return { family: '"Open Sauce Sans", sans-serif', weight: 900 };
+  return '900';
 }
 
-// Rasterize the word offscreen and return `count` normalized target
-// positions (x in [-0.5, 0.5], y aspect-correct, slight z jitter),
-// evenly spread across the glyphs.
-async function sampleWordTargets(count) {
-  const { family, weight } = await loadDisplayFont();
-  const W = 1800;
-  const H = 460;
-  const canvas = document.createElement("canvas");
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#fff";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  // extra tracking keeps letters separable once they inflate into spheres
+// Rasterize `text` offscreen and return `count` normalized target positions
+// (x in [-0.5, 0.5], y aspect-correct, z = 0), evenly spread across glyphs.
+function sampleTextTargets(ctx, W, H, text, px, count) {
+  ctx.clearRect(0, 0, W, H);
   ctx.letterSpacing = "14px";
-  let px = 330;
-  ctx.font = `${weight} ${px}px ${family}`;
-  const w = ctx.measureText(WORD).width;
+  ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
+  const w = ctx.measureText(text).width;
   if (w > W * 0.97) {
     px = Math.floor((px * W * 0.97) / w);
-    ctx.font = `${weight} ${px}px ${family}`;
+    ctx.font = `900 ${px}px "Open Sauce Sans", sans-serif`;
   }
-  ctx.fillText(WORD, W / 2, H / 2);
+  ctx.fillText(text, W / 2, H / 2);
 
   const data = ctx.getImageData(0, 0, W, H).data;
   const pts = [];
@@ -60,27 +47,43 @@ async function sampleWordTargets(count) {
   const n = pts.length / 2;
   if (n === 0) return null;
 
-  // Fisher–Yates shuffle of point indices, then take `count` evenly
   const order = Array.from({ length: n }, (_, i) => i);
   for (let i = n - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
 
-  const targets = new Float32Array(count * 3);
+  const targets = new Float32Array(count * 2);
   for (let i = 0; i < count; i++) {
     const j = order[i % n];
-    targets[i * 3] = (pts[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.003;
-    targets[i * 3 + 1] = -(pts[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.003;
-    targets[i * 3 + 2] = 0; // single flat layer — no depth stacking in the word
+    targets[i * 2] = (pts[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.003;
+    targets[i * 2 + 1] = -(pts[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.003;
   }
   return targets;
 }
 
-const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+async function buildTargets(count) {
+  await loadDisplayFont();
+  const W = 1800;
+  const H = 520;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const mono = sampleTextTargets(ctx, W, H, WORD_MONO, 460, count);
+  const full = sampleTextTargets(ctx, W, H, WORD_FULL, 330, count);
+  if (!mono || !full) return null;
+  return { mono, full };
+}
 
-// Debug/testing hook: ?heroT=12 starts the choreography clock at 12s so the
-// converged state can be inspected without waiting through the sequence.
+const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
+
+// Debug/testing hook: ?heroT=12 starts the choreography clock at 12s so a
+// given phase can be inspected without waiting through the sequence.
 function initialTime() {
   try {
     const v = parseFloat(new URLSearchParams(window.location.search).get("heroT"));
@@ -89,6 +92,12 @@ function initialTime() {
     return 0;
   }
 }
+
+// Spheres with rand above this detach and follow the cursor (~4% — the
+// same near-white accents colored "hot" below, so the swarm reads as the
+// bright ones leaving the word).
+const FOLLOWER_R = 0.955;
+const FOLLOW_START = 9.0;
 
 function VoxelWord({ started, count }) {
   const meshRef = useRef();
@@ -102,16 +111,19 @@ function VoxelWord({ started, count }) {
 
   useEffect(() => {
     let alive = true;
-    sampleWordTargets(count).then((t) => alive && setTargets(t));
+    buildTargets(count).then((t) => alive && setTargets(t));
     return () => {
       alive = false;
     };
   }, [count]);
 
-  // Per-instance state: scatter start, randomness, spring offset + velocity
+  // Per-instance state: scatter start, randomness, follower swarm state
   const inst = useMemo(() => {
     const starts = new Float32Array(count * 3);
     const rands = new Float32Array(count);
+    const orbitR = new Float32Array(count);
+    const orbitSpeed = new Float32Array(count);
+    const orbitPhase = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       const th = Math.random() * TWO_PI;
       const rad = 4 + Math.random() * 7;
@@ -119,12 +131,19 @@ function VoxelWord({ started, count }) {
       starts[i * 3 + 1] = (Math.random() - 0.5) * 8;
       starts[i * 3 + 2] = Math.sin(th) * rad - 3;
       rands[i] = Math.random();
+      orbitR[i] = 0.25 + Math.random() * 0.6;
+      orbitSpeed[i] = 1.2 + Math.random() * 2.2;
+      orbitPhase[i] = Math.random() * TWO_PI;
     }
     return {
       starts,
       rands,
-      offsets: new Float32Array(count * 2),
-      vels: new Float32Array(count * 2),
+      orbitR,
+      orbitSpeed,
+      orbitPhase,
+      // follower positions/velocities, lazily initialized (NaN = not yet)
+      fpos: new Float32Array(count * 2).fill(NaN),
+      fvel: new Float32Array(count * 2),
       dummy: new THREE.Object3D(),
     };
   }, [count]);
@@ -143,7 +162,7 @@ function VoxelWord({ started, count }) {
     return tex;
   }, []);
 
-  // Per-instance flat colors: moss → lime range, a few near-white accents
+  // Per-instance flat colors: moss → lime range, near-white for followers
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh || !targets) return;
@@ -170,8 +189,15 @@ function VoxelWord({ started, count }) {
         ny * (viewport.height / 2)
       );
     };
+    const onLeave = () => pointerTarget.current.set(999, 999);
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
+    window.addEventListener("pointerleave", onLeave);
+    window.addEventListener("blur", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("blur", onLeave);
+    };
   }, [viewport.width, viewport.height]);
 
   useFrame((_, delta) => {
@@ -181,27 +207,30 @@ function VoxelWord({ started, count }) {
     if (started) timeRef.current += dt;
     const t = timeRef.current;
 
-    pointer.current.lerp(pointerTarget.current, 0.12);
+    pointer.current.lerp(pointerTarget.current, 0.14);
     const px = pointer.current.x;
     const py = pointer.current.y;
+    const pointerActive = pointerTarget.current.x < 900;
 
-    // parallax tilt of the whole word toward the cursor
+    // gentle parallax tilt of the whole word toward the cursor
     if (groupRef.current) {
-      groupRef.current.rotation.y +=
-        (pointerNdc.current.x * 0.16 - groupRef.current.rotation.y) * 0.04;
-      groupRef.current.rotation.x +=
-        (-pointerNdc.current.y * 0.10 - groupRef.current.rotation.x) * 0.04;
+      const tx = pointerActive ? pointerNdc.current.x : 0;
+      const ty = pointerActive ? pointerNdc.current.y : 0;
+      groupRef.current.rotation.y += (tx * 0.09 - groupRef.current.rotation.y) * 0.03;
+      groupRef.current.rotation.x += (-ty * 0.06 - groupRef.current.rotation.x) * 0.03;
     }
 
     const scale = Math.min(viewport.width * 0.92, 17);
-    const repulseR = scale * 0.16;
     const baseSize = scale * 0.0055;
-    const { starts, rands, offsets, vels, dummy } = inst;
+    const { starts, rands, orbitR, orbitSpeed, orbitPhase, fpos, fvel, dummy } = inst;
+    const { mono, full } = targets;
     const shrink = 1 - Math.min(t / 4, 1) * 0.5;
 
     for (let i = 0; i < count; i++) {
       const r = rands[i];
-      const p = easeOutCubic(Math.min(Math.max((t - 3.2 - r * 1.8) / 2.5, 0), 1));
+      // phase 1: vortex → "S."   phase 2: "S." → "Startathon."
+      const p1 = easeOutCubic(clamp01((t - 2.6 - r * 1.2) / 2.0));
+      const p2 = easeOutCubic(clamp01((t - 6.6 - r * 1.0) / 1.8));
 
       // vortex drift
       const ang = t * (0.18 + r * 0.25) + r * TWO_PI;
@@ -211,43 +240,56 @@ function VoxelWord({ started, count }) {
       const sy0 = starts[i * 3 + 1];
       const sz0 = starts[i * 3 + 2];
       const sx = (ca * sx0 + sa * sz0) * shrink;
-      const sy = (sy0 + Math.sin(t * 0.6 + r * 12) * 0.4 * (1 - p)) * shrink;
+      const sy = (sy0 + Math.sin(t * 0.6 + r * 12) * 0.4 * (1 - p1)) * shrink;
       const sz = (-sa * sx0 + ca * sz0) * shrink;
 
-      let x = sx + (targets[i * 3] * scale - sx) * p;
-      let y = sy + (targets[i * 3 + 1] * scale - sy) * p;
-      const z = sz + (targets[i * 3 + 2] * scale - sz) * p;
+      // vortex → S. → word
+      const mx = mono[i * 2] * scale;
+      const my = mono[i * 2 + 1] * scale;
+      let x = sx + (mx - sx) * p1;
+      let y = sy + (my - sy) * p1;
+      let z = sz * (1 - p1);
+      x += (full[i * 2] * scale - x) * p2;
+      y += (full[i * 2 + 1] * scale - y) * p2;
 
-      // spring-physics cursor repulsion (only once converged)
-      let ox = offsets[i * 2];
-      let oy = offsets[i * 2 + 1];
-      let vx = vels[i * 2];
-      let vy = vels[i * 2 + 1];
-      const dx = x + ox - px;
-      const dy = y + oy - py;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1e-4;
-      if (dist < repulseR && p > 0.5) {
-        const f = ((repulseR - dist) / repulseR) * 30 * p;
-        vx += (dx / dist) * f * dt;
-        vy += (dy / dist) * f * dt;
+      let spin = t * (0.3 + r * 0.7) + r * 10;
+
+      // follower swarm: the bright spheres chase the cursor once the word
+      // has formed, and spring back to their slots when it leaves
+      if (r > FOLLOWER_R && t > FOLLOW_START) {
+        let fx = fpos[i * 2];
+        let fy = fpos[i * 2 + 1];
+        if (Number.isNaN(fx)) {
+          fx = x;
+          fy = y;
+        }
+        let dx;
+        let dy;
+        if (pointerActive) {
+          const oa = t * orbitSpeed[i] + orbitPhase[i];
+          dx = px + Math.cos(oa) * orbitR[i] - fx;
+          dy = py + Math.sin(oa) * orbitR[i] * 0.7 - fy;
+        } else {
+          dx = x - fx;
+          dy = y - fy;
+        }
+        let vx = fvel[i * 2] + dx * 14 * dt;
+        let vy = fvel[i * 2 + 1] + dy * 14 * dt;
+        const dmp = 1 - Math.min(3.2 * dt, 0.85);
+        vx *= dmp;
+        vy *= dmp;
+        fx += vx * dt;
+        fy += vy * dt;
+        fpos[i * 2] = fx;
+        fpos[i * 2 + 1] = fy;
+        fvel[i * 2] = vx;
+        fvel[i * 2 + 1] = vy;
+        x = fx;
+        y = fy;
+        z = 0.6; // ride slightly in front of the word
+        spin += Math.sqrt(vx * vx + vy * vy) * 0.6;
       }
-      // spring back to rest + damping
-      vx += -ox * 14 * dt;
-      vy += -oy * 14 * dt;
-      vx *= 1 - Math.min(4.5 * dt, 0.9);
-      vy *= 1 - Math.min(4.5 * dt, 0.9);
-      ox += vx * dt;
-      oy += vy * dt;
-      offsets[i * 2] = ox;
-      offsets[i * 2 + 1] = oy;
-      vels[i * 2] = vx;
-      vels[i * 2 + 1] = vy;
-      x += ox;
-      y += oy;
 
-      // tumble: slow idle spin, faster while displaced by the cursor
-      const agitation = Math.min(Math.sqrt(ox * ox + oy * oy) * 3, 2);
-      const spin = t * (0.3 + r * 0.7) + r * 10 + agitation * 2;
       dummy.position.set(x, y, z);
       dummy.rotation.set(spin, spin * 0.8, 0);
       dummy.scale.setScalar(baseSize * (0.8 + r * 0.4));
