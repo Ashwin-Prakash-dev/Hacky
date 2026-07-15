@@ -367,15 +367,15 @@ function ParticleEngine({ started, count, isMobile }) {
         if (arr > dep + 1) u3 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u3 = 1;
       }
-      // leg 4 (stats -> studenthook): departs when the stats section is 70%
-      // scrolled, swarms down the right side, and rings the intro video's
-      // border as it centers in the viewport
-      const stSec = getRect("section:stats");
+      // leg 4 (stats -> studenthook): departs a beat after the rail sweep
+      // completes (never before — the counters must have fired), then swarms
+      // down the right side into the next section's scatter
       const hvDoc = getRect("hook-video");
       let u4 = 0;
-      if (stSec && hvDoc && hvDoc.width > 2) {
-        const dep =
-          stSec.top + 0.7 * (stSec.height + window.innerHeight) - window.innerHeight;
+      if (statsDoc && hvDoc && hvDoc.width > 2) {
+        const sweepDone =
+          statsDoc.top + statsDoc.height / 2 - window.innerHeight * 0.5;
+        const dep = sweepDone + window.innerHeight * 0.35;
         const arr = hvDoc.top + hvDoc.height / 2 - window.innerHeight / 2;
         if (arr > dep + 1) u4 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u4 = 1;
@@ -591,10 +591,10 @@ function ParticleEngine({ started, count, isMobile }) {
             const s = (e - 0.7) / 0.3;
             const q = rands2[i];
             const rx = Math.max(
-              tipX - q * q * row.w * 0.5,
+              tipX - q * q * row.w * 0.38,
               row.cx - row.w / 2 - 0.2
             );
-            const ry = row.cy + (rands3[i] - 0.5) * row.h * 0.6;
+            const ry = row.cy + (rands3[i] - 0.5) * row.h * 0.12;
             tx = x3 + (rx - x3) * s;
             ty = y3 + (ry - y3) * s;
           } else {

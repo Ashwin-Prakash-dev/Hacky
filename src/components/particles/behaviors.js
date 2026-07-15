@@ -44,11 +44,16 @@ function videocards(c) {
 }
 
 // Sweep bookkeeping for the stats row: W is the tip's progress (0 = left
-// edge, 1 = right edge; negative = fully reset). Lights each stat cell as
-// the tip passes its center and returns the tip's world x.
+// edge, 1 = right edge; negative = fully reset). Etches the rail's lime
+// fill up to the tip, lights each stat cell as the tip passes its center
+// (which fires that cell's counter), and returns the tip's world x.
 export function sweepStats(c, W) {
   const row = c.rect("stats-row");
   if (!row) return null;
+  const fill = getEl("stats-rail-fill");
+  if (fill) {
+    fill.style.transform = `scaleX(${Math.max(0, Math.min(1, W))})`;
+  }
   const tipX = row.cx - row.w / 2 + W * row.w;
   for (let k = 0; k < 4; k++) {
     const el = getEl(`stat-${k}`);
@@ -58,9 +63,9 @@ export function sweepStats(c, W) {
   return tipX;
 }
 
-// Idle: the sweep has finished — the swarm rests as the completed trail,
-// tip at the row's right edge and the tail thinning back leftward, with
-// every stat lit.
+// Idle: the sweep has finished — the swarm rests as the completed comet
+// hugging the rail, tip at the row's right edge and the tail thinning
+// back leftward, with the rail fully etched and every stat lit.
 function stats(c) {
   const row = c.rect("stats-row");
   if (!row) return;
@@ -69,12 +74,12 @@ function stats(c) {
     const q = c.rands2[i];
     const x =
       tipX -
-      q * q * row.w * 0.5 +
+      q * q * row.w * 0.38 +
       Math.sin(c.t * (0.2 + c.rands[i] * 0.3) + q * 19) * 0.15;
     const y =
       row.cy +
-      (c.rands3[i] - 0.5) * row.h * 0.6 +
-      Math.cos(c.t * (0.25 + q * 0.2) + c.rands[i] * 23) * 0.12;
+      (c.rands3[i] - 0.5) * row.h * 0.12 +
+      Math.cos(c.t * (0.25 + q * 0.2) + c.rands[i] * 23) * 0.08;
     c.claim(i, x, y, (c.rands[i] - 0.5) * 0.5, 4);
   }
 }
