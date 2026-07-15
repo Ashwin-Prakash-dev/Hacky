@@ -428,12 +428,17 @@ const VideoCards = () => {
         <div
           id="what-is-it"
           className="vc-card-wrap vc-intro-grid"
+          data-particle-target="intro-grid"
           style={{
             padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2rem, 4vw, 3rem)",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "clamp(2rem, 6vw, 6rem)",
             alignItems: "end",
+            // above the fixed particle canvas (z-30): the swarm passes
+            // behind these texts on its way to the stats row
+            position: "relative",
+            zIndex: 31,
           }}
         >
           {/* Left: heading */}
@@ -450,6 +455,7 @@ const VideoCards = () => {
             </p>
             <h2
               className="special-font"
+              data-particle-target="intro-title"
               style={{
                 fontFamily: "var(--font-general)",
                 fontSize: "clamp(2.2rem, 5vw, 4.4rem)",
@@ -465,12 +471,15 @@ const VideoCards = () => {
           </div>
 
           {/* Right: body */}
-          <div style={{
-            borderLeft: "1px solid rgba(200,255,0,0.25)",
-            paddingLeft: "clamp(1.25rem, 2.5vw, 2rem)",
-            alignSelf: "end",
-            paddingBottom: "0.2rem",
-          }}>
+          <div
+            data-particle-target="intro-desc"
+            style={{
+              borderLeft: "1px solid rgba(200,255,0,0.25)",
+              paddingLeft: "clamp(1.25rem, 2.5vw, 2rem)",
+              alignSelf: "end",
+              paddingBottom: "0.2rem",
+            }}
+          >
             <p style={{
               fontFamily: "var(--font-general)",
               fontSize: "clamp(0.95rem, 1.3vw, 1.05rem)",

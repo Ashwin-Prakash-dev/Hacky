@@ -20,7 +20,7 @@ import {
   SHAPE_W,
   SHAPE_H,
 } from "./shapes";
-import { BEHAVIORS } from "./behaviors";
+import { BEHAVIORS, sweepStats } from "./behaviors";
 import { bordersPoint } from "./primitives";
 import {
   initRegistry,
@@ -240,8 +240,12 @@ function ParticleEngine({ started, count, isMobile }) {
     if (heroOwns && started && !hs.abandoned && movieT.current < MOVIE_END) {
       movieT.current += dt;
     }
-    if (!heroOwns && movieT.current > 0.1 && movieT.current < MOVIE_END) {
-      hs.abandoned = true; // scrolled away mid-movie: dissolve, don't resume
+    if (
+      (!heroOwns || sy > 40) &&
+      movieT.current > 0.1 &&
+      movieT.current < MOVIE_END
+    ) {
+      hs.abandoned = true; // any real scroll mid-movie dissolves it, no resume
     }
     const movieActive = heroOwns && !hs.abandoned && movieT.current < MOVIE_END;
 
@@ -323,16 +327,7 @@ function ParticleEngine({ started, count, isMobile }) {
         claimS[i] = p0;
       }
     } else {
-      // letters: parked on the hero-anchored wordmark — they scroll away
-      // with the section like ordinary content and are back in place
-      // whenever the user returns
       const s6 = shapes[6];
-      for (let i = dotN; i < count; i++) {
-        claimK[i] = 4;
-        claimT[i * 3] = s6[i * 2] * scale;
-        claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
-        claimT[i * 3 + 2] = 0;
-      }
       // The dot swarm's journey is a pure function of scroll, never a
       // trigger. Leg 1 (hero -> sponsors): u1 runs 0 -> 1 as the card group
       // centers in the viewport, detouring down a right-side stream lane.
@@ -358,6 +353,59 @@ function ParticleEngine({ started, count, isMobile }) {
         const arr = vgDoc.top - window.innerHeight * 0.5;
         if (arr > dep + 1) u2 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u2 = 1;
+      }
+      // leg 3 (videocards -> stats): departs when the "What is Startathon?"
+      // block enters the viewport, arrives as the stats row centers; the
+      // last stretch is the left-to-right row sweep
+      const introDoc = getRect("intro-grid");
+      const statsDoc = getRect("stats-row");
+      let u3 = 0;
+      if (introDoc && statsDoc && statsDoc.width > 2) {
+        const dep = introDoc.top - window.innerHeight;
+        const arr =
+          statsDoc.top + statsDoc.height / 2 - window.innerHeight * 0.5;
+        if (arr > dep + 1) u3 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u3 = 1;
+      }
+      // A movie abandoned mid-flight departs from its frozen last frame —
+      // the flock never regroups into the wordmark before streaming away.
+      // The frozen shape relaxes into the parked wordmark only when the
+      // morph can't be seen: hero off-screen, or the user at rest.
+      if (hs.abandoned && !hs.freeze) {
+        const f = new Float32Array(count * 2);
+        for (let i = 0; i < count; i++) {
+          f[i * 2] = cur[i * 3];
+          f[i * 2 + 1] = cur[i * 3 + 1] - heroOff;
+        }
+        hs.freeze = f;
+        hs.u0 = Math.min(u1, 0.99);
+      }
+      const fz = hs.freeze;
+      const svel = (sy - (hs.prevSy ?? sy)) / dt;
+      hs.prevSy = sy;
+      if (fz) {
+        const heroGone = heroRect
+          ? heroRect.cy - heroRect.h / 2 > vh / 2
+          : sy > window.innerHeight;
+        const relK = heroGone ? 3 : Math.abs(svel) < 60 ? 2 : 0;
+        if (relK) {
+          const rel = 1 - Math.exp(-relK * dt);
+          for (let i = 0; i < count; i++) {
+            fz[i * 2] += (s6[i * 2] * scale - fz[i * 2]) * rel;
+            fz[i * 2 + 1] += (s6[i * 2 + 1] * scale - fz[i * 2 + 1]) * rel;
+          }
+        }
+      }
+      const ur = fz ? clamp01((u1 - hs.u0) / Math.max(0.01, 1 - hs.u0)) : u1;
+      // letters: parked on the (frozen or settled) hero-anchored wordmark —
+      // they scroll away with the section like ordinary content and are
+      // back in place whenever the user returns
+      for (let i = dotN; i < count; i++) {
+        claimK[i] = 4;
+        claimT[i * 3] = fz ? fz[i * 2] : s6[i * 2] * scale;
+        claimT[i * 3 + 1] =
+          (fz ? fz[i * 2 + 1] : s6[i * 2 + 1] * scale) + heroOff;
+        claimT[i * 3 + 2] = 0;
       }
       const hovering = u2 <= 0 && getHovered()?.startsWith("sponsor-");
       const g = rectW("sponsor-group");
@@ -386,10 +434,11 @@ function ParticleEngine({ started, count, isMobile }) {
       if (u1 < 1 && !hovering) {
         for (let i = 0; i < dotN; i++) {
           const r = rands[i];
-          const pi = clamp01(u1 * 1.35 - r * 0.35);
+          const pi = clamp01(ur * 1.35 - r * 0.35);
           const e = pi * pi * (3 - 2 * pi);
-          const sx0 = s6[i * 2] * scale;
-          const sy0 = s6[i * 2 + 1] * scale + heroOff;
+          const sx0 = fz ? fz[i * 2] : s6[i * 2] * scale;
+          const sy0 =
+            (fz ? fz[i * 2 + 1] : s6[i * 2 + 1] * scale) + heroOff;
           let ex = vw * 0.42;
           let ey = -vh * 0.2;
           if (g) {
@@ -468,8 +517,85 @@ function ParticleEngine({ started, count, isMobile }) {
           claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
           claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
         }
-      } else {
+      } else if (u3 <= 0) {
         wind = BEHAVIORS.videocards(ctx)?.wind ?? 0;
+        sweepStats(ctx, -0.1); // approaching from above: stats start unlit
+      } else if (u3 < 1) {
+        // leg 3 waypoints: w0 video card borders -> w1 right lane ->
+        // w2 intro description -> w3 "What is Startathon?" heading ->
+        // w4 the stats row sweep (tip-weighted tail, lights cells it passes)
+        const dsc = rectW("intro-desc");
+        const ttl = rectW("intro-title");
+        const row = rectW("stats-row");
+        const vcRects = [];
+        for (let k2 = 0; k2 < 5; k2++) {
+          const cr = rectW(`vc-card-${k2}`);
+          if (cr && cr.w > 0.05) vcRects.push(cr);
+        }
+        const Wt = clamp01((u3 - 0.7) / 0.3);
+        const W = Wt * Wt * (3 - 2 * Wt);
+        const tipX = row ? sweepStats(ctx, W) : 0;
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const pi = clamp01(u3 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = vw * 0.42;
+          let y0 = vh * 1.2;
+          if (vcRects.length) {
+            bordersPoint(vcRects, rands2[i], rands3[i], 0.06, bOut);
+            x0 = bOut[0];
+            y0 = bOut[1];
+          }
+          let x2 = vw * 0.25;
+          let y2 = 0;
+          if (dsc) {
+            x2 = dsc.cx + (rands2[i] - 0.5) * dsc.w * 0.9;
+            y2 = dsc.cy + (rands3[i] - 0.5) * dsc.h * 0.85;
+          }
+          let x3 = -vw * 0.25;
+          let y3 = -vh * 0.2;
+          if (ttl) {
+            x3 = ttl.cx + (rands2[i] - 0.5) * ttl.w * 0.9;
+            y3 = ttl.cy + (rands3[i] - 0.5) * ttl.h * 0.85;
+          }
+          const x1 = vw * (0.38 + r * 0.07);
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.25) {
+            const s = e / 0.25;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else if (e < 0.5) {
+            const s = (e - 0.25) / 0.25;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          } else if (e < 0.7) {
+            const s = (e - 0.5) / 0.2;
+            tx = x2 + (x3 - x2) * s;
+            ty = y2 + (y3 - y2) * s;
+          } else if (row) {
+            const s = (e - 0.7) / 0.3;
+            const q = rands2[i];
+            const rx = Math.max(
+              tipX - q * q * row.w * 0.5,
+              row.cx - row.w / 2 - 0.2
+            );
+            const ry = row.cy + (rands3[i] - 0.5) * row.h * 0.6;
+            tx = x3 + (rx - x3) * s;
+            ty = y3 + (ry - y3) * s;
+          } else {
+            tx = x3;
+            ty = y3;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else {
+        wind = BEHAVIORS.stats(ctx)?.wind ?? 0;
       }
     }
 

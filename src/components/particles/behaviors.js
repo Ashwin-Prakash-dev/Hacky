@@ -1,4 +1,5 @@
 import { racetrack, scatterInRect, bordersPoint } from "./primitives";
+import { getEl } from "./registry";
 
 // Target generators for the traveling dot swarm. After the hero movie
 // settles, only the wordmark's period keeps living particles (ctx.count is
@@ -42,7 +43,44 @@ function videocards(c) {
   }
 }
 
+// Sweep bookkeeping for the stats row: W is the tip's progress (0 = left
+// edge, 1 = right edge; negative = fully reset). Lights each stat cell as
+// the tip passes its center and returns the tip's world x.
+export function sweepStats(c, W) {
+  const row = c.rect("stats-row");
+  if (!row) return null;
+  const tipX = row.cx - row.w / 2 + W * row.w;
+  for (let k = 0; k < 4; k++) {
+    const el = getEl(`stat-${k}`);
+    const r = c.rect(`stat-${k}`);
+    if (el && r) el.classList.toggle("stat-lit", tipX >= r.cx);
+  }
+  return tipX;
+}
+
+// Idle: the sweep has finished — the swarm rests as the completed trail,
+// tip at the row's right edge and the tail thinning back leftward, with
+// every stat lit.
+function stats(c) {
+  const row = c.rect("stats-row");
+  if (!row) return;
+  const tipX = sweepStats(c, 1);
+  for (let i = 0; i < c.count; i++) {
+    const q = c.rands2[i];
+    const x =
+      tipX -
+      q * q * row.w * 0.5 +
+      Math.sin(c.t * (0.2 + c.rands[i] * 0.3) + q * 19) * 0.15;
+    const y =
+      row.cy +
+      (c.rands3[i] - 0.5) * row.h * 0.6 +
+      Math.cos(c.t * (0.25 + q * 0.2) + c.rands[i] * 23) * 0.12;
+    c.claim(i, x, y, (c.rands[i] - 0.5) * 0.5, 4);
+  }
+}
+
 export const BEHAVIORS = {
   sponsors,
   videocards,
+  stats,
 };

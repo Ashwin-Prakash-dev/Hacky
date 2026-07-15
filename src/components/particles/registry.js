@@ -9,6 +9,7 @@
 // valid between rescans while the user scrolls.
 
 const docRects = new Map(); // id -> { top, left, width, height }
+const els = new Map(); // id -> element, for imperative class toggles
 let sections = []; // [{ id, top, bottom }] sorted by top
 let hovered = null;
 let faqOpen = 0;
@@ -18,6 +19,7 @@ export function scan() {
   const sy = window.scrollY;
   sections = [];
   docRects.clear();
+  els.clear();
   document.querySelectorAll("[data-particles]").forEach((el) => {
     const r = el.getBoundingClientRect();
     const id = el.dataset.particles;
@@ -36,6 +38,7 @@ export function scan() {
       const id = el.dataset.particleTarget || el.dataset.particleHover;
       const r = el.getBoundingClientRect();
       docRects.set(id, { top: r.top + sy, left: r.left, width: r.width, height: r.height });
+      els.set(id, el);
     });
 }
 
@@ -45,6 +48,7 @@ export const sectionAt = (docY) => {
 };
 
 export const getRect = (id) => docRects.get(id) || null;
+export const getEl = (id) => els.get(id) || null;
 export const getHovered = () => hovered;
 export const setHovered = (id) => {
   hovered = id;

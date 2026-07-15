@@ -78,9 +78,14 @@ const Stats = () => {
 
       <div
         id="stats-grid"
+        data-particle-target="stats-row"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
+          // above the fixed particle canvas (z-30): the sweeping swarm
+          // passes behind the numbers and lights each cell it reaches
+          position: "relative",
+          zIndex: 31,
         }}
       >
         {stats.map((stat, i) => (
@@ -97,22 +102,12 @@ const Stats = () => {
               transition: "background 0.25s ease",
               cursor: "default",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.025)";
-              e.currentTarget.querySelector(".stat-num").style.color = "#C8FF00";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.querySelector(".stat-num").style.color = i === 0 ? "#C8FF00" : "#fff";
-            }}
           >
-            {/* Top accent line on all stats, lime only on first */}
-            <div style={{
+            {/* Top accent line — lime once the particle sweep lights the cell */}
+            <div className="stat-accent" style={{
               position: "absolute", top: 0, left: 0, right: 0, height: "1px",
-              background: i === 0
-                ? "linear-gradient(90deg, transparent, #C8FF00, transparent)"
-                : "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
-              opacity: i === 0 ? 0.7 : 1,
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+              transition: "background 0.35s ease",
             }} />
 
             <span
@@ -122,10 +117,8 @@ const Stats = () => {
                 fontFamily: "var(--font-general)",
                 fontSize: "clamp(2.4rem, 5vw, 3.8rem)",
                 fontWeight: 900,
-                color: i === 0 ? "#C8FF00" : "#fff",
                 lineHeight: 1,
                 letterSpacing: "-0.03em",
-                transition: "color 0.25s ease",
               }}
             >
               {stat.value === null ? stat.text : "0"}
@@ -147,6 +140,14 @@ const Stats = () => {
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       <style>{`
+        .stat-num { color: #fff; transition: color 0.3s ease; }
+        .stats-cell:hover { background: rgba(255,255,255,0.025); }
+        .stats-cell:hover .stat-num { color: #C8FF00; }
+        .stat-lit .stat-num { color: #C8FF00; }
+        .stat-lit .stat-accent {
+          background: linear-gradient(90deg, transparent, #C8FF00, transparent) !important;
+          opacity: 0.7;
+        }
         @media (max-width: 640px) {
           #stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
