@@ -21,6 +21,7 @@ import {
   SHAPE_H,
 } from "./shapes";
 import { BEHAVIORS } from "./behaviors";
+import { bordersPoint } from "./primitives";
 import {
   initRegistry,
   sectionAt,
@@ -52,6 +53,8 @@ function initialTime() {
 }
 
 const MOVIE_END = KEYS[KEYS.length - 1].at + KEYS[KEYS.length - 1].dur + 1.3;
+
+const bOut = [0, 0]; // scratch for bordersPoint targets
 
 function ParticleEngine({ started, count, isMobile }) {
   const meshRef = useRef();
@@ -330,25 +333,60 @@ function ParticleEngine({ started, count, isMobile }) {
         claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
         claimT[i * 3 + 2] = 0;
       }
-      // hero -> sponsors is scrubbed by scroll, not triggered: u runs from
-      // 0 (page top) to 1 (card group centered in the viewport). The swarm
-      // starts displacing with the first scrolled pixel, detours through a
-      // right-side stream lane mid-journey, and lands dispersed behind the
-      // card group exactly when the cards reach mid-screen. Scrolling back
-      // reverses it into the period.
+      // The dot swarm's journey is a pure function of scroll, never a
+      // trigger. Leg 1 (hero -> sponsors): u1 runs 0 -> 1 as the card group
+      // centers in the viewport, detouring down a right-side stream lane.
+      // The swarm then dwells behind the sponsor cards until the sponsors
+      // section is 70% scrolled; leg 2 (sponsors -> videocards) carries it
+      // down the LEFT edge, behind the "We took notes…" heading, out its
+      // bottom-right corner, and onto the video card borders, arriving as
+      // the video grid reaches mid-screen. Scrolling back reverses it all.
       const groupDoc = getRect("sponsor-group");
-      let u = 1;
+      let u1 = 1;
       if (groupDoc) {
         const targetScroll = groupDoc.top + groupDoc.height / 2 - window.innerHeight / 2;
-        if (targetScroll > 1) u = Math.min(1, sy / targetScroll);
+        if (targetScroll > 1) u1 = Math.min(1, sy / targetScroll);
       }
-      const hovering =
-        act === "sponsors" && getHovered()?.startsWith("sponsor-");
+      const spDoc = getRect("section:sponsors");
+      const vgDoc = getRect("vc-grid");
+      let u2 = 0;
+      if (spDoc && vgDoc && vgDoc.width > 2) {
+        // ScrollTrigger-style progress: 0 when the section top enters the
+        // viewport bottom, 1 when its bottom leaves the top — depart at 70%
+        const dep =
+          spDoc.top + 0.7 * (spDoc.height + window.innerHeight) - window.innerHeight;
+        const arr = vgDoc.top - window.innerHeight * 0.5;
+        if (arr > dep + 1) u2 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u2 = 1;
+      }
+      const hovering = u2 <= 0 && getHovered()?.startsWith("sponsor-");
       const g = rectW("sponsor-group");
-      if (u < 1 && !hovering) {
+      const ctx = {
+        t,
+        at,
+        dt,
+        count: dotN, // behaviors pose only the dot swarm
+        rands,
+        rands2,
+        rands3,
+        scale,
+        vw,
+        vh,
+        heroOff,
+        hovered: getHovered(),
+        rect: rectW,
+        consume,
+        claim: (i, x, y, z, k) => {
+          claimK[i] = k;
+          claimT[i * 3] = x;
+          claimT[i * 3 + 1] = y;
+          claimT[i * 3 + 2] = z;
+        },
+      };
+      if (u1 < 1 && !hovering) {
         for (let i = 0; i < dotN; i++) {
           const r = rands[i];
-          const pi = clamp01(u * 1.35 - r * 0.35);
+          const pi = clamp01(u1 * 1.35 - r * 0.35);
           const e = pi * pi * (3 - 2 * pi);
           const sx0 = s6[i * 2] * scale;
           const sy0 = s6[i * 2 + 1] * scale + heroOff;
@@ -368,30 +406,70 @@ function ParticleEngine({ started, count, isMobile }) {
           claimT[i * 3 + 1] = by;
           claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * e;
         }
-      } else if (act && BEHAVIORS[act]) {
-        const ctx = {
-          t,
-          at,
-          dt,
-          count: dotN, // behaviors pose only the dot swarm
-          rands,
-          rands2,
-          rands3,
-          scale,
-          vw,
-          vh,
-          heroOff,
-          hovered: getHovered(),
-          rect: rectW,
-          consume,
-          claim: (i, x, y, z, k) => {
-            claimK[i] = k;
-            claimT[i * 3] = x;
-            claimT[i * 3 + 1] = y;
-            claimT[i * 3 + 2] = z;
-          },
-        };
-        wind = BEHAVIORS[act](ctx)?.wind ?? 0;
+      } else if (u2 <= 0 || hovering) {
+        wind = BEHAVIORS.sponsors(ctx)?.wind ?? 0;
+      } else if (u2 < 1) {
+        // leg 2 waypoints: w0 sponsor-group scatter -> w1 left lane ->
+        // w2 behind the heading -> w3 its bottom-right -> w4 card borders
+        const h = rectW("vc-heading");
+        const vcRects = [];
+        for (let k2 = 0; k2 < 5; k2++) {
+          const cr = rectW(`vc-card-${k2}`);
+          if (cr && cr.w > 0.05) vcRects.push(cr);
+        }
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const pi = clamp01(u2 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = vw * 0.42;
+          let y0 = vh * 1.2;
+          if (g) {
+            x0 = g.cx + (rands2[i] - 0.5) * (g.w + 1);
+            y0 = g.cy + (rands3[i] - 0.5) * (g.h + 1);
+          }
+          let x2 = -vw * 0.2;
+          let y2 = 0;
+          let x3 = 0;
+          let y3 = -vh * 0.2;
+          if (h) {
+            x2 = h.cx + (rands2[i] - 0.5) * h.w * 0.9;
+            y2 = h.cy + (rands3[i] - 0.5) * h.h * 0.85;
+            x3 = h.cx + h.w / 2 + 0.2 + (rands2[i] - 0.5) * 0.5;
+            y3 = h.cy - h.h / 2 - 0.15 + (rands3[i] - 0.5) * 0.35;
+          }
+          const x1 = -vw * (0.38 + r * 0.07);
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.3) {
+            const s = e / 0.3;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else if (e < 0.55) {
+            const s = (e - 0.3) / 0.25;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          } else if (e < 0.75) {
+            const s = (e - 0.55) / 0.2;
+            tx = x2 + (x3 - x2) * s;
+            ty = y2 + (y3 - y2) * s;
+          } else if (vcRects.length) {
+            const s = (e - 0.75) / 0.25;
+            bordersPoint(vcRects, rands2[i], rands3[i], 0.06, bOut);
+            tx = x3 + (bOut[0] - x3) * s;
+            ty = y3 + (bOut[1] - y3) * s;
+          } else {
+            tx = x3;
+            ty = y3;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else {
+        wind = BEHAVIORS.videocards(ctx)?.wind ?? 0;
       }
     }
 

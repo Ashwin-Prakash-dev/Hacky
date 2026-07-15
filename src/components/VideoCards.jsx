@@ -286,7 +286,13 @@ const VideoCards = () => {
         {/* ── Section Header ───────────────────────────────── */}
         <div
           ref={headerRef}
-          style={{ padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2.5rem, 5vw, 4rem)" }}
+          style={{
+            padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2.5rem, 5vw, 4rem)",
+            // above the fixed particle canvas (z-30): the migrating swarm
+            // passes behind the heading text on its way to the video grid
+            position: "relative",
+            zIndex: 31,
+          }}
         >
           <p
             className="vc-reveal"
@@ -305,6 +311,7 @@ const VideoCards = () => {
 
           <h2
             className="vc-reveal special-font"
+            data-particle-target="vc-heading"
             style={{
               fontFamily: "var(--font-general)",
               fontSize: "clamp(2.4rem, 6vw, 5.2rem)",
@@ -337,10 +344,17 @@ const VideoCards = () => {
         </div>
 
         {/* ── Desktop bento grid ───────────────────────────── */}
-        <div className="vc-desktop-grid">
+        <div
+          className="vc-desktop-grid"
+          data-particle-target="vc-grid"
+          // above the fixed particle canvas (z-30): border particles pass
+          // behind the videos and read as an outline in the gaps
+          style={{ position: "relative", zIndex: 31 }}
+        >
           {/* Hero Card: ANTHROPIC (full width) */}
           <div
             className="vc-card-wrap"
+            data-particle-target="vc-card-0"
             style={{ marginBottom: GAP, height: "clamp(300px, 58vh, 660px)" }}
           >
             <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
@@ -350,17 +364,25 @@ const VideoCards = () => {
 
           {/* 2-col grid: SPACEX (tall) + PALANTIR / OPENAI */}
           <div className="vc-grid" style={{ gap: GAP, marginBottom: GAP }}>
-            <div className="vc-card-wrap vc-spacex">
+            <div className="vc-card-wrap vc-spacex" data-particle-target="vc-card-1">
               <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[1]} />
               </BentoTilt>
             </div>
-            <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
+            <div
+              className="vc-card-wrap"
+              data-particle-target="vc-card-2"
+              style={{ height: "clamp(220px, 34vh, 360px)" }}
+            >
               <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[2]} />
               </BentoTilt>
             </div>
-            <div className="vc-card-wrap" style={{ height: "clamp(220px, 34vh, 360px)" }}>
+            <div
+              className="vc-card-wrap"
+              data-particle-target="vc-card-3"
+              style={{ height: "clamp(220px, 34vh, 360px)" }}
+            >
               <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[3]} />
               </BentoTilt>
@@ -370,6 +392,7 @@ const VideoCards = () => {
           {/* ANDURIL — full width footer card */}
           <div
             className="vc-card-wrap"
+            data-particle-target="vc-card-4"
             style={{ height: "clamp(220px, 38vh, 400px)" }}
           >
             <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">

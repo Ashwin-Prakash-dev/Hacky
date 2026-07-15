@@ -34,6 +34,25 @@ export function scatterInRect(r, a, b, t, pad, out) {
   out[1] = r.cy + (b - 0.5) * (r.h + pad * 2) + Math.cos(t * (0.2 + b * 0.3) + a * 23) * 0.2;
 }
 
+// Spread particles across the borders of several rects, weighted by
+// perimeter so big cards get proportionally more dots. a picks the rect,
+// s is the arc-length fraction around its border.
+export function bordersPoint(rects, a, s, pad, out) {
+  let total = 0;
+  for (const r of rects) total += r.w + r.h;
+  let pick = rects[rects.length - 1];
+  const goal = a * total;
+  let acc = 0;
+  for (const r of rects) {
+    acc += r.w + r.h;
+    if (goal <= acc) {
+      pick = r;
+      break;
+    }
+  }
+  perimeterPoint(pick, s, pad, out);
+}
+
 const seg = [0, 0];
 
 // Claim particles [i0, i0+m) onto a racetrack orbit around rect r.
