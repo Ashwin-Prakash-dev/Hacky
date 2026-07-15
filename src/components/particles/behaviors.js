@@ -79,46 +79,40 @@ function stats(c) {
   }
 }
 
-// Idle: the swarm drifts scattered across the whole section. Hovering the
-// Apply button switches on a magnet: the particles snap into chains along
-// discrete field lines radiating out of the button (iron filings around a
-// pole), trembling in place like they're holding kinetic energy they
-// can't release.
+// Idle: the swarm drifts scattered across the headline block. Hovering the
+// Apply button switches on a magnet: each particle stays near its own
+// scattered spot but snaps onto the nearest field line running through the
+// button, so the scatter reorganizes into thin rays pointing at the pole —
+// trembling in place like kinetic energy it can't release.
 const FIELD_LINES = 22;
+const LINE_STEP = (Math.PI * 2) / FIELD_LINES;
 function studenthook(c) {
-  if (c.hovered === "hook-apply") {
-    const btn = c.rect("hook-apply");
-    if (btn) {
-      for (let i = 0; i < c.count; i++) {
-        const li = Math.floor(c.rands[i] * FIELD_LINES);
-        const th =
-          (li / FIELD_LINES) * Math.PI * 2 + Math.sin(c.t * 0.4) * 0.03;
-        const ca = Math.cos(th);
-        const sa = Math.sin(th);
-        // field lines start on an ellipse hugging the button's silhouette
-        const a = btn.w / 2 + 0.12;
-        const b = btn.h / 2 + 0.12;
-        const r0 = (a * b) / Math.sqrt(b * b * ca * ca + a * a * sa * sa);
-        const d = c.rands2[i] * c.rands2[i] * 2.2 + 0.05; // denser at the pole
-        const vib = Math.sin(c.t * 16 + c.rands3[i] * 40) * 0.055;
-        const vib2 = Math.cos(c.t * 21 + c.rands3[i] * 27) * 0.03;
-        const R = r0 + d + vib2;
-        c.claim(
-          i,
-          btn.cx + ca * R - sa * vib,
-          btn.cy + sa * R + ca * vib,
-          (c.rands3[i] - 0.5) * 0.4,
-          7
-        );
-      }
-      return;
-    }
-  }
   const sec = c.rect("hook-scatter");
   if (!sec) return;
+  const btn = c.hovered === "hook-apply" ? c.rect("hook-apply") : null;
   for (let i = 0; i < c.count; i++) {
-    scatterInRect(sec, c.rands2[i], c.rands3[i], c.t, 0, out);
-    c.claim(i, out[0], out[1], (c.rands[i] - 0.5) * 0.8, 4);
+    // frozen home (t = 0) while magnetized, so nobody hops between lines
+    scatterInRect(sec, c.rands2[i], c.rands3[i], btn ? 0 : c.t, 0, out);
+    if (btn) {
+      const dx = out[0] - btn.cx;
+      const dy = out[1] - btn.cy;
+      const rho = Math.hypot(dx, dy);
+      const th = Math.round(Math.atan2(dy, dx) / LINE_STEP) * LINE_STEP;
+      const ca = Math.cos(th);
+      const sa = Math.sin(th);
+      const R = Math.max(rho * 0.92, 0.5); // slight pull, never inside
+      const vib = Math.sin(c.t * 16 + c.rands3[i] * 40) * 0.05;
+      const vib2 = Math.cos(c.t * 21 + c.rands3[i] * 27) * 0.03;
+      c.claim(
+        i,
+        btn.cx + ca * (R + vib2) - sa * vib,
+        btn.cy + sa * (R + vib2) + ca * vib,
+        (c.rands3[i] - 0.5) * 0.4,
+        8
+      );
+    } else {
+      c.claim(i, out[0], out[1], (c.rands[i] - 0.5) * 0.8, 4);
+    }
   }
 }
 
