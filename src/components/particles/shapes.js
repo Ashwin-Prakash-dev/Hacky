@@ -296,6 +296,51 @@ function drawTrophyTeam(ctx, W, H) {
   }
 }
 
+// The resting wordmark, partitioned: particle slots [0, dotCount) get the
+// period's points, the rest get the letters. The dot swarm is the only
+// group that travels beyond the hero, so it's given roughly double the
+// period's natural point share to have enough bodies for the journey.
+function sampleWordWithDot(ctx, W, H, count) {
+  // drawText has just run, so ctx.font/letterSpacing hold the final values
+  const wFull = ctx.measureText(WORD_FULL).width;
+  const wBare = ctx.measureText("Startathon").width;
+  const xSplit = W / 2 - wFull / 2 + wBare + (wFull - wBare) * 0.15;
+  const data = ctx.getImageData(0, 0, W, H).data;
+  const letters = [];
+  const period = [];
+  for (let y = 0; y < H; y += 3) {
+    for (let x = 0; x < W; x += 3) {
+      if (data[(y * W + x) * 4 + 3] > 128) (x >= xSplit ? period : letters).push(x, y);
+    }
+  }
+  const nP = period.length / 2;
+  const nL = letters.length / 2;
+  if (!nP || !nL) return null;
+  for (const pts of [period, letters]) {
+    const n = pts.length / 2;
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tx = pts[i * 2];
+      const ty = pts[i * 2 + 1];
+      pts[i * 2] = pts[j * 2];
+      pts[i * 2 + 1] = pts[j * 2 + 1];
+      pts[j * 2] = tx;
+      pts[j * 2 + 1] = ty;
+    }
+  }
+  const frac = nP / (nP + nL);
+  const dotCount = Math.max(100, Math.min(280, Math.round(count * frac * 2)));
+  const targets = new Float32Array(count * 2);
+  for (let i = 0; i < count; i++) {
+    const src = i < dotCount ? period : letters;
+    const n = i < dotCount ? nP : nL;
+    const j = (i < dotCount ? i : i - dotCount) % n;
+    targets[i * 2] = (src[j * 2] - W / 2) / W + (Math.random() - 0.5) * 0.003;
+    targets[i * 2 + 1] = -(src[j * 2 + 1] - H / 2) / W + (Math.random() - 0.5) * 0.003;
+  }
+  return { targets, dotCount };
+}
+
 export async function buildTargets(count) {
   await loadDisplayFont();
   const W = SHAPE_W;
@@ -319,10 +364,12 @@ export async function buildTargets(count) {
     { anim: "table" },
     sample(() => drawPodium(ctx, W, H)),
     sample(() => drawTrophyTeam(ctx, W, H)),
-    sample(() => drawText(ctx, W, H, WORD_FULL, 330)),
   ];
-  if (shapes.some((s) => !s)) return null;
-  return shapes;
+  drawText(ctx, W, H, WORD_FULL, 330);
+  const rest = sampleWordWithDot(ctx, W, H, count);
+  if (shapes.some((s) => !s) || !rest) return null;
+  shapes.push(rest.targets);
+  return { shapes, dotCount: rest.dotCount };
 }
 
 // ---------------------------------------------------------------------------

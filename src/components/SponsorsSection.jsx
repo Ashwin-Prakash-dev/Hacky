@@ -44,6 +44,10 @@ const SponsorCard = ({ sponsor, idx }) => {
       style={{
         flex: "1 1 260px",
         maxWidth: "340px",
+        // above the fixed particle canvas (z-30): the orbiting swarm passes
+        // behind the card and peeks out around its edges
+        position: "relative",
+        zIndex: 31,
         textDecoration: "none",
         display: "flex",
         flexDirection: "column",

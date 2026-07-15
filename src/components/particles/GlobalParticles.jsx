@@ -13,7 +13,6 @@ import {
   evalElem,
   assignSlots,
   buildTargets,
-  buildGlyphs,
   easeOutCubic,
   clamp01,
   makeGradientMap,
@@ -21,7 +20,6 @@ import {
   SHAPE_W,
   SHAPE_H,
 } from "./shapes";
-import { fract } from "./primitives";
 import { BEHAVIORS } from "./behaviors";
 import {
   initRegistry,
@@ -29,7 +27,6 @@ import {
   getRect,
   getHovered,
   setHovered,
-  isFaqOpen,
   consume,
 } from "./registry";
 
@@ -69,16 +66,14 @@ function ParticleEngine({ started, count, isMobile }) {
   const pointerTarget = useRef(new THREE.Vector2(999, 999));
   const pointerNdc = useRef(new THREE.Vector2(0, 0));
   const { viewport } = useThree();
-  const [shapes, setShapes] = useState(null);
-  const [glyphs, setGlyphs] = useState(null);
+  const [built, setBuilt] = useState(null);
   const pstate = useMemo(() => param("pstate"), []);
   const phover = useMemo(() => param("phover"), []);
 
   useEffect(() => {
     initRegistry();
     let alive = true;
-    buildTargets(count).then((t) => alive && setShapes(t));
-    buildGlyphs().then((g) => alive && setGlyphs(g));
+    buildTargets(count).then((t) => alive && setBuilt(t));
     return () => {
       alive = false;
     };
@@ -130,7 +125,7 @@ function ParticleEngine({ started, count, isMobile }) {
   // Per-instance flat colors: moss → lime range, a few near-white accents.
   useEffect(() => {
     const mesh = meshRef.current;
-    if (!mesh || !shapes) return;
+    if (!mesh || !built) return;
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     const moss = new THREE.Color("#3d5c0a");
     const lime = new THREE.Color("#C8FF00");
@@ -143,7 +138,7 @@ function ParticleEngine({ started, count, isMobile }) {
       mesh.setColorAt(i, c);
     }
     mesh.instanceColor.needsUpdate = true;
-  }, [shapes, count, inst]);
+  }, [built, count, inst]);
 
   useEffect(() => {
     const onMove = (e) => {
@@ -168,7 +163,8 @@ function ParticleEngine({ started, count, isMobile }) {
 
   useFrame((_, delta) => {
     const mesh = meshRef.current;
-    if (!mesh || !shapes) return;
+    if (!mesh || !built) return;
+    const { shapes, dotCount: dotN } = built;
     const dt = Math.min(delta, 0.05);
     elapsed.current += dt;
     const t = elapsed.current;
@@ -323,43 +319,58 @@ function ParticleEngine({ started, count, isMobile }) {
         claimT[i * 3 + 2] = z;
         claimS[i] = p0;
       }
-    } else if (act && BEHAVIORS[act]) {
-      const ctx = {
-        t,
-        at,
-        dt,
-        count,
-        rands,
-        rands2,
-        rands3,
-        scale,
-        vw,
-        vh,
-        glyphs,
-        shapes,
-        heroOff,
-        hovered: getHovered(),
-        faqOpen: isFaqOpen(),
-        rect: rectW,
-        consume,
-        claim: (i, x, y, z, k) => {
-          claimK[i] = k;
-          claimT[i * 3] = x;
-          claimT[i * 3 + 1] = y;
-          claimT[i * 3 + 2] = z;
-        },
-      };
-      wind = BEHAVIORS[act](ctx)?.wind ?? 0;
+    } else {
+      // letters: parked on the hero-anchored wordmark — they scroll away
+      // with the section like ordinary content and are back in place
+      // whenever the user returns
+      const s6 = shapes[6];
+      for (let i = dotN; i < count; i++) {
+        claimK[i] = 4;
+        claimT[i * 3] = s6[i * 2] * scale;
+        claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
+        claimT[i * 3 + 2] = 0;
+      }
+      if (act === "hero") {
+        // the dot swarm rejoins the period
+        for (let i = 0; i < dotN; i++) {
+          claimK[i] = 5;
+          claimT[i * 3] = s6[i * 2] * scale;
+          claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
+          claimT[i * 3 + 2] = 0;
+        }
+      } else if (act && BEHAVIORS[act]) {
+        const ctx = {
+          t,
+          at,
+          dt,
+          count: dotN, // behaviors pose only the dot swarm
+          rands,
+          rands2,
+          rands3,
+          scale,
+          vw,
+          vh,
+          heroOff,
+          hovered: getHovered(),
+          rect: rectW,
+          consume,
+          claim: (i, x, y, z, k) => {
+            claimK[i] = k;
+            claimT[i * 3] = x;
+            claimT[i * 3 + 1] = y;
+            claimT[i * 3 + 2] = z;
+          },
+        };
+        wind = BEHAVIORS[act](ctx)?.wind ?? 0;
+      }
     }
 
     // ---- integrate ------------------------------------------------------
-    // The flock is finite and lives in one section at a time. Outside the
-    // hero the system stays subtle: claimed particles render small, only a
-    // sparse remainder keeps drifting in the side gutters, and the rest
-    // fade out entirely. On a section handoff, targets pinch into a narrow
-    // vertical column with capped travel speed, so the migration reads as
-    // a stream pouring between sections before fanning out.
-    const idleVis = Math.floor(count * 0.12);
+    // Letters live at the hero and simply seek their parked wordmark spots.
+    // Dot-swarm particles additionally get the migration stream: on a
+    // section handoff their targets pinch into a right-side lane with
+    // capped travel speed, so the swarm pours down the right edge of the
+    // page before fanning into the new section's pose.
     for (let i = 0; i < count; i++) {
       const r = rands[i];
       const r2 = rands2[i];
@@ -387,25 +398,24 @@ function ParticleEngine({ started, count, isMobile }) {
           ty = claimT[i3 + 1];
           tz = claimT[i3 + 2];
           kk = k;
-          scTarget = heroOwns ? 1 : 0.7;
+          scTarget = 1;
         } else {
-          // sparse resting drift in the side gutters, clear of content
-          const side = r2 < 0.5 ? -1 : 1;
-          tx = side * vw * (0.4 + 0.08 * r3) + Math.sin(t * (0.2 + r * 0.3) + r * 21) * 0.3;
-          ty =
-            (r2 < 0.5 ? r2 * 2 - 0.5 : r2 * 2 - 1.5) * vh * 0.92 +
-            Math.cos(t * (0.15 + r * 0.2) + r * 17) * 0.5;
+          // unclaimed dots wait in the right-side gutter, small and quiet
+          tx = vw * (0.4 + 0.08 * r3) + Math.sin(t * (0.2 + r * 0.3) + r * 21) * 0.3;
+          ty = (r2 - 0.5) * vh * 0.9 + Math.cos(t * (0.15 + r * 0.2) + r * 17) * 0.5;
           tz = (r3 - 0.5) * 1.5;
           kk = 1.1;
-          scTarget = heroOwns ? 1 : i < idleVis ? 0.45 : 0;
+          scTarget = 0.6;
         }
-        // migration stream: staggered per particle so the column flows
-        const p = clamp01((at - r * 0.55) / 1.1);
-        if (p < 1) {
-          const e = p * p * (3 - 2 * p);
-          const lane = (fract(r * 7.13) - 0.5) * vw * 0.1;
-          tx = lane + (tx - lane) * e;
-          tz *= e;
+        let p = 1;
+        if (i < dotN) {
+          p = clamp01((at - r * 0.55) / 1.1);
+          if (p < 1) {
+            const e = p * p * (3 - 2 * p);
+            const lane = vw * (0.4 + r * 0.06);
+            tx = lane + (tx - lane) * e;
+            tz *= e;
+          }
         }
         const a = 1 - Math.exp(-kk * dt);
         let dx = (tx - x) * a;
@@ -488,7 +498,7 @@ function ParticleEngine({ started, count, isMobile }) {
     }
   });
 
-  if (!shapes) return null;
+  if (!built) return null;
 
   return (
     <group ref={groupRef}>
@@ -543,7 +553,7 @@ const GlobalParticles = ({ started = true }) => {
   const [dpr, setDpr] = useState(maxDpr);
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-30">
       <CanvasErrorBoundary fallback={null}>
         <Canvas
           flat
