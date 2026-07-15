@@ -179,6 +179,7 @@ const SponsorsSection = () => {
         </div>
 
         <div
+          data-particle-target="sponsor-group"
           style={{
             display: "flex",
             flexWrap: "wrap",

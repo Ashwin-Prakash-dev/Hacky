@@ -330,13 +330,43 @@ function ParticleEngine({ started, count, isMobile }) {
         claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
         claimT[i * 3 + 2] = 0;
       }
-      if (act === "hero") {
-        // the dot swarm rejoins the period
+      // hero -> sponsors is scrubbed by scroll, not triggered: u runs from
+      // 0 (page top) to 1 (card group centered in the viewport). The swarm
+      // starts displacing with the first scrolled pixel, detours through a
+      // right-side stream lane mid-journey, and lands dispersed behind the
+      // card group exactly when the cards reach mid-screen. Scrolling back
+      // reverses it into the period.
+      const groupDoc = getRect("sponsor-group");
+      let u = 1;
+      if (groupDoc) {
+        const targetScroll = groupDoc.top + groupDoc.height / 2 - window.innerHeight / 2;
+        if (targetScroll > 1) u = Math.min(1, sy / targetScroll);
+      }
+      const hovering =
+        act === "sponsors" && getHovered()?.startsWith("sponsor-");
+      const g = rectW("sponsor-group");
+      if (u < 1 && !hovering) {
         for (let i = 0; i < dotN; i++) {
-          claimK[i] = 5;
-          claimT[i * 3] = s6[i * 2] * scale;
-          claimT[i * 3 + 1] = s6[i * 2 + 1] * scale + heroOff;
-          claimT[i * 3 + 2] = 0;
+          const r = rands[i];
+          const pi = clamp01(u * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          const sx0 = s6[i * 2] * scale;
+          const sy0 = s6[i * 2 + 1] * scale + heroOff;
+          let ex = vw * 0.42;
+          let ey = -vh * 0.2;
+          if (g) {
+            ex = g.cx + (rands2[i] - 0.5) * (g.w + 1);
+            ey = g.cy + (rands3[i] - 0.5) * (g.h + 1);
+          }
+          let bx = sx0 + (ex - sx0) * e;
+          const w = Math.sin(e * Math.PI);
+          const by =
+            sy0 + (ey - sy0) * e + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          bx += (vw * (0.38 + r * 0.07) - bx) * w;
+          claimK[i] = 12;
+          claimT[i * 3] = bx;
+          claimT[i * 3 + 1] = by;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * e;
         }
       } else if (act && BEHAVIORS[act]) {
         const ctx = {
@@ -407,33 +437,10 @@ function ParticleEngine({ started, count, isMobile }) {
           kk = 1.1;
           scTarget = 0.6;
         }
-        let p = 1;
-        if (i < dotN) {
-          p = clamp01((at - r * 0.55) / 1.1);
-          if (p < 1) {
-            const e = p * p * (3 - 2 * p);
-            const lane = vw * (0.4 + r * 0.06);
-            tx = lane + (tx - lane) * e;
-            tz *= e;
-          }
-        }
         const a = 1 - Math.exp(-kk * dt);
-        let dx = (tx - x) * a;
-        let dy = (ty - y) * a;
-        let dz = (tz - z) * a;
-        if (p < 1) {
-          const maxStep = vh * 1.5 * dt;
-          const dm = Math.sqrt(dx * dx + dy * dy);
-          if (dm > maxStep) {
-            const s = maxStep / dm;
-            dx *= s;
-            dy *= s;
-            dz *= s;
-          }
-        }
-        x += dx + wind * (0.5 + r) * dt;
-        y += dy;
-        z += dz;
+        x += (tx - x) * a + wind * (0.5 + r) * dt;
+        y += (ty - y) * a;
+        z += (tz - z) * a;
       }
       const sc = scaleCur[i] + (scTarget - scaleCur[i]) * Math.min(1, dt * 2.2);
       scaleCur[i] = sc;

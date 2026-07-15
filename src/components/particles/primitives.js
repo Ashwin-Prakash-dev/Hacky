@@ -27,6 +27,13 @@ export function perimeterPoint(r, s, pad, out) {
   out[1] += r.cy;
 }
 
+// Wandering scatter point inside rect r (inflated by pad), derived from
+// two independent per-particle randoms so the spread has no line artifacts.
+export function scatterInRect(r, a, b, t, pad, out) {
+  out[0] = r.cx + (a - 0.5) * (r.w + pad * 2) + Math.sin(t * (0.25 + a * 0.3) + b * 19) * 0.25;
+  out[1] = r.cy + (b - 0.5) * (r.h + pad * 2) + Math.cos(t * (0.2 + b * 0.3) + a * 23) * 0.2;
+}
+
 const seg = [0, 0];
 
 // Claim particles [i0, i0+m) onto a racetrack orbit around rect r.
