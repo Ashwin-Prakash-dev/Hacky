@@ -76,6 +76,7 @@ const StudentHook = () => {
         {/* Headline + video side by side */}
         <div
           ref={headlineRef}
+          data-particle-target="hook-scatter"
           style={{
             display: "flex", gap: "clamp(2rem, 5vw, 4rem)",
             alignItems: "flex-start", marginBottom: "5rem",

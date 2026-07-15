@@ -21,7 +21,7 @@ import {
   SHAPE_H,
 } from "./shapes";
 import { BEHAVIORS, sweepStats } from "./behaviors";
-import { bordersPoint, perimeterPoint } from "./primitives";
+import { bordersPoint } from "./primitives";
 import {
   initRegistry,
   sectionAt,
@@ -611,11 +611,11 @@ function ParticleEngine({ started, count, isMobile }) {
         wind = BEHAVIORS.stats(ctx)?.wind ?? 0;
       } else if (u4 < 1 && getHovered() !== "hook-apply") {
         // leg 4 waypoints: w0 the resting stats trail -> w1 right lane ->
-        // w2 the intro video's border ring. Hovering the Apply button
-        // overrides the scrub from the first departing pixel — the swarm
-        // rushes straight to the button instead.
+        // w2 scattered across the headline block (matching the idle pose).
+        // Hovering the Apply button overrides the scrub from the first
+        // departing pixel — the swarm rushes straight to the button.
         const row = rectW("stats-row");
-        const v = rectW("hook-video");
+        const sec = rectW("hook-scatter");
         for (let i = 0; i < dotN; i++) {
           const r = rands[i];
           const pi = clamp01(u4 * 1.35 - r * 0.35);
@@ -632,10 +632,9 @@ function ParticleEngine({ started, count, isMobile }) {
           }
           let x2 = vw * 0.3;
           let y2 = -vh * 0.2;
-          if (v) {
-            perimeterPoint(v, rands3[i], 0.07 + rands2[i] * 0.08, bOut);
-            x2 = bOut[0];
-            y2 = bOut[1];
+          if (sec) {
+            x2 = sec.cx + (rands2[i] - 0.5) * sec.w;
+            y2 = sec.cy + (rands3[i] - 0.5) * sec.h;
           }
           const x1 = vw * (0.38 + r * 0.07);
           const y1 = (y0 + y2) * 0.5;

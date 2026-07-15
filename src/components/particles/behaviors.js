@@ -1,9 +1,4 @@
-import {
-  racetrack,
-  scatterInRect,
-  bordersPoint,
-  perimeterPoint,
-} from "./primitives";
+import { racetrack, scatterInRect, bordersPoint } from "./primitives";
 import { getEl } from "./registry";
 
 // Target generators for the traveling dot swarm. After the hero movie
@@ -84,28 +79,46 @@ function stats(c) {
   }
 }
 
-// Idle: the swarm rings the intro video's border, creeping slowly around
-// it. Hovering the Apply button pulls the whole ring into a pulsing orbit
-// around the button.
+// Idle: the swarm drifts scattered across the whole section. Hovering the
+// Apply button switches on a magnet: the particles snap into chains along
+// discrete field lines radiating out of the button (iron filings around a
+// pole), trembling in place like they're holding kinetic energy they
+// can't release.
+const FIELD_LINES = 22;
 function studenthook(c) {
   if (c.hovered === "hook-apply") {
     const btn = c.rect("hook-apply");
     if (btn) {
-      racetrack(c, btn, 0, c.count, 0.1 + Math.sin(c.t * 5) * 0.05, 0.22, 9);
+      for (let i = 0; i < c.count; i++) {
+        const li = Math.floor(c.rands[i] * FIELD_LINES);
+        const th =
+          (li / FIELD_LINES) * Math.PI * 2 + Math.sin(c.t * 0.4) * 0.03;
+        const ca = Math.cos(th);
+        const sa = Math.sin(th);
+        // field lines start on an ellipse hugging the button's silhouette
+        const a = btn.w / 2 + 0.12;
+        const b = btn.h / 2 + 0.12;
+        const r0 = (a * b) / Math.sqrt(b * b * ca * ca + a * a * sa * sa);
+        const d = c.rands2[i] * c.rands2[i] * 2.2 + 0.05; // denser at the pole
+        const vib = Math.sin(c.t * 16 + c.rands3[i] * 40) * 0.055;
+        const vib2 = Math.cos(c.t * 21 + c.rands3[i] * 27) * 0.03;
+        const R = r0 + d + vib2;
+        c.claim(
+          i,
+          btn.cx + ca * R - sa * vib,
+          btn.cy + sa * R + ca * vib,
+          (c.rands3[i] - 0.5) * 0.4,
+          7
+        );
+      }
       return;
     }
   }
-  const v = c.rect("hook-video");
-  if (!v) return;
+  const sec = c.rect("hook-scatter");
+  if (!sec) return;
   for (let i = 0; i < c.count; i++) {
-    const dir = c.rands[i] > 0.5 ? 1 : -1;
-    perimeterPoint(
-      v,
-      c.rands3[i] + c.t * 0.03 * dir,
-      0.07 + c.rands2[i] * 0.08,
-      out
-    );
-    c.claim(i, out[0], out[1], (c.rands[i] - 0.5) * 0.5, 4);
+    scatterInRect(sec, c.rands2[i], c.rands3[i], c.t, 0, out);
+    c.claim(i, out[0], out[1], (c.rands[i] - 0.5) * 0.8, 4);
   }
 }
 
