@@ -21,7 +21,7 @@ import {
   SHAPE_H,
 } from "./shapes";
 import { BEHAVIORS, sweepStats } from "./behaviors";
-import { bordersPoint } from "./primitives";
+import { bordersPoint, perimeterPoint } from "./primitives";
 import {
   initRegistry,
   sectionAt,
@@ -367,6 +367,19 @@ function ParticleEngine({ started, count, isMobile }) {
         if (arr > dep + 1) u3 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u3 = 1;
       }
+      // leg 4 (stats -> studenthook): departs when the stats section is 70%
+      // scrolled, swarms down the right side, and rings the intro video's
+      // border as it centers in the viewport
+      const stSec = getRect("section:stats");
+      const hvDoc = getRect("hook-video");
+      let u4 = 0;
+      if (stSec && hvDoc && hvDoc.width > 2) {
+        const dep =
+          stSec.top + 0.7 * (stSec.height + window.innerHeight) - window.innerHeight;
+        const arr = hvDoc.top + hvDoc.height / 2 - window.innerHeight / 2;
+        if (arr > dep + 1) u4 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u4 = 1;
+      }
       // A movie abandoned mid-flight departs from its frozen last frame —
       // the flock never regroups into the wordmark before streaming away.
       // The frozen shape relaxes into the parked wordmark only when the
@@ -594,8 +607,57 @@ function ParticleEngine({ started, count, isMobile }) {
           claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
           claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
         }
-      } else {
+      } else if (u4 <= 0) {
         wind = BEHAVIORS.stats(ctx)?.wind ?? 0;
+      } else if (u4 < 1 && getHovered() !== "hook-apply") {
+        // leg 4 waypoints: w0 the resting stats trail -> w1 right lane ->
+        // w2 the intro video's border ring. Hovering the Apply button
+        // overrides the scrub from the first departing pixel — the swarm
+        // rushes straight to the button instead.
+        const row = rectW("stats-row");
+        const v = rectW("hook-video");
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const pi = clamp01(u4 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = vw * 0.3;
+          let y0 = vh * 1.2;
+          if (row) {
+            const q = rands2[i];
+            x0 = Math.max(
+              row.cx + row.w / 2 - q * q * row.w * 0.5,
+              row.cx - row.w / 2
+            );
+            y0 = row.cy + (rands3[i] - 0.5) * row.h * 0.6;
+          }
+          let x2 = vw * 0.3;
+          let y2 = -vh * 0.2;
+          if (v) {
+            perimeterPoint(v, rands3[i], 0.07 + rands2[i] * 0.08, bOut);
+            x2 = bOut[0];
+            y2 = bOut[1];
+          }
+          const x1 = vw * (0.38 + r * 0.07);
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.45) {
+            const s = e / 0.45;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else {
+            const s = (e - 0.45) / 0.55;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else {
+        wind = BEHAVIORS.studenthook(ctx)?.wind ?? 0;
       }
     }
 

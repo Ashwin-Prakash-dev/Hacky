@@ -1,4 +1,9 @@
-import { racetrack, scatterInRect, bordersPoint } from "./primitives";
+import {
+  racetrack,
+  scatterInRect,
+  bordersPoint,
+  perimeterPoint,
+} from "./primitives";
 import { getEl } from "./registry";
 
 // Target generators for the traveling dot swarm. After the hero movie
@@ -79,8 +84,34 @@ function stats(c) {
   }
 }
 
+// Idle: the swarm rings the intro video's border, creeping slowly around
+// it. Hovering the Apply button pulls the whole ring into a pulsing orbit
+// around the button.
+function studenthook(c) {
+  if (c.hovered === "hook-apply") {
+    const btn = c.rect("hook-apply");
+    if (btn) {
+      racetrack(c, btn, 0, c.count, 0.1 + Math.sin(c.t * 5) * 0.05, 0.22, 9);
+      return;
+    }
+  }
+  const v = c.rect("hook-video");
+  if (!v) return;
+  for (let i = 0; i < c.count; i++) {
+    const dir = c.rands[i] > 0.5 ? 1 : -1;
+    perimeterPoint(
+      v,
+      c.rands3[i] + c.t * 0.03 * dir,
+      0.07 + c.rands2[i] * 0.08,
+      out
+    );
+    c.claim(i, out[0], out[1], (c.rands[i] - 0.5) * 0.5, 4);
+  }
+}
+
 export const BEHAVIORS = {
   sponsors,
   videocards,
   stats,
+  studenthook,
 };

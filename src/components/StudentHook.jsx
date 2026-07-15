@@ -80,6 +80,11 @@ const StudentHook = () => {
             display: "flex", gap: "clamp(2rem, 5vw, 4rem)",
             alignItems: "flex-start", marginBottom: "5rem",
             opacity: 0, flexWrap: "wrap",
+            // GSAP's entrance transform makes this a stacking context, which
+            // would trap any child z-index below the fixed canvas (z-30) —
+            // so the whole block sits above it
+            position: "relative",
+            zIndex: 31,
           }}
         >
           {/* Left: text */}
@@ -132,8 +137,19 @@ const StudentHook = () => {
             }}>
               If you're a builder and you resonated with that, there's no reason you shouldn't apply.
             </p>
-            <a href="/apply" style={{ textDecoration: "none", display: "inline-block" }}>
+            <a
+              href="/apply"
+              style={{
+                textDecoration: "none",
+                display: "inline-block",
+                // above the fixed particle canvas (z-30): the hover swarm
+                // orbits behind the button
+                position: "relative",
+                zIndex: 31,
+              }}
+            >
               <button
+                data-particle-hover="hook-apply"
                 style={{
                   padding: "0.9rem 2.25rem",
                   background: "#C8FF00", color: "#000",
@@ -161,11 +177,16 @@ const StudentHook = () => {
 
           {/* Right: video */}
           <div style={{ flex: "1 1 340px", minWidth: 0 }}>
-            <div style={{
-              position: "relative", width: "100%", paddingBottom: "56.25%",
-              borderRadius: "10px", overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}>
+            <div
+              data-particle-target="hook-video"
+              style={{
+                position: "relative", width: "100%", paddingBottom: "56.25%",
+                borderRadius: "10px", overflow: "hidden",
+                border: "1px solid rgba(255,255,255,0.08)",
+                // above the fixed particle canvas (z-30): the swarm rings
+                // the border from behind
+                zIndex: 31,
+              }}>
               <iframe
                 src="https://player.vimeo.com/video/1197348906?autoplay=0&title=0&byline=0&portrait=0"
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
