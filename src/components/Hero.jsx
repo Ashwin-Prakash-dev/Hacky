@@ -34,28 +34,63 @@ const Hero = () => {
   const [inkOk] = useState(canUseInk);
   const discRef = useRef(null);
   const discSpinRef = useRef(null);
+  const discArcRef = useRef(null);
+  const discChromeRef = useRef(null);
+  const discFaceRef = useRef(null);
 
-  // The badge disc is fixed: it starts in the hero's right gutter, docks
-  // to the bottom-right corner as the page scrolls (so it never scrolls
-  // away), and its spin is scroll-reactive — driven by smoothed scroll
-  // velocity on top of a slow idle drift, reversing on scroll-up.
+  // The badge starts as a BANNER: the ring text on a flattened path laid
+  // straight across the wordmark. On scroll the path curls — its ends
+  // bend down until they meet — closing into the disc, which glides to
+  // the bottom-right corner and lives there as a fixed stamp. Spin is
+  // scroll-reactive (idle drift + smoothed velocity, backspins on up)
+  // and only engages once the ring has closed.
   useEffect(() => {
     const disc = discRef.current;
     const spin = discSpinRef.current;
-    if (!disc || !spin) return undefined;
+    const arcEl = discArcRef.current;
+    const chrome = discChromeRef.current;
+    const face = discFaceRef.current;
+    if (!disc || !spin || !arcEl || !chrome || !face) return undefined;
 
-    const D = 128; // svg box (size-32)
-    // hero anchor: top-right, tucked under the nav
-    const gutter = () => ({
-      x: window.innerWidth * 0.97 - D,
-      y: Math.max(96, window.innerHeight * 0.14),
-    });
+    const D = 128; // rendered svg box (size-32)
+    const RING = 289; // text path length in svg units (2π·46)
+    const ANCHOR = 49.07; // px from box center up to the path's apex (60,14)
+
+    // Reel-style curl: the ribbon winds onto a spool at its RIGHT end
+    // (one-sided, like paper rolling up) instead of bending from both
+    // ends. The spool is the final ring (r 46 at 60,60), tangent to the
+    // banner line at the fixed entry point (60,14): a straight tail of
+    // the un-wound length runs in from the left, then the wound part
+    // wraps clockwise. Constant path length + textLength keep the glyph
+    // spacing steady throughout.
+    const pathFor = (f) => {
+      if (f < 0.003) {
+        return `M ${(60 - RING).toFixed(2)} 14 L 60 14`;
+      }
+      const W = f * Math.PI * 2; // wound angle around the reel
+      const tail = (1 - f) * RING; // ribbon still unrolled
+      const pt = (th) =>
+        `${(60 + 46 * Math.sin(th)).toFixed(2)} ${(60 - 46 * Math.cos(th)).toFixed(2)}`;
+      let d = `M ${(60 - tail).toFixed(2)} 14 L 60 14`;
+      if (W <= Math.PI) {
+        d += ` A 46 46 0 0 1 ${pt(W)}`;
+      } else {
+        d += ` A 46 46 0 0 1 ${pt(Math.PI)} A 46 46 0 0 1 ${pt(W)}`;
+      }
+      return d;
+    };
+    const ease = (v) => {
+      const c = Math.min(Math.max(v, 0), 1);
+      return c * c * (3 - 2 * c);
+    };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // static stamp in the gutter, no spin, no docking
+      // static closed disc, top-right, no curl, no spin
       const place = () => {
-        const g = gutter();
-        disc.style.transform = `translate3d(${g.x}px, ${g.y}px, 0)`;
+        arcEl.setAttribute("d", pathFor(1));
+        chrome.setAttribute("opacity", "1");
+        face.style.opacity = "1";
+        disc.style.transform = `translate3d(${window.innerWidth * 0.97 - D}px, ${Math.max(96, window.innerHeight * 0.14)}px, 0)`;
       };
       place();
       window.addEventListener("resize", place);
@@ -67,22 +102,48 @@ const Hero = () => {
     let vel = 0;
     let lastY = window.scrollY;
     const tick = () => {
+      const vw = window.innerWidth;
       const vh = window.innerHeight;
       const y = window.scrollY;
       vel += (y - lastY - vel) * 0.15; // smoothed px/frame
       lastY = y;
 
-      // dock: gutter anchor -> bottom-right corner over ~0.7 viewports
-      const c = Math.min(Math.max(y / (vh * 0.7), 0), 1);
-      const p = c * c * (3 - 2 * c);
-      const g = gutter();
-      const k = 1 - 0.32 * p; // 128px -> ~88px
-      const x = g.x + (window.innerWidth - 24 - D * (0.5 + k / 2) - g.x) * p;
-      const yPos = g.y + (vh - 24 - D * (0.5 + k / 2) - g.y) * p;
-      disc.style.transform = `translate3d(${x.toFixed(1)}px, ${yPos.toFixed(1)}px, 0) scale(${k.toFixed(3)})`;
+      // two-leg journey: leg 1 (c 0→0.5) the banner flows RIGHT while
+      // reeling itself into the ring at the top-right; leg 2 (c 0.5→1)
+      // the closed ring rides the right edge down to the bottom corner
+      const c = Math.min(Math.max(y / (vh * 0.9), 0), 1);
+      const p1 = ease(Math.min(c / 0.5, 1));
+      const p2 = ease(Math.max((c - 0.5) / 0.5, 0));
 
-      // spin: idle drift + scroll drive (signed, so it backspins on up)
-      rot += 0.2 + vel * 0.3;
+      // curl the banner into the ring (one-sided reel)
+      arcEl.setAttribute("d", pathFor(p1));
+
+      // scale: banner spans ~46vw across the wordmark -> ~87px disc
+      const kA = (vw * 0.46) / (RING * (D / 120));
+      const kB = 0.68;
+      const k = kA + (kB - kA) * p1;
+      // the reel entry point (60,14) is the anchor. At rest the banner
+      // hangs left of it (centered over the wordmark); leg 1 flies it to
+      // the top-right corner, leg 2 drops it to the bottom-right dock.
+      const xC = vw - 24 - (D * kB) / 2; // right-edge column, both corners
+      const ayTR = 132 - ANCHOR * kB; // ring center y 132, under the nav
+      const ayBR = vh - 24 - (D * kB) / 2 - ANCHOR * kB;
+      const bannerHalf = (RING * (D / 120) * kA) / 2;
+      const ax = vw / 2 + bannerHalf + (xC - vw / 2 - bannerHalf) * p1;
+      const ay = vh * 0.32 + (ayTR - vh * 0.32) * p1 + (ayBR - ayTR) * p2;
+      disc.style.transform = `translate3d(${(ax - D / 2).toFixed(1)}px, ${(ay - D / 2 + ANCHOR * k).toFixed(1)}px, 0) scale(${k.toFixed(3)})`;
+
+      // disc chrome (glass face, rings, hub) surfaces as the reel closes
+      const chromeOp = ease((p1 - 0.75) / 0.25).toFixed(3);
+      chrome.setAttribute("opacity", chromeOp);
+      face.style.opacity = chromeOp;
+
+      // spin only once the ring has closed; while open, relax any
+      // accumulated rotation back to a full turn so the flattened banner
+      // always lies flat (never frozen at a diagonal)
+      const gate = ease((c - 0.52) / 0.12);
+      rot += (0.2 + vel * 0.3) * gate;
+      rot += (Math.round(rot / 360) * 360 - rot) * (1 - gate) * 0.12;
       spin.style.transform = `rotate(${rot.toFixed(2)}deg)`;
       raf = requestAnimationFrame(tick);
     };
@@ -213,48 +274,140 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Rotating badge disc: fixed, so it survives the hero — it sits
-            top-right under the nav, then docks to the bottom-right corner
-            on scroll (positioned + spun per-frame by the effect above) */}
+        {/* Badge banner→disc: fixed, so it survives the hero. Starts as a
+            straight text banner across the wordmark; the path curls into
+            a ring on scroll and docks bottom-right (driven per-frame by
+            the effect above). */}
         <div
           ref={discRef}
-          className="hero-disc pointer-events-none fixed left-0 top-0 hidden sm:block"
+          className="hero-disc pointer-events-none fixed left-0 top-0 z-[999999999] hidden sm:block"
           aria-hidden="true"
         >
-          <svg viewBox="0 0 120 120" className="size-32">
+          <div ref={discFaceRef} className="hero-disc-face z-40" />
+          {/* position:relative so the svg paints ABOVE the absolutely-
+              positioned glass face — static elements always paint below
+              positioned siblings, which buried the band + text under the
+              face's backdrop blur */}
+          <svg
+            viewBox="0 0 120 120"
+            className="size-32"
+            style={{ overflow: "visible", position: "relative" }}
+          >
             <defs>
-              <path
-                id="hero-disc-arc"
-                d="M 60 60 m -46 0 a 46 46 0 1 1 92 0 a 46 46 0 1 1 -92 0"
-              />
+              {/* morphed per-frame: straight banner -> reeled ring r46 */}
+              <path ref={discArcRef} id="hero-disc-arc" d="M -229 14 L 60 14" />
+              {/* ribbon material: off-white gradient with a faint lime
+                  cast. User-space coords: a bbox-relative gradient
+                  degenerates on the flat banner (zero-height bbox) and
+                  the band paints as nothing. */}
+              <linearGradient
+                id="hero-band-grad"
+                gradientUnits="userSpaceOnUse"
+                x1="-220"
+                y1="0"
+                x2="110"
+                y2="120"
+              >
+                <stop offset="0" stopColor="#ffffff" />
+                <stop offset="0.45" stopColor="#edf2e0" />
+                <stop offset="0.72" stopColor="#ffffff" />
+                <stop offset="1" stopColor="#e5efcf" />
+              </linearGradient>
+              {/* shader-style surface: anisotropic turbulence streaks a
+                  holographic sheen along the ribbon, then a drop shadow
+                  lifts it off the page. The region is user-space and
+                  generous: a straight banner has a zero-height bbox, so
+                  percentage regions would collapse and hide the band. */}
+              <filter
+                id="hero-band-fx"
+                filterUnits="userSpaceOnUse"
+                x="-340"
+                y="-60"
+                width="520"
+                height="300"
+              >
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency="0.06 0.55"
+                  numOctaves="2"
+                  seed="7"
+                  result="noise"
+                />
+                <feColorMatrix
+                  in="noise"
+                  type="matrix"
+                  values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.82  0 0 0 0.45 0"
+                  result="tint"
+                />
+                <feComposite
+                  in="tint"
+                  in2="SourceAlpha"
+                  operator="in"
+                  result="sheen"
+                />
+                <feMerge result="band">
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in="sheen" />
+                </feMerge>
+                <feDropShadow
+                  dx="0"
+                  dy="5"
+                  stdDeviation="6"
+                  floodColor="#000000"
+                  floodOpacity="0.45"
+                />
+              </filter>
             </defs>
-            <circle
-              cx="60"
-              cy="60"
-              r="58"
+            {/* the ribbon: a thick stroke on the SAME morphing path, so
+                it curls with the text and closes into the disc's ring */}
+            <use
+              href="#hero-disc-arc"
               fill="none"
-              stroke="rgba(255,255,255,0.12)"
+              stroke="url(#hero-band-grad)"
+              strokeWidth="22"
+              strokeLinecap="round"
+              filter="url(#hero-band-fx)"
             />
-            <circle cx="60" cy="60" r="34" fill="none" stroke="rgba(255,255,255,0.08)" />
+            <g ref={discChromeRef} opacity="0">
+              <circle
+                cx="60"
+                cy="60"
+                r="58"
+                fill="none"
+                stroke="rgba(255,255,255,0.12)"
+              />
+              <circle
+                cx="60"
+                cy="60"
+                r="30"
+                fill="none"
+                stroke="rgba(255,255,255,0.08)"
+              />
+              <circle cx="60" cy="60" r="4" fill="#C8FF00" />
+            </g>
             <g ref={discSpinRef} className="hero-disc-spin">
               <text
-                fill="rgba(255,255,255,0.7)"
+                fill="#141804"
                 fontSize="10.5"
-                letterSpacing="3"
+                dominantBaseline="central"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
-                {/* textLength pins the ring text to the arc's full
-                    circumference (2π·46 ≈ 289) so it never gaps */}
-                <textPath href="#hero-disc-arc" textLength="288" lengthAdjust="spacing">
-                  KERALA · LIMITED TEAMS ONLY ·
+                {/* textLength alone distributes the glyphs across the
+                    path's constant length (≈289) — combining it with
+                    letter-spacing double-counts in Chrome and leaves the
+                    tail of the ring empty */}
+                <textPath
+                  href="#hero-disc-arc"
+                  textLength="286"
+                  lengthAdjust="spacing"
+                >
+                  2L+ PRIZE POOL · LIMITED TEAMS ONLY ·
                 </textPath>
               </text>
             </g>
-            <circle cx="60" cy="60" r="4" fill="#C8FF00" />
           </svg>
         </div>
       </div>
-
     </section>
   );
 };
