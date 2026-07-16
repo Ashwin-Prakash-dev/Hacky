@@ -207,11 +207,9 @@ const LiquidLens = ({ started = true }) => {
     });
 
     const size = () => {
-      // desktop: a 60vw band anchored 10% from the left; mobile: an 84vw
-      // band, centered — 60% would shrink the wordmark into a corner
+      // a centered band: 60vw on desktop, 84vw on mobile
       const mobile = window.innerWidth < 768;
       const frac = mobile ? 0.84 : 0.6;
-      const leftPct = mobile ? 8 : 10;
       const cssW = Math.min(
         window.innerWidth * frac,
         window.innerHeight * frac * 2.48
@@ -221,12 +219,9 @@ const LiquidLens = ({ started = true }) => {
         if (!svg) return;
         svg.style.width = `${cssW}px`;
         svg.style.height = `${cssH}px`;
-        svg.style.left = `${leftPct}%`;
       });
       nodes.current.tag.forEach((tag) => {
-        if (!tag) return;
-        tag.style.top = `calc(50% + ${cssH / 2 + 18}px)`;
-        tag.style.left = `${leftPct}%`;
+        if (tag) tag.style.top = `calc(50% + ${cssH / 2 + 18}px)`;
       });
     };
     size();
@@ -761,9 +756,9 @@ const LiquidLens = ({ started = true }) => {
           viewBox={`0 0 ${SHAPE_W} ${SHAPE_H}`}
           style={{
             position: "absolute",
-            left: "10%", // kept current by size()
+            left: "50%",
             top: "50%",
-            transform: "translate(0, -50%)",
+            transform: "translate(-50%, -50%)",
             overflow: "visible",
           }}
         >
@@ -849,9 +844,9 @@ const LiquidLens = ({ started = true }) => {
           ref={reg("tag")}
           style={{
             position: "absolute",
-            left: "50%", // kept current by size()
+            left: "50%",
             top: "72%",
-            paddingLeft: "5em",
+            transform: "translateX(-50%)",
             fontFamily: "var(--font-mono)",
             fontSize: "clamp(0.6rem, 1vw, 0.78rem)",
             letterSpacing: "0.32em",
