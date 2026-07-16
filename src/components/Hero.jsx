@@ -280,7 +280,7 @@ const Hero = () => {
             the effect above). */}
         <div
           ref={discRef}
-          className="hero-disc pointer-events-none fixed left-0 top-0 z-[999999999] hidden sm:block"
+          className="hero-disc pointer-events-none fixed left-0 top-0 hidden sm:block"
           aria-hidden="true"
         >
           <div ref={discFaceRef} className="hero-disc-face z-40" />

@@ -351,7 +351,6 @@ body.custom-cursor {
 .hero-disc-face {
   position: absolute;
   inset: 0;
-  padding-left: 50rem;
   border-radius: 50%;
   background: rgba(8, 8, 8, 0.6);
   backdrop-filter: blur(14px) saturate(150%);
