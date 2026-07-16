@@ -13,7 +13,7 @@ const WhatsAppLink = () => (
       width: "100%", padding: "0.85rem",
       background: "transparent",
       border: "1px solid rgba(37,211,102,0.35)",
-      borderRadius: "8px",
+      borderRadius: "999px",
       color: "#25D366",
       fontFamily: "var(--font-general, sans-serif)",
       fontSize: "0.8rem", letterSpacing: "0.1em",
@@ -68,9 +68,9 @@ const WaitlistForm = () => {
   if (status === "success") {
     return (
       <div style={{
-        background: "#0a0a0a",
-        border: "1px solid rgba(200,255,0,0.18)",
-        borderRadius: "14px",
+        background: "rgba(200,255,0,0.03)",
+        boxShadow: "inset 0 0 0 1px rgba(200,255,0,0.18)",
+        borderRadius: "1.75rem",
         padding: "clamp(2rem, 5vw, 3.5rem)",
         textAlign: "center",
       }}>
@@ -105,10 +105,23 @@ const WaitlistForm = () => {
   }
 
   return (
+    // outer machined shell — the particle swarm patrols this border
+    <div
+      data-particle-target="contact-panel"
+      style={{
+        padding: "0.375rem",
+        borderRadius: "1.75rem",
+        background: "rgba(255,255,255,0.03)",
+        boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)",
+        // above the fixed particle canvas (z-30): the patrol ring passes
+        // behind the panel and shows around its edges
+        position: "relative",
+        zIndex: 31,
+      }}>
     <div style={{
-      background: "linear-gradient(145deg, #0d0d0d, #0a0a0a)",
-      border: "1px solid rgba(255,255,255,0.08)",
-      borderRadius: "14px",
+      background: "linear-gradient(145deg, #0d0d0d, #090909)",
+      borderRadius: "calc(1.75rem - 0.375rem)",
+      boxShadow: "inset 0 1px 1px rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.04)",
       padding: "clamp(2rem, 5vw, 3.5rem)",
       position: "relative",
       overflow: "hidden",
@@ -127,12 +140,7 @@ const WaitlistForm = () => {
         pointerEvents: "none",
       }} />
 
-      <p style={{
-        fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.75rem", letterSpacing: "0.18em",
-        textTransform: "uppercase", color: "#C8FF00",
-        marginBottom: "0.75rem",
-      }}>Stay in the loop</p>
+      <span className="eyebrow" style={{ marginBottom: "1rem" }}>Stay in the loop</span>
 
       <h2
         className="special-font bento-title"
@@ -174,15 +182,15 @@ const WaitlistForm = () => {
               required={key !== "phone"}
               style={{
                 width: "100%",
-                padding: "0.85rem 1rem",
+                padding: "0.85rem 1.25rem",
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "8px",
+                borderRadius: "999px",
                 color: "#fff",
                 fontFamily: "var(--font-general, sans-serif)",
                 fontSize: "0.95rem",
                 outline: "none",
-                transition: "border-color 0.2s, background 0.2s",
+                transition: "border-color 0.4s cubic-bezier(0.32,0.72,0,1), background 0.4s cubic-bezier(0.32,0.72,0,1)",
                 boxSizing: "border-box",
               }}
               onFocus={(e) => {
@@ -213,15 +221,15 @@ const WaitlistForm = () => {
           data-particle-hover="contact-cta"
           disabled={status === "loading"}
           style={{
-            width: "100%", padding: "0.9rem",
-            background: "#C8FF00", color: "#000",
-            border: "none", borderRadius: "8px",
+            width: "100%", padding: "0.95rem",
+            background: "#C8FF00", color: "#050505",
+            border: "none", borderRadius: "999px",
             fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.8rem", letterSpacing: "0.1em",
+            fontSize: "0.8rem", letterSpacing: "0.12em",
             fontWeight: 700, textTransform: "uppercase",
             cursor: status === "loading" ? "not-allowed" : "pointer",
             opacity: status === "loading" ? 0.6 : 1,
-            transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, opacity 0.2s",
+            transition: "transform 0.5s cubic-bezier(0.32,0.72,0,1), box-shadow 0.5s cubic-bezier(0.32,0.72,0,1), opacity 0.2s",
           }}
           onMouseEnter={(e) => {
             if (status !== "loading") {
@@ -261,6 +269,7 @@ const WaitlistForm = () => {
       }}>
         Organized by Coding Club · SCTCE · Thiruvananthapuram
       </p>
+    </div>
     </div>
   );
 };

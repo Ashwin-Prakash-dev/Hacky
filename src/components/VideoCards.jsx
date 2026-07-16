@@ -152,14 +152,14 @@ const VideoCard = ({ src, title, label, category }) => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <span
             style={{
-              fontFamily: "var(--font-general)",
-              fontSize: "0.72rem",
-              letterSpacing: "0.18em",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.66rem",
+              letterSpacing: "0.2em",
               textTransform: "uppercase",
               color: hovered ? "#C8FF00" : "rgba(255,255,255,0.75)",
-              border: `0.5px solid ${hovered ? "rgba(200,255,0,0.42)" : "rgba(255,255,255,0.14)"}`,
-              borderRadius: "2px",
-              padding: "3px 10px",
+              border: `1px solid ${hovered ? "rgba(200,255,0,0.42)" : "rgba(255,255,255,0.14)"}`,
+              borderRadius: "999px",
+              padding: "4px 12px",
               backdropFilter: "blur(6px)",
               background: "rgba(0,0,0,0.22)",
               transition: "color 0.4s ease, border-color 0.4s ease",
@@ -279,7 +279,7 @@ const VideoCards = () => {
       ref={sectionRef}
       id="showcase"
       data-particles="videocards"
-      style={{ backgroundColor: "#0a0a0a", paddingBottom: 0 }}
+      style={{ backgroundColor: "#050505", paddingBottom: 0 }}
     >
       <div className="container mx-auto px-3 md:px-10">
 
@@ -294,30 +294,20 @@ const VideoCards = () => {
             zIndex: 31,
           }}
         >
-          <p
-            className="vc-reveal"
-            style={{
-              fontFamily: "var(--font-general)",
-              fontSize: "0.78rem",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#C8FF00",
-              marginBottom: "1.25rem",
-              opacity: 0,
-            }}
-          >
+          <span className="vc-reveal eyebrow" style={{ marginBottom: "1.4rem", opacity: 0 }}>
             Our inspiration
-          </p>
+          </span>
 
           <h2
             className="vc-reveal special-font"
             data-particle-target="vc-heading"
             style={{
-              fontFamily: "var(--font-general)",
+              fontFamily: "var(--font-display)",
               fontSize: "clamp(2.4rem, 6vw, 5.2rem)",
-              fontWeight: 900,
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
               color: "#ffffff",
-              lineHeight: 0.92,
+              lineHeight: 0.95,
               maxWidth: "18ch",
               marginBottom: "1.5rem",
               opacity: 0,
@@ -357,7 +347,7 @@ const VideoCards = () => {
             data-particle-target="vc-card-0"
             style={{ marginBottom: GAP, height: "clamp(300px, 58vh, 660px)" }}
           >
-            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+            <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
               <VideoCard {...CARDS[0]} />
             </BentoTilt>
           </div>
@@ -365,7 +355,7 @@ const VideoCards = () => {
           {/* 2-col grid: SPACEX (tall) + PALANTIR / OPENAI */}
           <div className="vc-grid" style={{ gap: GAP, marginBottom: GAP }}>
             <div className="vc-card-wrap vc-spacex" data-particle-target="vc-card-1">
-              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+              <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[1]} />
               </BentoTilt>
             </div>
@@ -374,7 +364,7 @@ const VideoCards = () => {
               data-particle-target="vc-card-2"
               style={{ height: "clamp(220px, 34vh, 360px)" }}
             >
-              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+              <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[2]} />
               </BentoTilt>
             </div>
@@ -383,7 +373,7 @@ const VideoCards = () => {
               data-particle-target="vc-card-3"
               style={{ height: "clamp(220px, 34vh, 360px)" }}
             >
-              <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+              <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[3]} />
               </BentoTilt>
             </div>
@@ -395,7 +385,7 @@ const VideoCards = () => {
             data-particle-target="vc-card-4"
             style={{ height: "clamp(220px, 38vh, 400px)" }}
           >
-            <BentoTilt className="h-full border-hsla overflow-hidden rounded-xl transition-transform duration-300 ease-out">
+            <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
               <VideoCard {...CARDS[4]} />
             </BentoTilt>
           </div>
@@ -443,25 +433,18 @@ const VideoCards = () => {
         >
           {/* Left: heading */}
           <div>
-            <p style={{
-              fontFamily: "var(--font-general)",
-              fontSize: "0.78rem",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#C8FF00",
-              marginBottom: "1.5rem",
-            }}>
+            <span className="eyebrow" style={{ marginBottom: "1.5rem" }}>
               What is it actually?
-            </p>
+            </span>
             <h2
               className="special-font"
               data-particle-target="intro-title"
               style={{
-                fontFamily: "var(--font-general)",
+                fontFamily: "var(--font-display)",
                 fontSize: "clamp(2.2rem, 5vw, 4.4rem)",
-                fontWeight: 900,
+                fontWeight: 400,
                 color: "#ffffff",
-                lineHeight: 0.9,
+                lineHeight: 0.95,
                 letterSpacing: "-0.02em",
               }}
             >

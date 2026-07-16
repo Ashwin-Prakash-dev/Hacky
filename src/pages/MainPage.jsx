@@ -10,7 +10,6 @@ import NavBar from "../components/Navbar";
 import Hero from "../components/Hero";
 import GlobalParticles, { canUseParticles } from "../components/particles/GlobalParticles";
 import SponsorsSection from "../components/SponsorsSection";
-import Stats from "../components/Stats";
 import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
 import Timeline from "../components/Timeline";
@@ -78,7 +77,6 @@ const MainPage = () => {
         <Hero />
         <SponsorsSection />
         <VideoCards />
-        <Stats />
         <StudentHook />
         <Marquee />
         <TerminalBridge />

@@ -38,14 +38,14 @@ const CardLabel = ({ text, dark = false }) => (
   <span
     style={{
       display: "inline-block",
-      fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.78rem",
-      letterSpacing: "0.16em",
+      fontFamily: "var(--font-mono)",
+      fontSize: "0.66rem",
+      letterSpacing: "0.2em",
       textTransform: "uppercase",
       color: dark ? "#C8FF00" : "rgba(255,255,255,0.75)",
-      border: `0.5px solid ${dark ? "rgba(200,255,0,0.35)" : "rgba(255,255,255,0.12)"}`,
-      borderRadius: "2px",
-      padding: "3px 9px",
+      border: `1px solid ${dark ? "rgba(200,255,0,0.35)" : "rgba(255,255,255,0.12)"}`,
+      borderRadius: "999px",
+      padding: "4px 12px",
     }}
   >
     {text}

@@ -8,6 +8,12 @@
 // Rects are stored in document space (top includes scrollY), so they stay
 // valid between rescans while the user scrolls.
 
+// Hero movie clock, written by the particle engine each frame and read by
+// the liquid-reveal overlay so its SVG text morph stays in sync with the
+// particle morph. Plain module state, same contract as the rest of this
+// file: imperative reads from animation loops only.
+export const heroClock = { t: 0, active: false };
+
 const docRects = new Map(); // id -> { top, left, width, height }
 const els = new Map(); // id -> element, for imperative class toggles
 let sections = []; // [{ id, top, bottom }] sorted by top

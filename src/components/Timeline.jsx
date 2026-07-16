@@ -214,11 +214,9 @@ const RulesCard = () => {
 };
 
 const ImportedCardSlot = ({ children }) => (
-  <div style={{
-    height: "340px", borderRadius: "8px", overflow: "hidden",
-    border: "1px solid rgba(255,255,255,0.1)",
-  }}>
-    {children}
+  // Double-bezel shell (.tl-slot in index.css) — lifts + rims lime on hover
+  <div className="tl-slot">
+    <div className="tl-slot-core">{children}</div>
   </div>
 );
 
@@ -289,7 +287,7 @@ const Timeline = () => {
       ref={sectionRef}
       id="timeline"
       data-particles="timeline"
-      style={{ background: "#0a0a0a", position: "relative", width: "100%", paddingBottom: "9rem" }}
+      style={{ background: "#050505", position: "relative", width: "100%", paddingBottom: "9rem" }}
     >
       {/* Faint axis track */}
       <div className="fc-axis-track" data-particle-target="tl-spine" style={{

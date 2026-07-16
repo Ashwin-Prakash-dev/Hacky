@@ -70,7 +70,7 @@ const StudentHook = () => {
     <section
       ref={sectionRef}
       data-particles="studenthook"
-      style={{ background: "#0a0a0a", padding: "7rem 0 6rem", width: "100%" }}
+      style={{ background: "#050505", padding: "7rem 0 6rem", width: "100%" }}
     >
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
@@ -90,18 +90,9 @@ const StudentHook = () => {
         >
           {/* Left: text */}
           <div style={{ flex: "1 1 300px" }}>
-            <p
-              className="font-general"
-              style={{
-                fontSize: "0.95rem",
-                fontStyle: "italic",
-                color: "rgba(255,255,255,0.7)",
-                marginBottom: "1.25rem",
-                letterSpacing: "0.01em",
-              }}
-            >
+            <span className="eyebrow" style={{ marginBottom: "1.4rem" }}>
               you're next
-            </p>
+            </span>
 
             <h2
               className="special-font bento-title"
@@ -109,7 +100,7 @@ const StudentHook = () => {
                 color: "#fff",
                 fontSize: "clamp(2.6rem, 6vw, 4.8rem)",
                 letterSpacing: "-0.03em",
-                lineHeight: 0.9,
+                lineHeight: 0.95,
                 marginBottom: "1.5rem",
               }}
             >
@@ -140,39 +131,17 @@ const StudentHook = () => {
             </p>
             <a
               href="/apply"
+              className="cta-pill"
+              data-particle-hover="hook-apply"
               style={{
-                textDecoration: "none",
-                display: "inline-block",
                 // above the fixed particle canvas (z-30): the hover swarm
                 // orbits behind the button
                 position: "relative",
                 zIndex: 31,
               }}
             >
-              <button
-                data-particle-hover="hook-apply"
-                style={{
-                  padding: "0.9rem 2.25rem",
-                  background: "#C8FF00", color: "#000",
-                  border: "none", borderRadius: "5px",
-                  fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.78rem", letterSpacing: "0.12em",
-                  fontWeight: 700, textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(200,255,0,0.25)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                Apply now →
-              </button>
+              Apply now
+              <span className="cta-pill-icon" aria-hidden="true">↗</span>
             </a>
           </div>
 
@@ -182,8 +151,9 @@ const StudentHook = () => {
               data-particle-target="hook-video"
               style={{
                 position: "relative", width: "100%", paddingBottom: "56.25%",
-                borderRadius: "10px", overflow: "hidden",
+                borderRadius: "1.25rem", overflow: "hidden",
                 border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
                 // above the fixed particle canvas (z-30): the swarm rings
                 // the border from behind
                 zIndex: 31,
@@ -276,12 +246,12 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
     >
       {/* Number */}
       <span style={{
-        fontFamily: "var(--font-general)",
+        fontFamily: "var(--font-display)",
         fontSize: "clamp(2.2rem, 3.5vw, 3rem)",
-        fontWeight: 900,
-        color: hovered ? "rgba(200,255,0,0.25)" : "rgba(200,255,0,0.1)",
+        fontWeight: 400,
+        color: hovered ? "rgba(200,255,0,0.3)" : "rgba(200,255,0,0.12)",
         lineHeight: 1,
-        letterSpacing: "-0.04em",
+        letterSpacing: "-0.03em",
         transition: "color 0.3s ease",
         userSelect: "none",
       }}>
@@ -289,15 +259,18 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
       </span>
 
       {/* Tag + headline */}
-      <div>
+      <div style={{
+        transform: hovered ? "translateX(8px)" : "translateX(0)",
+        transition: "transform 0.6s cubic-bezier(0.32,0.72,0,1)",
+      }}>
         <span style={{
           display: "inline-block",
-          fontFamily: "var(--font-general)",
-          fontSize: "0.72rem", letterSpacing: "0.16em",
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.64rem", letterSpacing: "0.2em",
           textTransform: "uppercase",
           color: hovered ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.65)",
-          border: `0.5px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
-          borderRadius: "2px", padding: "3px 8px",
+          border: `1px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
+          borderRadius: "999px", padding: "4px 11px",
           marginBottom: "0.65rem",
           transition: "color 0.3s, border-color 0.3s",
         }}>{item.tag}</span>
@@ -313,8 +286,9 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
       {/* Body */}
       <p className="font-general sh-row-body" style={{
         fontSize: "0.95rem",
-        color: "rgba(255,255,255,0.75)",
+        color: hovered ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.75)",
         lineHeight: 1.78,
+        transition: "color 0.4s ease",
       }}>{item.body}</p>
     </div>
   );

@@ -16,114 +16,133 @@ const NavBar = () => {
     setScrolled(currentScrollY > 10);
   }, [currentScrollY]);
 
+  // Lock page scroll behind the full-screen mobile menu
+  useEffect(() => {
+    if (menuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div
-      className="fixed inset-x-0 top-0 z-50 transition-all duration-300"
-      style={{ height: "56px" }}
-    >
-      <div className={`nav-bg ${scrolled ? "nav-bg--scrolled" : ""}`} />
-      {scrolled && <div className="nav-hairline" />}
-
-      <header className="relative size-full">
-        <nav className="nav-inner flex h-full items-center justify-between">
+    <>
+      <div className="nav-shell">
+        <div className={`nav-island ${scrolled ? "nav-island--scrolled" : ""}`}>
           <a href="#" className="nav-logo">
             Startathon<span className="nav-logo-dot">.</span>
           </a>
 
-          <div className="flex items-center">
-            {/* Desktop links */}
-            <div className="hidden items-center md:flex">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollTo(item.id)}
-                  className="nav-link"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+          {/* Desktop links */}
+          <div className="hidden items-center md:flex">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollTo(item.id)}
+                className="nav-link"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
 
-            <a href="/apply" className="nav-cta" style={{ textDecoration: "none" }}>
-              Apply Now
+          <div className="flex items-center gap-2">
+            <a href="/apply" className="nav-cta">
+              Apply
+              <span className="nav-cta-icon" aria-hidden="true">↗</span>
             </a>
 
             {/* Hamburger — mobile only */}
             <button
-              className="ml-2 flex cursor-pointer flex-col justify-center gap-[5px] border-none bg-transparent p-2 md:hidden"
+              className="flex cursor-pointer flex-col items-center justify-center gap-[5px] border-none bg-transparent p-2 md:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
+              aria-expanded={menuOpen}
             >
-              <span style={{
-                display: "block", width: "20px", height: "1.5px",
-                background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.65)",
-                transition: "transform 0.3s ease, background 0.25s",
-                transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none",
-              }} />
-              <span style={{
-                display: "block", width: "20px", height: "1.5px",
-                background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.65)",
-                transition: "opacity 0.2s, background 0.25s",
-                opacity: menuOpen ? 0 : 1,
-              }} />
-              <span style={{
-                display: "block", width: "20px", height: "1.5px",
-                background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.65)",
-                transition: "transform 0.3s ease, background 0.25s",
-                transform: menuOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
-              }} />
+              <span
+                style={{
+                  display: "block", width: "18px", height: "1.5px",
+                  background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.7)",
+                  transition: "transform 0.5s cubic-bezier(0.32,0.72,0,1), background 0.3s",
+                  transform: menuOpen ? "translateY(3.25px) rotate(45deg)" : "none",
+                }}
+              />
+              <span
+                style={{
+                  display: "block", width: "18px", height: "1.5px",
+                  background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.7)",
+                  transition: "transform 0.5s cubic-bezier(0.32,0.72,0,1), background 0.3s",
+                  transform: menuOpen ? "translateY(-3.25px) rotate(-45deg)" : "none",
+                }}
+              />
             </button>
           </div>
-        </nav>
-      </header>
+        </div>
+      </div>
 
-      {/* Mobile dropdown menu */}
+      {/* Full-screen mobile overlay */}
       <div
+        aria-hidden={!menuOpen}
         style={{
-          position: "absolute", top: "56px", left: 0, right: 0,
-          background: "rgba(10,10,10,0.97)",
-          backdropFilter: "blur(24px) saturate(180%)",
-          WebkitBackdropFilter: "blur(24px) saturate(180%)",
-          borderBottom: menuOpen ? "1px solid rgba(255,255,255,0.07)" : "none",
-          overflow: "hidden",
-          maxHeight: menuOpen ? "280px" : "0",
-          transition: "max-height 0.4s cubic-bezier(0.76, 0, 0.24, 1), border-bottom 0.1s",
-          zIndex: -1,
+          position: "fixed", inset: 0, zIndex: 55,
+          background: "rgba(5,5,5,0.86)",
+          backdropFilter: "blur(28px) saturate(160%)",
+          WebkitBackdropFilter: "blur(28px) saturate(160%)",
+          opacity: menuOpen ? 1 : 0,
+          pointerEvents: menuOpen ? "auto" : "none",
+          transition: "opacity 0.55s cubic-bezier(0.32,0.72,0,1)",
+          display: "flex", alignItems: "center",
         }}
       >
-        <nav style={{
-          padding: "1rem clamp(1.25rem, 4vw, 2.5rem) 1.5rem",
-          display: "flex", flexDirection: "column",
-        }}>
+        <nav
+          style={{
+            width: "100%",
+            padding: "0 clamp(2rem, 8vw, 4rem)",
+            display: "flex", flexDirection: "column", gap: "0.25rem",
+          }}
+        >
           {navItems.map((item, i) => (
-            <button
-              key={item.id}
-              onClick={() => { scrollTo(item.id); setMenuOpen(false); }}
-              style={{
-                textAlign: "left", background: "none", border: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.05)",
-                fontFamily: "var(--font-general)", fontSize: "0.85rem",
-                letterSpacing: "0.08em", textTransform: "uppercase",
-                color: "rgba(255,255,255,0.78)",
-                padding: "0.9rem 0", cursor: "pointer",
-                transition: "color 0.2s",
-                opacity: menuOpen ? 1 : 0,
-                transform: menuOpen ? "translateY(0)" : "translateY(-8px)",
-                transitionDelay: menuOpen ? `${i * 0.05}s` : "0s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.78)")}
-            >
-              {item.label}
-            </button>
+            <div key={item.id} style={{ overflow: "hidden" }}>
+              <button
+                onClick={() => { scrollTo(item.id); setMenuOpen(false); }}
+                style={{
+                  textAlign: "left", background: "none", border: "none",
+                  fontFamily: "var(--font-display)",
+                  fontSize: "clamp(2.2rem, 9vw, 3.2rem)",
+                  fontWeight: 400, letterSpacing: "0.01em",
+                  color: "#fff",
+                  padding: "0.55rem 0", cursor: "pointer",
+                  display: "block", width: "100%", lineHeight: 1,
+                  opacity: menuOpen ? 1 : 0,
+                  transform: menuOpen ? "translateY(0)" : "translateY(110%)",
+                  transition: `transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.08 + i * 0.07}s, opacity 0.5s ease ${0.08 + i * 0.07}s`,
+                }}
+              >
+                {item.label}
+              </button>
+            </div>
           ))}
+          <div style={{ overflow: "hidden", marginTop: "2rem" }}>
+            <a
+              href="/apply"
+              className="cta-pill"
+              style={{
+                opacity: menuOpen ? 1 : 0,
+                transform: menuOpen ? "translateY(0)" : "translateY(110%)",
+                transition: `transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.08 + navItems.length * 0.07}s, opacity 0.5s ease ${0.08 + navItems.length * 0.07}s`,
+              }}
+            >
+              Apply now
+              <span className="cta-pill-icon" aria-hidden="true">↗</span>
+            </a>
+          </div>
         </nav>
       </div>
-    </div>
+    </>
   );
 };
 

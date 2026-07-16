@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -49,50 +48,92 @@ const SponsorCard = ({ sponsor, idx }) => {
         position: "relative",
         zIndex: 31,
         textDecoration: "none",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: "1.1rem",
-        padding: "2rem",
-        borderRadius: "12px",
-        background: hovered ? "#111111" : "#0e0e0e",
-        border: hovered ? "1px solid rgba(200,255,0,0.4)" : "1px solid rgba(255,255,255,0.08)",
-        boxShadow: hovered ? "0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,255,0,0.15)" : "none",
+        display: "block",
+        // outer machined shell
+        padding: "0.375rem",
+        borderRadius: "1.5rem",
+        background: "rgba(255,255,255,0.03)",
+        boxShadow: hovered
+          ? "inset 0 0 0 1px rgba(200,255,0,0.22), 0 24px 60px rgba(0,0,0,0.5)"
+          : "inset 0 0 0 1px rgba(255,255,255,0.06)",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.3s ease, transform 0.3s ease",
+        transition:
+          "box-shadow 0.6s cubic-bezier(0.32,0.72,0,1), transform 0.6s cubic-bezier(0.32,0.72,0,1)",
       }}
     >
-      <img
-        src={sponsor.src}
-        alt={sponsor.name}
-        style={{ height: `${sponsor.h}px`, width: "auto", objectFit: "contain" }}
-      />
-      <p
-        className="font-general"
+      {/* inner core */}
+      <div
         style={{
-          fontSize: "0.88rem",
-          color: "rgba(255,255,255,0.7)",
-          lineHeight: 1.6,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: "1.1rem",
+          height: "100%",
+          padding: "1.9rem",
+          borderRadius: "calc(1.5rem - 0.375rem)",
+          background: hovered ? "#0e0e0c" : "#0b0b0b",
+          boxShadow:
+            "inset 0 1px 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04)",
+          transition: "background 0.6s cubic-bezier(0.32,0.72,0,1)",
         }}
       >
-        {sponsor.blurb}
-      </p>
-      <span
-        className="font-general"
-        style={{
-          fontSize: "0.75rem",
-          fontWeight: 700,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: hovered ? "#C8FF00" : "rgba(255,255,255,0.45)",
-          transition: "color 0.25s ease",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.35em",
-        }}
-      >
-        Visit site {hovered ? <FiArrowRight aria-hidden="true" /> : <FiArrowUpRight aria-hidden="true" />}
-      </span>
+        <img
+          src={sponsor.src}
+          alt={sponsor.name}
+          style={{
+            height: `${sponsor.h}px`,
+            width: "auto",
+            objectFit: "contain",
+            transform: hovered ? "translateY(-3px) scale(1.04)" : "none",
+            transition: "transform 0.6s cubic-bezier(0.32,0.72,0,1)",
+          }}
+        />
+        <p
+          className="font-general"
+          style={{
+            fontSize: "0.88rem",
+            color: "rgba(255,255,255,0.7)",
+            lineHeight: 1.7,
+          }}
+        >
+          {sponsor.blurb}
+        </p>
+        <span
+          className="font-general"
+          style={{
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: hovered ? "#C8FF00" : "rgba(255,255,255,0.45)",
+            transition: "color 0.4s ease",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.6em",
+            marginTop: "auto",
+          }}
+        >
+          Visit site
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "1.5rem",
+              height: "1.5rem",
+              borderRadius: "50%",
+              background: hovered ? "rgba(200,255,0,0.12)" : "rgba(255,255,255,0.06)",
+              transform: hovered ? "translate(1px,-1px)" : "none",
+              transition:
+                "background 0.4s ease, transform 0.5s cubic-bezier(0.32,0.72,0,1)",
+              fontSize: "0.78rem",
+            }}
+          >
+            ↗
+          </span>
+        </span>
+      </div>
     </a>
   );
 };
@@ -144,34 +185,25 @@ const SponsorsSection = () => {
     <section
       ref={sectionRef}
       data-particles="sponsors"
-      style={{ background: "#0a0a0a", width: "100%" }}
+      style={{ background: "#050505", width: "100%" }}
     >
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       <div
         className="container mx-auto px-5 md:px-10"
-        style={{ padding: "5rem clamp(1.25rem, 4vw, 2.5rem) 6rem" }}
+        style={{ padding: "clamp(6rem, 10vw, 8rem) clamp(1.25rem, 4vw, 2.5rem)" }}
       >
-        <div ref={headerRef} style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <p
-            className="font-general"
-            style={{
-              fontSize: "0.78rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#C8FF00",
-              marginBottom: "0.75rem",
-            }}
-          >
+        <div ref={headerRef} style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+          <span className="eyebrow" style={{ marginBottom: "1.1rem" }}>
             Our Sponsors
-          </p>
+          </span>
           <h2
             className="bento-title special-font"
             style={{
               color: "#fff",
               fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
               letterSpacing: "-0.02em",
-              lineHeight: 1,
+              lineHeight: 1.05,
             }}
           >
             Companies b<b>a</b>cking Startathon

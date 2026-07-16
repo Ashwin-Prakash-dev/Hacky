@@ -27,12 +27,12 @@ const Footer = () => (
       {/* Brand */}
       <div className="footer-brand">
         <p style={{
-          fontFamily: "var(--font-general)",
-          fontSize: "1rem", fontWeight: 700,
+          fontFamily: "var(--font-display)",
+          fontSize: "1.2rem", fontWeight: 400,
           letterSpacing: "-0.01em", color: "#fff",
           marginBottom: "6px",
         }}>
-          Startathon<span style={{ color: "#888888" }}>.</span>
+          Startathon<span style={{ color: "#C8FF00" }}>.</span>
         </p>
         <p className="font-general" style={{
           fontSize: "0.85rem", color: "rgba(255,255,255,0.65)",
@@ -149,14 +149,20 @@ const Footer = () => (
         color: rgba(255,255,255,0.7);
         text-decoration: none;
         letter-spacing: 0.02em;
-        transition: color 0.2s;
+        transition: color 0.2s, transform 0.45s cubic-bezier(0.32,0.72,0,1);
         white-space: nowrap;
       }
+      .footer-link:hover { transform: translateX(4px); }
       .footer-link-icon {
         font-size: 1rem;
         color: rgba(255,255,255,0.55);
         flex-shrink: 0;
         display: flex;
+        transition: color 0.2s, transform 0.45s cubic-bezier(0.32,0.72,0,1);
+      }
+      .footer-link:hover .footer-link-icon {
+        color: #C8FF00;
+        transform: scale(1.15);
       }
       .footer-bottom {
         display: flex;

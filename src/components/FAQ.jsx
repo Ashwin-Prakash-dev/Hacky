@@ -117,15 +117,16 @@ const FAQ = () => {
       id="faq"
       data-particles="faq"
       className="w-screen"
-      style={{ background: "#0a0a0a", padding: "6rem 0" }}
+      style={{ background: "#050505", padding: "6rem 0" }}
     >
       <div className="container mx-auto px-5 md:px-10">
         <div style={{ marginBottom: "4rem" }}>
+          <span className="eyebrow" style={{ marginBottom: "1.2rem" }}>FAQ</span>
           <h2
-            className="bento-title"
+            className="bento-title special-font"
             style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.02em" }}
           >
-            Got questions?
+            Got quest<b>i</b>ons?
           </h2>
         </div>
 
@@ -135,13 +136,18 @@ const FAQ = () => {
           gridTemplateColumns: "1fr 1fr",
           gap: "clamp(2.5rem, 6vw, 5rem)",
           alignItems: "start",
+          // above the fixed particle canvas (z-30): the swarm scatters
+          // behind the question list and rings the answer panel on select
+          position: "relative",
+          zIndex: 31,
         }}>
           {/* Left: question list */}
-          <div>
+          <div data-particle-target="faq-list">
             {faqs.map((faq, i) => (
               <button
                 key={i}
                 onClick={() => handleSelect(i)}
+                className="faq-q"
                 style={{
                   width: "100%", textAlign: "left",
                   display: "flex", alignItems: "baseline", gap: "1.25rem",
@@ -154,18 +160,18 @@ const FAQ = () => {
                     ? "2px solid rgba(200,255,0,0.5)"
                     : "2px solid transparent",
                   cursor: "pointer",
-                  transition: "border-color 0.2s ease",
+                  transition: "border-color 0.2s ease, transform 0.5s cubic-bezier(0.32,0.72,0,1)",
                 }}
               >
-                <span style={{
-                  fontFamily: "var(--font-general)",
-                  fontSize: "0.78rem", fontWeight: 700,
-                  color: selected === i ? "rgba(200,255,0,0.8)" : "rgba(255,255,255,0.5)",
+                <span className="faq-q-num" style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem", fontWeight: 500,
+                  color: selected === i ? "rgba(200,255,0,0.8)" : "rgba(255,255,255,0.4)",
                   minWidth: "1.8rem", flexShrink: 0,
                   transition: "color 0.2s",
-                  letterSpacing: "0.04em",
+                  letterSpacing: "0.08em",
                 }}>0{i + 1}</span>
-                <span className="font-general" style={{
+                <span className="font-general faq-q-text" style={{
                   fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
                   color: selected === i ? "#fff" : "rgba(255,255,255,0.75)",
                   lineHeight: 1.45,
@@ -176,7 +182,7 @@ const FAQ = () => {
           </div>
 
           {/* Right: sticky answer panel */}
-          <div style={{ position: "sticky", top: "8rem" }}>
+          <div data-particle-target="faq-answer" style={{ position: "sticky", top: "8rem" }}>
             <div ref={answerRef}>
               <p className="font-general" style={{
                 fontSize: "clamp(0.95rem, 1.6vw, 1.1rem)",
@@ -204,6 +210,9 @@ const FAQ = () => {
       <style>{`
         .faq-desktop { display: grid; }
         .faq-mobile  { display: none; }
+        .faq-q:hover { transform: translateX(6px); }
+        .faq-q:hover .faq-q-num  { color: rgba(200,255,0,0.85) !important; }
+        .faq-q:hover .faq-q-text { color: #fff !important; }
         @media (max-width: 767px) {
           .faq-desktop { display: none !important; }
           .faq-mobile  { display: block !important; }

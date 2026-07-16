@@ -5,22 +5,13 @@ import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import {
   KEYS,
-  WALK_SCENE,
-  TABLE_SCENE,
   TWO_PI,
-  walkerElems,
-  tableElems,
-  evalElem,
-  assignSlots,
   buildTargets,
   easeOutCubic,
   clamp01,
   makeGradientMap,
-  ANIM_SCENES,
-  SHAPE_W,
-  SHAPE_H,
 } from "./shapes";
-import { BEHAVIORS, sweepStats } from "./behaviors";
+import { BEHAVIORS } from "./behaviors";
 import { bordersPoint } from "./primitives";
 import {
   initRegistry,
@@ -29,6 +20,7 @@ import {
   getHovered,
   setHovered,
   consume,
+  heroClock,
 } from "./registry";
 
 // The site-wide particle system: one fixed, transparent, full-viewport
@@ -58,7 +50,6 @@ const bOut = [0, 0]; // scratch for bordersPoint targets
 
 function ParticleEngine({ started, count, isMobile }) {
   const meshRef = useRef();
-  const groupRef = useRef();
   const elapsed = useRef(0);
   const movieT = useRef(initialTime());
   const heroState = useRef({ abandoned: false });
@@ -67,7 +58,6 @@ function ParticleEngine({ started, count, isMobile }) {
   const pointerPrev = useRef(new THREE.Vector2(999, 999));
   const pointerVel = useRef(new THREE.Vector2(0, 0));
   const pointerTarget = useRef(new THREE.Vector2(999, 999));
-  const pointerNdc = useRef(new THREE.Vector2(0, 0));
   const { viewport } = useThree();
   const [built, setBuilt] = useState(null);
   const pstate = useMemo(() => param("pstate"), []);
@@ -82,8 +72,8 @@ function ParticleEngine({ started, count, isMobile }) {
     };
   }, [count]);
 
-  // Per-instance state: scatter start, randomness, animated-scene slots,
-  // current position, wake spring state, claim buffers
+  // Per-instance state: scatter start, randomness, current position,
+  // wake spring state, claim buffers
   const inst = useMemo(() => {
     const starts = new Float32Array(count * 3);
     const rands = new Float32Array(count);
@@ -102,16 +92,11 @@ function ParticleEngine({ started, count, isMobile }) {
       rands2[i] = Math.random();
       rands3[i] = Math.random();
     }
-    const slots = {};
-    for (const name of Object.keys(ANIM_SCENES)) {
-      slots[name] = assignSlots(ANIM_SCENES[name](0), count);
-    }
     return {
       starts,
       rands,
       rands2,
       rands3,
-      slots,
       cur: starts.slice(),
       offsets: new Float32Array(count * 2),
       vels: new Float32Array(count * 2),
@@ -147,7 +132,6 @@ function ParticleEngine({ started, count, isMobile }) {
     const onMove = (e) => {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -((e.clientY / window.innerHeight) * 2 - 1);
-      pointerNdc.current.set(nx, ny);
       pointerTarget.current.set(
         nx * (viewport.width / 2),
         ny * (viewport.height / 2)
@@ -196,14 +180,6 @@ function ParticleEngine({ started, count, isMobile }) {
     const pvx = pointerVel.current.x;
     const pvy = pointerVel.current.y;
 
-    // gentle parallax tilt of the whole scene toward the cursor
-    if (groupRef.current) {
-      const tx = pointerActive ? pointerNdc.current.x : 0;
-      const ty = pointerActive ? pointerNdc.current.y : 0;
-      groupRef.current.rotation.y += (tx * 0.09 - groupRef.current.rotation.y) * 0.03;
-      groupRef.current.rotation.x += (-ty * 0.06 - groupRef.current.rotation.x) * 0.03;
-    }
-
     const vw = viewport.width;
     const vh = viewport.height;
     const wppX = vw / window.innerWidth;
@@ -248,13 +224,15 @@ function ParticleEngine({ started, count, isMobile }) {
       hs.abandoned = true; // any real scroll mid-movie dissolves it, no resume
     }
     const movieActive = heroOwns && !hs.abandoned && movieT.current < MOVIE_END;
+    // publish the movie clock for the liquid-reveal overlay's text morph
+    heroClock.t = movieT.current;
+    heroClock.active = movieActive;
 
     const {
       starts,
       rands,
       rands2,
       rands3,
-      slots,
       cur,
       offsets,
       vels,
@@ -275,14 +253,9 @@ function ParticleEngine({ started, count, isMobile }) {
     let wind = 0;
 
     if (movieActive) {
-      // ---- the hero particle movie, verbatim choreography ---------------
+      // ---- the hero sequence: vortex gather -> "S." -> "Startathon." ----
       const mt = movieT.current;
-      const shrink = 1 - Math.min(mt / 4, 1) * 0.5;
-      const animEls = {
-        walk: mt > KEYS[WALK_SCENE].at ? walkerElems(mt - KEYS[WALK_SCENE].at) : null,
-        table: mt > KEYS[TABLE_SCENE].at ? tableElems(mt - KEYS[TABLE_SCENE].at) : null,
-      };
-      const segOut = [0, 0];
+      const shrink = 1 - Math.min(mt / 3, 1) * 0.5;
       for (let i = 0; i < count; i++) {
         const r = rands[i];
         const p0 = easeOutCubic(clamp01((mt - KEYS[0].at - r * 1.2) / KEYS[0].dur));
@@ -301,23 +274,10 @@ function ParticleEngine({ started, count, isMobile }) {
         let y = syv + (shapes[0][i * 2 + 1] * scale - syv) * p0;
         let z = sz * (1 - p0);
 
-        for (let k = 1; k < KEYS.length; k++) {
-          const pk = easeOutCubic(clamp01((mt - KEYS[k].at - r) / KEYS[k].dur));
-          if (pk <= 0) break;
-          const s = shapes[k];
-          let tx;
-          let ty;
-          if (s.anim) {
-            const slot = slots[s.anim];
-            evalElem(animEls[s.anim][slot.idx[i]], slot.u[i], slot.v[i], segOut);
-            tx = (segOut[0] - SHAPE_W / 2) / SHAPE_W;
-            ty = -(segOut[1] - SHAPE_H / 2) / SHAPE_W;
-          } else {
-            tx = s[i * 2];
-            ty = s[i * 2 + 1];
-          }
-          x += (tx * scale - x) * pk;
-          y += (ty * scale - y) * pk;
+        const p1 = easeOutCubic(clamp01((mt - KEYS[1].at - r) / KEYS[1].dur));
+        if (p1 > 0) {
+          x += (shapes[1][i * 2] * scale - x) * p1;
+          y += (shapes[1][i * 2 + 1] * scale - y) * p1;
         }
 
         claimK[i] = 99;
@@ -327,7 +287,7 @@ function ParticleEngine({ started, count, isMobile }) {
         claimS[i] = p0;
       }
     } else {
-      const s6 = shapes[6];
+      const s6 = shapes[1]; // the partitioned resting wordmark
       // The dot swarm's journey is a pure function of scroll, never a
       // trigger. Leg 1 (hero -> sponsors): u1 runs 0 -> 1 as the card group
       // centers in the viewport, detouring down a right-side stream lane.
@@ -354,31 +314,69 @@ function ParticleEngine({ started, count, isMobile }) {
         if (arr > dep + 1) u2 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u2 = 1;
       }
-      // leg 3 (videocards -> stats): departs when the "What is Startathon?"
-      // block enters the viewport, arrives as the stats row centers; the
-      // last stretch is the left-to-right row sweep
+      // leg 3 (videocards -> studenthook): departs when the "What is
+      // Startathon?" block enters the viewport, detours through the intro
+      // texts, and fans into the headline scatter as the hook centers
       const introDoc = getRect("intro-grid");
-      const statsDoc = getRect("stats-row");
+      const hsDoc = getRect("hook-scatter");
       let u3 = 0;
-      if (introDoc && statsDoc && statsDoc.width > 2) {
+      if (introDoc && hsDoc && hsDoc.width > 2) {
         const dep = introDoc.top - window.innerHeight;
-        const arr =
-          statsDoc.top + statsDoc.height / 2 - window.innerHeight * 0.5;
+        const arr = hsDoc.top + hsDoc.height / 2 - window.innerHeight * 0.5;
         if (arr > dep + 1) u3 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u3 = 1;
       }
-      // leg 4 (stats -> studenthook): departs a beat after the rail sweep
-      // completes (never before — the counters must have fired), then swarms
-      // down the right side into the next section's scatter
-      const hvDoc = getRect("hook-video");
+      // leg 4 (studenthook -> terminal): departs half a screen after the
+      // hook settles, pours down the right lane, arrives as the terminal
+      // box centers and hands the swarm to its patrol ring
+      const termDoc = getRect("terminal-box");
       let u4 = 0;
-      if (statsDoc && hvDoc && hvDoc.width > 2) {
-        const sweepDone =
-          statsDoc.top + statsDoc.height / 2 - window.innerHeight * 0.5;
-        const dep = sweepDone + window.innerHeight * 0.35;
-        const arr = hvDoc.top + hvDoc.height / 2 - window.innerHeight / 2;
+      if (hsDoc && termDoc && termDoc.width > 2) {
+        const dep =
+          hsDoc.top + hsDoc.height / 2 - window.innerHeight * 0.5 +
+          window.innerHeight * 0.45;
+        const arr = termDoc.top + termDoc.height / 2 - window.innerHeight * 0.5;
         if (arr > dep + 1) u4 = clamp01((sy - dep) / (arr - dep));
         else if (sy >= dep) u4 = 1;
+      }
+      // leg 5 (terminal -> timeline): the swarm dismounts the ring and
+      // mounts the spine as the first timeline card centers
+      const node0Doc = getRect("tl-node-0");
+      let u5 = 0;
+      if (termDoc && node0Doc && node0Doc.width > 2) {
+        const dep =
+          termDoc.top + termDoc.height / 2 - window.innerHeight * 0.5 +
+          window.innerHeight * 0.4;
+        const arr =
+          node0Doc.top + node0Doc.height / 2 - window.innerHeight * 0.5;
+        if (arr > dep + 1) u5 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u5 = 1;
+      }
+      // leg 6 (timeline -> faq): departs past the last card, crosses to the
+      // left lane, scatters behind the question list
+      const node3Doc = getRect("tl-node-3");
+      const faqListDoc = getRect("faq-list");
+      let u6 = 0;
+      if (node3Doc && faqListDoc && faqListDoc.width > 2) {
+        const dep =
+          node3Doc.top + node3Doc.height / 2 - window.innerHeight * 0.5 +
+          window.innerHeight * 0.3;
+        const arr =
+          faqListDoc.top + faqListDoc.height / 2 - window.innerHeight * 0.5;
+        if (arr > dep + 1) u6 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u6 = 1;
+      }
+      // leg 7 (faq -> contact): the final run — down the right lane onto
+      // the waitlist panel's border patrol
+      const cpDoc = getRect("contact-panel");
+      let u7 = 0;
+      if (faqListDoc && cpDoc && cpDoc.width > 2) {
+        const dep =
+          faqListDoc.top + faqListDoc.height / 2 - window.innerHeight * 0.5 +
+          window.innerHeight * 0.5;
+        const arr = cpDoc.top + cpDoc.height / 2 - window.innerHeight * 0.5;
+        if (arr > dep + 1) u7 = clamp01((sy - dep) / (arr - dep));
+        else if (sy >= dep) u7 = 1;
       }
       // A movie abandoned mid-flight departs from its frozen last frame —
       // the flock never regroups into the wordmark before streaming away.
@@ -532,22 +530,18 @@ function ParticleEngine({ started, count, isMobile }) {
         }
       } else if (u3 <= 0) {
         wind = BEHAVIORS.videocards(ctx)?.wind ?? 0;
-        sweepStats(ctx, -0.1); // approaching from above: stats start unlit
       } else if (u3 < 1) {
         // leg 3 waypoints: w0 video card borders -> w1 right lane ->
         // w2 intro description -> w3 "What is Startathon?" heading ->
-        // w4 the stats row sweep (tip-weighted tail, lights cells it passes)
+        // w4 fanned across the hook headline block (matching its idle pose)
         const dsc = rectW("intro-desc");
         const ttl = rectW("intro-title");
-        const row = rectW("stats-row");
+        const hook = rectW("hook-scatter");
         const vcRects = [];
         for (let k2 = 0; k2 < 5; k2++) {
           const cr = rectW(`vc-card-${k2}`);
           if (cr && cr.w > 0.05) vcRects.push(cr);
         }
-        const Wt = clamp01((u3 - 0.7) / 0.3);
-        const W = Wt * Wt * (3 - 2 * Wt);
-        const tipX = row ? sweepStats(ctx, W) : 0;
         for (let i = 0; i < dotN; i++) {
           const r = rands[i];
           const pi = clamp01(u3 * 1.35 - r * 0.35);
@@ -571,35 +565,32 @@ function ParticleEngine({ started, count, isMobile }) {
             x3 = ttl.cx + (rands2[i] - 0.5) * ttl.w * 0.9;
             y3 = ttl.cy + (rands3[i] - 0.5) * ttl.h * 0.85;
           }
+          let x4 = 0;
+          let y4 = -vh * 0.6;
+          if (hook) {
+            x4 = hook.cx + (rands2[i] - 0.5) * hook.w;
+            y4 = hook.cy + (rands3[i] - 0.5) * hook.h;
+          }
           const x1 = vw * (0.38 + r * 0.07);
           const y1 = (y0 + y2) * 0.5;
           let tx;
           let ty;
-          if (e < 0.25) {
-            const s = e / 0.25;
+          if (e < 0.22) {
+            const s = e / 0.22;
             tx = x0 + (x1 - x0) * s;
             ty = y0 + (y1 - y0) * s;
-          } else if (e < 0.5) {
-            const s = (e - 0.25) / 0.25;
+          } else if (e < 0.45) {
+            const s = (e - 0.22) / 0.23;
             tx = x1 + (x2 - x1) * s;
             ty = y1 + (y2 - y1) * s;
-          } else if (e < 0.7) {
-            const s = (e - 0.5) / 0.2;
+          } else if (e < 0.68) {
+            const s = (e - 0.45) / 0.23;
             tx = x2 + (x3 - x2) * s;
             ty = y2 + (y3 - y2) * s;
-          } else if (row) {
-            const s = (e - 0.7) / 0.3;
-            const q = rands2[i];
-            const rx = Math.max(
-              tipX - q * q * row.w * 0.38,
-              row.cx - row.w / 2 - 0.2
-            );
-            const ry = row.cy + (rands3[i] - 0.5) * row.h * 0.12;
-            tx = x3 + (rx - x3) * s;
-            ty = y3 + (ry - y3) * s;
           } else {
-            tx = x3;
-            ty = y3;
+            const s = (e - 0.68) / 0.32;
+            tx = x3 + (x4 - x3) * s;
+            ty = y3 + (y4 - y3) * s;
           }
           const w = Math.sin(e * Math.PI);
           claimK[i] = 12;
@@ -607,34 +598,167 @@ function ParticleEngine({ started, count, isMobile }) {
           claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
           claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
         }
-      } else if (u4 <= 0) {
-        wind = BEHAVIORS.stats(ctx)?.wind ?? 0;
-      } else if (u4 < 1 && getHovered() !== "hook-apply") {
-        // leg 4 waypoints: w0 the resting stats trail -> w1 right lane ->
-        // w2 scattered across the headline block (matching the idle pose).
-        // Hovering the Apply button overrides the scrub from the first
-        // departing pixel — the swarm rushes straight to the button.
-        const row = rectW("stats-row");
-        const sec = rectW("hook-scatter");
+      } else if (u4 <= 0 || getHovered() === "hook-apply") {
+        // hovering Apply overrides a started departure — the magnet wins
+        wind = BEHAVIORS.studenthook(ctx)?.wind ?? 0;
+      } else if (u4 < 1) {
+        // leg 4 waypoints: w0 hook headline scatter -> w1 right lane ->
+        // w2 the terminal box border
+        const hook = rectW("hook-scatter");
+        const term = rectW("terminal-box");
         for (let i = 0; i < dotN; i++) {
           const r = rands[i];
           const pi = clamp01(u4 * 1.35 - r * 0.35);
           const e = pi * pi * (3 - 2 * pi);
-          let x0 = vw * 0.3;
+          let x0 = vw * 0.2;
           let y0 = vh * 1.2;
-          if (row) {
-            const q = rands2[i];
-            x0 = Math.max(
-              row.cx + row.w / 2 - q * q * row.w * 0.5,
-              row.cx - row.w / 2
-            );
-            y0 = row.cy + (rands3[i] - 0.5) * row.h * 0.6;
+          if (hook) {
+            x0 = hook.cx + (rands2[i] - 0.5) * hook.w;
+            y0 = hook.cy + (rands3[i] - 0.5) * hook.h;
           }
-          let x2 = vw * 0.3;
-          let y2 = -vh * 0.2;
-          if (sec) {
-            x2 = sec.cx + (rands2[i] - 0.5) * sec.w;
-            y2 = sec.cy + (rands3[i] - 0.5) * sec.h;
+          let x2 = 0;
+          let y2 = -vh * 0.3;
+          if (term) {
+            bordersPoint([term], rands2[i], rands3[i], 0.1, bOut);
+            x2 = bOut[0];
+            y2 = bOut[1];
+          }
+          const x1 = vw * (0.38 + r * 0.07);
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.5) {
+            const s = e / 0.5;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else {
+            const s = (e - 0.5) / 0.5;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else if (u5 <= 0) {
+        wind = BEHAVIORS.terminal(ctx)?.wind ?? 0;
+      } else if (u5 < 1) {
+        // leg 5 waypoints: w0 terminal border -> w1 a loose center lane ->
+        // w2 the spine comet (tail thinning up from the beam tip)
+        const term = rectW("terminal-box");
+        const spine = rectW("tl-spine");
+        let tipY = -vh * 0.5;
+        let spx = 0;
+        let tail = vh * 0.4;
+        if (spine && spine.h > 0.1) {
+          const topY = spine.cy + spine.h / 2;
+          const p = clamp01((topY + 0.35 * vh) / (spine.h + 0.65 * vh));
+          tipY = topY - p * spine.h;
+          spx = spine.cx;
+          tail = Math.min(spine.h * 0.35, vh * 0.55);
+        }
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const q = rands2[i];
+          const pi = clamp01(u5 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = 0;
+          let y0 = vh * 1.2;
+          if (term) {
+            bordersPoint([term], rands2[i], rands3[i], 0.1, bOut);
+            x0 = bOut[0];
+            y0 = bOut[1];
+          }
+          const x2 = spx + (rands3[i] - 0.5) * 0.22;
+          const y2 = tipY + q * q * tail;
+          const x1 = spx + (rands3[i] - 0.5) * 1.6;
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.5) {
+            const s = e / 0.5;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else {
+            const s = (e - 0.5) / 0.5;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else if (u6 <= 0) {
+        wind = BEHAVIORS.timeline(ctx)?.wind ?? 0;
+      } else if (u6 < 1) {
+        // leg 6 waypoints: w0 the spent comet at the spine's foot ->
+        // w1 left lane -> w2 scattered behind the FAQ question list
+        const spine = rectW("tl-spine");
+        const list = rectW("faq-list");
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const q = rands2[i];
+          const pi = clamp01(u6 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = 0;
+          let y0 = vh * 1.2;
+          if (spine) {
+            x0 = spine.cx + (rands3[i] - 0.5) * 0.22;
+            y0 = spine.cy - spine.h / 2 + q * q * Math.min(spine.h * 0.35, vh * 0.55);
+          }
+          let x2 = -vw * 0.25;
+          let y2 = -vh * 0.3;
+          if (list) {
+            x2 = list.cx + (rands2[i] - 0.5) * list.w;
+            y2 = list.cy + (rands3[i] - 0.5) * list.h;
+          }
+          const x1 = -vw * (0.38 + r * 0.07);
+          const y1 = (y0 + y2) * 0.5;
+          let tx;
+          let ty;
+          if (e < 0.45) {
+            const s = e / 0.45;
+            tx = x0 + (x1 - x0) * s;
+            ty = y0 + (y1 - y0) * s;
+          } else {
+            const s = (e - 0.45) / 0.55;
+            tx = x1 + (x2 - x1) * s;
+            ty = y1 + (y2 - y1) * s;
+          }
+          const w = Math.sin(e * Math.PI);
+          claimK[i] = 12;
+          claimT[i * 3] = tx;
+          claimT[i * 3 + 1] = ty + Math.sin(pi * 5 + r * 12) * 0.25 * w;
+          claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
+        }
+      } else if (u7 <= 0) {
+        wind = BEHAVIORS.faq(ctx)?.wind ?? 0;
+      } else if (u7 < 1 && getHovered() !== "contact-cta") {
+        // leg 7 waypoints: w0 FAQ list scatter -> w1 right lane -> w2 the
+        // waitlist panel border. Hovering the submit button skips straight
+        // to the contact magnet.
+        const list = rectW("faq-list");
+        const panel = rectW("contact-panel");
+        for (let i = 0; i < dotN; i++) {
+          const r = rands[i];
+          const pi = clamp01(u7 * 1.35 - r * 0.35);
+          const e = pi * pi * (3 - 2 * pi);
+          let x0 = -vw * 0.25;
+          let y0 = vh * 1.2;
+          if (list) {
+            x0 = list.cx + (rands2[i] - 0.5) * list.w;
+            y0 = list.cy + (rands3[i] - 0.5) * list.h;
+          }
+          let x2 = 0;
+          let y2 = -vh * 0.3;
+          if (panel) {
+            bordersPoint([panel], rands2[i], rands3[i], 0.12, bOut);
+            x2 = bOut[0];
+            y2 = bOut[1];
           }
           const x1 = vw * (0.38 + r * 0.07);
           const y1 = (y0 + y2) * 0.5;
@@ -656,7 +780,7 @@ function ParticleEngine({ started, count, isMobile }) {
           claimT[i * 3 + 2] = (rands3[i] - 0.5) * 0.8 * w;
         }
       } else {
-        wind = BEHAVIORS.studenthook(ctx)?.wind ?? 0;
+        wind = BEHAVIORS.contact(ctx)?.wind ?? 0;
       }
     }
 
@@ -773,14 +897,12 @@ function ParticleEngine({ started, count, isMobile }) {
   if (!built) return null;
 
   return (
-    <group ref={groupRef}>
-      <instancedMesh ref={meshRef} args={[null, null, count]} frustumCulled={false}>
-        {/* 10x8 segments ≈ 60% fewer triangles; toon banding hides the
-            low-poly silhouette at these sphere sizes */}
-        <sphereGeometry args={[0.5, 10, 8]} />
-        <meshToonMaterial gradientMap={gradientMap} transparent opacity={0} />
-      </instancedMesh>
-    </group>
+    <instancedMesh ref={meshRef} args={[null, null, count]} frustumCulled={false}>
+      {/* 10x8 segments ≈ 60% fewer triangles; toon banding hides the
+          low-poly silhouette at these sphere sizes */}
+      <sphereGeometry args={[0.5, 10, 8]} />
+      <meshToonMaterial gradientMap={gradientMap} transparent opacity={0} />
+    </instancedMesh>
   );
 }
 

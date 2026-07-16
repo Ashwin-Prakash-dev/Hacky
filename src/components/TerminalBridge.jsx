@@ -171,7 +171,7 @@ const TerminalBridge = () => {
       data-particles="terminal"
       style={{
         position: "relative",
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "#050505",
         overflow: "hidden",
         padding: "clamp(4.5rem, 9vw, 7.5rem) clamp(1rem, 5vw, 3rem)",
       }}
@@ -192,10 +192,12 @@ const TerminalBridge = () => {
       <div
         data-particle-target="terminal-box"
         style={{
-          position: "relative", zIndex: 1,
+          // above the fixed particle canvas (z-30): the patrol ring and the
+          // access-granted burst emerge from behind the box edges
+          position: "relative", zIndex: 31,
           maxWidth: "720px", margin: "0 auto",
           border: "0.5px solid rgba(200,255,0,0.12)",
-          borderRadius: "6px",
+          borderRadius: "1rem",
           background: "rgba(200,255,0,0.018)",
           boxShadow: "0 0 0 1px rgba(0,0,0,0.6), 0 24px 80px rgba(0,0,0,0.5), inset 0 0 60px rgba(200,255,0,0.012)",
           backdropFilter: "blur(2px)",
@@ -208,7 +210,7 @@ const TerminalBridge = () => {
           padding: "0.7rem 1.2rem",
           borderBottom: "0.5px solid rgba(200,255,0,0.1)",
           background: "rgba(200,255,0,0.025)",
-          borderRadius: "6px 6px 0 0",
+          borderRadius: "1rem 1rem 0 0",
         }}>
           {["rgba(255,255,255,0.12)", "rgba(255,255,255,0.07)", "rgba(255,255,255,0.05)"].map((c, i) => (
             <span key={i} style={{
@@ -219,9 +221,9 @@ const TerminalBridge = () => {
           <span style={{
             marginLeft: "auto", fontFamily: "monospace",
             fontSize: "0.78rem", letterSpacing: "0.14em",
-            color: "rgba(200,255,0,0.75)", textTransform: "uppercase",
+            color: "rgba(200,255,0,0.75)",
           }}>
-            STARTATHON.SYS
+            Startathon.sys
           </span>
           <span style={{
             fontFamily: "monospace", fontSize: "0.72rem",
@@ -390,13 +392,13 @@ const TerminalBridge = () => {
           padding: "0.6rem 1.2rem",
           borderTop: "0.5px solid rgba(200,255,0,0.08)",
           background: "rgba(200,255,0,0.015)",
-          borderRadius: "0 0 6px 6px",
+          borderRadius: "0 0 1rem 1rem",
         }}>
           <span style={{ fontFamily: "monospace", fontSize: "0.72rem", letterSpacing: "0.12em", color: "rgba(255,255,255,0.55)", textTransform: "uppercase" }}>
             BUILDER ACCESS TERMINAL
           </span>
-          <span style={{ fontFamily: "monospace", fontSize: "0.72rem", letterSpacing: "0.12em", color: "rgba(200,255,0,0.6)", textTransform: "uppercase" }}>
-            STARTATHON 2026 // KERALA
+          <span style={{ fontFamily: "monospace", fontSize: "0.72rem", letterSpacing: "0.12em", color: "rgba(200,255,0,0.6)" }}>
+            Startathon 2026 // Kerala
           </span>
         </div>
       </div>
