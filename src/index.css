@@ -344,6 +344,24 @@ body.custom-cursor {
   will-change: transform;
 }
 
+/* Hero badge disc: ring text around a lime hub. The spin is driven
+   per-frame from Hero.jsx (idle drift + scroll velocity), not CSS.
+   The container carries the glass material (same recipe as the nav
+   island) so the ring text stays legible over any section it docks on. */
+.hero-disc {
+  border-radius: 50%;
+  background: rgba(8, 8, 8, 0.6);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 12px 36px rgba(0, 0, 0, 0.4);
+}
+.hero-disc-spin {
+  transform-origin: 60px 60px;
+}
+
 /* ── Shared premium components ───────────────────────────────────────────── */
 
 /* Border beam: a lime highlight endlessly tracing a bezel — a rotating

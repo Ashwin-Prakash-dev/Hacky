@@ -221,7 +221,10 @@ const LiquidLens = ({ started = true }) => {
         svg.style.height = `${cssH}px`;
       });
       nodes.current.tag.forEach((tag) => {
-        if (tag) tag.style.top = `calc(50% + ${cssH / 2 + 18}px)`;
+        if (!tag) return;
+        tag.style.top = `calc(50% + ${cssH / 2 + 18}px)`;
+        // flush with the right edge of the centered wordmark band
+        tag.style.right = `${(100 - frac * 100) / 2}%`;
       });
     };
     size();
@@ -844,9 +847,8 @@ const LiquidLens = ({ started = true }) => {
           ref={reg("tag")}
           style={{
             position: "absolute",
-            left: "50%",
+            right: "20%", // kept flush with the band's right edge by size()
             top: "72%",
-            transform: "translateX(-50%)",
             fontFamily: "var(--font-mono)",
             fontSize: "clamp(0.6rem, 1vw, 0.78rem)",
             letterSpacing: "0.32em",
