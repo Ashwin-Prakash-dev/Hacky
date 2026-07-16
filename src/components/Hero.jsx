@@ -38,12 +38,14 @@ const Hero = () => {
   const discChromeRef = useRef(null);
   const discFaceRef = useRef(null);
 
-  // The badge starts as a BANNER: the ring text on a flattened path laid
-  // straight across the wordmark. On scroll the path curls — its ends
-  // bend down until they meet — closing into the disc, which glides to
-  // the bottom-right corner and lives there as a fixed stamp. Spin is
-  // scroll-reactive (idle drift + smoothed velocity, backspins on up)
-  // and only engages once the ring has closed.
+  // The badge starts as a BANNER: the ring text on a flattened path,
+  // docked as the hero's top-right post (dark glass, lime type — quiet
+  // furniture, never brighter than the wordmark). On scroll the path
+  // reels into the disc at the top-right corner, then rides the right
+  // edge down to the bottom-right dock. Spin is scroll-reactive (idle
+  // drift + smoothed velocity) and only engages once the ring has
+  // closed. On mobile the reel sits out: the badge renders as a small
+  // closed disc under the nav with a gentle idle spin.
   useEffect(() => {
     const disc = discRef.current;
     const spin = discSpinRef.current;
@@ -90,7 +92,9 @@ const Hero = () => {
         arcEl.setAttribute("d", pathFor(1));
         chrome.setAttribute("opacity", "1");
         face.style.opacity = "1";
-        disc.style.transform = `translate3d(${window.innerWidth * 0.97 - D}px, ${Math.max(96, window.innerHeight * 0.14)}px, 0)`;
+        const s = window.innerWidth < 640 ? 0.55 : 0.68;
+        const cx = window.innerWidth - 16 - 64 * s - 18;
+        disc.style.transform = `translate3d(${(cx - D / 2).toFixed(1)}px, ${(130 - D / 2).toFixed(1)}px, 0) scale(${s})`;
       };
       place();
       window.addEventListener("resize", place);
@@ -108,9 +112,27 @@ const Hero = () => {
       vel += (y - lastY - vel) * 0.15; // smoothed px/frame
       lastY = y;
 
-      // two-leg journey: leg 1 (c 0→0.5) the banner flows RIGHT while
-      // reeling itself into the ring at the top-right; leg 2 (c 0.5→1)
-      // the closed ring rides the right edge down to the bottom corner
+      if (vw < 640) {
+        // mobile: no reel — a small closed disc that rests under the
+        // nav (top-right) and rides the right edge down to the
+        // bottom-right dock on scroll, spinning gently throughout
+        arcEl.setAttribute("d", pathFor(1));
+        chrome.setAttribute("opacity", "1");
+        face.style.opacity = "1";
+        const s = 0.55;
+        const cx = vw - 16 - 36;
+        const p = ease(Math.min(y / (vh * 0.6), 1));
+        const cy = 130 + (vh - 24 - 36 - 130) * p;
+        disc.style.transform = `translate3d(${(cx - D / 2).toFixed(1)}px, ${(cy - D / 2).toFixed(1)}px, 0) scale(${s})`;
+        rot += 0.15 + vel * 0.2;
+        spin.style.transform = `rotate(${rot.toFixed(2)}deg)`;
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
+      // two-leg journey: leg 1 (c 0→0.5) the banner reels itself into
+      // the ring at the top-right corner; leg 2 (c 0.5→1) the closed
+      // ring rides the right edge down to the bottom corner
       const c = Math.min(Math.max(y / (vh * 0.9), 0), 1);
       const p1 = ease(Math.min(c / 0.5, 1));
       const p2 = ease(Math.max((c - 0.5) / 0.5, 0));
@@ -118,19 +140,22 @@ const Hero = () => {
       // curl the banner into the ring (one-sided reel)
       arcEl.setAttribute("d", pathFor(p1));
 
-      // scale: banner spans ~46vw across the wordmark -> ~87px disc
-      const kA = (vw * 0.46) / (RING * (D / 120));
+      // scale: banner spans ~30vw as the top-right post (clamped so the
+      // ring text stays legible on tablets and sane on ultrawides)
+      // -> ~87px disc
+      const kA = Math.min(Math.max(vw * 0.3, 320), 480) / (RING * (D / 120));
       const kB = 0.68;
       const k = kA + (kB - kA) * p1;
-      // the reel entry point (60,14) is the anchor. At rest the banner
-      // hangs left of it (centered over the wordmark); leg 1 flies it to
-      // the top-right corner, leg 2 drops it to the bottom-right dock.
+      // the reel entry point (60,14) is the anchor. At rest the banner's
+      // right end sits flush with the content margin (top-right post);
+      // leg 1 reels it into the corner ring, leg 2 drops it to the dock.
       const xC = vw - 24 - (D * kB) / 2; // right-edge column, both corners
       const ayTR = 132 - ANCHOR * kB; // ring center y 132, under the nav
       const ayBR = vh - 24 - (D * kB) / 2 - ANCHOR * kB;
-      const bannerHalf = (RING * (D / 120) * kA) / 2;
-      const ax = vw / 2 + bannerHalf + (xC - vw / 2 - bannerHalf) * p1;
-      const ay = vh * 0.32 + (ayTR - vh * 0.32) * p1 + (ayBR - ayTR) * p2;
+      const axRest = vw - 40; // right end at the px-10 content margin
+      const ayRest = 148; // banner line just under the nav band
+      const ax = axRest + (xC - axRest) * p1;
+      const ay = ayRest + (ayTR - ayRest) * p1 + (ayBR - ayTR) * p2;
       disc.style.transform = `translate3d(${(ax - D / 2).toFixed(1)}px, ${(ay - D / 2 + ANCHOR * k).toFixed(1)}px, 0) scale(${k.toFixed(3)})`;
 
       // disc chrome (glass face, rings, hub) surfaces as the reel closes
@@ -169,20 +194,24 @@ const Hero = () => {
     });
   });
 
-  // "30 hrs" and "20 teams" already live in the wordmark tagline — the
-  // chips only carry what isn't said elsewhere. `hot` flips a chip to the
-  // lime emphasis treatment.
-  const facts = [
-    { label: "SCTCE · Trivandrum" },
-    { label: "₹2L+ prize pool", hot: true },
-  ];
-
-  const chipClass = (hot) =>
-    `rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.18em] backdrop-blur-sm ${
-      hot
-        ? "border-[#C8FF00]/40 bg-[#C8FF00]/10 text-[#C8FF00] shadow-[0_0_18px_rgba(200,255,0,0.15)]"
-        : "border-white/10 bg-black/30 text-blue-50/70"
-    }`;
+  // Each fact is said exactly once in the hero: prize pool + team cap on
+  // the ribbon, hours + teams in the wordmark tagline, date + venue here.
+  const facts = (
+    <>
+      <span
+        style={{ fontFamily: "var(--font-mono)" }}
+        className="text-[11px] uppercase tracking-[0.3em] text-[#C8FF00]"
+      >
+        July 2026
+      </span>
+      <span
+        style={{ fontFamily: "var(--font-mono)" }}
+        className="text-[10px] uppercase tracking-[0.22em] text-blue-50/50"
+      >
+        SCTCE · Thiruvananthapuram
+      </span>
+    </>
+  );
 
   return (
     <section
@@ -203,7 +232,9 @@ const Hero = () => {
           (z-20) but BELOW the lens (z-45), so the blob's backdrop filter
           recolors this text live as it passes over. The blob collapses
           over the CTAs, so they stay usable. */}
-      <div className="absolute left-0 top-0 z-[21] flex size-full flex-col justify-between px-5 pb-10 pt-28 sm:px-10 sm:pb-14">
+      <div className="absolute left-0 top-0 z-[21] flex size-full flex-col justify-between px-5 pb-8 pt-24 sm:px-10 sm:pb-12 sm:pt-28">
+        {/* Top-left post: the positioning line, balancing the ribbon
+            (top-right post). The h1 stays for a11y/reduced-motion. */}
         <div>
           <h1 className={inkOk ? "sr-only" : "hero-heading text-blue-100"}>
             Startathon{!inkOk && <span className="hero-dot">.</span>}
@@ -213,29 +244,26 @@ const Hero = () => {
               Thiruvananthapuram
             </span>
           </h1>
+          <p
+            className="max-w-60 text-xl leading-snug text-blue-50/80 sm:text-2xl"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Kerala&rsquo;s most curated hackathon
+            <span className="text-[#C8FF00]">.</span>
+          </p>
         </div>
 
-        {/* Bottom band, split for balance: message + CTAs bottom-left,
-            fact chips as a right-aligned rail bottom-right (they echo the
-            wordmark tagline's right alignment). On mobile the rail folds
-            back into the left block. */}
+        {/* Baseline band: message + CTAs anchor the left corner, the
+            date/venue facts anchor the right — a framed composition
+            around the centered wordmark. On mobile the facts stack
+            into the left column. */}
         <div className="flex w-full flex-wrap items-end justify-between gap-6">
-          <div className="glass- w-fit max-w-full p-6 sm:p-7">
-            <p className="hero-sub mb-5 max-w-sm font-general text-base text-blue-50">
+          <div className="w-fit max-w-full">
+            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50">
               Not everyone gets in.
             </p>
 
-            <div className="mb-7 flex max-w-md flex-wrap items-center gap-2 sm:hidden">
-              {facts.map(({ label, hot }) => (
-                <span
-                  key={label}
-                  style={{ fontFamily: "var(--font-mono)" }}
-                  className={chipClass(hot)}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
+            <div className="mb-6 flex flex-col gap-1.5 sm:hidden">{facts}</div>
 
             <div className="flex flex-wrap items-center gap-5">
               <Link to="/apply" className="cta-pill group">
@@ -261,26 +289,19 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="hidden flex-col items-end gap-2 pb-1 sm:flex">
-            {facts.map(({ label, hot }) => (
-              <span
-                key={label}
-                style={{ fontFamily: "var(--font-mono)" }}
-                className={chipClass(hot)}
-              >
-                {label}
-              </span>
-            ))}
+          <div className="hidden flex-col items-end gap-1.5 pb-1 text-right sm:flex">
+            {facts}
           </div>
         </div>
 
-        {/* Badge banner→disc: fixed, so it survives the hero. Starts as a
-            straight text banner across the wordmark; the path curls into
-            a ring on scroll and docks bottom-right (driven per-frame by
-            the effect above). */}
+        {/* Badge banner→disc: fixed, so it survives the hero. Desktop:
+            a straight text banner docked top-right that reels into a
+            ring on scroll and docks bottom-right; mobile: a small closed
+            disc under the nav (both driven per-frame by the effect
+            above). */}
         <div
           ref={discRef}
-          className="hero-disc pointer-events-none fixed left-0 top-0 hidden sm:block"
+          className="hero-disc pointer-events-none fixed left-0 top-0"
           aria-hidden="true"
         >
           {/* no z-index here: the face must paint BELOW the svg (which is
@@ -299,10 +320,11 @@ const Hero = () => {
             <defs>
               {/* morphed per-frame: straight banner -> reeled ring r46 */}
               <path ref={discArcRef} id="hero-disc-arc" d="M -229 14 L 60 14" />
-              {/* ribbon material: off-white gradient with a faint lime
-                  cast. User-space coords: a bbox-relative gradient
-                  degenerates on the flat banner (zero-height bbox) and
-                  the band paints as nothing. */}
+              {/* ribbon material: dark glass with a faint lime cast —
+                  furniture, never brighter than the wordmark. User-space
+                  coords: a bbox-relative gradient degenerates on the flat
+                  banner (zero-height bbox) and the band paints as
+                  nothing. */}
               <linearGradient
                 id="hero-band-grad"
                 gradientUnits="userSpaceOnUse"
@@ -311,10 +333,10 @@ const Hero = () => {
                 x2="110"
                 y2="120"
               >
-                <stop offset="0" stopColor="#ffffff" />
-                <stop offset="0.45" stopColor="#edf2e0" />
-                <stop offset="0.72" stopColor="#ffffff" />
-                <stop offset="1" stopColor="#e5efcf" />
+                <stop offset="0" stopColor="#1c2110" />
+                <stop offset="0.45" stopColor="#101408" />
+                <stop offset="0.72" stopColor="#191e0c" />
+                <stop offset="1" stopColor="#0c0f06" />
               </linearGradient>
               {/* shader-style surface: anisotropic turbulence streaks a
                   holographic sheen along the ribbon, then a drop shadow
@@ -339,7 +361,7 @@ const Hero = () => {
                 <feColorMatrix
                   in="noise"
                   type="matrix"
-                  values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.82  0 0 0 0.45 0"
+                  values="0 0 0 0 0.55  0 0 0 0 0.72  0 0 0 0 0  0 0 0 0.22 0"
                   result="tint"
                 />
                 <feComposite
@@ -362,7 +384,16 @@ const Hero = () => {
               </filter>
             </defs>
             {/* the ribbon: a thick stroke on the SAME morphing path, so
-                it curls with the text and closes into the disc's ring */}
+                it curls with the text and closes into the disc's ring.
+                A slightly wider lime under-stroke rims the dark band so
+                it keeps an edge against the near-black ground. */}
+            <use
+              href="#hero-disc-arc"
+              fill="none"
+              stroke="rgba(200,255,0,0.32)"
+              strokeWidth="24"
+              strokeLinecap="round"
+            />
             <use
               href="#hero-disc-arc"
               fill="none"
@@ -390,7 +421,7 @@ const Hero = () => {
             </g>
             <g ref={discSpinRef} className="hero-disc-spin">
               <text
-                fill="#141804"
+                fill="#C8FF00"
                 fontSize="10.5"
                 dominantBaseline="central"
                 style={{ fontFamily: "var(--font-mono)" }}

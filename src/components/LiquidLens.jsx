@@ -207,9 +207,12 @@ const LiquidLens = ({ started = true }) => {
     });
 
     const size = () => {
-      // a centered band: 60vw on desktop, 84vw on mobile
+      // a centered band: 60vw on desktop, 84vw on mobile. On mobile the
+      // band anchors in the upper third (dead-center leaves the top half
+      // of the phone viewport empty); desktop stays vertically centered.
       const mobile = window.innerWidth < 768;
       const frac = mobile ? 0.84 : 0.6;
+      const topPct = mobile ? 36 : 50;
       const cssW = Math.min(
         window.innerWidth * frac,
         window.innerHeight * frac * 2.48
@@ -219,12 +222,17 @@ const LiquidLens = ({ started = true }) => {
         if (!svg) return;
         svg.style.width = `${cssW}px`;
         svg.style.height = `${cssH}px`;
+        svg.style.top = `${topPct}%`;
       });
       nodes.current.tag.forEach((tag) => {
         if (!tag) return;
-        tag.style.top = `calc(50% + ${cssH / 2 + 18}px)`;
-        // flush with the right edge of the centered wordmark band
+        tag.style.top = `calc(${topPct}% + ${cssH / 2 + 18}px)`;
+        // flush with the right edge of the centered wordmark band; on
+        // mobile the tracking and size step down so the line stays
+        // inside the margins instead of running edge-to-edge
         tag.style.right = `${(100 - frac * 100) / 2}%`;
+        tag.style.fontSize = mobile ? "0.55rem" : "clamp(0.6rem, 1vw, 0.78rem)";
+        tag.style.letterSpacing = mobile ? "0.18em" : "0.32em";
       });
     };
     size();
