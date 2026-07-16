@@ -50,7 +50,6 @@ const VideoCard = ({ src, title, label, category }) => {
     <div
       ref={cardRef}
       className="relative size-full overflow-hidden"
-      data-particle-hover={`video-${src}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onMouseMove={(e) => {
@@ -278,7 +277,7 @@ const VideoCards = () => {
     <section
       ref={sectionRef}
       id="showcase"
-      data-particles="videocards"
+      data-lens="showcase"
       style={{ backgroundColor: "#050505", paddingBottom: 0 }}
     >
       <div className="container mx-auto px-3 md:px-10">
@@ -288,10 +287,7 @@ const VideoCards = () => {
           ref={headerRef}
           style={{
             padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2.5rem, 5vw, 4rem)",
-            // above the fixed particle canvas (z-30): the migrating swarm
-            // passes behind the heading text on its way to the video grid
             position: "relative",
-            zIndex: 31,
           }}
         >
           <span className="vc-reveal eyebrow" style={{ marginBottom: "1.4rem", opacity: 0 }}>
@@ -300,7 +296,6 @@ const VideoCards = () => {
 
           <h2
             className="vc-reveal special-font"
-            data-particle-target="vc-heading"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(2.4rem, 6vw, 5.2rem)",
@@ -334,17 +329,10 @@ const VideoCards = () => {
         </div>
 
         {/* ── Desktop bento grid ───────────────────────────── */}
-        <div
-          className="vc-desktop-grid"
-          data-particle-target="vc-grid"
-          // above the fixed particle canvas (z-30): border particles pass
-          // behind the videos and read as an outline in the gaps
-          style={{ position: "relative", zIndex: 31 }}
-        >
+        <div className="vc-desktop-grid" style={{ position: "relative" }}>
           {/* Hero Card: ANTHROPIC (full width) */}
           <div
             className="vc-card-wrap"
-            data-particle-target="vc-card-0"
             style={{ marginBottom: GAP, height: "clamp(300px, 58vh, 660px)" }}
           >
             <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
@@ -354,14 +342,13 @@ const VideoCards = () => {
 
           {/* 2-col grid: SPACEX (tall) + PALANTIR / OPENAI */}
           <div className="vc-grid" style={{ gap: GAP, marginBottom: GAP }}>
-            <div className="vc-card-wrap vc-spacex" data-particle-target="vc-card-1">
+            <div className="vc-card-wrap vc-spacex">
               <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
                 <VideoCard {...CARDS[1]} />
               </BentoTilt>
             </div>
             <div
               className="vc-card-wrap"
-              data-particle-target="vc-card-2"
               style={{ height: "clamp(220px, 34vh, 360px)" }}
             >
               <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
@@ -370,7 +357,6 @@ const VideoCards = () => {
             </div>
             <div
               className="vc-card-wrap"
-              data-particle-target="vc-card-3"
               style={{ height: "clamp(220px, 34vh, 360px)" }}
             >
               <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
@@ -382,7 +368,6 @@ const VideoCards = () => {
           {/* ANDURIL — full width footer card */}
           <div
             className="vc-card-wrap"
-            data-particle-target="vc-card-4"
             style={{ height: "clamp(220px, 38vh, 400px)" }}
           >
             <BentoTilt className="h-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out">
@@ -418,17 +403,13 @@ const VideoCards = () => {
         <div
           id="what-is-it"
           className="vc-card-wrap vc-intro-grid"
-          data-particle-target="intro-grid"
           style={{
             padding: "clamp(5rem, 10vw, 8rem) 1.25rem clamp(2rem, 4vw, 3rem)",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "clamp(2rem, 6vw, 6rem)",
             alignItems: "end",
-            // above the fixed particle canvas (z-30): the swarm passes
-            // behind these texts on its way to the stats row
             position: "relative",
-            zIndex: 31,
           }}
         >
           {/* Left: heading */}
@@ -438,7 +419,6 @@ const VideoCards = () => {
             </span>
             <h2
               className="special-font"
-              data-particle-target="intro-title"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(2.2rem, 5vw, 4.4rem)",
@@ -455,7 +435,6 @@ const VideoCards = () => {
 
           {/* Right: body */}
           <div
-            data-particle-target="intro-desc"
             style={{
               borderLeft: "1px solid rgba(200,255,0,0.25)",
               paddingLeft: "clamp(1.25rem, 2.5vw, 2rem)",

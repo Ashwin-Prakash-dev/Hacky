@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
-import { faqDelta, emit as emitParticleEvent } from "./particles/registry";
 
 const faqs = [
   {
@@ -51,7 +50,6 @@ const FAQItem = ({ question, answer }) => {
     } else {
       tl.current = gsap.to(body, { height: 0, opacity: 0, duration: 0.3, ease: "power3.in" });
     }
-    faqDelta(open ? -1 : 1);
     setOpen((prev) => !prev);
   };
 
@@ -62,7 +60,7 @@ const FAQItem = ({ question, answer }) => {
       paddingLeft: "1rem", marginLeft: "-1rem",
       transition: "border-color 0.3s ease",
     }}>
-      <button onClick={toggle} className="w-full text-left" style={{
+      <button onClick={toggle} className="w-full text-left" data-lens-label={question} style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "1.5rem 0", background: "none", border: "none", cursor: "pointer", gap: "1.25rem",
       }}>
@@ -99,7 +97,6 @@ const FAQ = () => {
 
   const handleSelect = (i) => {
     if (i === selected) return;
-    emitParticleEvent("faq-select");
     setSelected(i);
   };
 
@@ -115,7 +112,7 @@ const FAQ = () => {
   return (
     <section
       id="faq"
-      data-particles="faq"
+      data-lens="faq"
       className="w-screen"
       style={{ background: "#050505", padding: "6rem 0" }}
     >
@@ -136,18 +133,15 @@ const FAQ = () => {
           gridTemplateColumns: "1fr 1fr",
           gap: "clamp(2.5rem, 6vw, 5rem)",
           alignItems: "start",
-          // above the fixed particle canvas (z-30): the swarm scatters
-          // behind the question list and rings the answer panel on select
-          position: "relative",
-          zIndex: 31,
         }}>
           {/* Left: question list */}
-          <div data-particle-target="faq-list">
+          <div>
             {faqs.map((faq, i) => (
               <button
                 key={i}
                 onClick={() => handleSelect(i)}
                 className="faq-q"
+                data-lens-label={faq.q}
                 style={{
                   width: "100%", textAlign: "left",
                   display: "flex", alignItems: "baseline", gap: "1.25rem",
@@ -182,7 +176,7 @@ const FAQ = () => {
           </div>
 
           {/* Right: sticky answer panel */}
-          <div data-particle-target="faq-answer" style={{ position: "sticky", top: "8rem" }}>
+          <div style={{ position: "sticky", top: "8rem" }}>
             <div ref={answerRef}>
               <p className="font-general" style={{
                 fontSize: "clamp(0.95rem, 1.6vw, 1.1rem)",

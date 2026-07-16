@@ -8,7 +8,7 @@ import CustomCursor from "../components/CustomCursor";
 import ScrollProgress from "../components/ScrollProgress";
 import NavBar from "../components/Navbar";
 import Hero from "../components/Hero";
-import GlobalParticles, { canUseParticles } from "../components/particles/GlobalParticles";
+import LiquidLens from "../components/LiquidLens";
 import SponsorsSection from "../components/SponsorsSection";
 import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
@@ -27,7 +27,6 @@ const MainPage = () => {
   const [introComplete, setIntroComplete] = useState(
     () => sessionStorage.getItem(INTRO_SEEN_KEY) === "1"
   );
-  const [particlesOk] = useState(canUseParticles);
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -71,9 +70,11 @@ const MainPage = () => {
         />
       )}
       {introComplete && <GoogleOneTap />}
-      {particlesOk && <GlobalParticles started={introComplete} />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
+        {/* the liquid ink hero headline + the site-wide x-ray lens blob;
+            its base layer anchors to <main>'s top (the hero viewport) */}
+        <LiquidLens started={introComplete} />
         <Hero />
         <SponsorsSection />
         <VideoCards />

@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from "react";
-import { emit as emitParticleEvent } from "./particles/registry";
 import "./TerminalBridge.css";
 
 /* ── Boot sequence ──────────────────────────────────────────────────────── */
@@ -92,7 +91,6 @@ const TerminalBridge = () => {
           timersRef.current.push(t2);
         }
         if (line.type === "granted") {
-          emitParticleEvent("access-granted");
           const t3 = setTimeout(() => setInteractive(true), 600);
           timersRef.current.push(t3);
         }
@@ -168,7 +166,7 @@ const TerminalBridge = () => {
   return (
     <section
       ref={sectionRef}
-      data-particles="terminal"
+      data-lens="terminal"
       style={{
         position: "relative",
         backgroundColor: "#050505",
@@ -190,11 +188,8 @@ const TerminalBridge = () => {
 
       {/* ── Terminal Panel ─────────────────────────────────────── */}
       <div
-        data-particle-target="terminal-box"
         style={{
-          // above the fixed particle canvas (z-30): the patrol ring and the
-          // access-granted burst emerge from behind the box edges
-          position: "relative", zIndex: 31,
+          position: "relative",
           maxWidth: "720px", margin: "0 auto",
           border: "0.5px solid rgba(200,255,0,0.12)",
           borderRadius: "1rem",

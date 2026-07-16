@@ -70,23 +70,18 @@ const StudentHook = () => {
   return (
     <section
       ref={sectionRef}
-      data-particles="studenthook"
+      data-lens="builders"
       style={{ background: "#050505", padding: "7rem 0 6rem", width: "100%" }}
     >
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
         <div
           ref={headlineRef}
-          data-particle-target="hook-scatter"
           style={{
             display: "flex", gap: "clamp(2rem, 5vw, 4rem)",
             alignItems: "flex-start", marginBottom: "5rem",
             opacity: 0, flexWrap: "wrap",
-            // GSAP's entrance transform makes this a stacking context, which
-            // would trap any child z-index below the fixed canvas (z-30) —
-            // so the whole block sits above it
             position: "relative",
-            zIndex: 31,
           }}
         >
           {/* Left: text */}
@@ -130,17 +125,7 @@ const StudentHook = () => {
             }}>
               If you're a builder and you resonated with that, there's no reason you shouldn't apply.
             </p>
-            <Link
-              to="/apply"
-              className="cta-pill group"
-              data-particle-hover="hook-apply"
-              style={{
-                // above the fixed particle canvas (z-30): the hover swarm
-                // orbits behind the button
-                position: "relative",
-                zIndex: 31,
-              }}
-            >
+            <Link to="/apply" className="cta-pill group">
               <span className="relative inline-flex overflow-hidden">
                 <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
                   Apply Now
@@ -156,15 +141,11 @@ const StudentHook = () => {
           {/* Right: video */}
           <div style={{ flex: "1 1 340px", minWidth: 0 }}>
             <div
-              data-particle-target="hook-video"
               style={{
                 position: "relative", width: "100%", paddingBottom: "56.25%",
                 borderRadius: "1.25rem", overflow: "hidden",
                 border: "1px solid rgba(255,255,255,0.08)",
                 boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
-                // above the fixed particle canvas (z-30): the swarm rings
-                // the border from behind
-                zIndex: 31,
               }}>
               <iframe
                 src="https://player.vimeo.com/video/1197348906?autoplay=0&title=0&byline=0&portrait=0"
@@ -238,7 +219,6 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="sh-outcome-grid"
-      data-particle-target={`hook-${Number(item.num) - 1}`}
       style={{
         display: "grid",
         gridTemplateColumns: "3.5rem 1fr 1.6fr",

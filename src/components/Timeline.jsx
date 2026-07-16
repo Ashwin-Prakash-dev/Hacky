@@ -286,11 +286,11 @@ const Timeline = () => {
     <section
       ref={sectionRef}
       id="timeline"
-      data-particles="timeline"
+      data-lens="briefing"
       style={{ background: "#050505", position: "relative", width: "100%", paddingBottom: "9rem" }}
     >
       {/* Faint axis track */}
-      <div className="fc-axis-track" data-particle-target="tl-spine" style={{
+      <div className="fc-axis-track" style={{
         position: "absolute", left: "50%", top: 0, bottom: 0,
         width: "1px", background: "rgba(255,255,255,0.05)",
         transform: "translateX(-50%)", zIndex: 0, pointerEvents: "none",
@@ -337,7 +337,7 @@ const Timeline = () => {
           className="fc-row"
           style={{ display: "flex", alignItems: "center", padding: "2.5rem 0", opacity: 0 }}
         >
-          <div className="fc-card" data-particle-target="tl-node-0" style={{ flex: 1, paddingRight: "2rem" }}>
+          <div className="fc-card" style={{ flex: 1, paddingRight: "2rem" }}>
             <ImportedCardSlot><PrizesCard /></ImportedCardSlot>
           </div>
           <div className="fc-spacer" style={{ flex: 1 }} />
@@ -350,7 +350,7 @@ const Timeline = () => {
           style={{ display: "flex", alignItems: "center", padding: "2.5rem 0", opacity: 0 }}
         >
           <div className="fc-spacer" style={{ flex: 1 }} />
-          <div className="fc-card" data-particle-target="tl-node-1" style={{ flex: 1, paddingLeft: "2rem" }}>
+          <div className="fc-card" style={{ flex: 1, paddingLeft: "2rem" }}>
             <ImportedCardSlot><ExpectCard /></ImportedCardSlot>
           </div>
         </div>
@@ -361,7 +361,7 @@ const Timeline = () => {
           className="fc-row"
           style={{ display: "flex", alignItems: "center", padding: "2.5rem 0", opacity: 0 }}
         >
-          <div className="fc-card" data-particle-target="tl-node-2" style={{ flex: 1, paddingRight: "2rem" }}>
+          <div className="fc-card" style={{ flex: 1, paddingRight: "2rem" }}>
             <ImportedCardSlot><MentorsCard /></ImportedCardSlot>
           </div>
           <div className="fc-spacer" style={{ flex: 1 }} />
@@ -374,7 +374,7 @@ const Timeline = () => {
           style={{ display: "flex", alignItems: "center", padding: "2.5rem 0", opacity: 0 }}
         >
           <div className="fc-spacer" style={{ flex: 1 }} />
-          <div className="fc-card" data-particle-target="tl-node-3" style={{ flex: 1, paddingLeft: "2rem" }}>
+          <div className="fc-card" style={{ flex: 1, paddingLeft: "2rem" }}>
             <ImportedCardSlot><RulesCard /></ImportedCardSlot>
           </div>
         </div>

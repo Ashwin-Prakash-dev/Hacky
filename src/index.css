@@ -271,65 +271,46 @@ body.custom-cursor {
   }
 }
 
-/* ── Hero liquid reveal: oil-slick surface ──────────────────────────────── */
-/* Iridescent film drifting over the lime world — reads as oil on liquid.
-   Transform-only animation on its own layer; clipped by the blob. */
-.oil-film {
+/* ── Hero liquid reveal: x-ray lens surface ─────────────────────────────── */
+/* Inside the cursor blob the hero flips to its blueprint: a fine lime
+   drafting grid on near-black, a soft scan-light trailing the cursor, and
+   a faint lens rim hugging the blob edge. All clipped by the blob. */
+.lens-grid {
   position: absolute;
-  inset: -20%;
-  background:
-    radial-gradient(40% 55% at 30% 35%, rgba(255, 0, 180, 0.5), transparent 70%),
-    radial-gradient(45% 60% at 70% 60%, rgba(0, 200, 255, 0.46), transparent 70%),
-    radial-gradient(50% 50% at 55% 25%, rgba(140, 80, 255, 0.4), transparent 70%),
-    radial-gradient(45% 55% at 40% 78%, rgba(255, 220, 0, 0.34), transparent 70%);
-  mix-blend-mode: overlay;
-  filter: blur(24px) saturate(1.6);
-  animation: oilDrift 14s ease-in-out infinite alternate;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200, 255, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 255, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(200, 255, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 255, 0, 0.1) 1px, transparent 1px);
+  background-size:
+    44px 44px,
+    44px 44px,
+    220px 220px,
+    220px 220px;
   pointer-events: none;
 }
-/* second film, counter-drifting: the two layers slide over each other so
-   the colors interfere and shift like a real oil slick */
-.oil-film--b {
-  background:
-    radial-gradient(38% 50% at 66% 30%, rgba(0, 255, 190, 0.4), transparent 70%),
-    radial-gradient(46% 58% at 26% 66%, rgba(255, 90, 40, 0.34), transparent 70%),
-    radial-gradient(42% 46% at 58% 80%, rgba(80, 120, 255, 0.38), transparent 70%);
-  mix-blend-mode: color-dodge;
-  opacity: 0.5;
-  animation: oilDriftB 19s ease-in-out infinite alternate;
-}
-@keyframes oilDrift {
-  0%   { transform: translate(-4%, -3%) rotate(0deg) scale(1); }
-  50%  { transform: translate(3%, 4%) rotate(7deg) scale(1.08); }
-  100% { transform: translate(-2%, 2%) rotate(-6deg) scale(1.04); }
-}
-@keyframes oilDriftB {
-  0%   { transform: translate(3%, 2%) rotate(4deg) scale(1.06); }
-  50%  { transform: translate(-3%, -4%) rotate(-6deg) scale(1); }
-  100% { transform: translate(2%, -2%) rotate(5deg) scale(1.1); }
-}
-/* Specular hotspot trailing the blob center — the glossy highlight */
-.oil-sheen {
+/* Scan-light: a soft lime glow trailing the blob center, positioned
+   per-frame — the lens's own illumination */
+.lens-glare {
   position: absolute;
   left: 0;
   top: 0;
-  width: 380px;
-  height: 380px;
-  margin: -190px 0 0 -190px;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.16) 40%,
-    transparent 66%
+    rgba(200, 255, 0, 0.13),
+    rgba(200, 255, 0, 0.04) 45%,
+    transparent 65%
   );
-  mix-blend-mode: soft-light;
   pointer-events: none;
   will-change: transform;
 }
-/* Meniscus: darker ring with an inner bright lip, scaled per-frame to hug
-   the blob edge — gives the surface its convex, oily depth */
-.oil-rim {
+/* Lens rim: a faint lime ring scaled per-frame to hug the blob edge */
+.lens-rim {
   position: absolute;
   left: 0;
   top: 0;
@@ -339,21 +320,79 @@ body.custom-cursor {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    transparent 52%,
-    rgba(255, 255, 255, 0.22) 64%,
-    rgba(25, 35, 0, 0.4) 78%,
-    rgba(10, 15, 0, 0.18) 86%,
-    transparent 94%
+    transparent 56%,
+    rgba(200, 255, 0, 0.2) 66%,
+    rgba(200, 255, 0, 0.05) 76%,
+    transparent 86%
   );
-  mix-blend-mode: overlay;
   pointer-events: none;
+  will-change: transform;
+}
+/* Live cursor coordinate readout riding beside the blob center */
+.lens-readout {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(200, 255, 0, 0.85);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
   will-change: transform;
 }
 
 /* ── Shared premium components ───────────────────────────────────────────── */
 
+/* Border beam: a lime highlight endlessly tracing a bezel — a rotating
+   conic gradient masked down to the shell's padding ring. Used on the
+   contact panel's outer shell. */
+.border-beam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--beam-angle, 0deg),
+    transparent 0deg,
+    transparent 300deg,
+    rgba(200, 255, 0, 0.05) 330deg,
+    rgba(200, 255, 0, 0.85) 352deg,
+    #eaffb3 356deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: beamSpin 7s linear infinite;
+}
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes beamSpin {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .border-beam::before {
+    display: none;
+  }
+}
+
 /* Glass panel: the nav island's material as a content card — used by the
-   hero text block. Particles and the lime blob frost as they pass behind. */
+   hero text block. The lime blob frosts as it passes behind. */
 .glass-panel {
   background: rgba(8, 8, 8, 0.55);
   box-shadow:
@@ -638,6 +677,7 @@ body.custom-cursor {
   pointer-events: none; z-index: 99999;
   transform: translate(-50%, -50%);
   will-change: transform;
+  transition: background-color 0.25s var(--ease-out);
 }
 .cursor-ring {
   position: fixed; top: 0; left: 0;
@@ -646,6 +686,31 @@ body.custom-cursor {
   pointer-events: none; z-index: 99998;
   transform: translate(-50%, -50%);
   will-change: transform;
+  transition: border-color 0.3s var(--ease-out), border-radius 0.3s var(--ease-out);
+}
+/* Reticle crosshair arms, hidden until the lens locks a target */
+.cursor-ring::before,
+.cursor-ring::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #C8FF00;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+.cursor-ring::before { width: 40px; height: 1px; margin: -0.5px 0 0 -20px; }
+.cursor-ring::after { width: 1px; height: 40px; margin: -20px 0 0 -0.5px; }
+/* Target lock (body class set by LiquidLens while an Apply CTA is
+   hovered): the ring squares into a reticle, the dot goes lime */
+body.lens-lock .cursor-dot { background: #C8FF00; }
+body.lens-lock .cursor-ring {
+  border-color: rgba(200, 255, 0, 0.9);
+  border-radius: 7px;
+}
+body.lens-lock .cursor-ring::before,
+body.lens-lock .cursor-ring::after {
+  opacity: 0.85;
 }
 @media (hover: none), (pointer: coarse) {
   .cursor-dot, .cursor-ring { display: none !important; }

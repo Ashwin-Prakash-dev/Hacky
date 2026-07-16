@@ -105,18 +105,15 @@ const WaitlistForm = () => {
   }
 
   return (
-    // outer machined shell — the particle swarm patrols this border
+    // outer machined shell — a lime border-beam patrols the bezel
     <div
-      data-particle-target="contact-panel"
+      className="border-beam"
       style={{
         padding: "0.375rem",
         borderRadius: "1.75rem",
         background: "rgba(255,255,255,0.03)",
         boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)",
-        // above the fixed particle canvas (z-30): the patrol ring passes
-        // behind the panel and shows around its edges
         position: "relative",
-        zIndex: 31,
       }}>
     <div style={{
       background: "linear-gradient(145deg, #0d0d0d, #090909)",
@@ -218,7 +215,6 @@ const WaitlistForm = () => {
 
         <button
           type="submit"
-          data-particle-hover="contact-cta"
           disabled={status === "loading"}
           style={{
             width: "100%", padding: "0.95rem",

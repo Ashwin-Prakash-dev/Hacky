@@ -2,12 +2,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { useState } from "react";
-import HeroLiquidReveal from "./HeroLiquidReveal";
 import { Link } from "react-router-dom";
 
-// The particle headline is drawn by the site-wide canvas (GlobalParticles,
-// mounted in MainPage); this section supplies the dark backdrop it floats
-// over and the DOM fallback headline when WebGL/motion is unavailable.
+// The headline is the liquid ink wordmark (LiquidLens, mounted site-wide
+// in MainPage); this section supplies the dark backdrop it floats over and
+// the DOM fallback headline when reduced motion is requested.
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,25 +23,15 @@ const StaticHeroBackground = () => (
   />
 );
 
-function canUseParticles() {
+function canUseInk() {
   if (typeof window === "undefined") return false;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    return false;
-  try {
-    const canvas = document.createElement("canvas");
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
-    );
-  } catch {
-    return false;
-  }
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 const Hero = () => {
-  // When WebGL/motion is unavailable, the particle headline can't render —
-  // fall back to the visible DOM headline over a static gradient.
-  const [particlesOk] = useState(canUseParticles);
+  // Under reduced motion the liquid ink headline sits out — fall back to
+  // the visible DOM headline over a static gradient.
+  const [inkOk] = useState(canUseInk);
 
   useGSAP(() => {
     gsap.set("#video-frame", {
@@ -72,7 +61,6 @@ const Hero = () => {
   return (
     <section
       aria-label="Startathon — Kerala's most curated 30-hour hackathon"
-      data-particles="hero"
       className="relative h-dvh w-screen overflow-x-hidden"
     >
       <div
@@ -85,19 +73,18 @@ const Hero = () => {
       </div>
 
       {/* Text overlay: sibling of #video-frame (a z-10 stacking context),
-          so its z-index competes at page level — above the particle canvas
-          (z-30) AND the liquid reveal (z-45). The lime blob passes behind
-          the badge, sub, chips, and CTAs. */}
-      <div className="absolute left-0 top-0 z-[46] flex size-full flex-col justify-between px-5 pb-10 pt-28 sm:px-10 sm:pb-14">
+          so its z-index competes at page level — above the base ink
+          (z-20) but BELOW the lens (z-45), so the blob's backdrop filter
+          recolors this text live as it passes over. The blob collapses
+          over the CTAs, so they stay usable. */}
+      <div className="absolute left-0 top-0 z-[21] flex size-full flex-col justify-between px-5 pb-10 pt-28 sm:px-10 sm:pb-14">
         <div>
           <span className="eyebrow mb-5 rounded-full border border-white/10 bg-black/30 px-3 py-1 backdrop-blur-sm">
             Kerala · Limited teams only
           </span>
 
-          <h1
-            className={particlesOk ? "sr-only" : "hero-heading text-blue-100"}
-          >
-            Startathon{!particlesOk && <span className="hero-dot">.</span>}
+          <h1 className={inkOk ? "sr-only" : "hero-heading text-blue-100"}>
+            Startathon{!inkOk && <span className="hero-dot">.</span>}
             <span className="sr-only">
               {" "}
               — Kerala&rsquo;s most curated 30-hour hackathon at SCTCE,
@@ -106,7 +93,7 @@ const Hero = () => {
           </h1>
         </div>
 
-        <div className="glass-panel w-fit max-w-full p-6 sm:p-7">
+        <div className="glass- w-fit max-w-full p-6 sm:p-7">
           <p className="hero-sub mb-5 max-w-sm font-general text-base text-blue-50">
             30 hours. Ship something real.
             <br />
@@ -150,11 +137,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Liquid cursor blob: reveals the solid-text lime world. Sibling of
-          #video-frame (a z-10 stacking context) so its own z-index (45)
-          competes at page level — above the particle canvas (z-30), below
-          the hero text overlay (z-46). */}
-      <HeroLiquidReveal />
     </section>
   );
 };

@@ -28,7 +28,7 @@ const SPONSORS = [
   },
 ];
 
-const SponsorCard = ({ sponsor, idx }) => {
+const SponsorCard = ({ sponsor }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -37,16 +37,13 @@ const SponsorCard = ({ sponsor, idx }) => {
       target="_blank"
       rel="noopener noreferrer"
       className="sponsor-card"
-      data-particle-hover={`sponsor-${idx}`}
+      data-lens-label={sponsor.name}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
         flex: "1 1 260px",
         maxWidth: "340px",
-        // above the fixed particle canvas (z-30): the orbiting swarm passes
-        // behind the card and peeks out around its edges
         position: "relative",
-        zIndex: 31,
         textDecoration: "none",
         display: "block",
         // outer machined shell
@@ -191,7 +188,7 @@ const SponsorsSection = () => {
   return (
     <section
       ref={sectionRef}
-      data-particles="sponsors"
+      data-lens="sponsors"
       style={{ background: "#050505", width: "100%", position: "relative" }}
     >
       {/* lime ambience: a faint glow pooling behind the card group */}
@@ -229,7 +226,6 @@ const SponsorsSection = () => {
         </div>
 
         <div
-          data-particle-target="sponsor-group"
           style={{
             display: "flex",
             flexWrap: "wrap",
@@ -237,8 +233,8 @@ const SponsorsSection = () => {
             gap: "1.25rem",
           }}
         >
-          {SPONSORS.map((s, i) => (
-            <SponsorCard key={s.name} sponsor={s} idx={i} />
+          {SPONSORS.map((s) => (
+            <SponsorCard key={s.name} sponsor={s} />
           ))}
         </div>
       </div>
