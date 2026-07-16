@@ -283,7 +283,10 @@ const Hero = () => {
           className="hero-disc pointer-events-none fixed left-0 top-0 hidden sm:block"
           aria-hidden="true"
         >
-          <div ref={discFaceRef} className="hero-disc-face z-40" />
+          {/* no z-index here: the face must paint BELOW the svg (which is
+              position:relative), or its backdrop blur swallows the band
+              and text into a gray disc */}
+          <div ref={discFaceRef} className="hero-disc-face" />
           {/* position:relative so the svg paints ABOVE the absolutely-
               positioned glass face — static elements always paint below
               positioned siblings, which buried the band + text under the
