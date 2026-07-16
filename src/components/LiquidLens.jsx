@@ -34,11 +34,12 @@ import {
 // subpaths, so they merge with the mother blob while overlapping).
 //
 // Hovering any actionable element (links, buttons, fields) target-locks
-// the lens: the blob magnetizes onto the element and morphs into a halo
-// pinned to its rect, corner brackets snap around it, a bent leader line
-// runs out to a label naming the target, and the custom cursor squares
-// into a reticle. `data-lens-label` overrides the label text;
-// `data-lens-skip` opts an element back into the plain collapse.
+// the lens: the blob collapses out of the way (bursting into lobes as it
+// drains) while corner brackets snap around the element, a bent leader
+// line draws out to a label naming the target, and the custom cursor
+// squares into a reticle. `data-lens-label` / `data-lens-verb` override
+// the label text; `data-lens-skip` opts an element out of the lock
+// furniture entirely.
 
 const BLOB_POINTS = 10;
 const IDLE_MS = 200; // cursor still for this long -> blob melts away
@@ -376,16 +377,12 @@ const LiquidLens = ({ started = true }) => {
       }
 
       // ---- target lock -------------------------------------------------
-      // while an actionable element is hovered, the blob is steered onto
-      // its center and pinned there (element-relative, not cursor-
-      // relative); the halo morph itself happens in the clip assembly
+      // while an actionable element is hovered, the blob COLLAPSES out of
+      // the way (bursting into lobes as it drains) and the lock furniture
+      // — brackets, leader line, label — pins to the element's rect
       const wantLock = !!state.lock && state.lock.isConnected;
       if (wantLock) {
-        const lr = state.lock.getBoundingClientRect();
-        lastLockRect = lr;
-        target.x = lr.left + lr.width / 2;
-        target.y = lr.top + lr.height / 2;
-        state.lastMove = performance.now(); // a locked blob never idles out
+        lastLockRect = state.lock.getBoundingClientRect();
       }
       lockAmt += ((wantLock ? 1 : 0) - lockAmt) * 0.1;
       if (wantLock !== lockClass) {
@@ -403,7 +400,7 @@ const LiquidLens = ({ started = true }) => {
       vy = pos.y - py;
       const idle = performance.now() - state.lastMove > idleMs;
       const rTarget =
-        state.within && (wantLock || (!state.interactive && !idle))
+        state.within && !wantLock && !state.interactive && !idle
           ? baseR()
           : 0;
       // under-damped spring (ω≈6, ζ≈0.75): settles in ~1s with a soft
@@ -679,16 +676,9 @@ const LiquidLens = ({ started = true }) => {
       if (rCur >= 1.5) {
         const speed = Math.min(spd / 26, 1);
         const phi = Math.atan2(vy, vx);
-        // lock morph: blend the free blob toward a superellipse halo
-        // hugging the button rect (n=4 reads as a soft pill)
-        const lk = smooth(lockAmt);
-        const la = lastLockRect ? lastLockRect.width / 2 + 16 : 0;
-        const lb = lastLockRect ? lastLockRect.height / 2 + 13 : 0;
         const pts = [];
         for (let i = 0; i < BLOB_POINTS; i++) {
           const th = (i / BLOB_POINTS) * Math.PI * 2;
-          const cth = Math.cos(th);
-          const sth = Math.sin(th);
           const dTh = th - phi;
           const r =
             rCur *
@@ -697,20 +687,7 @@ const LiquidLens = ({ started = true }) => {
                 0.16 * speed * Math.cos(dTh - Math.PI)) + // drag behind
             rCur * 0.07 * Math.sin(t * 2.3 + i * 2.1) + // idle liquid wobble
             rCur * 0.05 * Math.cos(t * 1.7 + i * 3.7);
-          let x = pos.x + cth * r;
-          let y = pos.y + sth * r;
-          if (lk > 0.01 && lastLockRect) {
-            const rr =
-              Math.pow(
-                Math.pow(Math.abs(cth / la), 4) +
-                  Math.pow(Math.abs(sth / lb), 4),
-                -0.25
-              ) *
-              (1 + 0.02 * Math.sin(t * 2.9 + i * 2.1)); // faint liquid shiver
-            x = x * (1 - lk) + (pos.x + cth * rr) * lk;
-            y = y * (1 - lk) + (pos.y + sth * rr) * lk;
-          }
-          pts.push([x, y]);
+          pts.push([pos.x + Math.cos(th) * r, pos.y + Math.sin(th) * r]);
         }
         clip = blobPath(pts);
       }
@@ -924,11 +901,11 @@ const LiquidLens = ({ started = true }) => {
           position: "fixed",
           inset: 0,
           zIndex: 45,
-          background: "rgba(4, 6, 0, 0.35)",
+          background: "rgba(7, 10, 2, 0.28)",
           backdropFilter:
-            "sepia(1) saturate(4.5) hue-rotate(36deg) brightness(1.05)",
+            "sepia(1) saturate(2.6) hue-rotate(28deg) brightness(1.08)",
           WebkitBackdropFilter:
-            "sepia(1) saturate(4.5) hue-rotate(36deg) brightness(1.05)",
+            "sepia(1) saturate(2.6) hue-rotate(28deg) brightness(1.08)",
           clipPath: HIDDEN_CLIP,
           pointerEvents: "none",
           willChange: "clip-path",
