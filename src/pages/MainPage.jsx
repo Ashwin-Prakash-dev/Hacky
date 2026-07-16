@@ -72,9 +72,8 @@ const MainPage = () => {
       {introComplete && <GoogleOneTap />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
-        {/* the liquid ink hero headline + the site-wide x-ray lens blob;
-            its base layer anchors to <main>'s top (the hero viewport) */}
-        <LiquidLens started={introComplete} />
+        {/* the site-wide x-ray lens blob chasing the cursor */}
+        <LiquidLens />
         <Hero />
         <SponsorsSection />
         <VideoCards />

@@ -1,30 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  SHAPE_W,
-  SHAPE_H,
-  clamp01,
-  fittedTextPx,
-  loadDisplayFont,
-} from "../lib/wordmark";
+import { useEffect, useRef, useState } from "react";
+import { clamp01 } from "../lib/wordmark";
 
-// The site's liquid x-ray lens, in two parts:
-//
-//   · base ink   — solid lime wordmark over the dark hero, always visible.
-//     This IS the hero headline: droplets of ink writhe, congeal into
-//     "S.", then fuse into "Startathon." through a gooey blur-threshold
-//     filter.
-//   · lens layer — a fixed, full-viewport x-ray filter that shows through
-//     an organic blob chasing the cursor ANYWHERE on the page. It is
-//     translucent: a backdrop-filter chain recolors the live page inside
-//     the blob (whites turn lime, the ground stays dark), so all content
-//     stays crisp and readable "on top of" the blob while wearing its
-//     effect. Over that float a drafting grid, the hero wordmark as a
-//     HOLLOW stroked wireframe on an opaque patch (the blob swaps the
-//     solid fill for border-only glyphs) playing the same sequence, and
-//     survey boxes (dashed bounds, section labels, pixel dimensions)
-//     around every `data-lens` section. A document-space container counter-translates
-//     the page scroll each frame, so the x-ray annotations stay
-//     registered with the content they anatomize.
+// The site's liquid x-ray lens: a fixed, full-viewport filter that shows
+// through an organic blob chasing the cursor ANYWHERE on the page. It is
+// translucent: a backdrop-filter chain recolors the live page inside the
+// blob (whites turn lime, the ground stays dark — including the hero's
+// WebGL mercury field), so all content stays crisp and readable "on top
+// of" the blob while wearing its effect. Over that float a drafting
+// grid, a scan-light trailing the cursor, a lens rim, a live coordinate
+// readout, and survey boxes (dashed bounds, section labels, pixel
+// dimensions) around every `data-lens` section. A document-space
+// container counter-translates the page scroll each frame, so the x-ray
+// annotations stay registered with the content they anatomize.
 //
 // The blob is movement-driven: it grows where the cursor moves, collapses
 // after a beat of stillness, and swells back the moment movement resumes.
@@ -44,13 +31,6 @@ import {
 const BLOB_POINTS = 10;
 const IDLE_MS = 200; // cursor still for this long -> blob melts away
 const TAP_MS = 1500; // touch: a tapped blob lives this long
-const DROPS = 5; // ink droplets writhing before the S. congeals
-
-// Ink timeline (own clock, starts when the intro hands off)
-const FORM_AT = 0.5; // goo droplets -> "S."
-const FORM_DUR = 2.6;
-const FUSE_AT = 4.2; // "S." -> "Startathon."
-const FUSE_DUR = 3.6;
 
 function canUse() {
   if (typeof window === "undefined") return false;
@@ -101,8 +81,6 @@ function shedPath(s, r, t) {
 }
 
 const HIDDEN_CLIP = 'circle(0px at -200px -200px)';
-const CX = SHAPE_W / 2;
-const CY = SHAPE_H / 2;
 
 // Lock label for an element: a verb matched to what the element DOES,
 // then its name. Name source, best first: explicit label, aria,
@@ -162,7 +140,7 @@ const monoTag = {
   whiteSpace: "nowrap",
 };
 
-const LiquidLens = ({ started = true }) => {
+const LiquidLens = () => {
   const layerRef = useRef(null);
   const worldRef = useRef(null);
   const glareRef = useRef(null);
@@ -175,73 +153,9 @@ const LiquidLens = ({ started = true }) => {
   const lockLineRef = useRef(null);
   const lockDotRef = useRef(null);
   const lockLabelRef = useRef(null);
-  // Per-layer node registries: index 0 = base ink, 1 = lens wireframe.
-  const nodes = useRef({
-    svg: [],
-    tag: [],
-    goo: [],
-    drops: [],
-    sText: [],
-    wText: [],
-    blur: [],
-  });
-  const startedRef = useRef(started);
-  startedRef.current = started;
-  const enabled = useMemo(canUse, []);
+  const [enabled] = useState(canUse);
   // Survey boxes: document-space rects of every [data-lens] section.
   const [zones, setZones] = useState([]);
-
-  // Size both SVGs identically (a 60vw band anchored 10% from the left,
-  // capped against viewport height so the line never towers on narrow-
-  // and-tall screens), and fit the font sizes through the shared rule.
-  useEffect(() => {
-    if (!enabled) return undefined;
-    let alive = true;
-
-    loadDisplayFont().then(() => {
-      if (!alive) return;
-      const sPx = fittedTextPx("S.", 460);
-      const wPx = fittedTextPx("Startathon.", 330);
-      nodes.current.sText.forEach((el) => el?.setAttribute("font-size", sPx));
-      nodes.current.wText.forEach((el) => el?.setAttribute("font-size", wPx));
-    });
-
-    const size = () => {
-      // a centered band: 60vw on desktop, 84vw on mobile. On mobile the
-      // band anchors in the upper third (dead-center leaves the top half
-      // of the phone viewport empty); desktop stays vertically centered.
-      const mobile = window.innerWidth < 768;
-      const frac = mobile ? 0.84 : 0.6;
-      const topPct = mobile ? 36 : 50;
-      const cssW = Math.min(
-        window.innerWidth * frac,
-        window.innerHeight * frac * 2.48
-      );
-      const cssH = (cssW * SHAPE_H) / SHAPE_W;
-      nodes.current.svg.forEach((svg) => {
-        if (!svg) return;
-        svg.style.width = `${cssW}px`;
-        svg.style.height = `${cssH}px`;
-        svg.style.top = `${topPct}%`;
-      });
-      nodes.current.tag.forEach((tag) => {
-        if (!tag) return;
-        tag.style.top = `calc(${topPct}% + ${cssH / 2 + 18}px)`;
-        // flush with the right edge of the centered wordmark band; on
-        // mobile the tracking and size step down so the line stays
-        // inside the margins instead of running edge-to-edge
-        tag.style.right = `${(100 - frac * 100) / 2}%`;
-        tag.style.fontSize = mobile ? "0.55rem" : "clamp(0.6rem, 1vw, 0.78rem)";
-        tag.style.letterSpacing = mobile ? "0.18em" : "0.32em";
-      });
-    };
-    size();
-    window.addEventListener("resize", size);
-    return () => {
-      alive = false;
-      window.removeEventListener("resize", size);
-    };
-  }, [enabled]);
 
   // Measure the sections the lens anatomizes. Layout settles late (fonts,
   // media) — rescan a couple of times early, then on resize.
@@ -298,43 +212,20 @@ const LiquidLens = ({ started = true }) => {
     let rCur = 0;
     let rVel = 0;
     let t = 0;
-    let inkT = 0; // the ink's own movie clock
     let raf = 0;
-    let lastPhase = "";
-    let fluid = 0; // smoothed hover-energy driving the rest-state smear
-    let skew = 0; // smoothed velocity skew on the resting text
     // detached oil droplets: torn off by fast strokes or a collapsing
     // blob, each collapsing on its own within a few hundred ms
     const sheds = [];
     let shedAcc = 0; // distance travelled since the last droplet tore off
     let prevOpen = false;
-    // target lock: hovering any actionable element magnetizes the blob
-    // onto it and morphs it into a pill-shaped halo pinned to the element
-    let lockAmt = 0; // smoothed 0..1 morph between free blob and halo
+    // target lock: hovering any actionable element collapses the blob
+    // while the lock furniture pins to the element's rect
+    let lockAmt = 0; // smoothed 0..1
     let lastLockRect = null; // kept through the release fade-out
     let lockClass = false;
 
-    const tf = (sx, sy, sk) =>
-      `translate(${CX} ${CY}) skewX(${sk.toFixed(2)}) scale(${sx.toFixed(4)} ${sy.toFixed(4)}) translate(${-CX} ${-CY})`;
-
     const baseR = () =>
       Math.min(Math.max(window.innerWidth * 0.11, 110), 190);
-
-    // apply an attribute to the same node in both layers
-    const both = (kind, fn) => {
-      const list = nodes.current[kind];
-      for (let i = 0; i < list.length; i++) if (list[i]) fn(list[i], i);
-    };
-    // the base ink runs the full goo blur; the lens wireframe is thin
-    // strokes, so it takes a scaled-down defocus instead (a heavy blur
-    // would dissolve it entirely)
-    const setBlur = (v) =>
-      both("blur", (el, i) =>
-        el.setAttribute(
-          "stdDeviation",
-          (i ? Math.min(v * 0.35, 6) : v).toFixed(1)
-        )
-      );
 
     const track = (e) => {
       // the lens layer is fixed, so it works in raw viewport coordinates
@@ -346,9 +237,8 @@ const LiquidLens = ({ started = true }) => {
         pos.x = e.clientX;
         pos.y = e.clientY;
       }
-      // every actionable element locks the lens on: the blob pins to it
-      // as a halo instead of hiding it. `data-lens-skip` opts an element
-      // back into the plain collapse.
+      // every actionable element locks the lens on. `data-lens-skip`
+      // opts an element back into the plain collapse.
       const el = document.elementFromPoint(e.clientX, e.clientY);
       const skip = el?.closest?.("[data-lens-skip]");
       const lockHit = skip
@@ -374,7 +264,6 @@ const LiquidLens = ({ started = true }) => {
 
     const tick = () => {
       t += 1 / 60;
-      if (startedRef.current) inkT += 1 / 60;
 
       // the x-ray world counter-scrolls so its annotations stay registered
       // with the content they anatomize
@@ -383,9 +272,6 @@ const LiquidLens = ({ started = true }) => {
       }
 
       // ---- target lock -------------------------------------------------
-      // while an actionable element is hovered, the blob COLLAPSES out of
-      // the way (bursting into lobes as it drains) and the lock furniture
-      // — brackets, leader line, label — pins to the element's rect
       const wantLock = !!state.lock && state.lock.isConnected;
       if (wantLock) {
         lastLockRect = state.lock.getBoundingClientRect();
@@ -465,123 +351,6 @@ const LiquidLens = ({ started = true }) => {
         }
       }
       prevOpen = openNow;
-
-      // ---- ink dynamics (drives both layers in lockstep) ---------------
-      // Timeline: goo droplets -> "S." -> "Startathon.", every hand-off a
-      // liquid fuse, never a cut.
-      const g0 = clamp01((inkT - FORM_AT) / FORM_DUR); // droplets -> S.
-      const q = clamp01((inkT - FUSE_AT) / FUSE_DUR); // S. -> word
-      const open = rCur > 2;
-      const phase =
-        q >= 1 ? "restW" : q > 0 ? "fuse" : g0 >= 1 ? "restS" : "goo";
-      if (phase !== lastPhase) {
-        lastPhase = phase;
-        both("drops", (el) => el.setAttribute("opacity", phase === "goo" ? "1" : "0"));
-        if (phase === "restW") {
-          both("sText", (el) => el.setAttribute("opacity", "0"));
-          both("wText", (el) => el.setAttribute("opacity", "1"));
-        }
-        if (phase === "restS") {
-          both("sText", (el) => el.setAttribute("opacity", "1"));
-        }
-        fluid = 0;
-        skew = 0;
-      }
-
-      if (phase === "goo") {
-        // before the S. exists, the ink is only a writhing cluster of
-        // droplets; they converge and the S. congeals out of them
-        const conv = smooth(g0);
-        both("drops", (group) => {
-          const kids = group.children;
-          for (let i = 0; i < kids.length; i++) {
-            const ph = i * 1.9;
-            const ax = (270 - i * 40) * (1 - conv);
-            const ay = (115 - i * 13) * (1 - conv);
-            const dx =
-              CX +
-              Math.cos(t * (0.7 + i * 0.23) + ph) * ax +
-              Math.sin(t * 1.4 + i * 2.2) * 16 * (1 - conv);
-            const dy = CY + Math.sin(t * (0.9 + i * 0.19) + ph * 2) * ay;
-            const dr =
-              (56 + 24 * Math.sin(t * (1.1 + i * 0.3) + ph)) *
-              (1 - 0.72 * conv);
-            kids[i].setAttribute("cx", dx.toFixed(1));
-            kids[i].setAttribute("cy", dy.toFixed(1));
-            kids[i].setAttribute("r", Math.max(dr, 4).toFixed(1));
-          }
-          group.setAttribute(
-            "opacity",
-            g0 > 0.82 ? ((1 - g0) / 0.18).toFixed(3) : "1"
-          );
-        });
-        // the S. surfaces out of the goo late in the gather
-        const sOp = smooth((g0 - 0.45) / 0.45).toFixed(3);
-        const sS = 0.72 + 0.28 * conv;
-        const sTf = tf(
-          sS * (1 + Math.cos(t * 2.1) * 0.04),
-          sS * (1 + Math.sin(t * 2.7) * 0.05),
-          0
-        );
-        both("sText", (el) => {
-          el.setAttribute("opacity", sOp);
-          el.setAttribute("transform", sTf);
-        });
-        both("wText", (el) => el.setAttribute("opacity", "0"));
-        // heavy goo while forming, releasing as the S. sets
-        setBlur(3 + 17 * (1 - smooth((g0 - 0.6) / 0.4)) + Math.sin(t * 3.4) * 2);
-        both("goo", (el, i) => el.setAttribute("filter", `url(#hero-goo-${i})`));
-      } else if (phase === "fuse") {
-        // the fuse: slow, wide goo envelope with living undulation —
-        // "S." melts outward while the word congeals in underneath
-        const wave = Math.sin(q * Math.PI);
-        const sOp = (1 - smooth((q - 0.08) / 0.62)).toFixed(3);
-        const wOp = smooth((q - 0.28) / 0.6).toFixed(3);
-        const sTf = tf(1 + smooth(q) * 2.6, 1 + Math.sin(t * 3.1) * 0.06 * wave, 0);
-        const wTf = tf(
-          0.5 + 0.5 * smooth(q * 1.05),
-          1 + Math.sin(t * 2.6 + 1.7) * 0.05 * wave,
-          0
-        );
-        both("sText", (el) => {
-          el.setAttribute("opacity", sOp);
-          el.setAttribute("transform", sTf);
-        });
-        both("wText", (el) => {
-          el.setAttribute("opacity", wOp);
-          el.setAttribute("transform", wTf);
-        });
-        const env = Math.pow(wave, 0.7); // wide, lingering liquid peak
-        setBlur(env * 26 + Math.sin(t * 4.2) * 2 * env);
-        both("goo", (el, i) => el.setAttribute("filter", `url(#hero-goo-${i})`));
-      } else {
-        // resting ink ("S." before the fuse, the word after): a gentle
-        // idle undulation keeps it liquid, and a moving cursor smears it
-        // like wet oil — goo blur + skew follow pointer energy
-        const kind = phase === "restS" ? "sText" : "wText";
-        fluid += ((open ? Math.min(spd * 0.5, 7) : 0) - fluid) * 0.09;
-        skew +=
-          ((open ? Math.max(-6, Math.min(6, vx * 0.35)) : 0) - skew) * 0.09;
-        const energy = fluid / 7;
-        const iTf = tf(
-          1 + Math.cos(t * 1.9) * 0.012 + Math.cos(t * 4.4) * 0.03 * energy,
-          1 + Math.sin(t * 2.3) * 0.014 + Math.sin(t * 5.2) * 0.035 * energy,
-          skew
-        );
-        both(kind, (el) => el.setAttribute("transform", iTf));
-        if (fluid > 0.15) {
-          setBlur(fluid);
-          both("goo", (el, i) => el.setAttribute("filter", `url(#hero-goo-${i})`));
-        } else {
-          both("goo", (el) => el.removeAttribute("filter")); // crisp when still
-        }
-      }
-
-      // the mono tagline settles in as the word rests
-      const tagOp = smooth((q - 0.55) / 0.45).toFixed(3);
-      both("tag", (el) => {
-        el.style.opacity = tagOp;
-      });
 
       // scan-light lags slightly behind the motion, like a lens catching up
       if (glareRef.current) {
@@ -741,158 +510,8 @@ const LiquidLens = ({ started = true }) => {
 
   if (!enabled) return null;
 
-  // One ink pass: identical geometry both times, only the medium flips —
-  // solid lime ink for the base, a stroked lime wireframe for the lens.
-  const renderInk = (idx, variant) => {
-    const xray = variant === "xray";
-    const reg = (kind) => (el) => {
-      nodes.current[kind][idx] = el;
-    };
-    const inkFill = xray ? "none" : "#C8FF00";
-    const inkStroke = xray ? { stroke: "#C8FF00", strokeWidth: 3 } : {};
-    const textProps = {
-      x: CX,
-      y: CY,
-      textAnchor: "middle",
-      dominantBaseline: "central",
-      fill: inkFill,
-      ...inkStroke,
-      letterSpacing: "14",
-      style: { fontFamily: "var(--font-display)", fontWeight: 400 },
-    };
-    return (
-      <>
-        <svg
-          ref={reg("svg")}
-          viewBox={`0 0 ${SHAPE_W} ${SHAPE_H}`}
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            overflow: "visible",
-          }}
-        >
-          <defs>
-            {/* base: blur + alpha threshold = metaball goo; lens: plain
-                defocus (the threshold would dissolve thin strokes) */}
-            <filter
-              id={`hero-goo-${idx}`}
-              x="-20%"
-              y="-60%"
-              width="140%"
-              height="220%"
-            >
-              <feGaussianBlur ref={reg("blur")} in="SourceGraphic" stdDeviation="0" />
-              {!xray && (
-                <feColorMatrix
-                  type="matrix"
-                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
-                />
-              )}
-            </filter>
-          </defs>
-          {xray && (
-            // opaque patch behind the wireframe: hides the (filtered)
-            // solid fill underneath, so inside the blob the wordmark
-            // reads as hollow — border only
-            <rect
-              x="-40"
-              y="-40"
-              width={SHAPE_W + 80}
-              height={SHAPE_H + 80}
-              fill="#070803"
-            />
-          )}
-          <g ref={reg("goo")}>
-            {/* ink droplets: the pre-S. goo cluster (driven per-frame) */}
-            <g ref={reg("drops")}>
-              {Array.from({ length: DROPS }, (_, i) => (
-                <circle key={i} cx={CX} cy={CY} r="0" fill={inkFill} {...inkStroke} />
-              ))}
-            </g>
-            <text ref={reg("sText")} {...textProps} fontSize="460" opacity="0">
-              S.
-            </text>
-            <text ref={reg("wText")} {...textProps} fontSize="330" opacity="0">
-              Startathon.
-            </text>
-          </g>
-          {xray && (
-            // static drafting furniture: corner brackets, metric guides,
-            // spec labels — crisp, outside the goo group
-            <>
-              <g stroke="rgba(200,255,0,0.4)" strokeWidth="2" fill="none">
-                <path d="M 20 70 V 20 H 70" />
-                <path d="M 1730 20 H 1780 V 70" />
-                <path d="M 1780 450 V 500 H 1730" />
-                <path d="M 70 500 H 20 V 450" />
-                <line
-                  x1="20" y1="95" x2="1780" y2="95"
-                  strokeWidth="1" strokeDasharray="4 14" opacity="0.5"
-                />
-                <line
-                  x1="20" y1="425" x2="1780" y2="425"
-                  strokeWidth="1" strokeDasharray="4 14" opacity="0.5"
-                />
-                <line x1={CX} y1="8" x2={CX} y2="34" opacity="0.6" />
-                <line x1={CX} y1="486" x2={CX} y2="512" opacity="0.6" />
-              </g>
-              <g
-                fill="rgba(200,255,0,0.6)"
-                fontSize="19"
-                style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.3em" }}
-              >
-                <text x="96" y="56">STARTATHON.SYS — BUILD 2026</text>
-                <text x="1704" y="488" textAnchor="end">
-                  SCTCE · 8.47°N / 76.97°E
-                </text>
-              </g>
-            </>
-          )}
-        </svg>
-        <span
-          ref={reg("tag")}
-          style={{
-            position: "absolute",
-            right: "20%", // kept flush with the band's right edge by size()
-            top: "72%",
-            fontFamily: "var(--font-mono)",
-            fontSize: "clamp(0.6rem, 1vw, 0.78rem)",
-            letterSpacing: "0.32em",
-            textTransform: "uppercase",
-            color: xray ? "rgba(200,255,0,0.7)" : "rgba(255,255,255,0.55)",
-            whiteSpace: "nowrap",
-            userSelect: "none",
-            opacity: 0,
-          }}
-        >
-          30 hours · 20 teams · ship something real
-        </span>
-      </>
-    );
-  };
-
   return (
     <>
-      {/* base ink: the hero headline itself — lime on the dark ground,
-          anchored over the hero (first viewport of <main>), above
-          #video-frame (z-10), below the lens (45) */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100dvh",
-          zIndex: 20,
-          pointerEvents: "none",
-        }}
-      >
-        {renderInk(0, "solid")}
-      </div>
-
       {/* lens layer: the site-wide x-ray world, clipped to the cursor
           blob — fixed to the viewport, below the nav (z-60). It is a
           translucent filter, not an opaque cover: the backdrop chain
@@ -936,19 +555,6 @@ const LiquidLens = ({ started = true }) => {
             willChange: "transform",
           }}
         >
-          {/* the hero's wireframe wordmark (sec 01) */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100dvh",
-            }}
-          >
-            {renderInk(1, "xray")}
-          </div>
-
           {/* survey boxes around every data-lens section */}
           {zones.map((z) => (
             <div

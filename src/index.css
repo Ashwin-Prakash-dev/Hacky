@@ -201,11 +201,14 @@ body.custom-cursor {
   }
 
   .hero-heading {
-    @apply text-5xl sm:right-10 sm:text-7xl md:text-9xl lg:text-[12rem];
+    @apply text-6xl sm:text-7xl md:text-8xl;
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.01em;
+    line-height: 0.95;
     text-wrap: balance;
+    /* lifts the wordmark off the mercury rims passing behind it */
+    text-shadow: 0 6px 60px rgba(0, 0, 0, 0.75);
   }
 
   .about-subtext {
@@ -873,7 +876,6 @@ body.lens-lock .cursor-ring::after {
   background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
   z-index: 30; pointer-events: none;
 }
-.hero-dot { color: #888888; font-weight: inherit; font-size: inherit; }
 .hero-sub { opacity: 0.85; line-height: 1.75; letter-spacing: 0.01em; }
 
 /* ── Marquee ─────────────────────────────────────────────────────────────── */
