@@ -24,11 +24,14 @@ import { heroClock } from "./particles/registry";
 // after ~2s of stillness, and swells back the moment movement resumes.
 
 const BLOB_POINTS = 10;
-const IDLE_MS = 1000; // cursor still for this long -> blob melts away
+const IDLE_MS = 200; // cursor still for this long -> blob melts away
 const TAP_MS = 1500; // touch: a tapped blob lives this long
-// The ink fuse runs deliberately slower than the particle morph — the
-// solid text keeps settling like liquid after the swarm has landed.
-const FUSE_AT = KEYS[1].at;
+const DROPS = 5; // ink droplets writhing before the S. congeals
+// The ink runs deliberately slower than the particle morph — the solid
+// text keeps settling like liquid after the swarm has landed.
+const FORM_AT = KEYS[0].at; // goo droplets -> "S."
+const FORM_DUR = KEYS[0].dur + 1.0;
+const FUSE_AT = KEYS[1].at; // "S." -> "Startathon."
 const FUSE_DUR = KEYS[1].dur + 2.4;
 
 function canUse() {
@@ -82,7 +85,9 @@ const HeroLiquidReveal = () => {
   const svgRef = useRef(null);
   const tagRef = useRef(null);
   const sheenRef = useRef(null);
+  const rimRef = useRef(null);
   const gooGroupRef = useRef(null);
+  const dropsRef = useRef(null);
   const blurRef = useRef(null);
   const sTextRef = useRef(null);
   const wTextRef = useRef(null);
@@ -145,9 +150,9 @@ const HeroLiquidReveal = () => {
     let rVel = 0;
     let t = 0;
     let raf = 0;
-    let lastQ = -1;
+    let lastPhase = "";
     let fluid = 0; // smoothed hover-energy driving the rest-state smear
-    let skew = 0; // smoothed velocity skew on the resting word
+    let skew = 0; // smoothed velocity skew on the resting text
     // The ink fuse deliberately outlives the particle movie, so it keeps
     // its own shadow clock: it mirrors heroClock while the movie runs and
     // free-runs to completion after the movie ends or gets abandoned.
@@ -208,22 +213,84 @@ const HeroLiquidReveal = () => {
         rVel *= 0.3;
       }
 
-      // ---- solid-text dynamics: goo fuse + hover fluidness ------------
+      // ---- solid-ink dynamics ------------------------------------------
+      // Timeline (shadow-clocked): goo droplets -> "S." -> "Startathon.",
+      // every hand-off a liquid fuse, never a cut.
       if (heroClock.active) {
         shadowT = heroClock.t;
         wasActive = true;
       } else if (wasActive) {
         shadowT += 1 / 60; // movie over: let the ink finish settling
       }
-      const q = wasActive
-        ? clamp01((shadowT - FUSE_AT) / FUSE_DUR)
-        : clamp01((heroClock.t - FUSE_AT) / FUSE_DUR);
+      const T = wasActive ? shadowT : heroClock.t;
+      const g0 = clamp01((T - FORM_AT) / FORM_DUR); // droplets -> S.
+      const q = clamp01((T - FUSE_AT) / FUSE_DUR); // S. -> word
       const sEl = sTextRef.current;
       const wEl = wTextRef.current;
       const goo = gooGroupRef.current;
+      const drops = dropsRef.current;
       const blur = blurRef.current;
-      if (sEl && wEl && goo && blur) {
-        if (q < 1) {
+      if (sEl && wEl && goo && drops && blur) {
+        // shared: hover energy smears whichever ink is resting
+        const open = rCur > 2;
+        const sp = Math.hypot(vx, vy);
+        const phase =
+          q >= 1 ? "restW" : q > 0 ? "fuse" : g0 >= 1 ? "restS" : "goo";
+        if (phase !== lastPhase) {
+          lastPhase = phase;
+          drops.setAttribute("opacity", phase === "goo" ? "1" : "0");
+          if (phase === "restW") {
+            sEl.setAttribute("opacity", "0");
+            wEl.setAttribute("opacity", "1");
+          }
+          if (phase === "restS") sEl.setAttribute("opacity", "1");
+          fluid = 0;
+          skew = 0;
+        }
+
+        if (phase === "goo") {
+          // while the particles gather, the ink is only a writhing cluster
+          // of droplets; as the particle S. completes, they converge and
+          // the S. congeals out of them
+          const conv = smooth(g0);
+          const kids = drops.children;
+          for (let i = 0; i < kids.length; i++) {
+            const ph = i * 1.9;
+            const ax = (270 - i * 40) * (1 - conv);
+            const ay = (115 - i * 13) * (1 - conv);
+            const dx =
+              CX +
+              Math.cos(t * (0.7 + i * 0.23) + ph) * ax +
+              Math.sin(t * 1.4 + i * 2.2) * 16 * (1 - conv);
+            const dy = CY + Math.sin(t * (0.9 + i * 0.19) + ph * 2) * ay;
+            const dr =
+              (56 + 24 * Math.sin(t * (1.1 + i * 0.3) + ph)) *
+              (1 - 0.72 * conv);
+            kids[i].setAttribute("cx", dx.toFixed(1));
+            kids[i].setAttribute("cy", dy.toFixed(1));
+            kids[i].setAttribute("r", Math.max(dr, 4).toFixed(1));
+          }
+          drops.setAttribute(
+            "opacity",
+            g0 > 0.82 ? ((1 - g0) / 0.18).toFixed(3) : "1"
+          );
+          // the S. surfaces out of the goo late in the gather
+          const sOp = smooth((g0 - 0.45) / 0.45);
+          const sS = 0.72 + 0.28 * conv;
+          sEl.setAttribute("opacity", sOp.toFixed(3));
+          sEl.setAttribute(
+            "transform",
+            tf(sS * (1 + Math.cos(t * 2.1) * 0.04), sS * (1 + Math.sin(t * 2.7) * 0.05), 0)
+          );
+          wEl.setAttribute("opacity", "0");
+          // heavy goo while forming, releasing as the S. sets
+          const blurV = 3 + 17 * (1 - smooth((g0 - 0.6) / 0.4));
+          blur.setAttribute(
+            "stdDeviation",
+            (blurV + Math.sin(t * 3.4) * 2).toFixed(1)
+          );
+          goo.setAttribute("filter", "url(#hero-goo)");
+        } else if (phase === "fuse") {
           // the fuse: slow, wide goo envelope with living undulation —
           // "S." melts outward while the word congeals in underneath
           const wave = Math.sin(q * Math.PI);
@@ -243,32 +310,23 @@ const HeroLiquidReveal = () => {
             (env * 26 + Math.sin(t * 4.2) * 2 * env).toFixed(1)
           );
           goo.setAttribute("filter", "url(#hero-goo)");
-          fluid = 0;
-          skew = 0;
-          lastQ = q;
         } else {
-          if (lastQ !== 1) {
-            // fuse just finished: settle the layers once
-            sEl.setAttribute("opacity", "0");
-            wEl.setAttribute("opacity", "1");
-            lastQ = 1;
-          }
-          // at rest, a moving cursor smears the ink like wet oil: goo
-          // blur + skew follow pointer energy while the blob is open
-          const open = rCur > 2;
-          const sp = Math.hypot(vx, vy);
+          // resting ink ("S." before the fuse, the word after): a gentle
+          // idle undulation keeps it liquid, and a moving cursor smears it
+          // like wet oil — goo blur + skew follow pointer energy
+          const el = phase === "restS" ? sEl : wEl;
           fluid += ((open ? Math.min(sp * 0.5, 7) : 0) - fluid) * 0.09;
           skew +=
             ((open ? Math.max(-6, Math.min(6, vx * 0.35)) : 0) - skew) * 0.09;
           const energy = fluid / 7;
-          const wSx = 1 + Math.cos(t * 4.4) * 0.03 * energy;
-          const wSy = 1 + Math.sin(t * 5.2) * 0.035 * energy;
-          wEl.setAttribute("transform", tf(wSx, wSy, skew));
+          const iSx = 1 + Math.cos(t * 1.9) * 0.012 + Math.cos(t * 4.4) * 0.03 * energy;
+          const iSy = 1 + Math.sin(t * 2.3) * 0.014 + Math.sin(t * 5.2) * 0.035 * energy;
+          el.setAttribute("transform", tf(iSx, iSy, skew));
           if (fluid > 0.15) {
             blur.setAttribute("stdDeviation", fluid.toFixed(2));
             goo.setAttribute("filter", "url(#hero-goo)");
           } else {
-            goo.removeAttribute("filter"); // crisp when still
+            goo.removeAttribute("filter"); // crisp edges when still
           }
         }
       }
@@ -276,6 +334,11 @@ const HeroLiquidReveal = () => {
       // glossy hotspot lags slightly behind the motion, like light on oil
       if (sheenRef.current) {
         sheenRef.current.style.transform = `translate(${(pos.x - vx * 5).toFixed(1)}px, ${(pos.y - vy * 5).toFixed(1)}px)`;
+      }
+      // meniscus: a darker ring hugging the blob edge, scaled to its radius
+      if (rimRef.current) {
+        const rs = (rCur * 2.35) / 300;
+        rimRef.current.style.transform = `translate(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px) scale(${rs.toFixed(3)})`;
       }
 
       if (rCur < 1.5) {
@@ -346,10 +409,13 @@ const HeroLiquidReveal = () => {
         willChange: "clip-path",
       }}
     >
-      {/* oil-slick surface: drifting iridescent film + a specular hotspot
-          that trails the blob center (positioned per-frame) */}
+      {/* oil-slick surface: two counter-drifting iridescent films, a
+          specular hotspot trailing the blob center, and a meniscus ring
+          hugging the blob edge (both positioned per-frame) */}
       <div className="oil-film" aria-hidden="true" />
+      <div className="oil-film oil-film--b" aria-hidden="true" />
       <div ref={sheenRef} className="oil-sheen" aria-hidden="true" />
+      <div ref={rimRef} className="oil-rim" aria-hidden="true" />
 
       {/* the exact wordmark the particles form, in solid ink — playing the
           same S. -> Startathon. sequence as a gooey fuse */}
@@ -374,7 +440,13 @@ const HeroLiquidReveal = () => {
           </filter>
         </defs>
         <g ref={gooGroupRef}>
-          <text ref={sTextRef} {...textProps} fontSize="460">
+          {/* ink droplets: the pre-S. goo cluster (driven per-frame) */}
+          <g ref={dropsRef}>
+            {Array.from({ length: DROPS }, (_, i) => (
+              <circle key={i} cx={CX} cy={CY} r="0" fill="#050505" />
+            ))}
+          </g>
+          <text ref={sTextRef} {...textProps} fontSize="460" opacity="0">
             S.
           </text>
           <text ref={wTextRef} {...textProps} fontSize="330" opacity="0">

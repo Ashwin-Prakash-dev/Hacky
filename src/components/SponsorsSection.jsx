@@ -54,7 +54,7 @@ const SponsorCard = ({ sponsor, idx }) => {
         borderRadius: "1.5rem",
         background: "rgba(255,255,255,0.03)",
         boxShadow: hovered
-          ? "inset 0 0 0 1px rgba(200,255,0,0.22), 0 24px 60px rgba(0,0,0,0.5)"
+          ? "inset 0 0 0 1px rgba(200,255,0,0.45), 0 24px 60px rgba(0,0,0,0.5), 0 8px 42px rgba(200,255,0,0.18)"
           : "inset 0 0 0 1px rgba(255,255,255,0.06)",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         transition:
@@ -71,10 +71,13 @@ const SponsorCard = ({ sponsor, idx }) => {
           height: "100%",
           padding: "1.9rem",
           borderRadius: "calc(1.5rem - 0.375rem)",
-          background: hovered ? "#0e0e0c" : "#0b0b0b",
-          boxShadow:
-            "inset 0 1px 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04)",
-          transition: "background 0.6s cubic-bezier(0.32,0.72,0,1)",
+          // hover floods the core lime — the same inverted world the
+          // hero's liquid blob reveals
+          background: hovered ? "#C8FF00" : "#0b0b0b",
+          boxShadow: hovered
+            ? "inset 0 1px 1px rgba(255,255,255,0.35)"
+            : "inset 0 1px 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04)",
+          transition: "background 0.6s cubic-bezier(0.32,0.72,0,1), box-shadow 0.6s cubic-bezier(0.32,0.72,0,1)",
         }}
       >
         <img
@@ -84,16 +87,20 @@ const SponsorCard = ({ sponsor, idx }) => {
             height: `${sponsor.h}px`,
             width: "auto",
             objectFit: "contain",
+            // white logos flip to ink on the lime flood
+            filter: hovered ? "brightness(0)" : "none",
             transform: hovered ? "translateY(-3px) scale(1.04)" : "none",
-            transition: "transform 0.6s cubic-bezier(0.32,0.72,0,1)",
+            transition:
+              "transform 0.6s cubic-bezier(0.32,0.72,0,1), filter 0.45s ease",
           }}
         />
         <p
           className="font-general"
           style={{
             fontSize: "0.88rem",
-            color: "rgba(255,255,255,0.7)",
+            color: hovered ? "rgba(5,5,5,0.8)" : "rgba(255,255,255,0.7)",
             lineHeight: 1.7,
+            transition: "color 0.45s ease",
           }}
         >
           {sponsor.blurb}
@@ -105,8 +112,8 @@ const SponsorCard = ({ sponsor, idx }) => {
             fontWeight: 700,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: hovered ? "#C8FF00" : "rgba(255,255,255,0.45)",
-            transition: "color 0.4s ease",
+            color: hovered ? "#050505" : "rgba(255,255,255,0.45)",
+            transition: "color 0.45s ease",
             display: "inline-flex",
             alignItems: "center",
             gap: "0.6em",
@@ -123,10 +130,10 @@ const SponsorCard = ({ sponsor, idx }) => {
               width: "1.5rem",
               height: "1.5rem",
               borderRadius: "50%",
-              background: hovered ? "rgba(200,255,0,0.12)" : "rgba(255,255,255,0.06)",
+              background: hovered ? "rgba(0,0,0,0.14)" : "rgba(255,255,255,0.06)",
               transform: hovered ? "translate(1px,-1px)" : "none",
               transition:
-                "background 0.4s ease, transform 0.5s cubic-bezier(0.32,0.72,0,1)",
+                "background 0.45s ease, transform 0.5s cubic-bezier(0.32,0.72,0,1)",
               fontSize: "0.78rem",
             }}
           >
@@ -185,8 +192,19 @@ const SponsorsSection = () => {
     <section
       ref={sectionRef}
       data-particles="sponsors"
-      style={{ background: "#050505", width: "100%" }}
+      style={{ background: "#050505", width: "100%", position: "relative" }}
     >
+      {/* lime ambience: a faint glow pooling behind the card group */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(ellipse 55% 45% at 50% 62%, rgba(200,255,0,0.07), transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       <div

@@ -1,4 +1,5 @@
 import { useRef, useEffect, forwardRef, useState } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -129,9 +130,9 @@ const StudentHook = () => {
             }}>
               If you're a builder and you resonated with that, there's no reason you shouldn't apply.
             </p>
-            <a
-              href="/apply"
-              className="cta-pill"
+            <Link
+              to="/apply"
+              className="cta-pill group"
               data-particle-hover="hook-apply"
               style={{
                 // above the fixed particle canvas (z-30): the hover swarm
@@ -140,9 +141,16 @@ const StudentHook = () => {
                 zIndex: 31,
               }}
             >
-              Apply now
+              <span className="relative inline-flex overflow-hidden">
+                <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                  Apply Now
+                </span>
+                <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                  Apply Now
+                </span>
+              </span>
               <span className="cta-pill-icon" aria-hidden="true">↗</span>
-            </a>
+            </Link>
           </div>
 
           {/* Right: video */}
