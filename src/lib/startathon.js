@@ -88,4 +88,6 @@ export const api = {
   // payment
   submitPayment: (transactionId) =>
     request("/payment", { method: "POST", body: { transaction_id: transactionId } }),
+  applyReferral: (code) =>
+    request("/team/referral", { method: "PUT", body: { referral_code: code } }),
 };
