@@ -37,13 +37,16 @@ const StudentHook = () => {
         headlineRef.current,
         { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: headlineRef.current,
             start: "top 82%",
             toggleActions: "play none none reverse",
           },
-        }
+        },
       );
 
       rowRefs.current.forEach((el, i) => {
@@ -52,14 +55,17 @@ const StudentHook = () => {
           el,
           { opacity: 0, y: 28 },
           {
-            opacity: 1, y: 0, duration: 0.65, ease: "power3.out",
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+            ease: "power3.out",
             delay: i * 0.08,
             scrollTrigger: {
               trigger: el,
               start: "top 88%",
               toggleActions: "play none none reverse",
             },
-          }
+          },
         );
       });
     }, sectionRef);
@@ -71,16 +77,19 @@ const StudentHook = () => {
     <section
       ref={sectionRef}
       data-lens="builders"
-      style={{ background: "#050505", padding: "7rem 0 6rem", width: "100%" }}
+      style={{ background: "#050505", padding: "7rem 0 0rem", width: "100%" }}
     >
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
         <div
           ref={headlineRef}
           style={{
-            display: "flex", gap: "clamp(2rem, 5vw, 4rem)",
-            alignItems: "flex-start", marginBottom: "5rem",
-            opacity: 0, flexWrap: "wrap",
+            display: "flex",
+            gap: "clamp(2rem, 5vw, 4rem)",
+            alignItems: "flex-start",
+            marginBottom: "5rem",
+            opacity: 0,
+            flexWrap: "wrap",
             position: "relative",
           }}
         >
@@ -100,7 +109,8 @@ const StudentHook = () => {
                 marginBottom: "1.5rem",
               }}
             >
-              Still <b>i</b>n college.<br />
+              Still <b>i</b>n college.
+              <br />
               Already <b>b</b>uilding<b>.</b>
             </h2>
 
@@ -113,17 +123,21 @@ const StudentHook = () => {
                 marginBottom: "2rem",
               }}
             >
-              Every person behind those companies was a student once.
-              They just didn't stop building. Startathon is how we find
-              those people in Kerala. If that's you, you should be here.
+              Every person behind those companies was a student once. They just
+              didn't stop building. Startathon is how we find those people in
+              Kerala. If that's you, you should be here.
             </p>
-            <p className="font-general" style={{
-              fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
-              color: "rgba(255,255,255,0.75)",
-              lineHeight: 1.75,
-              marginBottom: "1.5rem",
-            }}>
-              If you're a builder and you resonated with that, there's no reason you shouldn't apply.
+            <p
+              className="font-general"
+              style={{
+                fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
+                color: "rgba(255,255,255,0.75)",
+                lineHeight: 1.75,
+                marginBottom: "1.5rem",
+              }}
+            >
+              If you're a builder and you resonated with that, there's no reason
+              you shouldn't apply.
             </p>
             <Link to="/apply" className="cta-pill group">
               <span className="relative inline-flex overflow-hidden">
@@ -134,7 +148,9 @@ const StudentHook = () => {
                   Apply Now
                 </span>
               </span>
-              <span className="cta-pill-icon" aria-hidden="true">↗</span>
+              <span className="cta-pill-icon" aria-hidden="true">
+                ↗
+              </span>
             </Link>
           </div>
 
@@ -142,14 +158,24 @@ const StudentHook = () => {
           <div style={{ flex: "1 1 340px", minWidth: 0 }}>
             <div
               style={{
-                position: "relative", width: "100%", paddingBottom: "56.25%",
-                borderRadius: "1.25rem", overflow: "hidden",
+                position: "relative",
+                width: "100%",
+                paddingBottom: "56.25%",
+                borderRadius: "1.25rem",
+                overflow: "hidden",
                 border: "1px solid rgba(255,255,255,0.08)",
                 boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
-              }}>
+              }}
+            >
               <iframe
                 src="https://player.vimeo.com/video/1197348906?autoplay=0&title=0&byline=0&portrait=0"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                }}
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
               />
@@ -158,7 +184,10 @@ const StudentHook = () => {
         </div>
 
         {/* ── Outcome rows ─────────────────────────────────────── */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+          className="hidden"
+        >
           {outcomes.map((item, i) => (
             <OutcomeRow
               key={i}
@@ -169,23 +198,37 @@ const StudentHook = () => {
         </div>
 
         {/* Pull-quote */}
-        <div style={{
-          marginTop: "4rem", paddingTop: "3rem",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          display: "flex", alignItems: "flex-start", gap: "1.25rem",
-        }}>
-          <div style={{
-            width: "3px", minHeight: "2.5rem", flexShrink: 0,
-            background: "linear-gradient(180deg, #C8FF00, transparent)",
-            borderRadius: "2px", marginTop: "0.2rem",
-          }} />
-          <p className="font-general" style={{
-            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
-            color: "rgba(255,255,255,0.85)",
-            lineHeight: 1.6, fontStyle: "italic",
-          }}>
-            "Kerala has the talent. It's always had it.
-            We're just putting it in one room and letting it run."
+        <div
+          style={{
+            marginTop: "4rem",
+            paddingTop: "3rem",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            display: "none",
+            alignItems: "flex-start",
+            gap: "1.25rem",
+          }}
+        >
+          <div
+            style={{
+              width: "3px",
+              minHeight: "2.5rem",
+              flexShrink: 0,
+              background: "linear-gradient(180deg, #C8FF00, transparent)",
+              borderRadius: "2px",
+              marginTop: "0.2rem",
+            }}
+          />
+          <p
+            className="font-general"
+            style={{
+              fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
+              color: "rgba(255,255,255,0.85)",
+              lineHeight: 1.6,
+              fontStyle: "italic",
+            }}
+          >
+            "Kerala has the talent. It's always had it. We're just putting it in
+            one room and letting it run."
           </p>
         </div>
       </div>
@@ -233,51 +276,71 @@ const OutcomeRow = forwardRef(({ item }, ref) => {
       }}
     >
       {/* Number */}
-      <span style={{
-        fontFamily: "var(--font-display)",
-        fontSize: "clamp(2.2rem, 3.5vw, 3rem)",
-        fontWeight: 400,
-        color: hovered ? "rgba(200,255,0,0.3)" : "rgba(200,255,0,0.12)",
-        lineHeight: 1,
-        letterSpacing: "-0.03em",
-        transition: "color 0.3s ease",
-        userSelect: "none",
-      }}>
+      <span
+        style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "clamp(2.2rem, 3.5vw, 3rem)",
+          fontWeight: 400,
+          color: hovered ? "rgba(200,255,0,0.3)" : "rgba(200,255,0,0.12)",
+          lineHeight: 1,
+          letterSpacing: "-0.03em",
+          transition: "color 0.3s ease",
+          userSelect: "none",
+        }}
+      >
         {item.num}
       </span>
 
       {/* Tag + headline */}
-      <div style={{
-        transform: hovered ? "translateX(8px)" : "translateX(0)",
-        transition: "transform 0.6s cubic-bezier(0.32,0.72,0,1)",
-      }}>
-        <span style={{
-          display: "inline-block",
-          fontFamily: "var(--font-mono)",
-          fontSize: "0.64rem", letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: hovered ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.65)",
-          border: `1px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
-          borderRadius: "999px", padding: "4px 11px",
-          marginBottom: "0.65rem",
-          transition: "color 0.3s, border-color 0.3s",
-        }}>{item.tag}</span>
-        <h3 className="font-general" style={{
-          fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
-          fontWeight: 800,
-          color: "#fff",
-          lineHeight: 1.15,
-          letterSpacing: "-0.02em",
-        }}>{item.headline}</h3>
+      <div
+        style={{
+          transform: hovered ? "translateX(8px)" : "translateX(0)",
+          transition: "transform 0.6s cubic-bezier(0.32,0.72,0,1)",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-block",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.64rem",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: hovered ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.65)",
+            border: `1px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
+            borderRadius: "999px",
+            padding: "4px 11px",
+            marginBottom: "0.65rem",
+            transition: "color 0.3s, border-color 0.3s",
+          }}
+        >
+          {item.tag}
+        </span>
+        <h3
+          className="font-general"
+          style={{
+            fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
+            fontWeight: 800,
+            color: "#fff",
+            lineHeight: 1.15,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {item.headline}
+        </h3>
       </div>
 
       {/* Body */}
-      <p className="font-general sh-row-body" style={{
-        fontSize: "0.95rem",
-        color: hovered ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.75)",
-        lineHeight: 1.78,
-        transition: "color 0.4s ease",
-      }}>{item.body}</p>
+      <p
+        className="font-general sh-row-body"
+        style={{
+          fontSize: "0.95rem",
+          color: hovered ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.75)",
+          lineHeight: 1.78,
+          transition: "color 0.4s ease",
+        }}
+      >
+        {item.body}
+      </p>
     </div>
   );
 });

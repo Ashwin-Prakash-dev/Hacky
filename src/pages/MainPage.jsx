@@ -12,7 +12,8 @@ import LiquidLens from "../components/LiquidLens";
 import SponsorsSection from "../components/SponsorsSection";
 import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
-import Timeline from "../components/Timeline";
+import Briefing from "../components/Briefing";
+import Prizes from "../components/Prizes";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -76,11 +77,12 @@ const MainPage = () => {
         <LiquidLens />
         <Hero />
         <SponsorsSection />
+        <Prizes />
+        <Briefing />
         <VideoCards />
         <StudentHook />
-        <Marquee />
-        <TerminalBridge />
-        <Timeline />
+        {/* <Marquee /> */}
+        {/* <TerminalBridge /> */}
         <FAQ />
         <Contact />
         <Footer />

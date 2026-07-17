@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "What's the prize pool?",
-    a: "₹2L+ total*. First place takes ₹1L+. Biggest builder prize in Kerala's student circuit. (*subject to changes)",
+    a: "₹2,00,000 total. First place takes ₹1,00,000, second ₹60,000, third ₹40,000. Biggest builder prize in Kerala's student circuit.",
   },
   {
     q: "What happens at Demo Day?",

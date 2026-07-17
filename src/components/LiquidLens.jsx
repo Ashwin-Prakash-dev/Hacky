@@ -30,15 +30,15 @@ import { clamp01 } from "../lib/wordmark";
 
 const BLOB_POINTS = 10;
 const IDLE_MS = 200; // cursor still for this long -> blob melts away
-const TAP_MS = 1500; // touch: a tapped blob lives this long
 
+// Desktop-only: the lens needs a hovering fine pointer to chase — on
+// touch devices (phones/tablets) it never mounts.
 function canUse() {
   if (typeof window === "undefined") return false;
-  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    return false;
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
-
-const isFinePointer = () =>
-  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 const smooth = (x) => {
   const c = clamp01(x);
@@ -205,8 +205,6 @@ const LiquidLens = () => {
       lockStamp: 0, // when the current lock engaged (draw/type clocks)
     };
     let shownText = ""; // last label text written to the DOM
-    const fine = isFinePointer();
-    const idleMs = fine ? IDLE_MS : TAP_MS;
     let vx = 0;
     let vy = 0;
     let rCur = 0;
@@ -254,10 +252,6 @@ const LiquidLens = () => {
       }
       state.interactive = !!skip;
     };
-    // fine pointer: the blob follows movement; touch: it blooms at the tap
-    // point (and rides a drag), then melts away after TAP_MS on its own
-    const onMove = fine ? track : null;
-    const onTouch = fine ? null : track;
     const onGone = () => {
       state.within = false;
     };
@@ -290,7 +284,7 @@ const LiquidLens = () => {
       pos.y += (target.y - pos.y) * 0.13;
       vx = pos.x - px;
       vy = pos.y - py;
-      const idle = performance.now() - state.lastMove > idleMs;
+      const idle = performance.now() - state.lastMove > IDLE_MS;
       const rTarget =
         state.within && !wantLock && !state.interactive && !idle
           ? baseR()
@@ -493,14 +487,12 @@ const LiquidLens = () => {
       raf = requestAnimationFrame(tick);
     };
 
-    if (onMove) window.addEventListener("pointermove", onMove, { passive: true });
-    if (onTouch) window.addEventListener("pointerdown", onTouch, { passive: true });
+    window.addEventListener("pointermove", track, { passive: true });
     document.documentElement.addEventListener("mouseleave", onGone);
     window.addEventListener("blur", onGone);
     raf = requestAnimationFrame(tick);
     return () => {
-      if (onMove) window.removeEventListener("pointermove", onMove);
-      if (onTouch) window.removeEventListener("pointerdown", onTouch);
+      window.removeEventListener("pointermove", track);
       document.documentElement.removeEventListener("mouseleave", onGone);
       window.removeEventListener("blur", onGone);
       document.body.classList.remove("lens-lock");
