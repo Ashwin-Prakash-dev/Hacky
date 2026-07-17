@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import JoinCodePanel from "../components/apply/team/JoinCodePanel";
+import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import RosterList from "../components/apply/team/RosterList";
 import InvitePanel from "../components/apply/team/InvitePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
@@ -50,6 +51,8 @@ const TeamPage = () => {
   const [inviteSentTo, setInviteSentTo] = useState("");
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState("");
+  const [applyRefBusy, setApplyRefBusy] = useState(false);
+  const [applyRefError, setApplyRefError] = useState("");
   const [kickBusyId, setKickBusyId] = useState(null);
   const [actionError, setActionError] = useState("");
   const [leaveBusy, setLeaveBusy] = useState(false);
@@ -119,6 +122,20 @@ const TeamPage = () => {
       setPayError(err.message);
     } finally {
       setPayBusy(false);
+    }
+  };
+
+  const applyReferralCode = async (code) => {
+    if (kickBusyId || inviteBusy || payBusy || leaveBusy || applyRefBusy) return;
+    setApplyRefBusy(true);
+    setApplyRefError("");
+    try {
+      await api.applyReferral(code);
+      await refresh();
+    } catch (err) {
+      setApplyRefError(err.message);
+    } finally {
+      setApplyRefBusy(false);
     }
   };
 
@@ -205,6 +222,8 @@ const TeamPage = () => {
 
           <JoinCodePanel code={team.join_code} />
 
+          <ReferralCodePanel code={team.referral_code} count={team.referral_count} />
+
           <RosterList team={team} onKick={kick} busyId={kickBusyId} />
 
           {isLeader && !confirmed && team.members.length < 4 && (
@@ -217,7 +236,12 @@ const TeamPage = () => {
           )}
 
           {!confirmed && (
-            <PaymentPanel team={team} onSubmit={pay} busy={payBusy} error={payError} />
+            <PaymentPanel
+              team={team} onSubmit={pay} busy={payBusy} error={payError}
+              onApplyReferral={applyReferralCode}
+              applyRefBusy={applyRefBusy}
+              referralError={applyRefError}
+            />
           )}
 
           <ErrorLine>{actionError}</ErrorLine>
