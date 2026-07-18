@@ -7,7 +7,13 @@ import ConfirmDialog from "../components/apply/ConfirmDialog";
 import TeammatesPanel from "../components/apply/team/TeammatesPanel";
 import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
-import { Panel, ErrorLine, PrimaryButton, GhostButton, MonoLink } from "../components/apply/ui";
+import {
+  Panel,
+  ErrorLine,
+  PrimaryButton,
+  GhostButton,
+  MonoLink,
+} from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
 import { MIN_MEMBERS } from "../lib/teamRules";
@@ -21,11 +27,16 @@ const StepLabel = ({ children }) => (
 const IdeaNotice = ({ prominent }) => (
   <div
     className={`rounded-md border-[0.5px] px-[1.1rem] py-[0.9rem] ${
-      prominent ? "border-lime/30 bg-lime/[0.06]" : "border-white/[0.08] bg-white/[0.02]"
+      prominent
+        ? "border-lime/30 bg-lime/[0.06]"
+        : "border-white/[0.08] bg-white/[0.02]"
     }`}
   >
-    <p className={`font-general text-[0.85rem] leading-relaxed ${prominent ? "text-lime/85" : "text-white/55"}`}>
-      Applications open soon. Once submissions open, your team will pitch its idea right here.
+    <p
+      className={`font-general text-[0.85rem] leading-relaxed ${prominent ? "text-lime/85" : "text-white/55"}`}
+    >
+      Applications open soon. Once submissions open, your team will pitch its
+      idea right here.
     </p>
   </div>
 );
@@ -50,7 +61,8 @@ const TeamPage = () => {
 
   const refresh = useCallback(() => {
     setLoadError("");
-    return api.getTeam()
+    return api
+      .getTeam()
       .then(setTeam)
       .catch((err) => {
         if (err.status === 404) navigate("/onboarding", { replace: true });
@@ -59,7 +71,9 @@ const TeamPage = () => {
       });
   }, [navigate]);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   // Keep the wizard stage consistent with the team's actual state.
   useEffect(() => {
@@ -71,7 +85,12 @@ const TeamPage = () => {
   }, [team]);
 
   const anyBusy = () =>
-    kickBusyId || cancelBusyId || inviteBusy || payBusy || leaveBusy || applyRefBusy;
+    kickBusyId ||
+    cancelBusyId ||
+    inviteBusy ||
+    payBusy ||
+    leaveBusy ||
+    applyRefBusy;
 
   const logout = () => {
     clearAuth();
@@ -254,11 +273,18 @@ const TeamPage = () => {
                 cancelBusyId={cancelBusyId}
               />
 
-              <PrimaryButton disabled={!rosterReady} onClick={() => setStage("payment")}>
+              <PrimaryButton
+                disabled={!rosterReady}
+                onClick={() => setStage("payment")}
+              >
                 <span className="inline-flex items-center gap-[0.4rem]">
-                  {rosterReady
-                    ? <>Continue to payment <ArrowRight size={14} /></>
-                    : `Add ${missing} more to continue`}
+                  {rosterReady ? (
+                    <>
+                      Continue to payment <ArrowRight size={14} />
+                    </>
+                  ) : (
+                    `Add ${missing} more to continue`
+                  )}
                 </span>
               </PrimaryButton>
 
@@ -276,6 +302,12 @@ const TeamPage = () => {
             <>
               <StepLabel>Step 2 of 2: Payment</StepLabel>
 
+              <p className="font-general text-sm leading-relaxed text-white/70">
+                After payment, your team will be eligible to submit an idea once
+                the problem statement is released. From those submissions, 20
+                teams will be shortlisted.
+              </p>
+
               <PaymentPanel
                 team={team}
                 locked={!rosterReady}
@@ -286,7 +318,6 @@ const TeamPage = () => {
               />
 
               <ErrorLine>{actionError}</ErrorLine>
-
               <div>
                 <GhostButton onClick={() => setStage("roster")}>
                   <span className="inline-flex items-center gap-[0.35rem]">
@@ -300,22 +331,28 @@ const TeamPage = () => {
           {stage === "done" && (
             <>
               <p className="font-general text-base font-semibold leading-relaxed text-lime">
-                You&apos;re in. See you at SCTCE. Your team is locked in: the
-                roster that paid (₹{fee}) is the roster that competes.
+                You&apos;re in. Your team is locked in: the roster that paid (₹
+                {fee}) is the roster that competes.
               </p>
 
               <IdeaNotice prominent />
 
               <TeammatesPanel team={team} kickBusyId={null} canInvite={false} />
 
-              <ReferralCodePanel code={team.referral_code} count={team.referral_count} />
+              <ReferralCodePanel
+                code={team.referral_code}
+                count={team.referral_count}
+              />
 
               <ErrorLine>{actionError}</ErrorLine>
             </>
           )}
 
           {stage !== "done" && (
-            <ReferralCodePanel code={team.referral_code} count={team.referral_count} />
+            <ReferralCodePanel
+              code={team.referral_code}
+              count={team.referral_count}
+            />
           )}
         </div>
       </PhaseTransition>

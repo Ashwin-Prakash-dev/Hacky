@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Eye } from "lucide-react";
 import { Panel, Eyebrow, GhostButton } from "../ui";
 
-const teamsLine = (n) => (n === 1 ? "1 team has used your code." : `${n} teams have used your code.`);
+const teamsLine = (n) => (n === 1 ? "1 team has used it." : `${n} teams have used it.`);
 
 const ReferralCodePanel = ({ code, count }) => {
+  const [revealed, setRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -24,37 +25,47 @@ const ReferralCodePanel = ({ code, count }) => {
       <Eyebrow>Referral code</Eyebrow>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-[0.85rem] gap-y-2">
-        <span className="select-all font-mono text-[clamp(1.2rem,3.5vw,1.6rem)] font-bold tracking-[0.25em] text-lime">
-          {code}
-        </span>
-        <GhostButton onClick={copy}>
-          {copied ? (
-            <span className="inline-flex items-center gap-[0.3rem]">
-              <Check size={12} strokeWidth={3} /> copied
+        {revealed ? (
+          <>
+            <span className="select-all font-mono text-[clamp(1.2rem,3.5vw,1.6rem)] font-bold tracking-[0.25em] text-lime">
+              {code}
             </span>
-          ) : "copy"}
-        </GhostButton>
+            <GhostButton onClick={copy}>
+              {copied ? (
+                <span className="inline-flex items-center gap-[0.3rem]">
+                  <Check size={12} strokeWidth={3} /> copied
+                </span>
+              ) : "copy"}
+            </GhostButton>
+          </>
+        ) : (
+          <>
+            <span className="select-none font-mono text-[clamp(1.2rem,3.5vw,1.6rem)] font-bold tracking-[0.25em] text-white/20">
+              {"•".repeat(code.length)}
+            </span>
+            <GhostButton onClick={() => setRevealed(true)}>
+              <span className="inline-flex items-center gap-[0.3rem]">
+                <Eye size={12} strokeWidth={2.5} /> reveal code
+              </span>
+            </GhostButton>
+          </>
+        )}
       </div>
 
-      <p className="mt-3 font-general text-[0.85rem] leading-relaxed text-white/70">
-        Teams that use this pay <span className="text-white">₹90</span> instead of ₹100.
+      <p className="mt-4 font-display text-[clamp(1.4rem,4vw,1.9rem)] font-extrabold tracking-[-0.01em] text-lime">
+        ₹10 per team you refer.
+      </p>
+
+      <p className="mt-2 font-mono text-[0.8rem] leading-relaxed text-white/50">
+        Teams that use it pay ₹90 instead of ₹100.
       </p>
 
       {earned !== null && (
-        earned > 0 ? (
-          <div className="mt-4">
-            <p className="font-general text-[clamp(1.5rem,4vw,2rem)] font-bold text-lime">
-              ₹{earned} earned
-            </p>
-            <p className="mt-1 font-general text-[0.85rem] text-white/60">
-              {teamsLine(count)} ₹10 a team, paid out by UPI after the event.
-            </p>
-          </div>
-        ) : (
-          <p className="mt-3 font-general text-[0.85rem] text-white/60">
-            ₹10 a team. Share it and start earning.
-          </p>
-        )
+        <p className="mt-1 font-mono text-[0.8rem] leading-relaxed text-white/50">
+          {earned > 0
+            ? `₹${earned} earned. ${teamsLine(count)} Paid out by UPI after the event.`
+            : "Nobody's used it yet."}
+        </p>
       )}
     </Panel>
   );

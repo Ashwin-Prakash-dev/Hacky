@@ -126,7 +126,7 @@ const Hero = () => {
     <section
       ref={sectionRef}
       aria-label="Startathon — Kerala's most curated 30-hour hackathon"
-      className="relative h-dvh w-screen overflow-hidden bg-[#050505] bg-[rgba(0,0,0,0.18)] backdrop-blur-md"
+      className="relative h-dvh w-screen overflow-hidden bg-[#050505] backdrop-blur-md"
     >
       <div className="absolute left-0 top-0 size-full">
         <StaticHeroBackground />
