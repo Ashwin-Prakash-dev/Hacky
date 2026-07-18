@@ -24,7 +24,7 @@ async function request(path, { method = "GET", body } = {}) {
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, "connection failed — check your network and retry");
+    throw new ApiError(0, "connection failed. Check your network and try again.");
   }
 
   let json = null;
@@ -36,7 +36,7 @@ async function request(path, { method = "GET", body } = {}) {
 
   if (res.ok && json?.success) return json.data;
   if (res.status === 401) clearAuth();
-  throw new ApiError(res.status, json?.error || "something went wrong — try again");
+  throw new ApiError(res.status, json?.error || "something went wrong. Try again.");
 }
 
 export const api = {
@@ -67,11 +67,10 @@ export const api = {
   createTeam: (teamName) =>
     request("/team", { method: "POST", body: { team_name: teamName } }),
   getTeam: () => request("/team"),
-  invite: (email, name) =>
-    request("/team/invite", {
-      method: "POST",
-      body: name ? { email, name } : { email },
-    }),
+  invite: (email) =>
+    request("/team/invite", { method: "POST", body: { email } }),
+  cancelInvite: (id) =>
+    request(`/team/invite/${encodeURIComponent(id)}/cancel`, { method: "POST" }),
   joinTeam: (joinCode) =>
     request("/team/join", { method: "POST", body: { join_code: joinCode } }),
   leaveTeam: () => request("/team/leave", { method: "POST" }),
@@ -88,4 +87,6 @@ export const api = {
   // payment
   submitPayment: (transactionId) =>
     request("/payment", { method: "POST", body: { transaction_id: transactionId } }),
+  applyReferral: (code) =>
+    request("/team/referral", { method: "PUT", body: { referral_code: code } }),
 };

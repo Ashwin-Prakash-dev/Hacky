@@ -1,6 +1,8 @@
-import { useRef, useEffect, forwardRef, useState } from "react";
+import { useRef, useEffect, forwardRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,13 +38,16 @@ const StudentHook = () => {
         headlineRef.current,
         { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: headlineRef.current,
             start: "top 82%",
             toggleActions: "play none none reverse",
           },
-        }
+        },
       );
 
       rowRefs.current.forEach((el, i) => {
@@ -51,14 +56,17 @@ const StudentHook = () => {
           el,
           { opacity: 0, y: 28 },
           {
-            opacity: 1, y: 0, duration: 0.65, ease: "power3.out",
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+            ease: "power3.out",
             delay: i * 0.08,
             scrollTrigger: {
               trigger: el,
               start: "top 88%",
               toggleActions: "play none none reverse",
             },
-          }
+          },
         );
       });
     }, sectionRef);
@@ -69,105 +77,57 @@ const StudentHook = () => {
   return (
     <section
       ref={sectionRef}
-      style={{ background: "#0a0a0a", padding: "7rem 0 6rem", width: "100%" }}
+      data-lens="builders"
+      className="w-full bg-[#050505] pb-0 pt-28"
     >
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
         <div
           ref={headlineRef}
-          style={{
-            display: "flex", gap: "clamp(2rem, 5vw, 4rem)",
-            alignItems: "flex-start", marginBottom: "5rem",
-            opacity: 0, flexWrap: "wrap",
-          }}
+          className="relative mb-20 flex flex-wrap items-start gap-[clamp(2rem,5vw,4rem)] opacity-0"
         >
           {/* Left: text */}
-          <div style={{ flex: "1 1 300px" }}>
-            <p
-              className="font-general"
-              style={{
-                fontSize: "0.95rem",
-                fontStyle: "italic",
-                color: "rgba(255,255,255,0.7)",
-                marginBottom: "1.25rem",
-                letterSpacing: "0.01em",
-              }}
-            >
-              you're next
-            </p>
+          <div className="flex-[1_1_300px]">
+            <span className="eyebrow mb-[1.4rem]">
+              you&apos;re next
+            </span>
 
-            <h2
-              className="special-font bento-title"
-              style={{
-                color: "#fff",
-                fontSize: "clamp(2.6rem, 6vw, 4.8rem)",
-                letterSpacing: "-0.03em",
-                lineHeight: 0.9,
-                marginBottom: "1.5rem",
-              }}
-            >
-              Still <b>i</b>n college.<br />
+            <h2 className="special-font bento-title mb-6 text-[clamp(2.6rem,6vw,4.8rem)] leading-[0.95] tracking-[-0.03em] text-white">
+              Still <b>i</b>n college.
+              <br />
               Already <b>b</b>uilding<b>.</b>
             </h2>
 
-            <p
-              className="font-general"
-              style={{
-                fontSize: "1rem",
-                color: "rgba(255,255,255,0.82)",
-                lineHeight: 1.8,
-                marginBottom: "2rem",
-              }}
-            >
-              Every person behind those companies was a student once.
-              They just didn't stop building. Startathon is how we find
-              those people in Kerala. If that's you, you should be here.
+            <p className="mb-8 font-general text-base leading-[1.8] text-white/[0.82]">
+              Every person behind those companies was a student once. They just
+              didn&apos;t stop building. Startathon is how we find those people in
+              Kerala. If that&apos;s you, you should be here.
             </p>
-            <p className="font-general" style={{
-              fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
-              color: "rgba(255,255,255,0.75)",
-              lineHeight: 1.75,
-              marginBottom: "1.5rem",
-            }}>
-              If you're a builder and you resonated with that, there's no reason you shouldn't apply.
+            <p className="mb-6 font-general text-[clamp(0.95rem,1.4vw,1.05rem)] leading-[1.75] text-white/75">
+              If you&apos;re a builder and you resonated with that, there&apos;s no reason
+              you shouldn&apos;t apply.
             </p>
-            <a href="/apply" style={{ textDecoration: "none", display: "inline-block" }}>
-              <button
-                style={{
-                  padding: "0.9rem 2.25rem",
-                  background: "#C8FF00", color: "#000",
-                  border: "none", borderRadius: "5px",
-                  fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.78rem", letterSpacing: "0.12em",
-                  fontWeight: 700, textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(200,255,0,0.25)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                Apply now →
-              </button>
-            </a>
+            <Link to="/apply" className="cta-pill group">
+              <span className="relative inline-flex overflow-hidden">
+                <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                  Apply Now
+                </span>
+                <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                  Apply Now
+                </span>
+              </span>
+              <span className="cta-pill-icon" aria-hidden="true">
+                <ArrowUpRight size={15} strokeWidth={2.25} />
+              </span>
+            </Link>
           </div>
 
           {/* Right: video */}
-          <div style={{ flex: "1 1 340px", minWidth: 0 }}>
-            <div style={{
-              position: "relative", width: "100%", paddingBottom: "56.25%",
-              borderRadius: "10px", overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}>
+          <div className="min-w-0 flex-[1_1_340px]">
+            <div className="relative w-full overflow-hidden rounded-[1.25rem] border border-white/[0.08] pb-[56.25%] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
               <iframe
                 src="https://player.vimeo.com/video/1197348906?autoplay=0&title=0&byline=0&portrait=0"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+                className="absolute inset-0 size-full border-none"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
               />
@@ -176,7 +136,7 @@ const StudentHook = () => {
         </div>
 
         {/* ── Outcome rows ─────────────────────────────────────── */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="hidden border-t border-white/[0.06]">
           {outcomes.map((item, i) => (
             <OutcomeRow
               key={i}
@@ -187,114 +147,45 @@ const StudentHook = () => {
         </div>
 
         {/* Pull-quote */}
-        <div style={{
-          marginTop: "4rem", paddingTop: "3rem",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          display: "flex", alignItems: "flex-start", gap: "1.25rem",
-        }}>
-          <div style={{
-            width: "3px", minHeight: "2.5rem", flexShrink: 0,
-            background: "linear-gradient(180deg, #C8FF00, transparent)",
-            borderRadius: "2px", marginTop: "0.2rem",
-          }} />
-          <p className="font-general" style={{
-            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
-            color: "rgba(255,255,255,0.85)",
-            lineHeight: 1.6, fontStyle: "italic",
-          }}>
-            "Kerala has the talent. It's always had it.
-            We're just putting it in one room and letting it run."
+        <div className="mt-16 hidden items-start gap-5 border-t border-white/[0.06] pt-12">
+          <div className="mt-[0.2rem] h-10 w-[3px] shrink-0 rounded-sm bg-[linear-gradient(180deg,#C8FF00,transparent)]" />
+          <p className="font-general text-[clamp(0.95rem,2vw,1.3rem)] italic leading-[1.6] text-white/85">
+            &quot;Kerala has the talent. It&apos;s always had it. We&apos;re just putting it in
+            one room and letting it run.&quot;
           </p>
         </div>
       </div>
-
-      <style>{`
-        .sh-row-body {
-          display: block;
-        }
-        @media (max-width: 639px) {
-          .sh-outcome-grid {
-            grid-template-columns: 2.5rem 1fr !important;
-          }
-          .sh-row-body {
-            grid-column: 1 / -1;
-            padding-left: 2.5rem;
-            padding-top: 0.5rem;
-          }
-        }
-      `}</style>
     </section>
   );
 };
 
 /* ── Individual outcome row ──────────────────────────────────────────────── */
-const OutcomeRow = forwardRef(({ item }, ref) => {
-  const [hovered, setHovered] = useState(false);
+const OutcomeRow = forwardRef(({ item }, ref) => (
+  <div
+    ref={ref}
+    className="group grid grid-cols-[2.5rem_1fr] items-center gap-[clamp(1.25rem,3vw,3rem)] border-b border-white/[0.06] bg-transparent py-[clamp(1.5rem,3vw,2.25rem)] opacity-0 transition-[background] duration-300 hover:bg-lime/[0.018] sm:grid-cols-[3.5rem_1fr_1.6fr]"
+  >
+    {/* Number */}
+    <span className="select-none font-display text-[clamp(2.2rem,3.5vw,3rem)] font-normal leading-none tracking-[-0.03em] text-lime/[0.12] transition-colors duration-300 group-hover:text-lime/30">
+      {item.num}
+    </span>
 
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="sh-outcome-grid"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "3.5rem 1fr 1.6fr",
-        gap: "clamp(1.25rem, 3vw, 3rem)",
-        padding: "clamp(1.5rem, 3vw, 2.25rem) 0",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        alignItems: "center",
-        opacity: 0,
-        background: hovered ? "rgba(200,255,0,0.018)" : "transparent",
-        transition: "background 0.3s ease",
-        cursor: "default",
-      }}
-    >
-      {/* Number */}
-      <span style={{
-        fontFamily: "var(--font-general)",
-        fontSize: "clamp(2.2rem, 3.5vw, 3rem)",
-        fontWeight: 900,
-        color: hovered ? "rgba(200,255,0,0.25)" : "rgba(200,255,0,0.1)",
-        lineHeight: 1,
-        letterSpacing: "-0.04em",
-        transition: "color 0.3s ease",
-        userSelect: "none",
-      }}>
-        {item.num}
+    {/* Tag + headline */}
+    <div className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-2">
+      <span className="mb-[0.65rem] inline-block rounded-full border border-white/10 px-[11px] py-1 font-mono text-[0.64rem] uppercase tracking-[0.2em] text-white/65 transition-[color,border-color] duration-300 group-hover:border-lime/30 group-hover:text-lime/85">
+        {item.tag}
       </span>
-
-      {/* Tag + headline */}
-      <div>
-        <span style={{
-          display: "inline-block",
-          fontFamily: "var(--font-general)",
-          fontSize: "0.72rem", letterSpacing: "0.16em",
-          textTransform: "uppercase",
-          color: hovered ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.65)",
-          border: `0.5px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
-          borderRadius: "2px", padding: "3px 8px",
-          marginBottom: "0.65rem",
-          transition: "color 0.3s, border-color 0.3s",
-        }}>{item.tag}</span>
-        <h3 className="font-general" style={{
-          fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
-          fontWeight: 800,
-          color: "#fff",
-          lineHeight: 1.15,
-          letterSpacing: "-0.02em",
-        }}>{item.headline}</h3>
-      </div>
-
-      {/* Body */}
-      <p className="font-general sh-row-body" style={{
-        fontSize: "0.95rem",
-        color: "rgba(255,255,255,0.75)",
-        lineHeight: 1.78,
-      }}>{item.body}</p>
+      <h3 className="font-general text-[clamp(1.1rem,2vw,1.45rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white">
+        {item.headline}
+      </h3>
     </div>
-  );
-});
+
+    {/* Body */}
+    <p className="col-span-2 pl-10 pt-2 font-general text-[0.95rem] leading-[1.78] text-white/75 transition-colors duration-[0.4s] group-hover:text-white/[0.92] sm:col-auto sm:pl-0 sm:pt-0">
+      {item.body}
+    </p>
+  </div>
+));
 
 OutcomeRow.displayName = "OutcomeRow";
 

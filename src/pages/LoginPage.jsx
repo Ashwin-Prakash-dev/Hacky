@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
@@ -26,7 +27,7 @@ const LoginPage = () => {
   const submit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password) {
-      setError("email and password are required");
+      setError("Enter your email and password.");
       return;
     }
     setBusy(true);
@@ -42,11 +43,11 @@ const LoginPage = () => {
   };
 
   return (
-    <AuthShell label="AUTHENTICATE">
+    <AuthShell label="LOG IN" step="account">
       <PhaseTransition>
         <Panel>
-          <Eyebrow>AUTHENTICATE</Eyebrow>
-          <Title>Log in to Startathon</Title>
+          <Eyebrow>LOG IN</Eyebrow>
+          <Title>Welcome back</Title>
           <NoticeLine>{state?.notice}</NoticeLine>
           <form onSubmit={submit} noValidate>
             <TerminalInput
@@ -61,17 +62,14 @@ const LoginPage = () => {
             />
             <ErrorLine>{error}</ErrorLine>
             <PrimaryButton type="submit" disabled={busy}>
-              {busy ? "authenticating…" : "Log in"}
+              {busy ? "Logging in…" : "Log in"}
             </PrimaryButton>
           </form>
           <Divider />
           <GoogleSignInPanel onError={setError} disabled={busy} />
-          <div style={{
-            display: "flex", justifyContent: "space-between",
-            alignItems: "baseline", marginTop: "1.5rem",
-          }}>
-            <MonoLink to="/forgot">forgot password?</MonoLink>
-            <MonoLink to="/signup">no account? sign up →</MonoLink>
+          <div className="mt-6 flex items-baseline justify-between">
+            <MonoLink to="/forgot">Forgot password?</MonoLink>
+            <MonoLink to="/signup">New here? Sign up <ArrowRight size={13} /></MonoLink>
           </div>
         </Panel>
       </PhaseTransition>

@@ -8,11 +8,12 @@ import CustomCursor from "../components/CustomCursor";
 import ScrollProgress from "../components/ScrollProgress";
 import NavBar from "../components/Navbar";
 import Hero from "../components/Hero";
+import LiquidLens from "../components/LiquidLens";
 import SponsorsSection from "../components/SponsorsSection";
-import Stats from "../components/Stats";
 import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
-import Timeline from "../components/Timeline";
+import Briefing from "../components/Briefing";
+import Prizes from "../components/Prizes";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -60,7 +61,7 @@ const MainPage = () => {
   return (
     <>
       <ScrollProgress />
-      <CustomCursor />
+      {/* <CustomCursor /> */}
       {!introComplete && (
         <Intro
           onComplete={() => {
@@ -72,16 +73,18 @@ const MainPage = () => {
       {introComplete && <GoogleOneTap />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
+        {/* the site-wide x-ray lens blob chasing the cursor */}
+        <LiquidLens />
         <Hero />
         <SponsorsSection />
+        <Prizes />
+        {/* <Briefing /> */}
         <VideoCards />
-        <Stats />
         <StudentHook />
-        <Marquee />
-        <TerminalBridge />
-        <Timeline />
+        {/* <Marquee /> */}
+        {/* <TerminalBridge /> */}
         <FAQ />
-        <Contact />
+        {/* <Contact /> */}
         <Footer />
       </main>
     </>

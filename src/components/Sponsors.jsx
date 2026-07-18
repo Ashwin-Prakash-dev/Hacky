@@ -1,17 +1,18 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowLeft, ArrowRight, Check, CircleDot, Diamond, Gem, Target } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ─── Data ──────────────────────────────────────────────────────────────── */
 
 const VALUE_PROPS = [
-  { icon: "◎", title: "Watch them build",      desc: "30 hours of live execution. You don't read a CV, you watch them solve hard problems in real time. The signal is unambiguous." },
-  { icon: "◈", title: "Kerala's best, one room", desc: "We curate 20 teams from across Kerala. The most ambitious student builders in the state, all in one place." },
-  { icon: "◉", title: "Access, not ads",       desc: "Every tier is built around proximity to the builders. Walk the floor, sit with teams, make offers on the spot." },
-  { icon: "◆", title: "Hire before anyone else", desc: "You see them build before any other company does. Spot offers, PPOs, internships, all made in context." },
+  { icon: CircleDot, title: "Watch them build",      desc: "30 hours of live execution. You don't read a CV, you watch them solve hard problems in real time. The signal is unambiguous." },
+  { icon: Diamond, title: "Kerala's best, one room", desc: "We curate 20 teams from across Kerala. The most ambitious student builders in the state, all in one place." },
+  { icon: Target, title: "Access, not ads",       desc: "Every tier is built around proximity to the builders. Walk the floor, sit with teams, make offers on the spot." },
+  { icon: Gem, title: "Hire before anyone else", desc: "You see them build before any other company does. Spot offers, PPOs, internships, all made in context." },
 ];
 
 const TIERS = [
@@ -44,7 +45,7 @@ const TIERS = [
   {
     id: "strategic", name: "Custom", price: "Quote on request", tag: "Bespoke",
     slots: null, highlight: false, bespoke: true,
-    cta: "Tell us what you need →",
+    cta: "Tell us what you need",
     perks: [
       "Don't fit T1 or T2?",
       "Tell us what you're looking for",
@@ -85,10 +86,7 @@ function GrainOverlay() {
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        position: "fixed", inset: 0, width: "100%", height: "100%",
-        pointerEvents: "none", zIndex: 0, mixBlendMode: "overlay",
-      }}
+      className="pointer-events-none fixed inset-0 z-0 size-full mix-blend-overlay"
     />
   );
 }
@@ -97,22 +95,18 @@ function GrainOverlay() {
 function MarqueeStrip({ reverse = false }) {
   const items = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
-    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-      <div style={{
-        display: "flex", gap: "3rem",
-        animation: `marqueeScroll${reverse ? "R" : ""} 22s linear infinite`,
-        width: "max-content",
-      }}>
+    <div className="overflow-hidden border-y border-white/[0.06]">
+      <div
+        className={`flex w-max gap-12 ${
+          reverse ? "animate-[marqueeScrollR_22s_linear_infinite]" : "animate-[marqueeScroll_22s_linear_infinite]"
+        }`}
+      >
         {items.map((t, i) => (
-          <span key={i} style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.72rem", letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.6)",
-            padding: "0.85rem 0", whiteSpace: "nowrap",
-            display: "flex", alignItems: "center", gap: "3rem",
-          }}>
+          <span key={i} className="flex items-center gap-12 whitespace-nowrap py-[0.85rem] font-general text-[0.72rem] uppercase tracking-[0.22em] text-white/60">
             {t}
-            <span style={{ color: "#C8FF00", fontSize: "0.55rem" }}>◆</span>
+            <span className="inline-flex text-lime">
+              <Diamond size={9} fill="currentColor" strokeWidth={0} />
+            </span>
           </span>
         ))}
       </div>
@@ -122,7 +116,6 @@ function MarqueeStrip({ reverse = false }) {
 
 /* ─── Tier card ─────────────────────────────────────────────────────────── */
 function TierCard({ tier }) {
-  const [hovered, setHovered] = useState(false);
   const cardRef = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -136,144 +129,85 @@ function TierCard({ tier }) {
   return (
     <div
       ref={cardRef}
-      className="sp-tier-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={`sp-tier-card group relative flex flex-col overflow-hidden rounded-[10px] p-8 opacity-0 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 ${
+        tier.highlight
+          ? "border border-lime/40 bg-[#0f0f0f] hover:shadow-[0_20px_60px_rgba(200,255,0,0.12),0_0_0_1px_rgba(200,255,0,0.5)]"
+          : "border border-white/[0.07] bg-[#080808] hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+      }`}
       onMouseMove={handleMouseMove}
-      style={{
-        background: tier.highlight ? "#0f0f0f" : "#080808",
-        border: tier.highlight
-          ? "1px solid rgba(200,255,0,0.4)"
-          : "1px solid rgba(255,255,255,0.07)",
-        borderRadius: "10px",
-        padding: "2rem",
-        display: "flex", flexDirection: "column",
-        position: "relative", overflow: "hidden",
-        opacity: 0,
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        boxShadow: hovered
-          ? tier.highlight
-            ? "0 20px 60px rgba(200,255,0,0.12), 0 0 0 1px rgba(200,255,0,0.5)"
-            : "0 20px 40px rgba(0,0,0,0.6)"
-          : "none",
-      }}
     >
       {/* Spotlight follow effect */}
-      <div style={{
-        position: "absolute", inset: 0, borderRadius: "10px",
-        background: `radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(200,255,0,0.05), transparent 70%)`,
-        opacity: hovered ? 1 : 0, transition: "opacity 0.3s",
-        pointerEvents: "none",
-      }} />
+      <div
+        className="pointer-events-none absolute inset-0 rounded-[10px] bg-[radial-gradient(300px_circle_at_var(--mx,50%)_var(--my,50%),rgba(200,255,0,0.05),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      />
 
       {/* Top gradient line */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: "2px",
-        background: tier.highlight
-          ? "linear-gradient(90deg, transparent, #C8FF00, transparent)"
-          : "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)",
-      }} />
+      <div
+        className={`absolute inset-x-0 top-0 h-0.5 ${
+          tier.highlight
+            ? "bg-[linear-gradient(90deg,transparent,#C8FF00,transparent)]"
+            : "bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)]"
+        }`}
+      />
 
       {tier.highlight && (
-        <div style={{
-          position: "absolute", top: "1.1rem", right: "1.1rem",
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase",
-          color: "#000", background: "#C8FF00",
-          borderRadius: "2px", padding: "3px 9px",
-        }}>Full Access</div>
+        <div className="absolute right-[1.1rem] top-[1.1rem] rounded-sm bg-lime px-[9px] py-[3px] font-general text-[0.65rem] uppercase tracking-[0.14em] text-black">
+          Full Access
+        </div>
       )}
 
       {/* Price + name */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <span style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.6)",
-        }}>{tier.tag}</span>
-        <div style={{
-          fontFamily: "var(--font-general)",
-          fontSize: tier.bespoke ? "clamp(1.1rem, 2.5vw, 1.6rem)" : "clamp(2rem, 4vw, 3rem)",
-          fontWeight: 900,
-          color: tier.highlight ? "#C8FF00" : tier.bespoke ? "rgba(255,255,255,0.7)" : "#fff",
-          fontStyle: tier.bespoke ? "italic" : "normal",
-          lineHeight: 1, marginTop: "0.4rem",
-        }}>{tier.price}</div>
+      <div className="mb-6">
+        <span className="font-general text-[0.72rem] uppercase tracking-[0.14em] text-white/60">{tier.tag}</span>
+        <div
+          className={`mt-[0.4rem] font-general font-black leading-none ${
+            tier.bespoke
+              ? "text-[clamp(1.1rem,2.5vw,1.6rem)] italic text-white/70"
+              : `text-[clamp(2rem,4vw,3rem)] ${tier.highlight ? "text-lime" : "text-white"}`
+          }`}
+        >
+          {tier.price}
+        </div>
         {tier.bespoke && (
-          <div style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.55)", marginTop: "0.3rem",
-          }}>Quoted per engagement</div>
+          <div className="mt-[0.3rem] font-general text-[0.68rem] uppercase tracking-[0.12em] text-white/55">
+            Quoted per engagement
+          </div>
         )}
-        <div style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.85rem", fontWeight: 600,
-          color: "rgba(255,255,255,0.75)", marginTop: "0.3rem",
-        }}>{tier.name}</div>
+        <div className="mt-[0.3rem] font-general text-[0.85rem] font-semibold text-white/75">{tier.name}</div>
         {tier.slots && (
-          <div style={{
-            display: "inline-block", marginTop: "0.55rem",
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase",
-            color: tier.highlight ? "#C8FF00" : "rgba(255,255,255,0.65)",
-            border: `1px solid ${tier.highlight ? "rgba(200,255,0,0.25)" : "rgba(255,255,255,0.1)"}`,
-            borderRadius: "2px", padding: "2px 7px",
-          }}>{tier.slots}</div>
+          <div
+            className={`mt-[0.55rem] inline-block rounded-sm border px-[7px] py-0.5 font-general text-[0.68rem] uppercase tracking-[0.12em] ${
+              tier.highlight ? "border-lime/25 text-lime" : "border-white/10 text-white/65"
+            }`}
+          >
+            {tier.slots}
+          </div>
         )}
       </div>
 
       {/* Perks */}
-      <div style={{ flex: 1 }}>
+      <div className="flex-1">
         {tier.perks.map((p) => (
-          <div key={p} style={{
-            display: "flex", gap: "10px", alignItems: "flex-start",
-            padding: "0.45rem 0",
-            borderBottom: "0.5px solid rgba(255,255,255,0.04)",
-          }}>
-            <span style={{ color: "#C8FF00", fontSize: "0.75rem", marginTop: "2px", flexShrink: 0 }}>✓</span>
-            <span style={{
-              fontFamily: "var(--font-general, sans-serif)",
-              fontSize: "0.82rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.5,
-            }}>{p}</span>
+          <div key={p} className="flex items-start gap-[10px] border-b-[0.5px] border-white/[0.04] py-[0.45rem]">
+            <span className="mt-0.5 shrink-0 text-lime">
+              <Check size={13} strokeWidth={3} />
+            </span>
+            <span className="font-general text-[0.82rem] leading-relaxed text-white/80">{p}</span>
           </div>
         ))}
       </div>
 
-      <a
-        href="#sponsor-contact"
-        style={{ textDecoration: "none", marginTop: "1.5rem" }}
-      >
-        <button style={{
-          width: "100%", padding: "0.75rem",
-          background: tier.highlight ? "#C8FF00" : "transparent",
-          color: tier.highlight ? "#000" : "rgba(255,255,255,0.8)",
-          border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "5px",
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.75rem", letterSpacing: "0.12em",
-          fontWeight: 700, textTransform: "uppercase",
-          cursor: "pointer", transition: "background 0.2s, color 0.2s, border-color 0.2s",
-        }}
-        onMouseEnter={(e) => {
-          if (!tier.highlight) {
-            e.currentTarget.style.borderColor = "rgba(200,255,0,0.4)";
-            e.currentTarget.style.color = "#C8FF00";
-          } else {
-            e.currentTarget.style.opacity = "0.85";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!tier.highlight) {
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-            e.currentTarget.style.color = "rgba(255,255,255,0.8)";
-          } else {
-            e.currentTarget.style.opacity = "1";
-          }
-        }}
+      <a href="#sponsor-contact" className="mt-6 no-underline">
+        <button
+          className={`w-full rounded-[5px] border py-3 font-general text-[0.75rem] font-bold uppercase tracking-[0.12em] transition-[background,color,border-color] duration-200 ${
+            tier.highlight
+              ? "border-none bg-lime text-black hover:opacity-85"
+              : "border-white/10 bg-transparent text-white/80 hover:border-lime/40 hover:text-lime"
+          }`}
         >
-          {tier.cta || "Get in touch →"}
+          <span className="inline-flex items-center gap-[0.4rem]">
+            {tier.cta || "Get in touch"} <ArrowRight size={13} />
+          </span>
         </button>
       </a>
     </div>
@@ -331,140 +265,67 @@ const Sponsors = () => {
   }, []);
 
   return (
-    <div ref={pageRef} style={{ background: "#000", minHeight: "100vh", position: "relative" }}>
+    <div ref={pageRef} className="relative min-h-screen bg-black">
       <GrainOverlay />
 
       {/* ── Back nav ──────────────────────────────────────────────────── */}
-      <div style={{
-        position: "fixed", top: "1.5rem", left: "1.5rem",
-        zIndex: 100, display: "flex", alignItems: "center", gap: "8px",
-      }}>
+      <div className="fixed left-6 top-6 z-[100] flex items-center gap-2">
         <button
           onClick={() => navigate("/")}
-          style={{
-            display: "flex", alignItems: "center", gap: "8px",
-            background: "rgba(0,0,0,0.6)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backdropFilter: "blur(12px)",
-            borderRadius: "50px", padding: "0.5rem 1rem",
-            color: "rgba(255,255,255,0.8)",
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.75rem", letterSpacing: "0.1em",
-            textTransform: "uppercase", cursor: "pointer",
-            transition: "color 0.2s, border-color 0.2s",
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "#C8FF00"; e.currentTarget.style.borderColor = "rgba(200,255,0,0.35)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
+          className="flex items-center gap-2 rounded-[50px] border border-white/10 bg-black/60 px-4 py-2 font-general text-[0.75rem] uppercase tracking-widest text-white/80 backdrop-blur-md transition-[color,border-color] duration-200 hover:border-lime/35 hover:text-lime"
         >
-          ← Startathon
+          <ArrowLeft size={13} /> Startathon
         </button>
       </div>
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <div ref={heroRef} style={{
-        minHeight: "100vh", display: "flex", flexDirection: "column",
-        justifyContent: "center", alignItems: "center", textAlign: "center",
-        padding: "8rem clamp(1.5rem, 6vw, 5rem) 5rem",
-        position: "relative",
-      }}>
+      <div
+        ref={heroRef}
+        className="relative flex min-h-screen flex-col items-center justify-center px-[clamp(1.5rem,6vw,5rem)] pb-20 pt-32 text-center"
+      >
         {/* Radial glow behind text */}
-        <div style={{
-          position: "absolute", top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "min(700px, 90vw)", height: "400px",
-          background: "radial-gradient(ellipse, rgba(200,255,0,0.07) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[min(700px,90vw)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse,rgba(200,255,0,0.07)_0%,transparent_70%)]" />
 
-        <span className="sp-hero-sub" style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "0.72rem", letterSpacing: "0.22em", textTransform: "uppercase",
-          color: "#C8FF00", background: "rgba(200,255,0,0.08)",
-          border: "0.5px solid rgba(200,255,0,0.25)", borderRadius: "2px",
-          padding: "4px 14px", marginBottom: "2.5rem", display: "inline-block",
-          opacity: 0,
-        }}>Sponsor Startathon 2026</span>
+        <span className="sp-hero-sub mb-10 inline-block rounded-sm border-[0.5px] border-lime/25 bg-lime/[0.08] px-[14px] py-1 font-general text-[0.72rem] uppercase tracking-[0.22em] text-lime opacity-0">
+          Sponsor Startathon 2026
+        </span>
 
-        <div style={{ position: "relative" }}>
+        <div className="relative">
           {["Backing", "the Builders."].map((line, i) => (
             <div
               key={i}
-              className="sp-hero-line"
-              style={{
-                fontFamily: "var(--font-general)",
-                fontSize: "clamp(4rem, 12vw, 10rem)",
-                fontWeight: 900, color: "#fff",
-                lineHeight: 0.9, letterSpacing: "-0.03em",
-                opacity: 0,
-              }}
+              className="sp-hero-line font-general text-[clamp(4rem,12vw,10rem)] font-black leading-[0.9] tracking-[-0.03em] text-white opacity-0"
             >
               {i === 1
-                ? <><span style={{ color: "#C8FF00" }}>the </span>Builders.</>
+                ? <><span className="text-lime">the </span>Builders.</>
                 : line
               }
             </div>
           ))}
         </div>
 
-        <p className="sp-hero-sub" style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "clamp(0.9rem, 1.3vw, 1.02rem)",
-          color: "rgba(255,255,255,0.8)",
-          maxWidth: "520px", lineHeight: 1.85,
-          marginTop: "2rem", opacity: 0,
-        }}>
+        <p className="sp-hero-sub mt-8 max-w-[520px] font-general text-[clamp(0.9rem,1.3vw,1.02rem)] leading-[1.85] text-white/80 opacity-0">
           The best student builders from across Kerala, in one room, building for 30 hours straight.
           You get direct access to them. Watch them work, talk to them, hire them on the spot.
         </p>
-        <p style={{
-          fontFamily: "var(--font-general, sans-serif)",
-          fontSize: "clamp(0.82rem, 1.4vw, 0.92rem)",
-          color: "rgba(255,255,255,0.65)",
-          maxWidth: "520px", margin: "0.9rem auto 0",
-          lineHeight: 1.65,
-        }}>
+        <p className="mx-auto mt-[0.9rem] max-w-[520px] font-general text-[clamp(0.82rem,1.4vw,0.92rem)] leading-[1.65] text-white/65">
           Limited slots per tier. The closer you want to be, the sooner you should reach out.
         </p>
 
         {/* Stat pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginTop: "2.5rem", justifyContent: "center" }}>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
           {[["20", "Curated teams"], ["30 HRS", "Build sprint"], ["₹2L+", "Prize pool"], ["All Kerala", "Reach"]].map(([n, l]) => (
-            <div key={l} className="sp-hero-stat" style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: "50px", padding: "0.5rem 1.2rem",
-              display: "flex", alignItems: "center", gap: "8px",
-              opacity: 0,
-            }}>
-              <span style={{
-                fontFamily: "var(--font-general)",
-                fontSize: "1rem", fontWeight: 900, color: "#C8FF00",
-              }}>{n}</span>
-              <span style={{
-                fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.72rem", letterSpacing: "0.1em",
-                textTransform: "uppercase", color: "rgba(255,255,255,0.7)",
-              }}>{l}</span>
+            <div key={l} className="sp-hero-stat flex items-center gap-2 rounded-[50px] border border-white/[0.08] bg-white/[0.04] px-5 py-2 opacity-0">
+              <span className="font-general text-base font-black text-lime">{n}</span>
+              <span className="font-general text-[0.72rem] uppercase tracking-widest text-white/70">{l}</span>
             </div>
           ))}
         </div>
 
         {/* Scroll cue — hidden on mobile to avoid overlap */}
-        <div className="sp-scroll-cue" style={{
-          position: "absolute", bottom: "2.5rem", left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
-        }}>
-          <span style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.68rem", letterSpacing: "0.14em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
-          }}>Scroll</span>
-          <div style={{
-            width: "1px", height: "36px",
-            background: "linear-gradient(to bottom, rgba(200,255,0,0.4), transparent)",
-            animation: "scrollPulse 2s ease-in-out infinite",
-          }} />
+        <div className="sp-scroll-cue absolute bottom-10 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-[6px] sm:flex">
+          <span className="font-general text-[0.68rem] uppercase tracking-[0.14em] text-white/55">Scroll</span>
+          <div className="h-9 w-px animate-[scrollPulse_2s_ease-in-out_infinite] bg-[linear-gradient(to_bottom,rgba(200,255,0,0.4),transparent)]" />
         </div>
       </div>
 
@@ -472,142 +333,76 @@ const Sponsors = () => {
       <MarqueeStrip />
 
       {/* ── Page body ─────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: "1140px", margin: "0 auto", padding: "6rem clamp(1.5rem, 5vw, 3.5rem)" }}>
+      <div className="mx-auto max-w-[1140px] px-[clamp(1.5rem,5vw,3.5rem)] py-24">
 
         {/* Value props */}
-        <div ref={valRef} style={{ marginBottom: "6rem" }}>
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.72rem", letterSpacing: "0.18em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.65)", marginBottom: "2rem",
-          }}>Why sponsor</p>
-          <div className="sp-val-grid" style={{
-            display: "grid",
-            gap: "1px", background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px",
-            overflow: "hidden",
-          }}>
+        <div ref={valRef} className="mb-24">
+          <p className="mb-8 font-general text-[0.72rem] uppercase tracking-[0.18em] text-white/65">Why sponsor</p>
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[10px] border border-white/[0.06] bg-white/[0.06] min-[601px]:grid-cols-[repeat(auto-fit,minmax(230px,1fr))]">
             {VALUE_PROPS.map((v) => (
-              <div key={v.title} className="sp-val-card" style={{
-                background: "#0a0a0a", padding: "2.25rem 2rem", opacity: 0,
-                transition: "background 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#0f0f0f")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#0a0a0a")}
+              <div
+                key={v.title}
+                className="sp-val-card bg-[#0a0a0a] p-8 opacity-0 transition-colors duration-200 hover:bg-[#0f0f0f]"
               >
-                <span style={{ fontSize: "1.1rem", color: "#C8FF00", display: "block", marginBottom: "1.1rem" }}>{v.icon}</span>
-                <h3 style={{
-                  fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.8rem", fontWeight: 700, color: "#fff",
-                  marginBottom: "0.6rem", letterSpacing: "0.01em",
-                }}>{v.title}</h3>
-                <p style={{
-                  fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.85rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.75,
-                }}>{v.desc}</p>
+                <v.icon size={19} strokeWidth={1.75} className="mb-[1.1rem] block text-lime" />
+                <h3 className="mb-[0.6rem] font-general text-[0.8rem] font-bold tracking-[0.01em] text-white">{v.title}</h3>
+                <p className="font-general text-[0.85rem] leading-[1.75] text-white/[0.72]">{v.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Tier cards */}
-        <div ref={tiersRef} style={{ marginBottom: "6rem" }}>
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.72rem", letterSpacing: "0.18em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.65)", marginBottom: "2rem",
-          }}>Sponsorship tiers</p>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1.1rem",
-          }}
-          className="sp-tiers-grid"
-          >
+        <div ref={tiersRef} className="mb-24">
+          <p className="mb-8 font-general text-[0.72rem] uppercase tracking-[0.18em] text-white/65">Sponsorship tiers</p>
+          <div className="grid grid-cols-1 gap-[1.1rem] min-[601px]:grid-cols-2 min-[901px]:grid-cols-3">
             {TIERS.map((t) => <TierCard key={t.id} tier={t} />)}
           </div>
         </div>
 
         {/* CTA */}
-        <div id="sponsor-contact" className="sp-cta-box" style={{
-          background: "linear-gradient(135deg, #0d0d0d 0%, #111 100%)",
-          border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px",
-          padding: "4rem 3rem", textAlign: "center", position: "relative", overflow: "hidden",
-        }}>
+        <div
+          id="sponsor-contact"
+          className="sp-cta-box relative overflow-hidden rounded-xl border border-white/[0.08] bg-[linear-gradient(135deg,#0d0d0d_0%,#111_100%)] px-5 py-10 text-center min-[601px]:px-12 min-[601px]:py-16"
+        >
           {/* Lime glow */}
-          <div style={{
-            position: "absolute", top: "-80px", left: "50%",
-            transform: "translateX(-50%)",
-            width: "400px", height: "300px",
-            background: "radial-gradient(ellipse, rgba(200,255,0,0.09) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
+          <div className="pointer-events-none absolute left-1/2 top-[-80px] h-[300px] w-[400px] -translate-x-1/2 bg-[radial-gradient(ellipse,rgba(200,255,0,0.09)_0%,transparent_70%)]" />
           {/* Top + bottom accent lines */}
-          <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.35), transparent)" }} />
-          <div style={{ position: "absolute", bottom: 0, left: "15%", right: "15%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.15), transparent)" }} />
+          <div className="absolute inset-x-[15%] top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.35),transparent)]" />
+          <div className="absolute inset-x-[15%] bottom-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.15),transparent)]" />
 
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase",
-            color: "#C8FF00", marginBottom: "1rem",
-          }}>Get in the room</p>
+          <p className="mb-4 font-general text-[0.72rem] uppercase tracking-[0.2em] text-lime">Get in the room</p>
 
-          <h2
-            className="special-font bento-title"
-            style={{
-              color: "#fff", fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-              letterSpacing: "-0.03em", lineHeight: 0.9,
-              marginBottom: "1.25rem",
-            }}
-          >
-            Meet Kerala's<br />best <b>b</b>uilders.
+          <h2 className="special-font bento-title mb-5 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] tracking-[-0.03em] text-white">
+            Meet Kerala&apos;s<br />best <b>b</b>uilders.
           </h2>
 
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.9rem", color: "rgba(255,255,255,0.75)",
-            maxWidth: "420px", margin: "0 auto 2.5rem", lineHeight: 1.75,
-          }}>
+          <p className="mx-auto mb-10 max-w-[420px] font-general text-[0.9rem] leading-[1.75] text-white/75">
             This is the densest concentration of top student builder talent in Kerala.
-            Reach out and we'll get you in.
+            Reach out and we&apos;ll get you in.
           </p>
 
-          <div className="sp-cta-btns" style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
-            <a href="mailto:hello@sctcoding.club?subject=Sponsorship%20Inquiry%20-%20Startathon%202026" style={{ textDecoration: "none" }}>
-              <button style={{
-                padding: "0.9rem 2.5rem",
-                background: "#C8FF00", color: "#000",
-                border: "none", borderRadius: "5px",
-                fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.78rem", letterSpacing: "0.12em",
-                fontWeight: 700, textTransform: "uppercase",
-                cursor: "pointer", transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-              >Email us →</button>
+          <div className="sp-cta-btns flex flex-col items-stretch justify-center gap-4 min-[601px]:flex-row min-[601px]:flex-wrap min-[601px]:items-center">
+            <a
+              href="mailto:hello@sctcoding.club?subject=Sponsorship%20Inquiry%20-%20Startathon%202026"
+              className="w-full no-underline min-[601px]:w-auto"
+            >
+              <button className="w-full rounded-[5px] border-none bg-lime px-10 py-[0.9rem] font-general text-[0.78rem] font-bold uppercase tracking-[0.12em] text-black transition-opacity duration-200 hover:opacity-85 min-[601px]:w-auto">
+                <span className="inline-flex items-center gap-[0.4rem]">
+                  Email us <ArrowRight size={13} />
+                </span>
+              </button>
             </a>
-            <a href="tel:+917909190948" style={{ textDecoration: "none" }}>
-              <button style={{
-                padding: "0.9rem 2.5rem",
-                background: "transparent", color: "rgba(255,255,255,0.8)",
-                border: "1px solid rgba(255,255,255,0.12)", borderRadius: "5px",
-                fontFamily: "var(--font-general, sans-serif)",
-                fontSize: "0.78rem", letterSpacing: "0.12em",
-                fontWeight: 700, textTransform: "uppercase",
-                cursor: "pointer", transition: "border-color 0.2s, color 0.2s",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(200,255,0,0.4)"; e.currentTarget.style.color = "#C8FF00"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
-              >+91 79091 90948</button>
+            <a href="tel:+917909190948" className="w-full no-underline min-[601px]:w-auto">
+              <button className="w-full rounded-[5px] border border-white/[0.12] bg-transparent px-10 py-[0.9rem] font-general text-[0.78rem] font-bold uppercase tracking-[0.12em] text-white/80 transition-[border-color,color] duration-200 hover:border-lime/40 hover:text-lime min-[601px]:w-auto">
+                +91 79091 90948
+              </button>
             </a>
           </div>
 
-          <p style={{
-            fontFamily: "var(--font-general, sans-serif)",
-            fontSize: "0.75rem", color: "rgba(255,255,255,0.55)",
-            marginTop: "2rem", letterSpacing: "0.04em",
-          }}>Organized by Coding Club · SCTCE · Thiruvananthapuram</p>
+          <p className="mt-8 font-general text-[0.75rem] tracking-[0.04em] text-white/55">
+            Organized by Coding Club · SCTCE · Thiruvananthapuram
+          </p>
         </div>
       </div>
 
@@ -615,44 +410,6 @@ const Sponsors = () => {
         @keyframes marqueeScroll  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @keyframes marqueeScrollR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
         @keyframes scrollPulse    { 0%,100% { opacity: 0.6; } 50% { opacity: 0.15; } }
-
-        @media (max-width: 640px) {
-          .sp-scroll-cue { display: none !important; }
-        }
-
-        .sp-tiers-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        .sp-val-grid {
-          grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        }
-
-        @media (max-width: 900px) {
-          .sp-tiers-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        @media (max-width: 600px) {
-          .sp-tiers-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .sp-val-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .sp-cta-box {
-            padding: 2.5rem 1.25rem !important;
-          }
-          .sp-cta-btns {
-            flex-direction: column !important;
-            align-items: stretch !important;
-          }
-          .sp-cta-btns a {
-            width: 100%;
-          }
-          .sp-cta-btns button {
-            width: 100% !important;
-          }
-        }
       `}</style>
     </div>
   );

@@ -1,42 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
-import JoinCodePanel from "../components/apply/team/JoinCodePanel";
-import RosterList from "../components/apply/team/RosterList";
-import InvitePanel from "../components/apply/team/InvitePanel";
+import ConfirmDialog from "../components/apply/ConfirmDialog";
+import TeammatesPanel from "../components/apply/team/TeammatesPanel";
+import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
-import { MONO, SANS, LIME, Panel, ErrorLine, PrimaryButton, GhostButton, MonoLink } from "../components/apply/ui";
+import { Panel, ErrorLine, PrimaryButton, GhostButton, MonoLink } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
+import { MIN_MEMBERS } from "../lib/teamRules";
 
-const StatusBadge = ({ status }) => {
-  const confirmed = status === "confirmed";
-  return (
-    <span style={{
-      fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.14em",
-      padding: "0.35rem 0.7rem", borderRadius: "100px",
-      color: confirmed ? "#0a0a0a" : "#ffb454",
-      background: confirmed ? LIME : "rgba(255,180,84,0.12)",
-      border: confirmed ? "none" : "0.5px solid rgba(255,180,84,0.5)",
-      fontWeight: 700, whiteSpace: "nowrap",
-    }}>
-      {confirmed ? "✓ CONFIRMED" : "PAYMENT PENDING"}
-    </span>
-  );
-};
+const StepLabel = ({ children }) => (
+  <p className="font-mono text-xs uppercase tracking-[0.16em] text-lime/85">
+    {children}
+  </p>
+);
 
 const IdeaNotice = ({ prominent }) => (
-  <div style={{
-    padding: "0.9rem 1.1rem", borderRadius: "6px",
-    background: prominent ? "rgba(200,255,0,0.06)" : "rgba(255,255,255,0.02)",
-    border: `0.5px solid ${prominent ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.08)"}`,
-  }}>
-    <p style={{
-      fontFamily: MONO, fontSize: "0.75rem", lineHeight: 1.6,
-      color: prominent ? "rgba(200,255,0,0.85)" : "rgba(255,255,255,0.5)",
-    }}>
-      {"// APPLICATIONS OPEN SOON — once submissions open, your team will apply with its idea here."}
+  <div
+    className={`rounded-md border-[0.5px] px-[1.1rem] py-[0.9rem] ${
+      prominent ? "border-lime/30 bg-lime/[0.06]" : "border-white/[0.08] bg-white/[0.02]"
+    }`}
+  >
+    <p className={`font-general text-[0.85rem] leading-relaxed ${prominent ? "text-lime/85" : "text-white/55"}`}>
+      Applications open soon. Once submissions open, your team will pitch its idea right here.
     </p>
   </div>
 );
@@ -44,15 +33,20 @@ const IdeaNotice = ({ prominent }) => (
 const TeamPage = () => {
   const navigate = useNavigate();
   const [team, setTeam] = useState(null);
+  const [stage, setStage] = useState(null); // "roster" | "payment" | "done"
   const [loadError, setLoadError] = useState("");
   const [inviteBusy, setInviteBusy] = useState(false);
   const [inviteError, setInviteError] = useState("");
   const [inviteSentTo, setInviteSentTo] = useState("");
   const [payBusy, setPayBusy] = useState(false);
   const [payError, setPayError] = useState("");
+  const [applyRefBusy, setApplyRefBusy] = useState(false);
+  const [applyRefError, setApplyRefError] = useState("");
   const [kickBusyId, setKickBusyId] = useState(null);
+  const [cancelBusyId, setCancelBusyId] = useState(null);
   const [actionError, setActionError] = useState("");
   const [leaveBusy, setLeaveBusy] = useState(false);
+  const [confirm, setConfirm] = useState(null); // { title, body, confirmLabel, action }
 
   const refresh = useCallback(() => {
     setLoadError("");
@@ -67,22 +61,34 @@ const TeamPage = () => {
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  // Keep the wizard stage consistent with the team's actual state.
+  useEffect(() => {
+    if (!team) return;
+    const rosterReady = team.members.length >= MIN_MEMBERS;
+    if (team.status === "confirmed") setStage("done");
+    else if (!rosterReady) setStage("roster");
+    else setStage((s) => s ?? "payment");
+  }, [team]);
+
+  const anyBusy = () =>
+    kickBusyId || cancelBusyId || inviteBusy || payBusy || leaveBusy || applyRefBusy;
+
   const logout = () => {
     clearAuth();
     navigate("/login", { replace: true });
   };
 
-  const invite = async (email, name, onSent) => {
-    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
+  const invite = async (email, onSent) => {
+    if (anyBusy()) return;
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setInviteError("enter a valid email");
+      setInviteError("Enter a valid email address.");
       return;
     }
     setInviteBusy(true);
     setInviteError("");
     setInviteSentTo("");
     try {
-      await api.invite(email, name || undefined);
+      await api.invite(email);
       setInviteSentTo(email);
       onSent();
       await refresh();
@@ -93,23 +99,44 @@ const TeamPage = () => {
     }
   };
 
-  const kick = async (member) => {
-    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
-    if (!window.confirm(`Kick ${member.name} from the team?`)) return;
-    setKickBusyId(member.user_id);
+  const kick = (member) => {
+    if (anyBusy()) return;
+    setConfirm({
+      title: `Remove ${member.name}?`,
+      body: "They'll be taken off the roster. They can rejoin later with the join code or a new invite.",
+      confirmLabel: "Remove",
+      action: async () => {
+        setConfirm(null);
+        setKickBusyId(member.user_id);
+        setActionError("");
+        try {
+          await api.kickMember(member.user_id);
+          await refresh();
+        } catch (err) {
+          setActionError(err.message);
+        } finally {
+          setKickBusyId(null);
+        }
+      },
+    });
+  };
+
+  const cancelInvite = async (inv) => {
+    if (anyBusy()) return;
+    setCancelBusyId(inv.invite_id);
     setActionError("");
     try {
-      await api.kickMember(member.user_id);
+      await api.cancelInvite(inv.invite_id);
       await refresh();
     } catch (err) {
       setActionError(err.message);
     } finally {
-      setKickBusyId(null);
+      setCancelBusyId(null);
     }
   };
 
   const pay = async (transactionId) => {
-    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
+    if (anyBusy()) return;
     setPayBusy(true);
     setPayError("");
     try {
@@ -122,32 +149,54 @@ const TeamPage = () => {
     }
   };
 
-  const leave = async () => {
-    if (kickBusyId || inviteBusy || payBusy || leaveBusy) return;
-    const isLeader = team.your_role === "leader";
-    const msg = isLeader
-      ? "Disband the team? This deletes it and frees every member. This cannot be undone."
-      : "Leave this team?";
-    if (!window.confirm(msg)) return;
-    setLeaveBusy(true);
-    setActionError("");
+  const applyReferralCode = async (code) => {
+    if (anyBusy()) return;
+    setApplyRefBusy(true);
+    setApplyRefError("");
     try {
-      await api.leaveTeam();
-      navigate("/onboarding", { replace: true });
+      await api.applyReferral(code);
+      await refresh();
     } catch (err) {
-      setActionError(err.message);
-      setLeaveBusy(false);
+      setApplyRefError(err.message);
+    } finally {
+      setApplyRefBusy(false);
     }
   };
 
+  const leave = () => {
+    if (anyBusy()) return;
+    const isLeader = team.your_role === "leader";
+    setConfirm({
+      title: isLeader ? "Disband the team?" : "Leave this team?",
+      body: isLeader
+        ? "This deletes the team for everyone and can't be undone. Your teammates will have to start over."
+        : "You'll be removed from the roster. You can rejoin later with the join code or a new invite.",
+      confirmLabel: isLeader ? "Disband team" : "Leave team",
+      action: async () => {
+        setConfirm(null);
+        setLeaveBusy(true);
+        setActionError("");
+        try {
+          await api.leaveTeam();
+          navigate("/onboarding", { replace: true });
+        } catch (err) {
+          setActionError(err.message);
+          setLeaveBusy(false);
+        }
+      },
+    });
+  };
+
+  const headerRight = (
+    <div className="flex items-center gap-5">
+      <MonoLink to="/profile">profile</MonoLink>
+      <GhostButton onClick={logout}>logout</GhostButton>
+    </div>
+  );
+
   if (loadError) {
     return (
-      <AuthShell label="TEAM" right={
-        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-          <MonoLink to="/profile">profile</MonoLink>
-          <GhostButton onClick={logout}>logout</GhostButton>
-        </div>
-      }>
+      <AuthShell label="TEAM" right={headerRight}>
         <Panel>
           <ErrorLine>{loadError}</ErrorLine>
           <PrimaryButton onClick={refresh}>Retry</PrimaryButton>
@@ -156,81 +205,131 @@ const TeamPage = () => {
     );
   }
 
-  if (!team) {
+  if (!team || !stage) {
     return (
       <AuthShell label="TEAM">
-        <p style={{ fontFamily: MONO, fontSize: "0.8rem", color: "rgba(200,255,0,0.7)" }}>
-          {"// loading team…"}
+        <p className="font-mono text-[0.8rem] text-lime/70">
+          Loading your team…
         </p>
       </AuthShell>
     );
   }
 
   const isLeader = team.your_role === "leader";
-  const confirmed = team.status === "confirmed";
+  const memberCount = team.members.length;
+  const rosterReady = memberCount >= MIN_MEMBERS;
+  const missing = MIN_MEMBERS - memberCount;
+  const fee = team.expected_fee ?? 100;
+
+  const header = (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <h1 className="font-mono text-[clamp(1.5rem,5vw,2.2rem)] font-bold tracking-[0.02em] text-white">
+        {team.team_name}
+      </h1>
+    </div>
+  );
 
   return (
-    <AuthShell label="TEAM" right={
-      <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-        <MonoLink to="/profile">profile</MonoLink>
-        <GhostButton onClick={logout}>logout</GhostButton>
-      </div>
-    }>
+    <AuthShell
+      label="TEAM"
+      step={stage === "done" ? "done" : stage === "payment" ? "pay" : "team"}
+      right={headerRight}
+    >
       <PhaseTransition>
-        <div style={{
-          width: "100%", maxWidth: "760px",
-          display: "flex", flexDirection: "column", gap: "1.25rem",
-        }}>
-          {/* Header */}
-          <div style={{
-            display: "flex", flexWrap: "wrap", alignItems: "center",
-            justifyContent: "space-between", gap: "0.75rem",
-          }}>
-            <h1 style={{
-              fontFamily: MONO, fontSize: "clamp(1.5rem, 5vw, 2.2rem)",
-              fontWeight: 700, color: "#fff", letterSpacing: "0.02em",
-            }}>
-              {team.team_name}
-            </h1>
-            <StatusBadge status={team.status} />
-          </div>
+        <div className="flex w-full max-w-[760px] flex-col gap-5">
+          {header}
 
-          {confirmed && (
-            <p style={{ fontFamily: SANS, fontSize: "0.85rem", color: "rgba(255,255,255,0.55)" }}>
-              Your team is locked in — the roster that paid is the roster that competes.
-            </p>
+          {stage === "roster" && (
+            <>
+              <TeammatesPanel
+                team={team}
+                onKick={kick}
+                kickBusyId={kickBusyId}
+                canInvite={isLeader}
+                onInvite={invite}
+                inviteBusy={inviteBusy}
+                inviteError={inviteError}
+                inviteSentTo={inviteSentTo}
+                onCancelInvite={cancelInvite}
+                cancelBusyId={cancelBusyId}
+              />
+
+              <PrimaryButton disabled={!rosterReady} onClick={() => setStage("payment")}>
+                <span className="inline-flex items-center gap-[0.4rem]">
+                  {rosterReady
+                    ? <>Continue to payment <ArrowRight size={14} /></>
+                    : `Add ${missing} more to continue`}
+                </span>
+              </PrimaryButton>
+
+              <ErrorLine>{actionError}</ErrorLine>
+
+              <div className="border-t border-white/[0.06] pt-2">
+                <GhostButton danger disabled={leaveBusy} onClick={leave}>
+                  {isLeader ? "Disband team" : "Leave team"}
+                </GhostButton>
+              </div>
+            </>
           )}
 
-          <IdeaNotice prominent={confirmed} />
+          {stage === "payment" && (
+            <>
+              <StepLabel>Step 2 of 2: Payment</StepLabel>
 
-          <JoinCodePanel code={team.join_code} />
+              <PaymentPanel
+                team={team}
+                locked={!rosterReady}
+                onSubmit={pay} busy={payBusy} error={payError}
+                onApplyReferral={applyReferralCode}
+                applyRefBusy={applyRefBusy}
+                referralError={applyRefError}
+              />
 
-          <RosterList team={team} onKick={kick} busyId={kickBusyId} />
+              <ErrorLine>{actionError}</ErrorLine>
 
-          {isLeader && !confirmed && team.members.length < 4 && (
-            <InvitePanel
-              onInvite={invite}
-              busy={inviteBusy}
-              error={inviteError}
-              sentTo={inviteSentTo}
-            />
+              <div>
+                <GhostButton onClick={() => setStage("roster")}>
+                  <span className="inline-flex items-center gap-[0.35rem]">
+                    <ArrowLeft size={13} /> Back to your roster
+                  </span>
+                </GhostButton>
+              </div>
+            </>
           )}
 
-          {!confirmed && (
-            <PaymentPanel team={team} onSubmit={pay} busy={payBusy} error={payError} />
+          {stage === "done" && (
+            <>
+              <p className="font-general text-base font-semibold leading-relaxed text-lime">
+                You&apos;re in. See you at SCTCE. Your team is locked in: the
+                roster that paid (₹{fee}) is the roster that competes.
+              </p>
+
+              <IdeaNotice prominent />
+
+              <TeammatesPanel team={team} kickBusyId={null} canInvite={false} />
+
+              <ReferralCodePanel code={team.referral_code} count={team.referral_count} />
+
+              <ErrorLine>{actionError}</ErrorLine>
+            </>
           )}
 
-          <ErrorLine>{actionError}</ErrorLine>
-
-          {!confirmed && (
-            <div style={{ paddingTop: "0.5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-              <GhostButton danger disabled={leaveBusy} onClick={leave}>
-                {isLeader ? "disband team (deletes it for everyone)" : "leave team"}
-              </GhostButton>
-            </div>
+          {stage !== "done" && (
+            <ReferralCodePanel code={team.referral_code} count={team.referral_count} />
           )}
         </div>
       </PhaseTransition>
+
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title}
+        body={confirm?.body}
+        confirmLabel={confirm?.confirmLabel}
+        danger
+        busy={leaveBusy || !!kickBusyId}
+        onConfirm={() => confirm?.action()}
+        onCancel={() => setConfirm(null)}
+      />
     </AuthShell>
   );
 };

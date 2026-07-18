@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
+import TerminalSelect from "../components/apply/inputs/TerminalSelect";
 import GoogleSignInPanel from "../components/apply/GoogleSignInPanel";
 import {
   Panel, Eyebrow, Title, ErrorLine,
@@ -12,14 +14,17 @@ import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
 import { usePageMeta } from "../lib/seo";
 
-const validate = ({ name, email, password, phone, college }) => {
+const GENDERS = ["male", "female", "other"];
+
+const validate = ({ name, email, password, phone, college, gender }) => {
   const errors = [];
-  if (!name.trim() || name.trim().length > 100) errors.push("name must be 1–100 characters");
-  if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.push("enter a valid email");
-  if (password.length < 8 || password.length > 100) errors.push("password must be 8–100 characters");
+  if (!name.trim() || name.trim().length > 100) errors.push("Enter your name (up to 100 characters).");
+  if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.push("Enter a valid email address.");
+  if (password.length < 8 || password.length > 100) errors.push("Passwords need at least 8 characters.");
   const digits = phone.replace(/\D/g, "");
-  if (digits.length < 10 || digits.length > 15) errors.push("phone must be 10–15 digits");
-  if (!college.trim() || college.trim().length > 150) errors.push("college must be 1–150 characters");
+  if (digits.length < 10 || digits.length > 15) errors.push("Enter a valid phone number (10–15 digits).");
+  if (!college.trim() || college.trim().length > 150) errors.push("Enter your college name.");
+  if (!GENDERS.includes(gender)) errors.push("Select your gender.");
   return errors;
 };
 
@@ -27,7 +32,7 @@ const SignupPage = () => {
   usePageMeta({ title: "Sign up", path: "/signup", noindex: true });
   const navigate = useNavigate();
   const [fields, setFields] = useState({
-    name: "", email: "", password: "", phone: "", college: "",
+    name: "", email: "", password: "", phone: "", college: "", gender: "",
   });
   const [errors, setErrors] = useState([]);
   const [conflict, setConflict] = useState(false);
@@ -56,6 +61,7 @@ const SignupPage = () => {
         password: fields.password,
         phone: fields.phone.replace(/\D/g, ""),
         college: fields.college.trim(),
+        gender: fields.gender,
       });
       saveAuth(data);
       navigate("/apply", { replace: true });
@@ -67,10 +73,10 @@ const SignupPage = () => {
   };
 
   return (
-    <AuthShell label="NEW OPERATIVE">
+    <AuthShell label="SIGN UP" step="account">
       <PhaseTransition>
         <Panel maxWidth="480px">
-          <Eyebrow>NEW OPERATIVE</Eyebrow>
+          <Eyebrow>SIGN UP</Eyebrow>
           <Title>Create your account</Title>
           <form onSubmit={submit} noValidate>
             <TerminalInput
@@ -94,22 +100,31 @@ const SignupPage = () => {
               label="College" value={fields.college}
               onChange={set("college")} autoComplete="organization"
             />
+            <TerminalSelect
+              label="Gender" value={fields.gender}
+              onChange={set("gender")}
+            >
+              <option value="" disabled>Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </TerminalSelect>
             {errors.map((err, i) => (
               <ErrorLine key={err}>
                 {err}
                 {conflict && i === errors.length - 1 && (
-                  <> — <MonoLink to="/login">log in instead</MonoLink></>
+                  <>. <MonoLink to="/login">Log in instead <ArrowRight size={13} /></MonoLink></>
                 )}
               </ErrorLine>
             ))}
             <PrimaryButton type="submit" disabled={busy}>
-              {busy ? "creating…" : "Sign up"}
+              {busy ? "Creating your account…" : "Sign up"}
             </PrimaryButton>
           </form>
           <Divider />
           <GoogleSignInPanel onError={(msg) => setErrors([msg])} disabled={busy} />
-          <div style={{ textAlign: "right", marginTop: "1.5rem" }}>
-            <MonoLink to="/login">have an account? log in →</MonoLink>
+          <div className="mt-6 text-right">
+            <MonoLink to="/login">Already have an account? Log in <ArrowRight size={13} /></MonoLink>
           </div>
         </Panel>
       </PhaseTransition>

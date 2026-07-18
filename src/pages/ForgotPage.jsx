@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
@@ -14,7 +15,7 @@ const ForgotPage = () => {
   const submit = async (e) => {
     e.preventDefault();
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      setError("enter a valid email");
+      setError("Enter a valid email address.");
       return;
     }
     setBusy(true);
@@ -38,10 +39,10 @@ const ForgotPage = () => {
           {sent ? (
             <>
               <NoticeLine>
-                if that account exists, a reset link is on its way — check your inbox
+                If that email has an account, a reset link is on its way. Check your inbox.
               </NoticeLine>
-              <div style={{ marginTop: "1.5rem" }}>
-                <MonoLink to="/login">← back to login</MonoLink>
+              <div className="mt-6">
+                <MonoLink to="/login"><ArrowLeft size={13} /> Back to log in</MonoLink>
               </div>
             </>
           ) : (
@@ -53,10 +54,10 @@ const ForgotPage = () => {
               />
               <ErrorLine>{error}</ErrorLine>
               <PrimaryButton type="submit" disabled={busy}>
-                {busy ? "sending…" : "Send reset link"}
+                {busy ? "Sending…" : "Send reset link"}
               </PrimaryButton>
-              <div style={{ textAlign: "right", marginTop: "1.5rem" }}>
-                <MonoLink to="/login">← back to login</MonoLink>
+              <div className="mt-6 text-right">
+                <MonoLink to="/login"><ArrowLeft size={13} /> Back to log in</MonoLink>
               </div>
             </form>
           )}

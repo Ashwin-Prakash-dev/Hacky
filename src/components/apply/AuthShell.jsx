@@ -1,62 +1,44 @@
 import { Link } from "react-router-dom";
-import { MONO, SANS } from "./ui";
+import { X } from "lucide-react";
+import Stepper from "./Stepper";
 
-const AuthShell = ({ label, right = null, children }) => (
-  <div style={{ minHeight: "100dvh", background: "#0a0a0a", position: "relative" }}>
+const AuthShell = ({ label, step = null, right = null, children }) => (
+  <div className="relative min-h-dvh bg-[#0a0a0a]">
     {/* Lime glow */}
-    <div aria-hidden="true" style={{
-      position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
-      background: "radial-gradient(ellipse 60% 45% at 50% 0%, rgba(200,255,0,0.05), transparent 70%)",
-    }} />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-[1] bg-[radial-gradient(ellipse_60%_45%_at_50%_0%,rgba(200,255,0,0.05),transparent_70%)]"
+    />
 
     {/* CRT scanlines */}
-    <div aria-hidden="true" style={{
-      position: "fixed", inset: 0, zIndex: 9999, pointerEvents: "none",
-      background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)",
-    }} />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-[9999] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.07)_2px,rgba(0,0,0,0.07)_4px)]"
+    />
 
     {/* Top bar */}
-    <header style={{
-      position: "fixed", top: 0, left: 0, right: 0,
-      height: "56px", zIndex: 100,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 clamp(1.25rem, 4vw, 2.5rem)",
-      borderBottom: "1px solid rgba(255,255,255,0.06)",
-      background: "rgba(10,10,10,0.92)",
-      backdropFilter: "blur(20px)",
-      WebkitBackdropFilter: "blur(20px)",
-    }}>
-      <Link to="/" style={{
-        fontFamily: SANS, fontSize: "0.95rem", fontWeight: 700,
-        letterSpacing: "-0.01em", color: "#fff", textDecoration: "none",
-      }}>
-        Startathon<span style={{ color: "#888" }}>.</span>
+    <header className="fixed inset-x-0 top-0 z-[100] flex h-14 items-center justify-between border-b border-white/[0.06] bg-[rgba(10,10,10,0.92)] px-[clamp(1.25rem,4vw,2.5rem)] backdrop-blur-[20px]">
+      <Link to="/" className="font-general text-[0.95rem] font-bold tracking-[-0.01em] text-white no-underline">
+        Startathon<span className="text-[#888]">.</span>
       </Link>
 
-      <span style={{
-        fontFamily: MONO, fontSize: "0.8rem",
-        letterSpacing: "0.12em", color: "rgba(200,255,0,0.8)",
-      }}>
+      <span className="font-mono text-[0.8rem] tracking-[0.12em] text-[rgba(200,255,0,0.8)]">
         [{label}]
       </span>
 
       {right ?? (
-        <Link to="/" style={{
-          fontFamily: SANS, fontSize: "0.8rem", letterSpacing: "0.1em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.7)",
-          textDecoration: "none",
-        }}>
-          ✕ Exit
+        <Link
+          to="/"
+          className="flex items-center gap-[0.35rem] font-general text-[0.8rem] uppercase tracking-widest text-white/70 no-underline"
+        >
+          <X size={14} /> Exit
         </Link>
       )}
     </header>
 
     {/* Content */}
-    <main style={{
-      position: "relative", zIndex: 10, minHeight: "100dvh",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      padding: "calc(56px + 2rem) clamp(1rem, 4vw, 2rem) 3rem",
-    }}>
+    <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-[clamp(1rem,4vw,2rem)] pb-12 pt-[calc(56px+2rem)]">
+      {step && <Stepper current={step} />}
       {children}
     </main>
   </div>

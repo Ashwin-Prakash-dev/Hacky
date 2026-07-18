@@ -14,7 +14,7 @@ const PhaseTransition = ({ direction = "forward", children }) => {
   }, [direction]);
 
   return (
-    <div ref={ref} style={{ width: "100%", display: "flex", justifyContent: "center", opacity: 0 }}>
+    <div ref={ref} className="flex w-full justify-center opacity-0">
       {children}
     </div>
   );

@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState } from "react";
-import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,68 +29,39 @@ const SPONSORS = [
   },
 ];
 
-const SponsorCard = ({ sponsor }) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <a
-      href={sponsor.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="sponsor-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        flex: "1 1 260px",
-        maxWidth: "340px",
-        textDecoration: "none",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: "1.1rem",
-        padding: "2rem",
-        borderRadius: "12px",
-        background: hovered ? "#111111" : "#0e0e0e",
-        border: hovered ? "1px solid rgba(200,255,0,0.4)" : "1px solid rgba(255,255,255,0.08)",
-        boxShadow: hovered ? "0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,255,0,0.15)" : "none",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.3s ease, transform 0.3s ease",
-      }}
-    >
+const SponsorCard = ({ sponsor }) => (
+  <a
+    href={sponsor.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="sponsor-card group relative block max-w-[340px] flex-[1_1_260px] rounded-3xl bg-white/[0.03] p-1.5 no-underline shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-[box-shadow,transform] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 hover:shadow-[inset_0_0_0_1px_rgba(200,255,0,0.45),0_24px_60px_rgba(0,0,0,0.5),0_8px_42px_rgba(200,255,0,0.18)]"
+    data-lens-label={sponsor.name}
+  >
+    {/* inner core — hover floods the core lime, the same inverted world the
+        hero's liquid blob reveals */}
+    <div className="flex h-full flex-col items-start gap-[1.1rem] rounded-[calc(1.5rem-0.375rem)] bg-[#0b0b0b] p-[1.9rem] shadow-[inset_0_1px_1px_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] transition-[background,box-shadow] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:bg-lime group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]">
       <img
         src={sponsor.src}
         alt={sponsor.name}
-        style={{ height: `${sponsor.h}px`, width: "auto", objectFit: "contain" }}
+        style={{ height: `${sponsor.h}px` }}
+        // white logos flip to ink on the lime flood
+        className="w-auto object-contain transition-[transform,filter] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-y-[-3px] group-hover:scale-[1.04] group-hover:brightness-0"
       />
-      <p
-        className="font-general"
-        style={{
-          fontSize: "0.88rem",
-          color: "rgba(255,255,255,0.7)",
-          lineHeight: 1.6,
-        }}
-      >
+      <p className="font-general text-[0.88rem] leading-[1.7] text-white/70 transition-colors duration-[450ms] group-hover:text-[rgba(5,5,5,0.8)]">
         {sponsor.blurb}
       </p>
-      <span
-        className="font-general"
-        style={{
-          fontSize: "0.75rem",
-          fontWeight: 700,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: hovered ? "#C8FF00" : "rgba(255,255,255,0.45)",
-          transition: "color 0.25s ease",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.35em",
-        }}
-      >
-        Visit site {hovered ? <FiArrowRight aria-hidden="true" /> : <FiArrowUpRight aria-hidden="true" />}
+      <span className="mt-auto inline-flex items-center gap-[0.6em] font-general text-[0.72rem] font-bold uppercase tracking-[0.12em] text-white/45 transition-colors duration-[450ms] group-hover:text-[#050505]">
+        Visit site
+        <span
+          aria-hidden="true"
+          className="inline-flex size-6 items-center justify-center rounded-full bg-white/[0.06] transition-[background,transform] duration-[450ms] group-hover:-translate-y-px group-hover:translate-x-px group-hover:bg-[rgba(0,0,0,0.14)]"
+        >
+          <ArrowUpRight size={13} strokeWidth={2.25} />
+        </span>
       </span>
-    </a>
-  );
-};
+    </div>
+  </a>
+);
 
 const SponsorsSection = () => {
   const sectionRef = useRef(null);
@@ -136,47 +107,29 @@ const SponsorsSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: "#0a0a0a", width: "100%" }}>
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
-
+    <section
+      ref={sectionRef}
+      data-lens="sponsors"
+      className="relative w-full bg-[#050505]"
+    >
+      {/* lime ambience: a faint glow pooling behind the card group */}
       <div
-        className="container mx-auto px-5 md:px-10"
-        style={{ padding: "5rem clamp(1.25rem, 4vw, 2.5rem) 6rem" }}
-      >
-        <div ref={headerRef} style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <p
-            className="font-general"
-            style={{
-              fontSize: "0.78rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#C8FF00",
-              marginBottom: "0.75rem",
-            }}
-          >
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_50%_62%,rgba(200,255,0,0.07),transparent_70%)]"
+      />
+      <div className="h-px bg-white/[0.06]" />
+
+      <div className="container mx-auto px-[clamp(1.25rem,4vw,2.5rem)] py-[clamp(6rem,10vw,8rem)]">
+        <div ref={headerRef} className="mb-14 text-center">
+          <span className="eyebrow mb-[1.1rem]">
             Our Sponsors
-          </p>
-          <h2
-            className="bento-title special-font"
-            style={{
-              color: "#fff",
-              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1,
-            }}
-          >
+          </span>
+          <h2 className="bento-title special-font text-[clamp(1.8rem,4vw,2.8rem)] leading-[1.05] tracking-[-0.02em] text-white">
             Companies b<b>a</b>cking Startathon
           </h2>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "1.25rem",
-          }}
-        >
+        <div className="flex flex-wrap justify-center gap-5">
           {SPONSORS.map((s) => (
             <SponsorCard key={s.name} sponsor={s} />
           ))}

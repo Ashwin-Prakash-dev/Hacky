@@ -100,12 +100,14 @@ const Intro = ({ onComplete }) => {
       <p
         ref={textRef}
         style={{
-          fontFamily: "var(--font-general)",
-          fontSize: "clamp(1.3rem, 3.5vw, 2.8rem)",
+          fontFamily: current.dot ? "var(--font-display)" : "var(--font-general)",
+          fontSize: current.dot
+            ? "clamp(1.8rem, 4.5vw, 3.4rem)"
+            : "clamp(1.3rem, 3.5vw, 2.8rem)",
           color: "#fff",
-          fontWeight: current.weight,
+          fontWeight: current.dot ? 400 : current.weight,
           letterSpacing:
-            currentIndex === quotes.length - 1 ? "-0.05em" : "0.01em",
+            currentIndex === quotes.length - 1 ? "-0.03em" : "0.01em",
           textAlign: "center",
           maxWidth: "680px",
           padding: "0 2rem",
@@ -114,7 +116,7 @@ const Intro = ({ onComplete }) => {
         }}
       >
         {current.dot ? (
-          <>Startathon<span style={{ color: "#888888" }}>.</span></>
+          <>Startathon<span style={{ color: "#C8FF00" }}>.</span></>
         ) : current.text}
       </p>
 
@@ -122,10 +124,10 @@ const Intro = ({ onComplete }) => {
         style={{
           position: "absolute",
           bottom: "2.5rem",
-          fontFamily: "var(--font-general)",
-          fontSize: "0.78rem",
-          letterSpacing: "0.14em",
-          color: "rgba(255,255,255,0.6)",
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.7rem",
+          letterSpacing: "0.18em",
+          color: "rgba(255,255,255,0.55)",
           textTransform: "uppercase",
         }}
       >

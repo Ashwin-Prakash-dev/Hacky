@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
-import { Panel, Eyebrow, Title, ErrorLine, MONO, PrimaryButton } from "../components/apply/ui";
+import { Panel, Eyebrow, Title, ErrorLine, PrimaryButton } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { isAuthed, getUser } from "../lib/auth";
 import { usePageMeta } from "../lib/seo";
@@ -10,7 +10,7 @@ const ApplyPage = () => {
   usePageMeta({
     title: "Apply",
     description:
-      "Apply to Startathon 2026 — Kerala's most curated 30-hour hackathon at SCTCE, Thiruvananthapuram. Teams of 1–4, only 20 spots.",
+      "Apply to Startathon 2026: Kerala's most curated 30-hour hackathon at SCTCE, Thiruvananthapuram. Teams of 3-4, only 20 spots.",
     path: "/apply",
   });
   const navigate = useNavigate();
@@ -50,8 +50,8 @@ const ApplyPage = () => {
             <PrimaryButton onClick={() => setAttempt((a) => a + 1)}>Retry</PrimaryButton>
           </>
         ) : (
-          <p style={{ fontFamily: MONO, fontSize: "0.8rem", color: "rgba(200,255,0,0.7)" }}>
-            {"// checking your status…"}
+          <p className="font-mono text-[0.8rem] text-lime/70">
+            Checking your application status…
           </p>
         )}
       </Panel>

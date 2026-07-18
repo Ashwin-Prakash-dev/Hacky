@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "What's the prize pool?",
-    a: "₹2L+ total*. First place takes ₹1L+. Biggest builder prize in Kerala's student circuit. (*subject to changes)",
+    a: "₹2,00,000 total. First place takes ₹1,00,000, second ₹60,000, third ₹40,000. Biggest builder prize in Kerala's student circuit.",
   },
   {
     q: "What happens at Demo Day?",
@@ -60,7 +60,7 @@ const FAQItem = ({ question, answer }) => {
       paddingLeft: "1rem", marginLeft: "-1rem",
       transition: "border-color 0.3s ease",
     }}>
-      <button onClick={toggle} className="w-full text-left" style={{
+      <button onClick={toggle} className="w-full text-left" data-lens-label={question} style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "1.5rem 0", background: "none", border: "none", cursor: "pointer", gap: "1.25rem",
       }}>
@@ -110,14 +110,20 @@ const FAQ = () => {
   }, [selected]);
 
   return (
-    <section id="faq" className="w-screen" style={{ background: "#0a0a0a", padding: "6rem 0" }}>
+    <section
+      id="faq"
+      data-lens="faq"
+      className="w-screen"
+      style={{ background: "#050505", padding: "6rem 0" }}
+    >
       <div className="container mx-auto px-5 md:px-10">
         <div style={{ marginBottom: "4rem" }}>
+          <span className="eyebrow" style={{ marginBottom: "1.2rem" }}>FAQ</span>
           <h2
-            className="bento-title"
+            className="bento-title special-font"
             style={{ color: "#fff", fontSize: "clamp(2rem,5vw,3.5rem)", letterSpacing: "-0.02em" }}
           >
-            Got questions?
+            Got quest<b>i</b>ons?
           </h2>
         </div>
 
@@ -134,6 +140,8 @@ const FAQ = () => {
               <button
                 key={i}
                 onClick={() => handleSelect(i)}
+                className="faq-q"
+                data-lens-label={faq.q}
                 style={{
                   width: "100%", textAlign: "left",
                   display: "flex", alignItems: "baseline", gap: "1.25rem",
@@ -146,18 +154,18 @@ const FAQ = () => {
                     ? "2px solid rgba(200,255,0,0.5)"
                     : "2px solid transparent",
                   cursor: "pointer",
-                  transition: "border-color 0.2s ease",
+                  transition: "border-color 0.2s ease, transform 0.5s cubic-bezier(0.32,0.72,0,1)",
                 }}
               >
-                <span style={{
-                  fontFamily: "var(--font-general)",
-                  fontSize: "0.78rem", fontWeight: 700,
-                  color: selected === i ? "rgba(200,255,0,0.8)" : "rgba(255,255,255,0.5)",
+                <span className="faq-q-num" style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem", fontWeight: 500,
+                  color: selected === i ? "rgba(200,255,0,0.8)" : "rgba(255,255,255,0.4)",
                   minWidth: "1.8rem", flexShrink: 0,
                   transition: "color 0.2s",
-                  letterSpacing: "0.04em",
+                  letterSpacing: "0.08em",
                 }}>0{i + 1}</span>
-                <span className="font-general" style={{
+                <span className="font-general faq-q-text" style={{
                   fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
                   color: selected === i ? "#fff" : "rgba(255,255,255,0.75)",
                   lineHeight: 1.45,
@@ -196,6 +204,9 @@ const FAQ = () => {
       <style>{`
         .faq-desktop { display: grid; }
         .faq-mobile  { display: none; }
+        .faq-q:hover { transform: translateX(6px); }
+        .faq-q:hover .faq-q-num  { color: rgba(200,255,0,0.85) !important; }
+        .faq-q:hover .faq-q-text { color: #fff !important; }
         @media (max-width: 767px) {
           .faq-desktop { display: none !important; }
           .faq-mobile  { display: block !important; }

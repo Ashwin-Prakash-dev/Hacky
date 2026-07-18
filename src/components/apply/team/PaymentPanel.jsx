@@ -1,24 +1,58 @@
 import { useState } from "react";
+import { Check, Lock } from "lucide-react";
 import TerminalInput from "../inputs/TerminalInput";
-import { MONO, SANS, LIME, Panel, Eyebrow, ErrorLine, PrimaryButton, GhostButton } from "../ui";
+import {
+  MONO, Panel, Eyebrow, ErrorLine, NoticeLine,
+  PrimaryButton, GhostButton,
+} from "../ui";
+import { MIN_MEMBERS, MAX_MEMBERS } from "../../../lib/teamRules";
+import RosterMeter from "./RosterMeter";
 
 const UPI_ID = import.meta.env.VITE_UPI_ID;
 const UPI_QR = import.meta.env.VITE_UPI_QR;
 
-const PaymentPanel = ({ team, onSubmit, busy, error }) => {
+const PaymentPanel = ({
+  team, locked, onSubmit, busy, error,
+  onApplyReferral, applyRefBusy, referralError,
+}) => {
   const [ref, setRef] = useState("");
+  const [refCode, setRefCode] = useState("");
   const [copied, setCopied] = useState(false);
   const isLeader = team.your_role === "leader";
+  const fee = team.expected_fee ?? 100;
+  const missing = Math.max(0, MIN_MEMBERS - team.members.length);
 
-  if (!isLeader) {
+  if (locked) {
+    const joined = team.members.length;
+    const pending = team.invites?.length ?? 0;
     return (
       <Panel maxWidth="none">
-        <Eyebrow>PAYMENT — ₹100</Eyebrow>
-        <p style={{
-          fontFamily: MONO, fontSize: "0.9rem",
-          color: "rgba(255,255,255,0.8)", marginTop: "0.75rem", lineHeight: 1.6,
-        }}>
-          {"// waiting for your leader to complete payment"}
+        <Eyebrow>Payment (₹{fee})</Eyebrow>
+        <div className="my-[0.85rem]">
+          <RosterMeter joined={joined} pending={pending} min={MIN_MEMBERS} max={MAX_MEMBERS} />
+        </div>
+        <p className="flex items-start gap-2 font-general text-[0.9rem] leading-relaxed text-white/65">
+          <span className="mt-[0.15rem] text-white/50">
+            <Lock size={14} strokeWidth={2} />
+          </span>
+          <span>
+            Payment unlocks once your team has {MIN_MEMBERS} members. You
+            need {missing} more {missing === 1 ? "teammate" : "teammates"}.
+            {isLeader ? " Add them above, then come back here." : ""}
+          </span>
+        </p>
+      </Panel>
+    );
+  }
+
+  if (!isLeader) {
+    const leaderName = team.members.find((m) => m.role === "leader")?.name ?? "your team leader";
+    return (
+      <Panel maxWidth="none">
+        <Eyebrow>Payment (₹{fee})</Eyebrow>
+        <p className="mt-3 font-general text-[0.9rem] leading-relaxed text-white/80">
+          Waiting for {leaderName} to complete the payment. Nothing for you to
+          do here. Once it&apos;s confirmed, your whole team is registered.
         </p>
       </Panel>
     );
@@ -39,34 +73,68 @@ const PaymentPanel = ({ team, onSubmit, busy, error }) => {
     onSubmit(ref.trim());
   };
 
+  const applyReferral = (e) => {
+    e.preventDefault();
+    if (!refCode.trim()) return;
+    onApplyReferral(refCode.trim());
+  };
+
   return (
     <Panel maxWidth="none">
-      <Eyebrow>PAYMENT — ₹100</Eyebrow>
-      <div style={{
-        display: "flex", flexWrap: "wrap", gap: "1.25rem",
-        alignItems: "flex-start", marginTop: "0.75rem",
-      }}>
+      <Eyebrow>Payment (₹{fee})</Eyebrow>
+      <p className="mt-2 font-general text-[0.88rem] leading-relaxed text-white/70">
+        One payment covers your whole team. Once it&apos;s verified, your spot is locked in.
+      </p>
+
+      {!team.referred_by && (
+        <form onSubmit={applyReferral} noValidate className="mt-4">
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <TerminalInput
+                label="Referral code from another team (optional, 10% off)"
+                value={refCode}
+                onChange={(e) => setRefCode(e.target.value)}
+                style={{ fontFamily: MONO }}
+              />
+            </div>
+            <div className="mb-7">
+              <GhostButton
+                onClick={applyReferral}
+                disabled={applyRefBusy || !refCode.trim()}
+              >
+                {applyRefBusy ? "Applying…" : "Apply"}
+              </GhostButton>
+            </div>
+          </div>
+          <ErrorLine>{referralError}</ErrorLine>
+        </form>
+      )}
+      <NoticeLine>
+        {team.referred_by ? `Referral applied. You pay ₹${fee}.` : ""}
+      </NoticeLine>
+
+      <div className="mt-3 flex flex-wrap items-start gap-5">
         {UPI_QR && (
           <img
             src={UPI_QR}
             alt={`UPI QR code for ${UPI_ID}`}
-            style={{
-              width: "140px", height: "140px", borderRadius: "6px",
-              border: "0.5px solid rgba(255,255,255,0.12)", background: "#fff",
-            }}
+            className="size-[140px] rounded-md border-[0.5px] border-white/[0.12] bg-white"
           />
         )}
-        <div style={{ flex: "1 1 240px" }}>
-          <p style={{ fontFamily: SANS, fontSize: "0.85rem", color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
-            Pay <b style={{ color: LIME }}>₹100</b> to the UPI ID below (or scan the QR),
-            then paste the transaction reference from your UPI app.
+        <div className="flex-[1_1_240px]">
+          <p className="font-general text-[0.85rem] leading-relaxed text-white/70">
+            Pay <b className="text-lime">₹{fee}</b> to the UPI ID below (or scan the QR),
+            then paste the transaction reference from your UPI app so we can verify it.
           </p>
-          <p style={{
-            fontFamily: MONO, fontSize: "0.9rem", color: "#fff",
-            margin: "0.75rem 0", userSelect: "all",
-          }}>
+          <p className="my-3 select-all font-mono text-[0.9rem] text-white">
             {UPI_ID}{" "}
-            <GhostButton onClick={copyUpi}>{copied ? "copied ✓" : "copy"}</GhostButton>
+            <GhostButton onClick={copyUpi}>
+              {copied ? (
+                <span className="inline-flex items-center gap-[0.3rem]">
+                  <Check size={12} strokeWidth={3} /> copied
+                </span>
+              ) : "copy"}
+            </GhostButton>
           </p>
           <form onSubmit={submit} noValidate>
             <TerminalInput
@@ -76,7 +144,7 @@ const PaymentPanel = ({ team, onSubmit, busy, error }) => {
             />
             <ErrorLine>{error}</ErrorLine>
             <PrimaryButton type="submit" disabled={busy || !ref.trim()}>
-              {busy ? "confirming…" : "Confirm payment"}
+              {busy ? "Confirming…" : "Confirm payment"}
             </PrimaryButton>
           </form>
         </div>

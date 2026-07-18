@@ -1,52 +1,15 @@
-const TerminalInput = ({ label, error, style: extStyle, onFocus, onBlur, ...props }) => (
-  <div style={{ marginBottom: "1.75rem" }}>
-    <label style={{
-      display: "block",
-      fontFamily: "var(--font-general, sans-serif)",
-      fontSize: "0.78rem",
-      letterSpacing: "0.14em",
-      color: "rgba(255,255,255,0.8)",
-      textTransform: "uppercase",
-      marginBottom: "0.55rem",
-      userSelect: "none",
-    }}>
+const TerminalInput = ({ label, error, style: extStyle, ...props }) => (
+  <div className="mb-7">
+    <label className="mb-[0.55rem] block select-none font-general text-[0.78rem] uppercase tracking-[0.14em] text-white/80">
       {label}
     </label>
     <input
       {...props}
-      style={{
-        width: "100%",
-        background: "transparent",
-        border: "none",
-        borderBottom: "1.5px solid rgba(255,255,255,0.12)",
-        borderRadius: 0,
-        padding: "0.55rem 0",
-        color: "#fff",
-        fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.95rem",
-        fontWeight: 400,
-        outline: "none",
-        transition: "border-color 0.25s",
-        boxSizing: "border-box",
-        caretColor: "#C8FF00",
-        ...extStyle,
-      }}
-      onFocus={(e) => {
-        e.target.style.borderBottomColor = "#C8FF00";
-        onFocus?.(e);
-      }}
-      onBlur={(e) => {
-        e.target.style.borderBottomColor = "rgba(255,255,255,0.12)";
-        onBlur?.(e);
-      }}
+      style={extStyle}
+      className="w-full rounded-md border border-white/[0.18] bg-white/5 px-[0.9rem] py-[0.7rem] font-general text-[0.95rem] font-normal text-white caret-lime outline-none transition-[border-color,background,box-shadow] duration-[250ms] focus:border-lime focus:bg-lime/[0.04] focus:shadow-[0_0_0_3px_rgba(200,255,0,0.12)]"
     />
     {error && (
-      <p style={{
-        fontFamily: "var(--font-general, sans-serif)",
-        fontSize: "0.85rem",
-        color: "rgba(255,120,120,0.95)",
-        marginTop: "0.45rem",
-      }}>
+      <p className="mt-[0.45rem] font-general text-[0.85rem] text-[rgba(255,120,120,0.95)]">
         {error}
       </p>
     )}

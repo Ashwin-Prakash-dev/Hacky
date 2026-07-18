@@ -1,87 +1,59 @@
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { MdOutlineEmail, MdOutlinePhone, MdOutlineLanguage } from "react-icons/md";
+import { Mail, Phone, Globe } from "lucide-react";
+
+const linkTransition = "[transition:color_0.2s,transform_0.45s_cubic-bezier(0.32,0.72,0,1)]";
 
 const Footer = () => (
-  <footer
-    className="w-screen"
-    style={{
-      background: "#050505",
-      borderTop: "1px solid rgba(255,255,255,0.07)",
-      position: "relative",
-    }}
-  >
+  <footer className="relative w-screen border-t border-white/[0.07] bg-[#050505]">
     {/* Gradient top accent */}
-    <div style={{
-      position: "absolute", top: 0, left: "10%", right: "10%", height: "1px",
-      background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.2), transparent)",
-      pointerEvents: "none",
-    }} />
+    <div className="pointer-events-none absolute inset-x-[10%] top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.2),transparent)]" />
 
     {/* Main row */}
-    <div
-      className="footer-main container mx-auto"
-      style={{ padding: "3.5rem 1.5rem" }}
-    >
+    <div className="container mx-auto grid grid-cols-[1fr_1fr] gap-10 px-6 py-14 md:grid-cols-[1fr_auto_auto] md:gap-16">
       {/* Brand */}
-      <div className="footer-brand">
-        <p style={{
-          fontFamily: "var(--font-general)",
-          fontSize: "1rem", fontWeight: 700,
-          letterSpacing: "-0.01em", color: "#fff",
-          marginBottom: "6px",
-        }}>
-          Startathon<span style={{ color: "#888888" }}>.</span>
+      <div className="col-span-2 md:col-span-1">
+        <p className="mb-[6px] font-display text-[1.2rem] font-normal tracking-[-0.01em] text-white">
+          Startathon<span className="text-lime">.</span>
         </p>
-        <p className="font-general" style={{
-          fontSize: "0.85rem", color: "rgba(255,255,255,0.65)",
-          letterSpacing: "0.02em", lineHeight: 1.7,
-          maxWidth: "220px",
-          marginBottom: "1.25rem",
-        }}>
-          Kerala's most curated hackathon for builders.<br />
+        <p className="mb-5 max-w-[220px] font-general text-[0.85rem] leading-[1.7] tracking-[0.02em] text-white/65">
+          Kerala&apos;s most curated hackathon for builders.<br />
           Organized by Coding Club, SCTCE.
         </p>
 
         {/* Associated logos */}
-        <p className="font-general" style={{
-          fontSize: "0.7rem", letterSpacing: "0.14em",
-          textTransform: "uppercase", color: "rgba(255,255,255,0.55)",
-          marginBottom: "0.65rem",
-        }}>Presented by</p>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <p className="mb-[0.65rem] font-general text-[0.7rem] uppercase tracking-[0.14em] text-white/55">Presented by</p>
+        <div className="flex items-center gap-4">
           <img
             src="/Coding Club.png"
             alt="Coding Club SCTCE"
-            style={{ height: "52px", width: "auto" }}
+            className="h-[52px] w-auto"
           />
-          <span style={{ width: "1px", height: "28px", background: "rgba(255,255,255,0.1)" }} />
+          <span className="h-7 w-px bg-white/10" />
           <img
             src="/SCTCElogo.png"
             alt="SCTCE"
-            style={{ height: "52px", width: "auto" }}
+            className="h-[52px] w-auto"
           />
         </div>
       </div>
 
       {/* Contact */}
-      <div className="footer-col">
-        <p className="font-general footer-col-label">Contact</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+      <div>
+        <p className="mb-4 font-general text-[0.72rem] uppercase tracking-[0.16em] text-white/60">Contact</p>
+        <div className="flex flex-col gap-[0.7rem]">
           {[
-            { href: "mailto:hello@sctcoding.club", label: "hello@sctcoding.club", icon: <MdOutlineEmail /> },
-            { href: "tel:+917909190948",           label: "+91 79091 90948",      icon: <MdOutlinePhone /> },
-            { href: "https://www.sctcoding.club",  label: "www.sctcoding.club",   icon: <MdOutlineLanguage />, external: true },
+            { href: "mailto:hello@sctcoding.club", label: "hello@sctcoding.club", icon: <Mail size={15} /> },
+            { href: "tel:+917909190948",           label: "+91 79091 90948",      icon: <Phone size={15} /> },
+            { href: "https://www.sctcoding.club",  label: "www.sctcoding.club",   icon: <Globe size={15} />, external: true },
           ].map(({ href, label, icon, external }) => (
             <a
               key={href}
               href={href}
               {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-              className="font-general footer-link"
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+              className={`group flex items-center gap-[9px] whitespace-nowrap font-general text-[0.85rem] tracking-[0.02em] text-white/70 no-underline hover:translate-x-1 hover:text-white ${linkTransition}`}
             >
-              <span className="footer-link-icon">{icon}</span>
+              <span className={`flex shrink-0 text-base text-white/55 group-hover:scale-[1.15] group-hover:text-lime ${linkTransition}`}>{icon}</span>
               {label}
             </a>
           ))}
@@ -89,9 +61,9 @@ const Footer = () => (
       </div>
 
       {/* Socials */}
-      <div className="footer-col">
-        <p className="font-general footer-col-label">Follow</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+      <div>
+        <p className="mb-4 font-general text-[0.72rem] uppercase tracking-[0.16em] text-white/60">Follow</p>
+        <div className="flex flex-col gap-[0.7rem]">
           {[
             { href: "https://www.instagram.com/codingclubsctce/",       icon: <FaInstagram />, label: "Instagram" },
             { href: "https://www.linkedin.com/company/sct-coding-club", icon: <FaLinkedin />,  label: "LinkedIn"  },
@@ -102,11 +74,9 @@ const Footer = () => (
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-general footer-link"
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#C8FF00")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+              className={`group flex items-center gap-[9px] whitespace-nowrap font-general text-[0.85rem] tracking-[0.02em] text-white/70 no-underline hover:translate-x-1 hover:text-lime ${linkTransition}`}
             >
-              <span className="footer-link-icon">{icon}</span>
+              <span className={`flex shrink-0 text-base text-white/55 group-hover:scale-[1.15] group-hover:text-lime ${linkTransition}`}>{icon}</span>
               {label}
             </a>
           ))}
@@ -115,74 +85,16 @@ const Footer = () => (
     </div>
 
     {/* Bottom bar */}
-    <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-      <div className="footer-bottom container mx-auto" style={{ padding: "1.1rem 1.5rem" }}>
-        <p className="font-general footer-bottom-text">
+    <div className="border-t border-white/5">
+      <div className="container mx-auto flex flex-col items-start gap-1.5 px-6 py-[1.1rem] md:flex-row md:items-center md:justify-between md:gap-0">
+        <p className="font-general text-[0.8rem] tracking-[0.03em] text-white/50">
           © 2026 Startathon · Sree Chitra Thirunal College of Engineering
         </p>
-        <p className="font-general footer-bottom-text">
+        <p className="font-general text-[0.8rem] tracking-[0.03em] text-white/50">
           Thiruvananthapuram, Kerala
         </p>
       </div>
     </div>
-
-    <style>{`
-      .footer-main {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 4rem;
-        align-items: start;
-      }
-      .footer-col-label {
-        font-size: 0.72rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.6);
-        margin-bottom: 1rem;
-      }
-      .footer-link {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        font-size: 0.85rem;
-        color: rgba(255,255,255,0.7);
-        text-decoration: none;
-        letter-spacing: 0.02em;
-        transition: color 0.2s;
-        white-space: nowrap;
-      }
-      .footer-link-icon {
-        font-size: 1rem;
-        color: rgba(255,255,255,0.55);
-        flex-shrink: 0;
-        display: flex;
-      }
-      .footer-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .footer-bottom-text {
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.5);
-        letter-spacing: 0.03em;
-      }
-
-      @media (max-width: 767px) {
-        .footer-main {
-          grid-template-columns: 1fr 1fr;
-          gap: 2.5rem;
-        }
-        .footer-brand {
-          grid-column: 1 / -1;
-        }
-        .footer-bottom {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.4rem;
-        }
-      }
-    `}</style>
   </footer>
 );
 
