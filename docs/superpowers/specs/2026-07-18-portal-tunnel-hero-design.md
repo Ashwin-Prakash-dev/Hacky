@@ -48,8 +48,12 @@ atmospheres and `cards-with-border-radius`-style rounded frames.
   Replaces `MercuryField.jsx`, which is **deleted** (no dead code).
 - `Hero.jsx` — rewritten: mounts PortalTunnel, owns the pinned ScrollTrigger,
   the HTML overlay (wordmark, copy, CTA, facts), and keeps the badge disc code.
-- Portals: rounded-plane geometry + drei `MeshPortalMaterial`. Each world =
-  video-textured plane + cheap gradient backdrop (no lamina dependency).
+- Portals: rounded video cards (plane + canvas-generated rounded alphaMap +
+  lime rim plane) at real depth (z = 0 / −10 / −20) in one fogged scene — NOT
+  `MeshPortalMaterial` FBOs. The camera dollies through them; each card is
+  opaque on approach, fills the frame at its crossing, and dissolves as the
+  camera passes, revealing the next portal in the fog. Identical experience,
+  zero render-target passes — the mobile-first choice.
 - One ScrollTrigger with scrub drives: camera z, per-portal `blend`, HTML fact
   opacity. Pointer/touch adds small damped parallax (±2°).
 - Canvas mounts once; `frameloop="demand"` + `invalidate()` from the scroll/pointer
