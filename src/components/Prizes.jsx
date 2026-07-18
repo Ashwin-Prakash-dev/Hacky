@@ -24,6 +24,34 @@ const Mask = ({ children, className = "", lineClassName = "" }) => (
   </div>
 );
 
+// A slot-machine digit: nine decoy digits then the real one. The resting
+// CSS transform (-90%) already shows the real digit, so no-JS and
+// reduced-motion users see the finished figure; GSAP rolls yPercent
+// 0 → -90 to spin through the decoys and land on it.
+// Every glyph in the figure — ₹, commas, digits — sits in an identical
+// top-aligned 1em slot box: an inline-block with overflow!=visible
+// baseline-aligns on its BOTTOM edge, which shoved rolling digits off the
+// line until all boxes shared the same alignment.
+const slotClass = "inline-block h-[1em] overflow-hidden align-top";
+
+const Reel = ({ digit }) => {
+  const d = Number(digit);
+  const column = Array.from({ length: 10 }, (_, k) => (d + 1 + k) % 10);
+  return (
+    <span className={slotClass}>
+      <span className="pz-reel block -translate-y-[90%]">
+        {column.map((n, k) => (
+          <span key={k} className="block h-[1em] leading-none">
+            {n}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+};
+
+const POOL = "2,00,000";
+
 // The prize theater. Desktop: the section pins for ~2.3 viewports of
 // scroll and the board fills in suspense order — hairlines sweep, then the
 // ladder from third place up to first, then the ₹2L pool figure stamps in
@@ -52,6 +80,9 @@ const Prizes = () => {
         gsap.set(q(".pz-rule"), { scaleX: 0, transformOrigin: "left center" });
         gsap.set(q(".pz-fade"), { autoAlpha: 0 });
         gsap.set(q(".pz-stats"), { autoAlpha: 0, y: 24 });
+        // y:0 matters — GSAP parses the resting CSS -translate-y-[90%]
+        // into a px `y` baseline and would stack yPercent on top of it
+        gsap.set(q(".pz-reel"), { y: 0, yPercent: 0 });
 
         if (ctx.conditions.desktop) {
           const tl = gsap.timeline({
@@ -59,28 +90,32 @@ const Prizes = () => {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
-              end: "+=230%",
+              end: "+=150%",
               scrub: 0.6,
               pin: true,
               anticipatePin: 1,
             },
           });
-          // the empty board draws itself: hairlines sweep open
+          // the board draws fast, then the counter rolls through most of
+          // the pin while the ladder slams in under it — stats land with
+          // the last digit, short hold, release
           tl.to(
             q(".pz-rule"),
-            { scaleX: 1, duration: 0.8, stagger: 0.1, ease: "power2.inOut" },
-            0.2
+            { scaleX: 1, duration: 0.5, stagger: 0.06, ease: "power2.inOut" },
+            0
           );
-          // suspense order: third, second, then first place
-          tl.to(q(".pz-l-03"), { yPercent: 0, duration: 0.6 }, 0.9);
-          tl.to(q(".pz-l-02"), { yPercent: 0, duration: 0.6 }, 1.7);
-          tl.to(q(".pz-l-01"), { yPercent: 0, duration: 0.6 }, 2.5);
-          // finale: the pool figure stamps in over the full board
-          tl.to(q(".pz-l-pool"), { yPercent: 0, duration: 0.7 }, 3.2);
-          tl.to(q(".pz-fade"), { autoAlpha: 1, duration: 0.5 }, 3.4);
-          tl.to(q(".pz-stats"), { autoAlpha: 1, y: 0, duration: 0.5 }, 3.6);
-          // hold the finished board before the pin releases
-          tl.to({}, { duration: 0.7 });
+          tl.to(q(".pz-fade"), { autoAlpha: 1, duration: 0.35 }, 0.05);
+          tl.to(q(".pz-l-pool"), { yPercent: 0, duration: 0.45 }, 0.1);
+          tl.to(
+            q(".pz-reel"),
+            { yPercent: -90, duration: 1.7, stagger: 0.12, ease: "power2.out" },
+            0.25
+          );
+          tl.to(q(".pz-l-03"), { yPercent: 0, duration: 0.4 }, 0.7);
+          tl.to(q(".pz-l-02"), { yPercent: 0, duration: 0.4 }, 1.0);
+          tl.to(q(".pz-l-01"), { yPercent: 0, duration: 0.4 }, 1.3);
+          tl.to(q(".pz-stats"), { autoAlpha: 1, y: 0, duration: 0.4 }, 1.8);
+          tl.to({}, { duration: 0.25 });
         } else {
           // mobile: one once-through reveal, top-down, on natural scroll
           const tl = gsap.timeline({
@@ -93,6 +128,12 @@ const Prizes = () => {
           });
           tl.to(q(".pz-fade"), { autoAlpha: 1, duration: 0.4 }, 0);
           tl.to(q(".pz-l-pool"), { yPercent: 0, duration: 0.7 }, 0.1);
+          tl.fromTo(
+            q(".pz-reel"),
+            { yPercent: 0 },
+            { yPercent: -90, duration: 1.2, stagger: 0.08, ease: "power2.out" },
+            0.15
+          );
           tl.to(
             q(".pz-rule"),
             { scaleX: 1, duration: 0.7, stagger: 0.08, ease: "power2.inOut" },
@@ -125,7 +166,16 @@ const Prizes = () => {
           </div>
           <Mask lineClassName="pz-l-pool">
             <h2 className="font-display text-[clamp(2.9rem,9vw,7rem)] font-extrabold leading-[0.95] tracking-[-0.02em] text-lime [font-variant-numeric:tabular-nums]">
-              ₹2,00,000
+              <span className={`${slotClass} leading-none`}>₹</span>
+              {POOL.split("").map((ch, i) =>
+                ch === "," ? (
+                  <span key={i} className={`${slotClass} leading-none`}>
+                    ,
+                  </span>
+                ) : (
+                  <Reel key={i} digit={ch} />
+                )
+              )}
             </h2>
           </Mask>
           <div className="pz-fade mt-4">
