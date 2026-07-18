@@ -61,7 +61,7 @@ const MainPage = () => {
   return (
     <>
       <ScrollProgress />
-      <CustomCursor />
+      {/* <CustomCursor /> */}
       {!introComplete && (
         <Intro
           onComplete={() => {
@@ -84,7 +84,7 @@ const MainPage = () => {
         {/* <Marquee /> */}
         {/* <TerminalBridge /> */}
         <FAQ />
-        <Contact />
+        {/* <Contact /> */}
         <Footer />
       </main>
     </>

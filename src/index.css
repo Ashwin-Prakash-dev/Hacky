@@ -162,8 +162,10 @@ body.custom-cursor {
     transition: color 0.2s;
   }
 
-  .nav-hover-btn:hover {
-    color: rgba(255, 255, 255, 0.9);
+  @media (hover: hover) and (pointer: fine) {
+    .nav-hover-btn:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
   }
 
   .floating-nav {
@@ -474,9 +476,11 @@ body.custom-cursor {
   white-space: nowrap;
   transition: transform 0.5s var(--ease-swift), box-shadow 0.5s var(--ease-swift);
 }
-.cta-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(200, 255, 0, 0.28);
+@media (hover: hover) and (pointer: fine) {
+  .cta-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(200, 255, 0, 0.28);
+  }
 }
 .cta-pill:active {
   transform: scale(0.98);
@@ -495,9 +499,11 @@ body.custom-cursor {
   flex-shrink: 0;
   transition: transform 0.5s var(--ease-swift), background 0.5s var(--ease-swift);
 }
-.cta-pill:hover .cta-pill-icon {
-  transform: translate(2px, -2px) scale(1.05);
-  background: rgba(0, 0, 0, 0.18);
+@media (hover: hover) and (pointer: fine) {
+  .cta-pill:hover .cta-pill-icon {
+    transform: translate(2px, -2px) scale(1.05);
+    background: rgba(0, 0, 0, 0.18);
+  }
 }
 
 /* Ghost variant: hairline pill on dark */
@@ -507,9 +513,11 @@ body.custom-cursor {
   color: rgba(255, 255, 255, 0.9);
   padding: 0.5rem 0.5rem 0.5rem 1.5rem;
 }
-.cta-pill--ghost:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  border-color: rgba(200, 255, 0, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .cta-pill--ghost:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(200, 255, 0, 0.3);
+  }
 }
 .cta-pill--ghost .cta-pill-icon {
   background: rgba(255, 255, 255, 0.08);
@@ -815,10 +823,12 @@ body.lens-lock .cursor-ring::after {
   transform-origin: right center;
   transition: transform 0.5s var(--ease-swift);
 }
-.nav-link:hover { color: #fff; }
-.nav-link:hover::after {
-  transform: scaleX(1);
-  transform-origin: left center;
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover { color: #fff; }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
 }
 .nav-cta {
   display: inline-flex;
@@ -839,9 +849,11 @@ body.lens-lock .cursor-ring::after {
   text-decoration: none;
   transition: transform 0.5s var(--ease-swift), box-shadow 0.5s var(--ease-swift);
 }
-.nav-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 26px rgba(200, 255, 0, 0.32);
+@media (hover: hover) and (pointer: fine) {
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 26px rgba(200, 255, 0, 0.32);
+  }
 }
 .nav-cta:active { transform: scale(0.97); }
 .nav-cta-icon {
@@ -855,8 +867,10 @@ body.lens-lock .cursor-ring::after {
   font-size: 0.75rem;
   transition: transform 0.5s var(--ease-swift);
 }
-.nav-cta:hover .nav-cta-icon {
-  transform: translate(1px, -1px);
+@media (hover: hover) and (pointer: fine) {
+  .nav-cta:hover .nav-cta-icon {
+    transform: translate(1px, -1px);
+  }
 }
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
@@ -889,9 +903,11 @@ body.lens-lock .cursor-ring::after {
   z-index: 1; pointer-events: none;
 }
 /* Hovering the strip pauses the belt so items can be read (and picked) */
-.marquee-wrap:hover .marquee-track { animation-play-state: paused; }
 .marquee-track span { transition: color 0.3s ease; }
-.marquee-track > span:hover { color: #C8FF00; }
+@media (hover: hover) and (pointer: fine) {
+  .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track > span:hover { color: #C8FF00; }
+}
 
 @keyframes marqueeFwd {
   from { transform: translateX(0); }

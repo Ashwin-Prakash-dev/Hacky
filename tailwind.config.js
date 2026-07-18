@@ -1,3 +1,5 @@
+import plugin from "tailwindcss/plugin";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -36,5 +38,13 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Touch devices fire :hover on tap and hold it "locked" until the next
+    // tap elsewhere — every `hover:` utility site-wide is scoped to real
+    // hover-capable pointers so nothing gets stuck on mobile.
+    plugin(({ addVariant }) => {
+      addVariant("hover", "@media (hover: hover) and (pointer: fine) { &:hover }");
+      addVariant("group-hover", "@media (hover: hover) and (pointer: fine) { :merge(.group):hover & }");
+    }),
+  ],
 };

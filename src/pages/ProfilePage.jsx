@@ -4,6 +4,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
+import TerminalSelect from "../components/apply/inputs/TerminalSelect";
 import {
   Panel, Eyebrow, Title, ErrorLine, NoticeLine,
   PrimaryButton, MonoLink,
@@ -11,7 +12,9 @@ import {
 import { api } from "../lib/startathon";
 import { updateUser } from "../lib/auth";
 
-const validate = ({ name, phone, college }) => {
+const GENDERS = ["male", "female", "other"];
+
+const validate = ({ name, phone, college, gender }) => {
   const errors = [];
   if (name.trim() && (name.trim().length < 1 || name.trim().length > 100)) {
     errors.push("Names can be up to 100 characters.");
@@ -23,6 +26,9 @@ const validate = ({ name, phone, college }) => {
   if (college.trim() && college.trim().length > 150) {
     errors.push("College names can be up to 150 characters.");
   }
+  if (!GENDERS.includes(gender)) {
+    errors.push("Select your gender.");
+  }
   return errors;
 };
 
@@ -32,7 +38,7 @@ const ProfilePage = () => {
   const [loadError, setLoadError] = useState("");
   const [email, setEmail] = useState("");
   const [teamId, setTeamId] = useState(null);
-  const [fields, setFields] = useState({ name: "", phone: "", college: "" });
+  const [fields, setFields] = useState({ name: "", phone: "", college: "", gender: "" });
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -48,6 +54,7 @@ const ProfilePage = () => {
           name: me.name ?? "",
           phone: me.phone ?? "",
           college: me.college ?? "",
+          gender: me.gender ?? "",
         });
       })
       .catch((err) => setLoadError(err.message))
@@ -74,6 +81,7 @@ const ProfilePage = () => {
     if (fields.name.trim()) body.name = fields.name.trim();
     if (fields.phone.trim()) body.phone = fields.phone.replace(/\D/g, "");
     if (fields.college.trim()) body.college = fields.college.trim();
+    if (fields.gender) body.gender = fields.gender;
     if (Object.keys(body).length === 0) {
       setErrors(["Nothing to save yet. Fill in a field first."]);
       return;
@@ -87,7 +95,10 @@ const ProfilePage = () => {
         navigate("/apply", { replace: true });
         return;
       }
-      setFields({ name: me.name ?? "", phone: me.phone ?? "", college: me.college ?? "" });
+      setFields({
+        name: me.name ?? "", phone: me.phone ?? "",
+        college: me.college ?? "", gender: me.gender ?? "",
+      });
       setSaved(true);
     } catch (err) {
       setErrors([err.message]);
@@ -134,6 +145,15 @@ const ProfilePage = () => {
                   label="College" value={fields.college}
                   onChange={set("college")} autoComplete="organization"
                 />
+                <TerminalSelect
+                  label="Gender" value={fields.gender}
+                  onChange={set("gender")}
+                >
+                  <option value="" disabled>Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </TerminalSelect>
                 {errors.map((err) => <ErrorLine key={err}>{err}</ErrorLine>)}
                 <NoticeLine>
                   {saved && (

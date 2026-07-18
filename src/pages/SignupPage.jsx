@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
+import TerminalSelect from "../components/apply/inputs/TerminalSelect";
 import GoogleSignInPanel from "../components/apply/GoogleSignInPanel";
 import {
   Panel, Eyebrow, Title, ErrorLine,
@@ -13,7 +14,9 @@ import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
 import { usePageMeta } from "../lib/seo";
 
-const validate = ({ name, email, password, phone, college }) => {
+const GENDERS = ["male", "female", "other"];
+
+const validate = ({ name, email, password, phone, college, gender }) => {
   const errors = [];
   if (!name.trim() || name.trim().length > 100) errors.push("Enter your name (up to 100 characters).");
   if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.push("Enter a valid email address.");
@@ -21,6 +24,7 @@ const validate = ({ name, email, password, phone, college }) => {
   const digits = phone.replace(/\D/g, "");
   if (digits.length < 10 || digits.length > 15) errors.push("Enter a valid phone number (10–15 digits).");
   if (!college.trim() || college.trim().length > 150) errors.push("Enter your college name.");
+  if (!GENDERS.includes(gender)) errors.push("Select your gender.");
   return errors;
 };
 
@@ -28,7 +32,7 @@ const SignupPage = () => {
   usePageMeta({ title: "Sign up", path: "/signup", noindex: true });
   const navigate = useNavigate();
   const [fields, setFields] = useState({
-    name: "", email: "", password: "", phone: "", college: "",
+    name: "", email: "", password: "", phone: "", college: "", gender: "",
   });
   const [errors, setErrors] = useState([]);
   const [conflict, setConflict] = useState(false);
@@ -57,6 +61,7 @@ const SignupPage = () => {
         password: fields.password,
         phone: fields.phone.replace(/\D/g, ""),
         college: fields.college.trim(),
+        gender: fields.gender,
       });
       saveAuth(data);
       navigate("/apply", { replace: true });
@@ -95,6 +100,15 @@ const SignupPage = () => {
               label="College" value={fields.college}
               onChange={set("college")} autoComplete="organization"
             />
+            <TerminalSelect
+              label="Gender" value={fields.gender}
+              onChange={set("gender")}
+            >
+              <option value="" disabled>Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </TerminalSelect>
             {errors.map((err, i) => (
               <ErrorLine key={err}>
                 {err}

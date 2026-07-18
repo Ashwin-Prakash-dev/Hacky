@@ -126,7 +126,7 @@ const Hero = () => {
     <section
       ref={sectionRef}
       aria-label="Startathon — Kerala's most curated 30-hour hackathon"
-      className="relative h-dvh w-screen overflow-hidden bg-[#050505]"
+      className="relative h-dvh w-screen overflow-hidden bg-[#050505] bg-[rgba(0,0,0,0.18)] backdrop-blur-md"
     >
       <div className="absolute left-0 top-0 size-full">
         <StaticHeroBackground />
@@ -154,34 +154,51 @@ const Hero = () => {
 
         {/* Center: the wordmark, floating over the dissolving video */}
         <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="hero-heading hero-rise text-white shadow-sm">
-            Startathon<span className="text-lime">.</span>
-          </h1>
+          <div className="w-fit max-w-full">
+            <h1 className="hero-heading hero-rise pointer-events-none select-none text-white shadow-sm">
+              Startathon<span className="text-lime">.</span>
+            </h1>
+            <span className="hero-rise pointer-events-none mt-1 block select-none text-right font-general text-sm tracking-[0.03em] text-white/80 md:text-xl">
+              an initiative by <a href="https://sctcoding.club" target="_blank" rel="noopener noreferrer" className="text-red-400 pointer-events-auto hover:underline">
+                SCTCE Coding Club
+              </a>
+            </span>
+          </div>
         </div>
 
         {/* Baseline band: message + CTAs anchor the left corner; the
             badge disc stamps the right. On mobile the facts stack in
             here instead of the top band. */}
         <div className="flex w-full flex-wrap items-end justify-between gap-6">
-          <div className="w-fit max-w-full">
-            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50 [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
-              Not everyone gets in.
-            </p>
+          <div className="relative w-fit max-w-full">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-8 -inset-y-10 z-0 bg-[radial-gradient(ellipse_100%_100%_at_0%_100%,rgba(0,0,0,0.65),transparent_72%)] sm:-inset-x-12 sm:-inset-y-14"
+            />
+            <div className="relative z-[1]">
+              <p className="hero-sub mb-2 max-w-sm font-general text-lg font-medium text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
+                Build something extraordinary.
+              </p>
+              <p className="hero-sub font-regular mb-4 max-w-sm font-general text-base text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
+                Join 100+ innovators pushing boundaries and creating the
+                future together.
+              </p>
 
-            <div className="flex flex-wrap items-center gap-5">
-              <Link to="/apply" className="cta-pill group">
-                <span className="relative inline-flex overflow-hidden">
-                  <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                    Apply Now
+              <div className="flex flex-wrap items-center gap-5">
+                <Link to="/apply" className="cta-pill group">
+                  <span className="relative inline-flex overflow-hidden">
+                    <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                      Start Your Journey
+                    </span>
+                    <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                      Start Your Journey
+                    </span>
                   </span>
-                  <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                    Apply Now
+                  <span className="cta-pill-icon" aria-hidden="true">
+                    <ArrowUpRight size={15} strokeWidth={2.25} />
                   </span>
-                </span>
-                <span className="cta-pill-icon" aria-hidden="true">
-                  <ArrowUpRight size={15} strokeWidth={2.25} />
-                </span>
-              </Link>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
