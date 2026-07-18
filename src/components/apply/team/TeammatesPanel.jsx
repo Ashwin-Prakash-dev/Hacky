@@ -187,10 +187,9 @@ const TeammatesPanel = ({
 
   const count = team.members.length;
   const invites = team.invites ?? [];
-  const confirmed = team.status === "confirmed";
   const isLeader = team.your_role === "leader";
-  const canKick = isLeader && !confirmed;
-  const canAdd = !confirmed && count < MAX_MEMBERS;
+  const canKick = isLeader;
+  const canAdd = count < MAX_MEMBERS;
   const openSlots = Math.max(0, MAX_MEMBERS - count - invites.length);
 
   return (
@@ -210,7 +209,7 @@ const TeammatesPanel = ({
         {invites.map((inv) => (
           <InviteRow
             key={inv.invite_id} invite={inv}
-            canCancel={isLeader && !confirmed}
+            canCancel={isLeader}
             busy={cancelBusyId === inv.invite_id}
             onCancel={onCancelInvite}
           />
