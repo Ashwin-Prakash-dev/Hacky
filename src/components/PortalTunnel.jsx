@@ -260,20 +260,30 @@ const CameraRig = ({ progressRef, staticMode }) => {
   return null;
 };
 
-// plays exactly one video — the stage the camera is inside
+// plays exactly one video — the stage the camera is inside. play() is
+// re-attempted (throttled) while the active video sits paused: the first
+// attempt at mount can land before the element is ready, and its rejected
+// promise would otherwise leave portal 1 frozen on the first paint.
 const VideoDirector = ({ progressRef, videosRef, staticMode }) => {
   const activeRef = useRef(-1);
-  useFrame(() => {
+  const lastTryRef = useRef(0);
+  useFrame(({ clock }) => {
     if (staticMode) return;
     const p = progressRef.current;
     const active = p < 0.2 ? 0 : p < 0.53 ? 1 : 2;
-    if (active === activeRef.current) return;
-    activeRef.current = active;
-    videosRef.current.forEach((v, i) => {
-      if (!v) return;
-      if (i === active) v.play().catch(() => {});
-      else if (!v.paused) v.pause();
-    });
+    if (active !== activeRef.current) {
+      activeRef.current = active;
+      videosRef.current.forEach((v, i) => {
+        if (v && i !== active && !v.paused) v.pause();
+      });
+      lastTryRef.current = 0; // let the new stage start immediately
+    }
+    const v = videosRef.current[active];
+    const t = clock.elapsedTime;
+    if (v && v.paused && t - lastTryRef.current > 0.5) {
+      lastTryRef.current = t;
+      v.play().catch(() => {});
+    }
   });
   return null;
 };
