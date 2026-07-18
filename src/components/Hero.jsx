@@ -170,35 +170,29 @@ const Hero = () => {
             badge disc stamps the right. On mobile the facts stack in
             here instead of the top band. */}
         <div className="flex w-full flex-wrap items-end justify-between gap-6">
-          <div className="relative w-fit max-w-full">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-8 -inset-y-10 z-0 bg-[radial-gradient(ellipse_100%_100%_at_0%_100%,rgba(0,0,0,0.65),transparent_72%)] sm:-inset-x-12 sm:-inset-y-14"
-            />
-            <div className="relative z-[1]">
-              <p className="hero-sub mb-2 max-w-sm font-general text-lg font-medium text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
-                Build something extraordinary.
-              </p>
-              <p className="hero-sub font-regular mb-4 max-w-sm font-general text-base text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
-                Join 100+ innovators pushing boundaries and creating the
-                future together.
-              </p>
+          <div className="w-fit max-w-full rounded-2xl bg-black/35 px-5 py-4 backdrop-blur-sm sm:px-6 sm:py-5">
+            <p className="hero-sub mb-2 max-w-sm font-general text-lg font-medium text-white">
+              Build something extraordinary.
+            </p>
+            <p className="hero-sub font-regular mb-4 max-w-sm font-general text-base text-white">
+              Join 100+ innovators pushing boundaries and creating the future
+              together.
+            </p>
 
-              <div className="flex flex-wrap items-center gap-5">
-                <Link to="/apply" className="cta-pill group">
-                  <span className="relative inline-flex overflow-hidden">
-                    <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                      Start Your Journey
-                    </span>
-                    <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                      Start Your Journey
-                    </span>
+            <div className="flex flex-wrap items-center gap-5">
+              <Link to="/apply" className="cta-pill group">
+                <span className="relative inline-flex overflow-hidden">
+                  <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                    Start Your Journey
                   </span>
-                  <span className="cta-pill-icon" aria-hidden="true">
-                    <ArrowUpRight size={15} strokeWidth={2.25} />
+                  <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                    Start Your Journey
                   </span>
-                </Link>
-              </div>
+                </span>
+                <span className="cta-pill-icon" aria-hidden="true">
+                  <ArrowUpRight size={15} strokeWidth={2.25} />
+                </span>
+              </Link>
             </div>
           </div>
         </div>

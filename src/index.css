@@ -186,9 +186,13 @@ body.custom-cursor {
 
   .special-font b {
     font-family: inherit;
-    font-weight: inherit;
+    font-weight: 800;
     font-style: normal;
     color: var(--lime);
+  }
+
+  .special-font {
+    font-weight: 600;
   }
 
   .hero-heading {
@@ -233,7 +237,7 @@ body.custom-cursor {
   .bento-title {
     @apply md:text-6xl text-4xl;
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 600;
     text-wrap: balance;
   }
 
@@ -879,7 +883,7 @@ body.lens-lock .cursor-ring::after {
   background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
   z-index: 30; pointer-events: none;
 }
-.hero-sub { opacity: 0.85; line-height: 1.75; letter-spacing: 0.01em; }
+.hero-sub { opacity: 0.95; line-height: 1.75; letter-spacing: 0.01em; }
 
 /* ── Marquee ─────────────────────────────────────────────────────────────── */
 .marquee-outer {

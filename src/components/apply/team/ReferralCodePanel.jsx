@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { GhostButton } from "../ui";
+import { Panel, Eyebrow, GhostButton } from "../ui";
 
-const teamsUsedLine = (n) => (n === 1 ? "1 team has used it so far." : `${n} teams have used it so far.`);
+const teamsLine = (n) => (n === 1 ? "1 team has used your code." : `${n} teams have used your code.`);
 
-/** Compact one-row version. The referral code is a nice-to-have, not a step. */
 const ReferralCodePanel = ({ code, count }) => {
   const [copied, setCopied] = useState(false);
 
@@ -18,25 +17,46 @@ const ReferralCodePanel = ({ code, count }) => {
     }
   };
 
+  const earned = count != null ? count * 10 : null;
+
   return (
-    <div className="flex flex-wrap items-center gap-x-[0.85rem] gap-y-[0.6rem] rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-[1.1rem] py-[0.85rem]">
-      <span className="font-general text-[0.85rem] text-white/70">
-        Your referral code:
-      </span>
-      <span className="select-all font-mono text-[0.95rem] font-bold tracking-[0.18em] text-lime">
-        {code}
-      </span>
-      <GhostButton onClick={copy}>
-        {copied ? (
-          <span className="inline-flex items-center gap-[0.3rem]">
-            <Check size={12} strokeWidth={3} /> copied
-          </span>
-        ) : "copy"}
-      </GhostButton>
-      <span className="font-general text-[0.8rem] text-white/50">
-        Other teams get 10% off with it.{count != null ? ` ${teamsUsedLine(count)}` : ""}
-      </span>
-    </div>
+    <Panel maxWidth="none">
+      <Eyebrow>Referral code</Eyebrow>
+
+      <div className="mt-2 flex flex-wrap items-center gap-x-[0.85rem] gap-y-2">
+        <span className="select-all font-mono text-[clamp(1.2rem,3.5vw,1.6rem)] font-bold tracking-[0.25em] text-lime">
+          {code}
+        </span>
+        <GhostButton onClick={copy}>
+          {copied ? (
+            <span className="inline-flex items-center gap-[0.3rem]">
+              <Check size={12} strokeWidth={3} /> copied
+            </span>
+          ) : "copy"}
+        </GhostButton>
+      </div>
+
+      <p className="mt-3 font-general text-[0.85rem] leading-relaxed text-white/70">
+        Teams that use this pay <span className="text-white">₹90</span> instead of ₹100.
+      </p>
+
+      {earned !== null && (
+        earned > 0 ? (
+          <div className="mt-4">
+            <p className="font-general text-[clamp(1.5rem,4vw,2rem)] font-bold text-lime">
+              ₹{earned} earned
+            </p>
+            <p className="mt-1 font-general text-[0.85rem] text-white/60">
+              {teamsLine(count)} ₹10 a team, paid out by UPI after the event.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-3 font-general text-[0.85rem] text-white/60">
+            ₹10 a team. Share it and start earning.
+          </p>
+        )
+      )}
+    </Panel>
   );
 };
 
