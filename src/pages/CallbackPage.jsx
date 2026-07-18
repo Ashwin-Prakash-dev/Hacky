@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, MonoLink } from "../components/apply/ui";
 import { api } from "../lib/startathon";
@@ -18,7 +19,7 @@ const CallbackPage = () => {
     const code = params.get("code");
     const state = params.get("state");
     if (!code || !state) {
-      setError("missing code or state in the callback URL");
+      setError("This sign-in link is incomplete. Please go back and try again.");
       return;
     }
 
@@ -38,12 +39,12 @@ const CallbackPage = () => {
           <>
             <Title>Sign-in failed</Title>
             <ErrorLine>{error}</ErrorLine>
-            <MonoLink to="/login">← back to login</MonoLink>
+            <MonoLink to="/login"><ArrowLeft size={13} /> Back to log in</MonoLink>
           </>
         ) : (
           <>
             <Title>Signing you in…</Title>
-            <NoticeLine>exchanging credentials with Google</NoticeLine>
+            <NoticeLine>Talking to Google. This only takes a moment.</NoticeLine>
           </>
         )}
       </Panel>

@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/startathon";
 import { saveAuth } from "../../lib/auth";
 import { loadGis } from "../../lib/gis";
-import { SANS } from "./ui";
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -18,7 +17,6 @@ const GoogleSignInPanel = ({ onError, disabled = false }) => {
   const navigate = useNavigate();
   const wrapperRef = useRef(null);
   const googleBtnRef = useRef(null);
-  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     if (!CLIENT_ID || disabled) return;
@@ -71,40 +69,16 @@ const GoogleSignInPanel = ({ onError, disabled = false }) => {
   return (
     <div
       ref={wrapperRef}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "48px",
-        opacity: disabled ? 0.5 : 1,
-        pointerEvents: disabled ? "none" : "auto",
-      }}
+      className={`group relative h-12 w-full ${disabled ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}
     >
-      {/* Real Google button — invisible, but the actual click target */}
+      {/* Real Google button: invisible, but the actual click target */}
       <div
         ref={googleBtnRef}
-        style={{
-          position: "absolute", inset: 0,
-          opacity: 0,
-          overflow: "hidden",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}
+        className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-0"
       />
 
-      {/* Decorative button — matches the site, never receives clicks */}
-      <div
-        style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "center",
-          gap: "0.6rem",
-          background: hovered && !disabled ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)",
-          border: hovered && !disabled ? "0.5px solid rgba(255,255,255,0.35)" : "0.5px solid rgba(255,255,255,0.16)",
-          borderRadius: "4px",
-          color: "#fff", fontFamily: SANS, fontSize: "0.85rem", fontWeight: 500,
-          transition: "border-color 0.2s, background 0.2s",
-        }}
-      >
+      {/* Decorative button: matches the site, never receives clicks */}
+      <div className="pointer-events-none absolute inset-0 flex w-full items-center justify-center gap-[0.6rem] rounded border-[0.5px] border-white/[0.16] bg-white/[0.04] font-general text-[0.85rem] font-medium text-white transition-[border-color,background] duration-200 group-hover:border-white/35 group-hover:bg-white/[0.07]">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
           <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>

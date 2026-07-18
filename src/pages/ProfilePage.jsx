@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Check } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
 import {
   Panel, Eyebrow, Title, ErrorLine, NoticeLine,
-  PrimaryButton, MonoLink, MONO,
+  PrimaryButton, MonoLink,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { updateUser } from "../lib/auth";
@@ -13,14 +14,14 @@ import { updateUser } from "../lib/auth";
 const validate = ({ name, phone, college }) => {
   const errors = [];
   if (name.trim() && (name.trim().length < 1 || name.trim().length > 100)) {
-    errors.push("name must be 1–100 characters");
+    errors.push("Names can be up to 100 characters.");
   }
   const digits = phone.replace(/\D/g, "");
   if (phone.trim() && (digits.length < 10 || digits.length > 15)) {
-    errors.push("phone must be 10–15 digits");
+    errors.push("Enter a valid phone number (10–15 digits).");
   }
   if (college.trim() && college.trim().length > 150) {
-    errors.push("college must be 150 characters or fewer");
+    errors.push("College names can be up to 150 characters.");
   }
   return errors;
 };
@@ -62,7 +63,7 @@ const ProfilePage = () => {
     e.preventDefault();
     const invalid = validate(fields);
     if (phoneMissing && !fields.phone.trim()) {
-      invalid.push("phone is required to continue");
+      invalid.push("Add your phone number to continue.");
     }
     if (invalid.length) {
       setErrors(invalid);
@@ -74,7 +75,7 @@ const ProfilePage = () => {
     if (fields.phone.trim()) body.phone = fields.phone.replace(/\D/g, "");
     if (fields.college.trim()) body.college = fields.college.trim();
     if (Object.keys(body).length === 0) {
-      setErrors(["nothing to save"]);
+      setErrors(["Nothing to save yet. Fill in a field first."]);
       return;
     }
     setBusy(true);
@@ -96,13 +97,13 @@ const ProfilePage = () => {
   };
 
   return (
-    <AuthShell label="PROFILE">
+    <AuthShell label="PROFILE" step={phoneMissing ? "phone" : null}>
       <PhaseTransition>
         <Panel>
           <Eyebrow>YOUR PROFILE</Eyebrow>
           {loading ? (
-            <p style={{ fontFamily: MONO, fontSize: "0.9rem", color: "rgba(200,255,0,0.7)" }}>
-              {"// loading your details…"}
+            <p className="font-mono text-[0.9rem] text-lime/70">
+              Loading your details…
             </p>
           ) : loadError ? (
             <>
@@ -114,14 +115,11 @@ const ProfilePage = () => {
               <Title>Edit your details</Title>
               {phoneMissing && (
                 <NoticeLine>
-                  Add your phone number to continue — it&apos;s required before you can access your team.
+                  Add your details. They&apos;re required before you can access your team.
                 </NoticeLine>
               )}
-              <p style={{
-                fontFamily: MONO, fontSize: "0.82rem",
-                color: "rgba(255,255,255,0.6)", marginBottom: "1.5rem",
-              }}>
-                {email} <span style={{ color: "rgba(255,255,255,0.4)" }}>(can&apos;t be changed)</span>
+              <p className="mb-6 font-mono text-[0.82rem] text-white/60">
+                {email} <span className="text-white/40">(can&apos;t be changed)</span>
               </p>
               <form onSubmit={submit} noValidate>
                 <TerminalInput
@@ -129,7 +127,7 @@ const ProfilePage = () => {
                   onChange={set("name")} autoComplete="name"
                 />
                 <TerminalInput
-                  label="Phone" type="tel" value={fields.phone}
+                  label="Phone (10-digit mobile number)" type="tel" value={fields.phone}
                   onChange={set("phone")} autoComplete="tel"
                 />
                 <TerminalInput
@@ -137,14 +135,22 @@ const ProfilePage = () => {
                   onChange={set("college")} autoComplete="organization"
                 />
                 {errors.map((err) => <ErrorLine key={err}>{err}</ErrorLine>)}
-                <NoticeLine>{saved && "Saved."}</NoticeLine>
+                <NoticeLine>
+                  {saved && (
+                    <span className="inline-flex items-center gap-[0.35rem]">
+                      <Check size={14} strokeWidth={3} /> Saved
+                    </span>
+                  )}
+                </NoticeLine>
                 <PrimaryButton type="submit" disabled={busy}>
-                  {busy ? "saving…" : "Save changes"}
+                  {busy ? "Saving…" : "Save changes"}
                 </PrimaryButton>
               </form>
               {!phoneMissing && (
-                <div style={{ marginTop: "1.5rem" }}>
-                  <MonoLink to={teamId ? "/team" : "/onboarding"}>← back</MonoLink>
+                <div className="mt-6">
+                  <MonoLink to={teamId ? "/team" : "/onboarding"}>
+                    <ArrowLeft size={13} /> Back to your team
+                  </MonoLink>
                 </div>
               )}
             </>

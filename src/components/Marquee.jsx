@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Diamond } from "lucide-react";
 
 const ITEMS = [
   "BUILDER-FIRST",
@@ -17,31 +18,23 @@ const MarqueeTrack = ({ reverse = false }) => {
 
   return (
     <div
-      className="marquee-track"
-      style={{
-        display: "flex",
-        width: "max-content",
-        animation: `marquee${reverse ? "Rev" : "Fwd"} 28s linear infinite`,
-      }}
+      className={`marquee-track flex w-max ${
+        reverse ? "animate-[marqueeRev_28s_linear_infinite]" : "animate-[marqueeFwd_28s_linear_infinite]"
+      }`}
     >
       {repeated.map((item, i) => (
         <span
           key={i}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "0 1.5rem",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.72rem",
-            letterSpacing: "0.22em",
+          className={`inline-flex items-center whitespace-nowrap px-6 font-mono text-[0.72rem] tracking-[0.22em] ${
             // no uppercase transform: the brand word must render exactly
             // as "Startathon." — the other items are typed in caps already
-            color: i % ITEMS.length === 0 ? "#C8FF00" : "rgba(255,255,255,0.55)",
-            whiteSpace: "nowrap",
-          }}
+            i % ITEMS.length === 0 ? "text-lime" : "text-white/[0.55]"
+          }`}
         >
           {item}
-          <span style={{ marginLeft: "1.5rem", color: "rgba(200,255,0,0.5)", fontSize: "0.55rem" }}>◆</span>
+          <span className="ml-6 inline-flex text-lime/50">
+            <Diamond size={9} fill="currentColor" strokeWidth={0} />
+          </span>
         </span>
       ))}
     </div>

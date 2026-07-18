@@ -5,7 +5,7 @@ import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
 import InviteCards from "../components/apply/team/InviteCards";
 import {
-  MONO, SANS, Panel, Eyebrow, Title, ErrorLine,
+  MONO, Panel, Eyebrow, Title, ErrorLine,
   PrimaryButton, GhostButton, MonoLink,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
@@ -39,7 +39,7 @@ const OnboardingPage = () => {
       .catch((err) => {
         if (cancelled) return;
         if (err.status === 401) navigate("/login", { replace: true });
-        // 404 = teamless, the expected state — stay here
+        // 404 = teamless, the expected state; stay here
       });
     loadInvites();
     return () => { cancelled = true; };
@@ -80,7 +80,7 @@ const OnboardingPage = () => {
     e.preventDefault();
     const name = teamName.trim();
     if (name.length < 2 || name.length > 60) {
-      setCreateError("team name must be 2–60 characters");
+      setCreateError("Team names are 2–60 characters.");
       return;
     }
     setBusy(true);
@@ -98,7 +98,7 @@ const OnboardingPage = () => {
     e.preventDefault();
     const code = joinCode.trim().toUpperCase();
     if (!code) {
-      setJoinError("enter a join code");
+      setJoinError("Enter the join code your teammate shared with you.");
       return;
     }
     setBusy(true);
@@ -115,20 +115,22 @@ const OnboardingPage = () => {
   return (
     <AuthShell
       label="FORM YOUR TEAM"
+      step="team"
       right={
-        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+        <div className="flex items-center gap-5">
           <MonoLink to="/profile">profile</MonoLink>
           <GhostButton onClick={logout}>logout</GhostButton>
         </div>
       }
     >
       <PhaseTransition>
-        <div style={{ width: "100%", maxWidth: "760px" }}>
-          <p style={{
-            fontFamily: MONO, fontSize: "0.78rem",
-            color: "rgba(200,255,0,0.7)", marginBottom: "1.5rem",
-          }}>
-            {"// logged in as "}{user?.name ?? "operative"}
+        <div className="w-full max-w-[760px]">
+          <p className="mb-2 font-mono text-[0.78rem] text-lime/70">
+            Signed in as {user?.name ?? "you"}
+          </p>
+          <p className="mb-6 font-general text-[0.9rem] leading-relaxed text-white/70">
+            Startathon is a team event. Every team needs <b className="text-lime">3-4 members</b> to
+            compete. Start one and invite your crew, or join a teammate&apos;s team with their code.
           </p>
 
           <InviteCards
@@ -139,24 +141,20 @@ const OnboardingPage = () => {
           />
           <ErrorLine>{inviteError}</ErrorLine>
 
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "1.25rem",
-          }}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5">
             <Panel maxWidth="none">
-              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+              <div className="flex h-full flex-col">
                 <Eyebrow>CREATE A TEAM</Eyebrow>
-                <div style={{ minHeight: "4.6rem" }}>
-                  <Title>Lead your own crew</Title>
+                <div className="min-h-[4.6rem]">
+                  <Title>Start a team and invite 2–3 teammates</Title>
                 </div>
-                <form onSubmit={createTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <form onSubmit={createTeam} noValidate className="flex flex-1 flex-col">
                   <TerminalInput
                     label="Team name (2–60 characters)" value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                   />
                   <ErrorLine>{createError}</ErrorLine>
-                  <div style={{ marginTop: "auto" }}>
+                  <div className="mt-auto">
                     <PrimaryButton type="submit" disabled={busy}>
                       Create team
                     </PrimaryButton>
@@ -166,19 +164,19 @@ const OnboardingPage = () => {
             </Panel>
 
             <Panel maxWidth="none">
-              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+              <div className="flex h-full flex-col">
                 <Eyebrow>JOIN A TEAM</Eyebrow>
-                <div style={{ minHeight: "4.6rem" }}>
-                  <Title>Have a join code?</Title>
+                <div className="min-h-[4.6rem]">
+                  <Title>Got a join code from a teammate?</Title>
                 </div>
-                <form onSubmit={joinTeam} noValidate style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <form onSubmit={joinTeam} noValidate className="flex flex-1 flex-col">
                   <TerminalInput
                     label="Join code" value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value)}
                     style={{ fontFamily: MONO, letterSpacing: "0.2em", textTransform: "uppercase" }}
                   />
                   <ErrorLine>{joinError}</ErrorLine>
-                  <div style={{ marginTop: "auto" }}>
+                  <div className="mt-auto">
                     <PrimaryButton type="submit" disabled={busy}>
                       Join team
                     </PrimaryButton>
@@ -188,12 +186,9 @@ const OnboardingPage = () => {
             </Panel>
           </div>
 
-          <p style={{
-            fontFamily: SANS, fontSize: "0.8rem",
-            color: "rgba(255,255,255,0.45)", marginTop: "1.75rem", lineHeight: 1.6,
-          }}>
-            Applications open soon — form or join a team now; once submissions open,
-            your team will apply with its idea.
+          <p className="mt-7 font-general text-[0.8rem] leading-relaxed text-white/45">
+            Applications open soon. Get your full team of 3-4 together now; once
+            submissions open, your team will apply with its idea.
           </p>
         </div>
       </PhaseTransition>

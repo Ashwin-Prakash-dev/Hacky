@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import MercuryField from "./MercuryField";
 
 // The hero: a raymarched liquid-mercury field (MercuryField, WebGL) with
@@ -17,13 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 const StaticHeroBackground = () => (
   <div
     aria-hidden="true"
-    className="absolute left-0 top-0 size-full"
-    style={{
-      background:
-        "radial-gradient(ellipse 80% 60% at 30% 25%, rgba(200,255,0,0.09), transparent 65%)," +
-        "radial-gradient(ellipse 70% 55% at 75% 70%, rgba(200,255,0,0.05), transparent 60%)," +
-        "#050505",
-    }}
+    className="absolute left-0 top-0 size-full bg-[#050505] bg-[radial-gradient(ellipse_80%_60%_at_30%_25%,rgba(200,255,0,0.09),transparent_65%),radial-gradient(ellipse_70%_55%_at_75%_70%,rgba(200,255,0,0.05),transparent_60%)]"
   />
 );
 
@@ -108,19 +103,12 @@ const Hero = () => {
   // Each fact is said exactly once in the hero: prize pool + team cap on
   // the badge disc, hours + teams in the wordmark tagline, date + venue
   // here. The shadow keeps them legible over passing mercury rims.
-  const factShadow = { textShadow: "0 2px 16px rgba(0,0,0,0.9)" };
   const facts = (
     <>
-      <span
-        style={{ fontFamily: "var(--font-mono)", ...factShadow }}
-        className="text-[11px] uppercase tracking-[0.3em] text-[#C8FF00]"
-      >
+      <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C8FF00] [text-shadow:0_2px_16px_rgba(0,0,0,0.9)]">
         July 2026
       </span>
-      <span
-        style={{ fontFamily: "var(--font-mono)", ...factShadow }}
-        className="text-[10px] uppercase tracking-[0.22em] text-blue-50/50"
-      >
+      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue-50/50 [text-shadow:0_2px_16px_rgba(0,0,0,0.9)]">
         SCTCE · Thiruvananthapuram
       </span>
     </>
@@ -153,10 +141,7 @@ const Hero = () => {
         {/* Top band: positioning line left, date/venue facts right
             (the badge disc owns the bottom-right corner). */}
         <div className="flex w-full items-start justify-between gap-6">
-          <p
-            className="hero-rise max-w-60 text-xl leading-snug text-blue-50/80 sm:text-2xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <p className="hero-rise max-w-60 font-display text-xl leading-snug text-blue-50/80 sm:text-2xl">
             Kerala&rsquo;s most curated hackathon
             <span className="text-[#C8FF00]">.</span>
           </p>
@@ -175,13 +160,7 @@ const Hero = () => {
               Thiruvananthapuram
             </span>
           </h1>
-          <p
-            className="hero-rise whitespace-nowrap text-[9px] uppercase tracking-[0.24em] text-blue-50/75 sm:text-xs sm:tracking-[0.32em]"
-            style={{
-              fontFamily: "var(--font-mono)",
-              textShadow: "0 2px 18px rgba(0,0,0,0.9)",
-            }}
-          >
+          <p className="hero-rise whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.24em] text-blue-50/75 [text-shadow:0_2px_18px_rgba(0,0,0,0.9)] sm:text-xs sm:tracking-[0.32em]">
             30 hours · 20 teams · ship something real
           </p>
         </div>
@@ -208,7 +187,7 @@ const Hero = () => {
                   </span>
                 </span>
                 <span className="cta-pill-icon" aria-hidden="true">
-                  ↗
+                  <ArrowUpRight size={15} strokeWidth={2.25} />
                 </span>
               </Link>
 
@@ -233,15 +212,14 @@ const Hero = () => {
           {/* no z-index here: the face must paint BELOW the svg (which is
               position:relative), or its backdrop blur swallows the band
               and text into a gray disc */}
-          <div className="hero-disc-face" style={{ opacity: 1 }} />
+          <div className="hero-disc-face opacity-100" />
           {/* position:relative so the svg paints ABOVE the absolutely-
               positioned glass face — static elements always paint below
               positioned siblings, which buried the band + text under the
               face's backdrop blur */}
           <svg
             viewBox="0 0 120 120"
-            className="size-32"
-            style={{ overflow: "visible", position: "relative" }}
+            className="relative size-32 overflow-visible"
           >
             <defs>
               {/* the ring the text rides: r46 around the hub */}
@@ -321,7 +299,7 @@ const Hero = () => {
                 fill="#C8FF00"
                 fontSize="10.5"
                 dominantBaseline="central"
-                style={{ fontFamily: "var(--font-mono)" }}
+                className="font-mono"
               >
                 {/* textLength alone distributes the glyphs across the
                     path's constant length (≈289) — combining it with

@@ -1,6 +1,7 @@
 import { useWindowScroll } from "react-use";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 
 const navItems = [
   { label: "What is it", id: "what-is-it" },
@@ -62,7 +63,7 @@ const NavBar = () => {
                 </span>
               </span>
               <span className="cta-pill-icon" aria-hidden="true">
-                ↗
+                <ArrowUpRight size={15} strokeWidth={2.25} />
               </span>
             </Link>
 
@@ -74,29 +75,17 @@ const NavBar = () => {
               aria-expanded={menuOpen}
             >
               <span
+                className={`block h-[1.5px] w-[18px] transition-[transform,background] duration-500 ${menuOpen ? "bg-lime" : "bg-white/70"}`}
                 style={{
-                  display: "block",
-                  width: "18px",
-                  height: "1.5px",
-                  background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.7)",
-                  transition:
-                    "transform 0.5s cubic-bezier(0.32,0.72,0,1), background 0.3s",
-                  transform: menuOpen
-                    ? "translateY(3.25px) rotate(45deg)"
-                    : "none",
+                  transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
+                  transform: menuOpen ? "translateY(3.25px) rotate(45deg)" : "none",
                 }}
               />
               <span
+                className={`block h-[1.5px] w-[18px] transition-[transform,background] duration-500 ${menuOpen ? "bg-lime" : "bg-white/70"}`}
                 style={{
-                  display: "block",
-                  width: "18px",
-                  height: "1.5px",
-                  background: menuOpen ? "#C8FF00" : "rgba(255,255,255,0.7)",
-                  transition:
-                    "transform 0.5s cubic-bezier(0.32,0.72,0,1), background 0.3s",
-                  transform: menuOpen
-                    ? "translateY(-3.25px) rotate(-45deg)"
-                    : "none",
+                  transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
+                  transform: menuOpen ? "translateY(-3.25px) rotate(-45deg)" : "none",
                 }}
               />
             </button>
@@ -107,50 +96,21 @@ const NavBar = () => {
       {/* Full-screen mobile overlay */}
       <div
         aria-hidden={!menuOpen}
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 55,
-          background: "rgba(5,5,5,0.86)",
-          backdropFilter: "blur(28px) saturate(160%)",
-          WebkitBackdropFilter: "blur(28px) saturate(160%)",
-          opacity: menuOpen ? 1 : 0,
-          pointerEvents: menuOpen ? "auto" : "none",
-          transition: "opacity 0.55s cubic-bezier(0.32,0.72,0,1)",
-          display: "flex",
-          alignItems: "center",
-        }}
+        className={`fixed inset-0 z-[55] flex items-center bg-[rgba(5,5,5,0.86)] transition-opacity duration-500 [backdrop-filter:blur(28px)_saturate(160%)] ${
+          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)" }}
       >
-        <nav
-          style={{
-            width: "100%",
-            padding: "0 clamp(2rem, 8vw, 4rem)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.25rem",
-          }}
-        >
+        <nav className="flex w-full flex-col gap-1 px-[clamp(2rem,8vw,4rem)]">
           {navItems.map((item, i) => (
-            <div key={item.id} style={{ overflow: "hidden" }}>
+            <div key={item.id} className="overflow-hidden">
               <button
                 onClick={() => {
                   scrollTo(item.id);
                   setMenuOpen(false);
                 }}
+                className="block w-full cursor-pointer border-none bg-none py-[0.55rem] text-left font-display text-[clamp(2.2rem,9vw,3.2rem)] font-normal leading-none tracking-[0.01em] text-white"
                 style={{
-                  textAlign: "left",
-                  background: "none",
-                  border: "none",
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(2.2rem, 9vw, 3.2rem)",
-                  fontWeight: 400,
-                  letterSpacing: "0.01em",
-                  color: "#fff",
-                  padding: "0.55rem 0",
-                  cursor: "pointer",
-                  display: "block",
-                  width: "100%",
-                  lineHeight: 1,
                   opacity: menuOpen ? 1 : 0,
                   transform: menuOpen ? "translateY(0)" : "translateY(110%)",
                   transition: `transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.08 + i * 0.07}s, opacity 0.5s ease ${0.08 + i * 0.07}s`,
@@ -160,7 +120,7 @@ const NavBar = () => {
               </button>
             </div>
           ))}
-          <div style={{ overflow: "hidden", marginTop: "2rem" }}>
+          <div className="mt-8 overflow-hidden">
             <Link
               to="/apply"
               className="cta-pill group"
@@ -180,7 +140,7 @@ const NavBar = () => {
                 </span>
               </span>
               <span className="cta-pill-icon" aria-hidden="true">
-                ↗
+                <ArrowUpRight size={15} strokeWidth={2.25} />
               </span>
             </Link>
           </div>

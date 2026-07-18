@@ -4,8 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LIME = "#C8FF00";
-
 const ladder = [
   { rank: "01", label: "First Place", amount: "₹1,00,000", top: true },
   { rank: "02", label: "Second Place", amount: "₹60,000", top: false },
@@ -19,18 +17,12 @@ const stats = [
 ];
 
 // Masked line: the child wipes upward out of the overflow-hidden shell.
-// `line` spreads extra props (class hooks) onto the moving inner div.
-const Mask = ({ children, style, line = {} }) => (
-  <div style={{ overflow: "hidden", ...style }}>
-    <div {...line}>{children}</div>
+// `lineClassName` is the GSAP class hook on the moving inner div.
+const Mask = ({ children, className = "", lineClassName = "" }) => (
+  <div className={`overflow-hidden ${className}`}>
+    <div className={lineClassName}>{children}</div>
   </div>
 );
-
-const mono = {
-  fontFamily: "var(--font-mono)",
-  textTransform: "uppercase",
-  letterSpacing: "0.22em",
-};
 
 // The prize theater. Desktop: the section pins for ~2.3 viewports of
 // scroll and the board fills in suspense order — hairlines sweep, then the
@@ -123,95 +115,49 @@ const Prizes = () => {
       ref={sectionRef}
       id="prizes"
       data-lens="prizes"
-      style={{
-        background: "#050505",
-        width: "100%",
-        minHeight: "100svh",
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        padding: "5rem 0",
-      }}
+      className="relative flex w-full items-center bg-[#050505] py-20 [min-height:100svh]"
     >
-      <div className="container mx-auto px-5 md:px-10" style={{ width: "100%" }}>
+      <div className="container mx-auto w-full px-5 md:px-10">
         {/* header: eyebrow + the pool figure as the finale of the reveal */}
-        <div style={{ marginBottom: "clamp(2rem, 5vh, 3.5rem)" }}>
-          <div className="pz-fade" style={{ marginBottom: "1.4rem" }}>
+        <div className="mb-[clamp(2rem,5vh,3.5rem)]">
+          <div className="pz-fade mb-[1.4rem]">
             <span className="eyebrow">what&apos;s at stake</span>
           </div>
-          <Mask line={{ className: "pz-l-pool" }}>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 800,
-                fontSize: "clamp(2.9rem, 9vw, 7rem)",
-                lineHeight: 0.95,
-                letterSpacing: "-0.02em",
-                color: LIME,
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
+          <Mask lineClassName="pz-l-pool">
+            <h2 className="font-display text-[clamp(2.9rem,9vw,7rem)] font-extrabold leading-[0.95] tracking-[-0.02em] text-lime [font-variant-numeric:tabular-nums]">
               ₹2,00,000
             </h2>
           </Mask>
-          <div className="pz-fade" style={{ marginTop: "1rem" }}>
-            <span style={{ ...mono, fontSize: "0.72rem", color: "rgba(255,255,255,0.55)" }}>
+          <div className="pz-fade mt-4">
+            <span className="font-mono text-[0.72rem] uppercase tracking-[0.22em] text-white/55">
               total prize pool
             </span>
           </div>
         </div>
 
         {/* prize ladder — reveals bottom row first */}
-        <div style={{ marginBottom: "clamp(1.8rem, 4vh, 3rem)" }}>
+        <div className="mb-[clamp(1.8rem,4vh,3rem)]">
           {ladder.map((p) => (
             <div key={p.rank}>
-              <div
-                className="pz-rule"
-                style={{ height: "1px", background: "rgba(255,255,255,0.1)" }}
-              />
-              <Mask line={{ className: `pz-l-${p.rank}` }}>
+              <div className="pz-rule h-px bg-white/10" />
+              <Mask lineClassName={`pz-l-${p.rank}`}>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    gap: "clamp(0.9rem, 3vw, 1.6rem)",
-                    padding: p.top ? "1.35rem 0" : "1.05rem 0",
-                  }}
+                  className={`flex items-baseline gap-[clamp(0.9rem,3vw,1.6rem)] ${p.top ? "py-[1.35rem]" : "py-[1.05rem]"}`}
                 >
-                  <span
-                    style={{
-                      ...mono,
-                      fontSize: "0.72rem",
-                      color: p.top ? LIME : "rgba(255,255,255,0.4)",
-                    }}
-                  >
+                  <span className={`font-mono text-[0.72rem] uppercase tracking-[0.22em] ${p.top ? "text-lime" : "text-white/40"}`}>
                     {p.rank}
                   </span>
                   <span
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 800,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.01em",
-                      fontSize: p.top
-                        ? "clamp(1.25rem, 3vw, 2rem)"
-                        : "clamp(1rem, 2.2vw, 1.5rem)",
-                      color: p.top ? "#fff" : "rgba(255,255,255,0.8)",
-                    }}
+                    className={`font-display font-extrabold uppercase tracking-[0.01em] ${
+                      p.top ? "text-[clamp(1.25rem,3vw,2rem)] text-white" : "text-[clamp(1rem,2.2vw,1.5rem)] text-white/80"
+                    }`}
                   >
                     {p.label}
                   </span>
                   <span
-                    style={{
-                      marginLeft: "auto",
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 800,
-                      fontSize: p.top
-                        ? "clamp(1.6rem, 4.2vw, 2.9rem)"
-                        : "clamp(1.15rem, 2.8vw, 1.9rem)",
-                      color: p.top ? LIME : "rgba(255,255,255,0.75)",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
+                    className={`ml-auto font-display font-extrabold [font-variant-numeric:tabular-nums] ${
+                      p.top ? "text-[clamp(1.6rem,4.2vw,2.9rem)] text-lime" : "text-[clamp(1.15rem,2.8vw,1.9rem)] text-white/75"
+                    }`}
                   >
                     {p.amount}
                   </span>
@@ -219,32 +165,16 @@ const Prizes = () => {
               </Mask>
             </div>
           ))}
-          <div
-            className="pz-rule"
-            style={{ height: "1px", background: "rgba(255,255,255,0.1)" }}
-          />
+          <div className="pz-rule h-px bg-white/10" />
         </div>
 
         {/* 30 = 24 + 6 stat strip */}
         <div className="pz-stats">
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "baseline",
-              gap: "0.9rem 1.4rem",
-              ...mono,
-              fontSize: "0.72rem",
-              color: "rgba(255,255,255,0.55)",
-            }}
-          >
+          <div className="flex flex-wrap items-baseline gap-x-[1.4rem] gap-y-[0.9rem] font-mono text-[0.72rem] uppercase tracking-[0.22em] text-white/55">
             {stats.map(([n, label], i) => (
-              <span
-                key={label}
-                style={{ display: "inline-flex", gap: "0.55rem", alignItems: "baseline" }}
-              >
-                {i > 0 && <span style={{ color: "rgba(255,255,255,0.25)" }}>·</span>}
-                <span style={{ color: LIME, fontSize: "0.95rem" }}>{n}</span>
+              <span key={label} className="inline-flex items-baseline gap-[0.55rem]">
+                {i > 0 && <span className="text-white/25">·</span>}
+                <span className="text-[0.95rem] text-lime">{n}</span>
                 {label}
               </span>
             ))}

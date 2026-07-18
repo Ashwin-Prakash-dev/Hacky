@@ -29,7 +29,7 @@ const blocks = [
     id: "rules",
     heading: "Rules",
     rows: [
-      { title: "Teams of 1–4", desc: "Build solo or with a crew. Up to 4 members per team" },
+      { title: "Teams of 3–4", desc: "Squad up — every team needs 3 to 4 members to compete" },
       { title: "Original work only", desc: "All code written during the 30-hour window. No pre-built projects" },
       { title: "Must be deployable", desc: "A working product or clear prototype. Slides don't count" },
       { title: "Fair play", desc: "Respect fellow builders, mentors, and the community you're in" },
@@ -39,17 +39,11 @@ const blocks = [
 
 // Masked line: the child wipes upward out of the overflow-hidden shell on
 // reveal — same grammar as the prize board above this section.
-const Mask = ({ children, style }) => (
-  <div style={{ overflow: "hidden", ...style }}>
+const Mask = ({ children, className = "" }) => (
+  <div className={`overflow-hidden ${className}`}>
     <div className="bf-line">{children}</div>
   </div>
 );
-
-const mono = {
-  fontFamily: "var(--font-mono)",
-  textTransform: "uppercase",
-  letterSpacing: "0.22em",
-};
 
 // The briefing: What to Expect / Mentors / Rules as one editorial document
 // continuing straight out of the prize reveal. Each block's lines mask in
@@ -88,92 +82,37 @@ const Briefing = () => {
       ref={sectionRef}
       id="briefing"
       data-lens="briefing"
-      style={{ background: "#050505", width: "100%", padding: "6rem 0 9rem" }}
+      className="w-full bg-[#050505] pb-36 pt-24"
     >
       <div className="container mx-auto px-5 md:px-10">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(4rem, 9vh, 6rem)",
-          }}
-        >
+        <div className="flex flex-col gap-[clamp(4rem,9vh,6rem)]">
           {blocks.map((block) => (
             <div key={block.id} className="bf-block">
-              <Mask style={{ marginBottom: "1.8rem" }}>
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "-0.01em",
-                    fontSize: "clamp(1.7rem, 4vw, 2.8rem)",
-                    lineHeight: 1,
-                    color: "#fff",
-                  }}
-                >
+              <Mask className="mb-[1.8rem]">
+                <h2 className="font-display text-[clamp(1.7rem,4vw,2.8rem)] font-extrabold uppercase leading-none tracking-[-0.01em] text-white">
                   {block.heading}
                 </h2>
               </Mask>
 
               {block.rows.map((row, i) => (
                 <div key={row.title}>
-                  <div
-                    className="bf-rule"
-                    style={{ height: "1px", background: "rgba(255,255,255,0.1)" }}
-                  />
+                  <div className="bf-rule h-px bg-white/10" />
                   <Mask>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "baseline",
-                        gap: "0.45rem clamp(1rem, 3vw, 1.6rem)",
-                        padding: "1.15rem 0",
-                      }}
-                    >
-                      <span
-                        style={{
-                          ...mono,
-                          fontSize: "0.68rem",
-                          color: "rgba(255,255,255,0.4)",
-                        }}
-                      >
+                    <div className="flex flex-wrap items-baseline gap-x-[clamp(1rem,3vw,1.6rem)] gap-y-[0.45rem] py-[1.15rem]">
+                      <span className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/40">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span
-                        style={{
-                          flex: "1 1 auto",
-                          fontFamily: "var(--font-display)",
-                          fontWeight: 800,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.01em",
-                          fontSize: "clamp(1.05rem, 2.3vw, 1.55rem)",
-                          color: "rgba(255,255,255,0.92)",
-                        }}
-                      >
+                      <span className="flex-[1_1_auto] font-display text-[clamp(1.05rem,2.3vw,1.55rem)] font-extrabold uppercase tracking-[0.01em] text-white/[0.92]">
                         {row.title}
                       </span>
-                      <span
-                        className="font-general"
-                        style={{
-                          flexBasis: "min(38ch, 100%)",
-                          marginLeft: "auto",
-                          fontSize: "0.9rem",
-                          lineHeight: 1.55,
-                          color: "rgba(255,255,255,0.55)",
-                        }}
-                      >
+                      <span className="ml-auto basis-[min(38ch,100%)] font-general text-[0.9rem] leading-[1.55] text-white/55">
                         {row.desc}
                       </span>
                     </div>
                   </Mask>
                 </div>
               ))}
-              <div
-                className="bf-rule"
-                style={{ height: "1px", background: "rgba(255,255,255,0.1)" }}
-              />
+              <div className="bf-rule h-px bg-white/10" />
             </div>
           ))}
         </div>

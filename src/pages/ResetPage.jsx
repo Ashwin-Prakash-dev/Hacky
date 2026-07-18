@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
@@ -19,12 +20,12 @@ const ResetPage = () => {
   const submit = async (e) => {
     e.preventDefault();
     if (password.length < 8 || password.length > 100) {
-      setError("password must be 8–100 characters");
+      setError("Passwords need at least 8 characters.");
       setExpired(false);
       return;
     }
     if (password !== confirm) {
-      setError("passwords do not match");
+      setError("The two passwords don't match.");
       setExpired(false);
       return;
     }
@@ -34,7 +35,7 @@ const ResetPage = () => {
       await api.verifyReset(token, password);
       navigate("/login", {
         replace: true,
-        state: { notice: "password set — log in with it below" },
+        state: { notice: "Password set. Log in with it below." },
       });
     } catch (err) {
       setError(err.message);
@@ -51,8 +52,8 @@ const ResetPage = () => {
           <Title>Choose a new password</Title>
           {!token ? (
             <>
-              <ErrorLine>this link is missing its token — request a new one</ErrorLine>
-              <MonoLink to="/forgot">request a new reset link →</MonoLink>
+              <ErrorLine>This reset link looks incomplete. Request a fresh one.</ErrorLine>
+              <MonoLink to="/forgot">Request a new reset link <ArrowRight size={13} /></MonoLink>
             </>
           ) : (
             <form onSubmit={submit} noValidate>
@@ -70,12 +71,12 @@ const ResetPage = () => {
                 {error && (
                   <>
                     {error}
-                    {expired && <> — <MonoLink to="/forgot">request a new link</MonoLink></>}
+                    {expired && <>. <MonoLink to="/forgot">Request a new link <ArrowRight size={13} /></MonoLink></>}
                   </>
                 )}
               </ErrorLine>
               <PrimaryButton type="submit" disabled={busy}>
-                {busy ? "saving…" : "Set password"}
+                {busy ? "Saving…" : "Set password"}
               </PrimaryButton>
             </form>
           )}

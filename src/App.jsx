@@ -15,6 +15,7 @@ import ResetPage from "./pages/ResetPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
 import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/forgot" element={<ForgotPage />} />
       <Route path="/reset" element={<ResetPage />} />
+      <Route path="/reset-password" element={<ResetPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/profile" element={<ProfilePage />} />
         <Route element={<RequirePhone />}>
@@ -34,6 +36,7 @@ function App() {
           <Route path="/team" element={<TeamPage />} />
         </Route>
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

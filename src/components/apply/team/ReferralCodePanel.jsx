@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { MONO, LIME, Panel, Eyebrow, GhostButton } from "../ui";
+import { Check } from "lucide-react";
+import { GhostButton } from "../ui";
 
-const pluralTeams = (n) => (n === 1 ? "1 team" : `${n} teams`);
+const teamsUsedLine = (n) => (n === 1 ? "1 team has used it so far." : `${n} teams have used it so far.`);
 
+/** Compact one-row version. The referral code is a nice-to-have, not a step. */
 const ReferralCodePanel = ({ code, count }) => {
   const [copied, setCopied] = useState(false);
 
@@ -12,41 +14,29 @@ const ReferralCodePanel = ({ code, count }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      // clipboard unavailable — code is selectable below
+      // clipboard unavailable; code is selectable below
     }
   };
 
   return (
-    <Panel maxWidth="none">
-      <Eyebrow>REFERRAL CODE</Eyebrow>
-      <div style={{
-        display: "flex", flexWrap: "wrap", alignItems: "center",
-        justifyContent: "space-between", gap: "0.75rem",
-      }}>
-        <span style={{
-          fontFamily: MONO, fontSize: "clamp(1.4rem, 4vw, 2rem)",
-          fontWeight: 700, letterSpacing: "0.25em", color: LIME,
-          userSelect: "all",
-        }}>
-          {code}
-        </span>
-        <GhostButton onClick={copy}>{copied ? "copied ✓" : "copy"}</GhostButton>
-      </div>
-      <p style={{
-        fontFamily: MONO, fontSize: "0.85rem",
-        color: "rgba(255,255,255,0.75)", marginTop: "0.75rem", lineHeight: 1.6,
-      }}>
-        {"// share this code — other teams get 10% off by using it"}
-      </p>
-      {count != null && (
-        <p style={{
-          fontFamily: MONO, fontSize: "0.85rem",
-          color: "rgba(200,255,0,0.85)", marginTop: "0.35rem", lineHeight: 1.6,
-        }}>
-          {`// ${pluralTeams(count)} used your code so far`}
-        </p>
-      )}
-    </Panel>
+    <div className="flex flex-wrap items-center gap-x-[0.85rem] gap-y-[0.6rem] rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-[1.1rem] py-[0.85rem]">
+      <span className="font-general text-[0.85rem] text-white/70">
+        Your referral code:
+      </span>
+      <span className="select-all font-mono text-[0.95rem] font-bold tracking-[0.18em] text-lime">
+        {code}
+      </span>
+      <GhostButton onClick={copy}>
+        {copied ? (
+          <span className="inline-flex items-center gap-[0.3rem]">
+            <Check size={12} strokeWidth={3} /> copied
+          </span>
+        ) : "copy"}
+      </GhostButton>
+      <span className="font-general text-[0.8rem] text-white/50">
+        Other teams get 10% off with it.{count != null ? ` ${teamsUsedLine(count)}` : ""}
+      </span>
+    </div>
   );
 };
 
