@@ -331,13 +331,24 @@ const TeamPage = () => {
           {stage === "done" && (
             <>
               <p className="font-general text-base font-semibold leading-relaxed text-lime">
-                You&apos;re in. Your team is locked in: the roster that paid (₹
-                {fee}) is the roster that competes.
+                You&apos;re in. Payment&apos;s confirmed (₹{fee}). You can still
+                add or remove teammates before submissions open.
               </p>
 
               <IdeaNotice prominent />
 
-              <TeammatesPanel team={team} kickBusyId={null} canInvite={false} />
+              <TeammatesPanel
+                team={team}
+                onKick={kick}
+                kickBusyId={kickBusyId}
+                canInvite={isLeader}
+                onInvite={invite}
+                inviteBusy={inviteBusy}
+                inviteError={inviteError}
+                inviteSentTo={inviteSentTo}
+                onCancelInvite={cancelInvite}
+                cancelBusyId={cancelBusyId}
+              />
 
               <ReferralCodePanel
                 code={team.referral_code}
