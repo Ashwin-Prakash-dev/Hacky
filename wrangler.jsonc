@@ -12,7 +12,8 @@
 	},
 	"upload_source_maps": true,
 	"compatibility_flags": [
-		"nodejs_compat"
+		"nodejs_compat",
+		"nodejs_compat_populate_process_env"
 	],
 	/**
 	 * Smart Placement
@@ -31,7 +32,13 @@
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
-	// "vars": {  "MY_VARIABLE": "production_value" }
+	"vars": {
+		"VITE_API_BASE": "https://api.sctcoding.club/api/v3/events/startathon",
+		"VITE_STARTATHON_API_BASE": "https://api.sctcoding.club/api/v3/events/startathon",
+		"VITE_UPI_ID": "zakuzzdj-1@okhdfcbank",
+		"VITE_UPI_QR": "/upi-qr.png",
+		"VITE_GOOGLE_CLIENT_ID": "243299702505-ia97kgm1aq4a32o0t76ljlmpk47jgnem.apps.googleusercontent.com"
+	},
 	/**
 	 * Static Assets
 	 * https://developers.cloudflare.com/workers/static-assets/binding/

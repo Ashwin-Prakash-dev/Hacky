@@ -61,6 +61,8 @@ const COMMANDS = {
 
 const UNKNOWN = (cmd) => [`command not found: ${cmd}`, "type 'help' for available commands."];
 
+const MONO_TIGHT = "font-mono text-[clamp(0.72rem,1.4vw,0.88rem)]";
+
 /* ── Component ──────────────────────────────────────────────────────────── */
 const TerminalBridge = () => {
   const sectionRef  = useRef(null);
@@ -166,63 +168,29 @@ const TerminalBridge = () => {
   return (
     <section
       ref={sectionRef}
-      style={{
-        position: "relative",
-        backgroundColor: "#000",
-        overflow: "hidden",
-        padding: "clamp(4.5rem, 9vw, 7.5rem) clamp(1rem, 5vw, 3rem)",
-      }}
+      data-lens="terminal"
+      className="relative overflow-hidden bg-[#050505] px-[clamp(1rem,5vw,3rem)] py-[clamp(4.5rem,9vw,7.5rem)]"
     >
       {/* Scanlines */}
       <div className="tb-scanlines" />
 
       {/* Ambient lime glow */}
-      <div style={{
-        position: "absolute", top: 0, left: "50%",
-        transform: "translateX(-50%)",
-        width: "60%", height: "1px",
-        background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.22), transparent)",
-        pointerEvents: "none",
-      }} />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-px w-3/5 -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.22),transparent)]" />
 
       {/* ── Terminal Panel ─────────────────────────────────────── */}
       <div
-        style={{
-          position: "relative", zIndex: 1,
-          maxWidth: "720px", margin: "0 auto",
-          border: "0.5px solid rgba(200,255,0,0.12)",
-          borderRadius: "6px",
-          background: "rgba(200,255,0,0.018)",
-          boxShadow: "0 0 0 1px rgba(0,0,0,0.6), 0 24px 80px rgba(0,0,0,0.5), inset 0 0 60px rgba(200,255,0,0.012)",
-          backdropFilter: "blur(2px)",
-        }}
+        className="relative mx-auto max-w-[720px] rounded-2xl border-[0.5px] border-lime/[0.12] bg-lime/[0.018] shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_24px_80px_rgba(0,0,0,0.5),inset_0_0_60px_rgba(200,255,0,0.012)] backdrop-blur-[2px]"
         onClick={() => interactive && inputRef.current?.focus()}
       >
         {/* ── Header bar ── */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: "8px",
-          padding: "0.7rem 1.2rem",
-          borderBottom: "0.5px solid rgba(200,255,0,0.1)",
-          background: "rgba(200,255,0,0.025)",
-          borderRadius: "6px 6px 0 0",
-        }}>
+        <div className="flex items-center gap-2 rounded-t-2xl border-b-[0.5px] border-lime/10 bg-lime/[0.025] px-5 py-[0.7rem]">
           {["rgba(255,255,255,0.12)", "rgba(255,255,255,0.07)", "rgba(255,255,255,0.05)"].map((c, i) => (
-            <span key={i} style={{
-              display: "inline-block", width: "8px", height: "8px",
-              borderRadius: "50%", background: c,
-            }} />
+            <span key={i} className="inline-block size-2 rounded-full" style={{ background: c }} />
           ))}
-          <span style={{
-            marginLeft: "auto", fontFamily: "monospace",
-            fontSize: "0.62rem", letterSpacing: "0.18em",
-            color: "rgba(200,255,0,0.45)", textTransform: "uppercase",
-          }}>
-            STARTATHON.SYS
+          <span className="ml-auto font-mono text-[0.78rem] tracking-[0.14em] text-lime/75">
+            Startathon.sys
           </span>
-          <span style={{
-            fontFamily: "monospace", fontSize: "0.56rem",
-            letterSpacing: "0.12em", color: "rgba(255,255,255,0.18)",
-          }}>
+          <span className="font-mono text-[0.72rem] tracking-widest text-white/55">
             v2026.1.0
           </span>
         </div>
@@ -230,14 +198,7 @@ const TerminalBridge = () => {
         {/* ── Terminal body ── */}
         <div
           ref={bodyRef}
-          style={{
-            padding: "clamp(1.5rem, 4vw, 2.5rem) clamp(1.2rem, 3.5vw, 2.2rem)",
-            display: "flex", flexDirection: "column", gap: "0",
-            minHeight: "320px",
-            maxHeight: "480px",
-            overflowY: "auto",
-            scrollbarWidth: "none",
-          }}
+          className="flex max-h-[480px] min-h-[320px] flex-col gap-0 overflow-y-auto px-[clamp(1.2rem,3.5vw,2.2rem)] py-[clamp(1.5rem,4vw,2.5rem)] [scrollbar-width:none]"
         >
           {/* Boot sequence lines */}
           {LINES.map((line) => {
@@ -246,65 +207,54 @@ const TerminalBridge = () => {
             const isLastLine = line.id === lastVisibleId;
             const showCursor = isLastLine && line.type !== "granted" && !interactive;
 
+            const marginBottomClass =
+              line.type === "question"
+                ? "mb-[clamp(0.9rem,2vw,1.4rem)]"
+                : line.type === "process" && line.id === 6
+                ? "mb-[clamp(1.2rem,2.5vw,1.8rem)]"
+                : line.type === "granted"
+                ? "mb-0"
+                : "mb-[clamp(0.3rem,0.8vw,0.55rem)]";
+
             return (
               <div
                 key={line.id}
-                style={{
-                  display: "flex", alignItems: "baseline", gap: "0",
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? "translateY(0)" : "translateY(5px)",
-                  transition: "opacity 0.3s ease, transform 0.3s ease",
-                  marginBottom:
-                    line.type === "question"
-                      ? "clamp(0.9rem, 2vw, 1.4rem)"
-                      : line.type === "process" && line.id === 6
-                      ? "clamp(1.2rem, 2.5vw, 1.8rem)"
-                      : line.type === "granted"
-                      ? 0
-                      : "clamp(0.3rem, 0.8vw, 0.55rem)",
-                }}
+                className={`flex items-baseline gap-0 transition-[opacity,transform] duration-300 ${marginBottomClass} ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-[5px] opacity-0"
+                }`}
               >
                 {/* Separator before ACCESS GRANTED */}
                 {line.type === "granted" && isVisible && (
-                  <div style={{
-                    position: "absolute",
-                    left: "clamp(1.2rem, 3.5vw, 2.2rem)",
-                    right: "clamp(1.2rem, 3.5vw, 2.2rem)",
-                    height: "0.5px",
-                    background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.18), transparent)",
-                    transform: "translateY(-clamp(0.6rem, 1.2vw, 0.9rem))",
-                    pointerEvents: "none",
-                  }} />
+                  <div className="pointer-events-none absolute inset-x-[clamp(1.2rem,3.5vw,2.2rem)] h-[0.5px] translate-y-[calc(clamp(0.6rem,1.2vw,0.9rem)*-1)] bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.18),transparent)]" />
                 )}
 
                 {/* Prompt */}
-                <span style={{
-                  fontFamily: "monospace",
-                  fontSize: line.type === "granted" ? "clamp(1rem, 2.2vw, 1.4rem)" : "clamp(0.72rem, 1.4vw, 0.88rem)",
-                  color:
-                    line.type === "granted" ? "#C8FF00"
-                    : line.type === "question" ? "rgba(200,255,0,0.8)"
-                    : "rgba(200,255,0,0.4)",
-                  minWidth: line.type === "granted" ? "2rem" : "1.6rem",
-                  flexShrink: 0, lineHeight: 1.5,
-                }}>
+                <span
+                  className={`shrink-0 font-mono leading-normal ${
+                    line.type === "granted"
+                      ? "min-w-8 text-[clamp(1rem,2.2vw,1.4rem)] text-lime"
+                      : line.type === "question"
+                      ? "min-w-[1.6rem] text-[clamp(0.72rem,1.4vw,0.88rem)] text-lime/80"
+                      : "min-w-[1.6rem] text-[clamp(0.72rem,1.4vw,0.88rem)] text-lime/40"
+                  }`}
+                >
                   {line.prompt}
                 </span>
 
                 {/* Text */}
                 {line.type === "process" ? (
-                  <span style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flex: 1, minWidth: 0 }}>
-                    <span style={{ fontFamily: "monospace", fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)", color: "rgba(255,255,255,0.55)", whiteSpace: "nowrap", letterSpacing: "0.04em" }}>
+                  <span className="flex min-w-0 flex-1 items-baseline gap-2">
+                    <span className="whitespace-nowrap font-mono text-[clamp(0.82rem,1.4vw,0.95rem)] tracking-[0.04em] text-white/80">
                       {line.text}
                     </span>
-                    <span style={{ flex: 1, borderBottom: "1px dotted rgba(200,255,0,0.1)", marginBottom: "0.18em", minWidth: "1rem" }} />
-                    <span style={{ flexShrink: 0 }}>
+                    <span className="mb-[0.18em] min-w-4 flex-1 border-b border-dotted border-lime/10" />
+                    <span className="shrink-0">
                       {isDone ? (
-                        <span style={{ fontFamily: "monospace", fontSize: "clamp(0.62rem, 1.2vw, 0.76rem)", letterSpacing: "0.12em", color: "#C8FF00", textTransform: "uppercase" }}>
+                        <span className="font-mono text-[clamp(0.75rem,1.2vw,0.85rem)] uppercase tracking-widest text-lime">
                           DONE
                         </span>
                       ) : (
-                        <span style={{ display: "inline-flex", alignItems: "center" }}>
+                        <span className="inline-flex items-center">
                           <span className="tb-dot" /><span className="tb-dot" /><span className="tb-dot" />
                         </span>
                       )}
@@ -312,14 +262,13 @@ const TerminalBridge = () => {
                     {showCursor && <span className="tb-cursor" />}
                   </span>
                 ) : line.type === "question" ? (
-                  <span style={{ fontFamily: "monospace", fontSize: "clamp(0.82rem, 1.8vw, 1.08rem)", color: "rgba(255,255,255,0.88)", letterSpacing: "0.05em", lineHeight: 1.5 }}>
+                  <span className="font-mono text-[clamp(0.82rem,1.8vw,1.08rem)] leading-normal tracking-wider text-white/[0.88]">
                     {line.text}
                     {showCursor && <span className="tb-cursor" />}
                   </span>
                 ) : (
                   <span
-                    className={isVisible ? "tb-granted-glow" : ""}
-                    style={{ fontFamily: "monospace", fontSize: "clamp(1.05rem, 2.4vw, 1.5rem)", fontWeight: 700, letterSpacing: "0.18em", color: "#C8FF00", textTransform: "uppercase", lineHeight: 1.4 }}
+                    className={`font-mono text-[clamp(1.05rem,2.4vw,1.5rem)] font-bold uppercase leading-[1.4] tracking-[0.18em] text-lime ${isVisible ? "tb-granted-glow" : ""}`}
                   >
                     {line.text}
                   </span>
@@ -330,17 +279,17 @@ const TerminalBridge = () => {
 
           {/* ── Interactive history ── */}
           {interactive && history.map((entry, i) => (
-            <div key={i} style={{ marginTop: "clamp(0.7rem, 1.5vw, 1rem)" }}>
+            <div key={i} className="mt-[clamp(0.7rem,1.5vw,1rem)]">
               {/* Command echo */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0" }}>
-                <span style={{ fontFamily: "monospace", fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)", color: "rgba(200,255,0,0.5)", minWidth: "1.6rem", flexShrink: 0 }}>$</span>
-                <span style={{ fontFamily: "monospace", fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)", color: "rgba(255,255,255,0.7)", letterSpacing: "0.04em" }}>{entry.cmd}</span>
+              <div className="flex items-baseline gap-0">
+                <span className={`min-w-[1.6rem] shrink-0 ${MONO_TIGHT} text-lime/50`}>$</span>
+                <span className={`${MONO_TIGHT} tracking-[0.04em] text-white/70`}>{entry.cmd}</span>
               </div>
               {/* Output lines */}
               {entry.output && entry.output.map((line, j) => (
-                <div key={j} style={{ display: "flex", marginTop: "0.2rem" }}>
-                  <span style={{ minWidth: "1.6rem", flexShrink: 0 }} />
-                  <span style={{ fontFamily: "monospace", fontSize: "clamp(0.68rem, 1.3vw, 0.84rem)", color: line === "" ? "transparent" : "rgba(255,255,255,0.48)", letterSpacing: "0.03em", whiteSpace: "pre" }}>
+                <div key={j} className="mt-[0.2rem] flex">
+                  <span className="min-w-[1.6rem] shrink-0" />
+                  <span className={`whitespace-pre font-mono text-[clamp(0.78rem,1.3vw,0.9rem)] tracking-[0.03em] ${line === "" ? "text-transparent" : "text-white/80"}`}>
                     {line || " "}
                   </span>
                 </div>
@@ -350,8 +299,8 @@ const TerminalBridge = () => {
 
           {/* ── Input prompt ── */}
           {interactive && (
-            <div style={{ display: "flex", alignItems: "center", gap: "0", marginTop: "clamp(0.9rem, 2vw, 1.3rem)" }}>
-              <span style={{ fontFamily: "monospace", fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)", color: "rgba(200,255,0,0.5)", minWidth: "1.6rem", flexShrink: 0 }}>$</span>
+            <div className="mt-[clamp(0.9rem,2vw,1.3rem)] flex items-center gap-0">
+              <span className={`min-w-[1.6rem] shrink-0 ${MONO_TIGHT} text-lime/50`}>$</span>
               <input
                 ref={inputRef}
                 value={inputVal}
@@ -361,19 +310,7 @@ const TerminalBridge = () => {
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck={false}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  fontFamily: "monospace",
-                  fontSize: "clamp(0.72rem, 1.4vw, 0.88rem)",
-                  color: "rgba(255,255,255,0.88)",
-                  letterSpacing: "0.04em",
-                  flex: 1,
-                  caretColor: "#C8FF00",
-                  padding: 0,
-                  lineHeight: 1.5,
-                }}
+                className={`flex-1 border-none bg-transparent p-0 caret-lime outline-none ${MONO_TIGHT} leading-normal tracking-[0.04em] text-white/[0.88]`}
                 placeholder="type 'help' for commands..."
               />
             </div>
@@ -381,34 +318,20 @@ const TerminalBridge = () => {
         </div>
 
         {/* ── Footer bar ── */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "0.6rem 1.2rem",
-          borderTop: "0.5px solid rgba(200,255,0,0.08)",
-          background: "rgba(200,255,0,0.015)",
-          borderRadius: "0 0 6px 6px",
-        }}>
-          <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(255,255,255,0.18)", textTransform: "uppercase" }}>
+        <div className="flex items-center justify-between rounded-b-2xl border-t-[0.5px] border-lime/[0.08] bg-lime/[0.015] px-5 py-[0.6rem]">
+          <span className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-white/55">
             BUILDER ACCESS TERMINAL
           </span>
-          <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(200,255,0,0.3)", textTransform: "uppercase" }}>
-            STARTATHON 2026 // KERALA
+          <span className="font-mono text-[0.72rem] tracking-[0.12em] text-lime/60">
+            Startathon 2026 // Kerala
           </span>
         </div>
       </div>
 
       {/* Bottom transition — scan-line sweep into Timeline */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, height: "180px",
-        background: "linear-gradient(to bottom, transparent 0%, rgba(200,255,0,0.04) 60%, rgba(200,255,0,0.01) 100%)",
-        pointerEvents: "none",
-      }} />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[180px] bg-[linear-gradient(to_bottom,transparent_0%,rgba(200,255,0,0.04)_60%,rgba(200,255,0,0.01)_100%)]" />
       {/* Hairline rule at the seam */}
-      <div style={{
-        position: "absolute", bottom: 0, left: "10%", right: "10%", height: "1px",
-        background: "linear-gradient(90deg, transparent, rgba(200,255,0,0.18) 30%, rgba(200,255,0,0.35) 50%, rgba(200,255,0,0.18) 70%, transparent)",
-        pointerEvents: "none",
-      }} />
+      <div className="pointer-events-none absolute inset-x-[10%] bottom-0 h-px bg-[linear-gradient(90deg,transparent,rgba(200,255,0,0.18)_30%,rgba(200,255,0,0.35)_50%,rgba(200,255,0,0.18)_70%,transparent)]" />
     </section>
   );
 };

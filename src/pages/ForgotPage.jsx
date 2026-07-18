@@ -1,0 +1,70 @@
+import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import AuthShell from "../components/apply/AuthShell";
+import PhaseTransition from "../components/apply/PhaseTransition";
+import TerminalInput from "../components/apply/inputs/TerminalInput";
+import { Panel, Eyebrow, Title, ErrorLine, NoticeLine, PrimaryButton, MonoLink } from "../components/apply/ui";
+import { api } from "../lib/startathon";
+
+const ForgotPage = () => {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      await api.requestReset(email.trim().toLowerCase());
+      setSent(true);
+    } catch (err) {
+      // API always 200s for valid requests; only network/500 land here
+      setError(err.message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <AuthShell label="RESET ACCESS">
+      <PhaseTransition>
+        <Panel>
+          <Eyebrow>RESET ACCESS</Eyebrow>
+          <Title>Forgot your password?</Title>
+          {sent ? (
+            <>
+              <NoticeLine>
+                If that email has an account, a reset link is on its way. Check your inbox.
+              </NoticeLine>
+              <div className="mt-6">
+                <MonoLink to="/login"><ArrowLeft size={13} /> Back to log in</MonoLink>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={submit} noValidate>
+              <TerminalInput
+                label="Email" type="email" value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+              <ErrorLine>{error}</ErrorLine>
+              <PrimaryButton type="submit" disabled={busy}>
+                {busy ? "Sending…" : "Send reset link"}
+              </PrimaryButton>
+              <div className="mt-6 text-right">
+                <MonoLink to="/login"><ArrowLeft size={13} /> Back to log in</MonoLink>
+              </div>
+            </form>
+          )}
+        </Panel>
+      </PhaseTransition>
+    </AuthShell>
+  );
+};
+
+export default ForgotPage;

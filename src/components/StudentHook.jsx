@@ -1,21 +1,26 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, forwardRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const outcomes = [
   {
+    num: "01",
     tag: "Career",
     headline: "Be seen before anyone else.",
     body: "Companies at the event watch you build for 30 hours. If something clicks, that's a conversation that doesn't happen anywhere else.",
   },
   {
+    num: "02",
     tag: "Access",
     headline: "Talk to people who've done it.",
     body: "Founders, CTOs, operators. Not a keynote from 50 rows back. They're in the room, and you can walk up and talk to them.",
   },
   {
+    num: "03",
     tag: "Network",
     headline: "Stand out to the right people.",
     body: "The people in this room remember who impressed them. That's not something a CV can do.",
@@ -25,7 +30,7 @@ const outcomes = [
 const StudentHook = () => {
   const sectionRef = useRef(null);
   const headlineRef = useRef(null);
-  const cardsRef = useRef([]);
+  const rowRefs = useRef([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -42,26 +47,26 @@ const StudentHook = () => {
             start: "top 82%",
             toggleActions: "play none none reverse",
           },
-        }
+        },
       );
 
-      cardsRef.current.forEach((el, i) => {
+      rowRefs.current.forEach((el, i) => {
         if (!el) return;
         gsap.fromTo(
           el,
-          { opacity: 0, y: 32 },
+          { opacity: 0, y: 28 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
+            duration: 0.65,
             ease: "power3.out",
-            delay: i * 0.1,
+            delay: i * 0.08,
             scrollTrigger: {
               trigger: el,
               start: "top 88%",
               toggleActions: "play none none reverse",
             },
-          }
+          },
         );
       });
     }, sectionRef);
@@ -72,98 +77,57 @@ const StudentHook = () => {
   return (
     <section
       ref={sectionRef}
-      style={{ background: "#000", padding: "7rem 0 6rem", width: "100%" }}
+      data-lens="builders"
+      className="w-full bg-[#050505] pb-0 pt-28"
     >
-      <div style={{ marginBottom: "6rem" }} />
-
       <div className="container mx-auto px-5 md:px-10">
         {/* Headline + video side by side */}
-        <div ref={headlineRef} style={{ display: "flex", gap: "clamp(2rem, 5vw, 4rem)", alignItems: "flex-start", marginBottom: "5rem", opacity: 0, flexWrap: "wrap" }}>
+        <div
+          ref={headlineRef}
+          className="relative mb-20 flex flex-wrap items-start gap-[clamp(2rem,5vw,4rem)] opacity-0"
+        >
           {/* Left: text */}
-          <div style={{ flex: "1 1 300px" }}>
-            <p
-              className="font-general"
-              style={{
-                fontSize: "0.6rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#C8FF00",
-                marginBottom: "1.25rem",
-              }}
-            >
-              You're next
-            </p>
+          <div className="flex-[1_1_300px]">
+            <span className="eyebrow mb-[1.4rem]">
+              you&apos;re next
+            </span>
 
-            <h2
-              className="special-font bento-title"
-              style={{
-                color: "#fff",
-                fontSize: "clamp(2.6rem, 6vw, 4.8rem)",
-                letterSpacing: "-0.03em",
-                lineHeight: 0.9,
-                marginBottom: "1.5rem",
-              }}
-            >
-              Still <b>i</b>n college.<br />
+            <h2 className="special-font bento-title mb-6 text-[clamp(2.6rem,6vw,4.8rem)] leading-[0.95] tracking-[-0.03em] text-white">
+              Still <b>i</b>n college.
+              <br />
               Already <b>b</b>uilding<b>.</b>
             </h2>
 
-            <p
-              className="font-general"
-              style={{
-                fontSize: "0.88rem",
-                color: "rgba(255,255,255,0.38)",
-                lineHeight: 1.8,
-                marginBottom: "2rem",
-              }}
-            >
-              Every person behind those companies was a student once.
-              They just didn't stop building. Startathon is how we find
-              those people in Kerala. If that's you, you should be here.
+            <p className="mb-8 font-general text-base leading-[1.8] text-white/[0.82]">
+              Every person behind those companies was a student once. They just
+              didn&apos;t stop building. Startathon is how we find those people in
+              Kerala. If that&apos;s you, you should be here.
             </p>
-            <p className="font-general" style={{
-              fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
-              color: "rgba(255,255,255,0.45)",
-              lineHeight: 1.75,
-              marginBottom: "1.5rem",
-            }}>
-              If you're a builder and you resonated with that, there's no reason you shouldn't apply.
+            <p className="mb-6 font-general text-[clamp(0.95rem,1.4vw,1.05rem)] leading-[1.75] text-white/75">
+              If you&apos;re a builder and you resonated with that, there&apos;s no reason
+              you shouldn&apos;t apply.
             </p>
-            <a href="#contact" style={{ textDecoration: "none", display: "inline-block" }}>
-              <button
-                style={{
-                  padding: "0.9rem 2.25rem",
-                  background: "#C8FF00",
-                  color: "#000",
-                  border: "none",
-                  borderRadius: "5px",
-                  fontFamily: "var(--font-general, sans-serif)",
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.14em",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "opacity 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-              >
-                Apply now →
-              </button>
-            </a>
+            <Link to="/apply" className="cta-pill group">
+              <span className="relative inline-flex overflow-hidden">
+                <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                  Apply Now
+                </span>
+                <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                  Apply Now
+                </span>
+              </span>
+              <span className="cta-pill-icon" aria-hidden="true">
+                <ArrowUpRight size={15} strokeWidth={2.25} />
+              </span>
+            </Link>
           </div>
 
           {/* Right: video */}
-          <div style={{ flex: "1 1 340px", minWidth: 0 }}>
-            <div style={{
-              position: "relative", width: "100%", paddingBottom: "56.25%",
-              borderRadius: "10px", overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}>
+          <div className="min-w-0 flex-[1_1_340px]">
+            <div className="relative w-full overflow-hidden rounded-[1.25rem] border border-white/[0.08] pb-[56.25%] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
               <iframe
                 src="https://player.vimeo.com/video/1197348906?autoplay=0&title=0&byline=0&portrait=0"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
+                className="absolute inset-0 size-full border-none"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
               />
@@ -171,159 +135,58 @@ const StudentHook = () => {
           </div>
         </div>
 
-        {/* Outcome cards */}
-        <div className="sh-grid" style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1px",
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "12px",
-            overflow: "hidden",
-          }}
-        >
+        {/* ── Outcome rows ─────────────────────────────────────── */}
+        <div className="hidden border-t border-white/[0.06]">
           {outcomes.map((item, i) => (
-            <OutcomeCard
+            <OutcomeRow
               key={i}
               item={item}
-              isLast={i === outcomes.length - 1}
-              ref={(el) => (cardsRef.current[i] = el)}
+              ref={(el) => (rowRefs.current[i] = el)}
             />
           ))}
         </div>
 
-        {/* Bottom pull-quote */}
-        <div
-          style={{
-            marginTop: "4rem",
-            paddingTop: "3rem",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "1.25rem",
-          }}
-        >
-          <div
-            style={{
-              width: "3px",
-              minHeight: "2.5rem",
-              flexShrink: 0,
-              background: "linear-gradient(180deg, #C8FF00, transparent)",
-              borderRadius: "2px",
-              marginTop: "0.2rem",
-            }}
-          />
-          <p
-            className="font-general"
-            style={{
-              fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
-              color: "rgba(255,255,255,0.55)",
-              lineHeight: 1.6,
-              fontStyle: "italic",
-            }}
-          >
-            "Kerala has the talent. It's always had it.
-            We're just putting it in one room and letting it run."
+        {/* Pull-quote */}
+        <div className="mt-16 hidden items-start gap-5 border-t border-white/[0.06] pt-12">
+          <div className="mt-[0.2rem] h-10 w-[3px] shrink-0 rounded-sm bg-[linear-gradient(180deg,#C8FF00,transparent)]" />
+          <p className="font-general text-[clamp(0.95rem,2vw,1.3rem)] italic leading-[1.6] text-white/85">
+            &quot;Kerala has the talent. It&apos;s always had it. We&apos;re just putting it in
+            one room and letting it run.&quot;
           </p>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 767px) {
-          .sh-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        @media (max-width: 640px) {
-          .sh-video-row {
-            flex-direction: column !important;
-          }
-        }
-      `}</style>
     </section>
   );
 };
 
-/* ── Individual outcome card ─────────────────────────────────────────────── */
-import { forwardRef, useState } from "react";
+/* ── Individual outcome row ──────────────────────────────────────────────── */
+const OutcomeRow = forwardRef(({ item }, ref) => (
+  <div
+    ref={ref}
+    className="group grid grid-cols-[2.5rem_1fr] items-center gap-[clamp(1.25rem,3vw,3rem)] border-b border-white/[0.06] bg-transparent py-[clamp(1.5rem,3vw,2.25rem)] opacity-0 transition-[background] duration-300 hover:bg-lime/[0.018] sm:grid-cols-[3.5rem_1fr_1.6fr]"
+  >
+    {/* Number */}
+    <span className="select-none font-display text-[clamp(2.2rem,3.5vw,3rem)] font-normal leading-none tracking-[-0.03em] text-lime/[0.12] transition-colors duration-300 group-hover:text-lime/30">
+      {item.num}
+    </span>
 
-const OutcomeCard = forwardRef(({ item, isLast }, ref) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? "rgba(200,255,0,0.04)" : "#000",
-        padding: "2.5rem 2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        cursor: "default",
-        transition: "background 0.3s ease",
-        opacity: 0,
-      }}
-    >
-      <span
-        className="font-general"
-        style={{
-          fontSize: "0.55rem",
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: hovered ? "#C8FF00" : "rgba(255,255,255,0.25)",
-          border: `0.5px solid ${hovered ? "rgba(200,255,0,0.3)" : "rgba(255,255,255,0.1)"}`,
-          borderRadius: "2px",
-          padding: "3px 8px",
-          display: "inline-block",
-          width: "fit-content",
-          transition: "color 0.3s, border-color 0.3s",
-        }}
-      >
+    {/* Tag + headline */}
+    <div className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-2">
+      <span className="mb-[0.65rem] inline-block rounded-full border border-white/10 px-[11px] py-1 font-mono text-[0.64rem] uppercase tracking-[0.2em] text-white/65 transition-[color,border-color] duration-300 group-hover:border-lime/30 group-hover:text-lime/85">
         {item.tag}
       </span>
-
-      <h3
-        className="font-general"
-        style={{
-          fontSize: "clamp(1.1rem, 2vw, 1.45rem)",
-          fontWeight: 800,
-          color: "#fff",
-          lineHeight: 1.2,
-          letterSpacing: "-0.02em",
-        }}
-      >
+      <h3 className="font-general text-[clamp(1.1rem,2vw,1.45rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white">
         {item.headline}
       </h3>
-
-      <p
-        className="font-general"
-        style={{
-          fontSize: "0.78rem",
-          color: "rgba(255,255,255,0.38)",
-          lineHeight: 1.75,
-        }}
-      >
-        {item.body}
-      </p>
-
-      {/* Bottom accent line on hover */}
-      <div
-        style={{
-          marginTop: "auto",
-          height: "1px",
-          background: hovered
-            ? "linear-gradient(90deg, #C8FF00, transparent)"
-            : "transparent",
-          transition: "background 0.4s ease",
-          borderRadius: "1px",
-        }}
-      />
     </div>
-  );
-});
 
-OutcomeCard.displayName = "OutcomeCard";
+    {/* Body */}
+    <p className="col-span-2 pl-10 pt-2 font-general text-[0.95rem] leading-[1.78] text-white/75 transition-colors duration-[0.4s] group-hover:text-white/[0.92] sm:col-auto sm:pl-0 sm:pt-0">
+      {item.body}
+    </p>
+  </div>
+));
+
+OutcomeRow.displayName = "OutcomeRow";
 
 export default StudentHook;
