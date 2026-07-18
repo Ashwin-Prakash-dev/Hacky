@@ -37,11 +37,13 @@ const supportsWebGL = () => {
 // stay in the corner posts.
 const FACTS = ["30 hours", "20 teams", "Ship something real"];
 // [in, out] scroll-progress windows — each fact sits on its stage's
-// fullscreen moment (cards fill the frame at p ≈ 0.10 / 0.44 / 0.77)
+// fullscreen moment (cards fill the frame at p ≈ 0.10 / 0.44 / 0.77).
+// The last fact has no out: it arrives early, holds to the end of the
+// tunnel, and scrolls away with the section — the closing statement.
 const FACT_WINDOWS = [
   [0.1, 0.24],
   [0.42, 0.56],
-  [0.75, 0.9],
+  [0.68, null],
 ];
 
 const Hero = () => {
@@ -146,7 +148,10 @@ const Hero = () => {
           { opacity: 0, scale: 0.97 },
           { opacity: 1, scale: 1, duration: 0.045 },
           tIn
-        ).to(el, { opacity: 0, duration: 0.045 }, tOut - 0.045);
+        );
+        if (tOut !== null) {
+          tl.to(el, { opacity: 0, duration: 0.045 }, tOut - 0.045);
+        }
       });
       tl.to({}, { duration: 0.001 }, 1); // pad the timeline to exactly p=1
     },
