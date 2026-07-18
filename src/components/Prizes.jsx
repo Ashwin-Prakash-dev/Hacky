@@ -39,7 +39,7 @@ const Reel = ({ digit }) => {
   const column = Array.from({ length: 10 }, (_, k) => (d + 1 + k) % 10);
   return (
     <span className={slotClass}>
-      <span className="pz-reel block -translate-y-[90%]">
+      <span className="pz-reel block translate-y-[-90%]">
         {column.map((n, k) => (
           <span key={k} className="block h-[1em] leading-none">
             {n}
