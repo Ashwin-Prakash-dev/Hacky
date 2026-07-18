@@ -137,8 +137,8 @@ const PortalCard = ({
       scale={staticMode && index > 0 ? 0.55 : 1}
     >
       {/* rim: a slightly larger lime rounded-rect behind the video reads
-          as the portal's frame */}
-      <mesh position-z={-0.03} scale={[1.045, 1.045, 1]}>
+          as the portal's frame — a hairline, not a sticker border */}
+      <mesh position-z={-0.03} scale={[1.022, 1.022, 1]}>
         <planeGeometry args={[planeW, planeH]} />
         <meshBasicMaterial
           ref={rimMatRef}
@@ -286,15 +286,30 @@ const PortalTunnel = ({ progressRef, staticMode = false }) => {
     () => window.innerWidth / window.innerHeight < 0.8
   );
 
-  // park the canvas whenever the hero is offscreen
+  // park the canvas whenever the hero is offscreen. GSAP's pin re-parents
+  // the section into a pin-spacer during mount, which can feed the
+  // observer one stale "not intersecting" record and then go quiet — so
+  // never trust a bare false: confirm against the live rect, and recheck
+  // once after the pin has settled.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return undefined;
+    const onScreen = (r) => r.bottom > 0 && r.top < window.innerHeight;
     const io = new IntersectionObserver(([entry]) => {
-      setFrameloop(entry.isIntersecting ? "always" : "never");
+      setFrameloop(
+        entry.isIntersecting || onScreen(el.getBoundingClientRect())
+          ? "always"
+          : "never"
+      );
     });
     io.observe(el);
-    return () => io.disconnect();
+    const settle = setTimeout(() => {
+      if (onScreen(el.getBoundingClientRect())) setFrameloop("always");
+    }, 400);
+    return () => {
+      io.disconnect();
+      clearTimeout(settle);
+    };
   }, []);
 
   useEffect(() => {
