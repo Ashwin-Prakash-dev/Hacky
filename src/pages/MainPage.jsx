@@ -78,7 +78,7 @@ const MainPage = () => {
         <Hero />
         <SponsorsSection />
         <Prizes />
-        <Briefing />
+        {/* <Briefing /> */}
         <VideoCards />
         <StudentHook />
         {/* <Marquee /> */}

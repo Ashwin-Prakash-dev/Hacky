@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
 const navItems = [
+  { label: "Prizes", id: "prizes" },
   { label: "What is it", id: "what-is-it" },
-  { label: "Perks", id: "timeline" },
   { label: "FAQ", id: "faq" },
 ];
 
@@ -35,9 +35,9 @@ const NavBar = () => {
     <>
       <div className="nav-shell">
         <div className={`nav-island ${scrolled ? "nav-island--scrolled" : ""}`}>
-          <a href="#" className="nav-logo">
+          <Link to="#" className="nav-logo">
             Startathon<span className="nav-logo-dot">.</span>
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="hidden items-center md:flex">

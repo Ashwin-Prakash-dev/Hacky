@@ -42,7 +42,7 @@ const Hero = () => {
 
   const reduced = useMemo(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    []
+    [],
   );
   const webgl = useMemo(supportsWebGL, []);
 
@@ -119,18 +119,7 @@ const Hero = () => {
         },
       });
     },
-    { scope: sectionRef, dependencies: [reduced, webgl] }
-  );
-
-  const facts = (
-    <>
-      <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C8FF00] [text-shadow:0_2px_16px_rgba(0,0,0,0.9)]">
-        July 2026
-      </span>
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue-50/50 [text-shadow:0_2px_16px_rgba(0,0,0,0.9)]">
-        SCTCE · Thiruvananthapuram
-      </span>
-    </>
+    { scope: sectionRef, dependencies: [reduced, webgl] },
   );
 
   return (
@@ -159,19 +148,14 @@ const Hero = () => {
             bottom-right corner). */}
         <div className="flex w-full items-start justify-end gap-6">
           <div className="hero-rise hidden flex-col items-end gap-1.5 pt-1 text-right sm:flex">
-            {facts}
+            {/* {facts} */}
           </div>
         </div>
 
         {/* Center: the wordmark, floating over the dissolving video */}
         <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="hero-heading hero-rise text-[#C8FF00]">
-            Startathon.
-            <span className="sr-only">
-              {" "}
-              — Kerala&rsquo;s most curated 30-hour hackathon at SCTCE,
-              Thiruvananthapuram
-            </span>
+          <h1 className="hero-heading hero-rise text-white shadow-sm">
+            Startathon<span className="text-lime">.</span>
           </h1>
         </div>
 
@@ -183,8 +167,6 @@ const Hero = () => {
             <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50 [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
               Not everyone gets in.
             </p>
-
-            <div className="mb-6 flex flex-col gap-1.5 sm:hidden">{facts}</div>
 
             <div className="flex flex-wrap items-center gap-5">
               <Link to="/apply" className="cta-pill group">
@@ -200,13 +182,6 @@ const Hero = () => {
                   <ArrowUpRight size={15} strokeWidth={2.25} />
                 </span>
               </Link>
-
-              <a
-                href="#what-is-it"
-                className="font-general text-xs uppercase tracking-widest text-blue-50/60 underline-offset-4 transition hover:text-[#C8FF00] hover:underline"
-              >
-                What is Startathon?
-              </a>
             </div>
           </div>
         </div>
@@ -224,111 +199,114 @@ const Hero = () => {
           className="hero-disc pointer-events-none fixed left-0 top-0 z-30"
           aria-hidden="true"
         >
-        {/* no z-index here: the face must paint BELOW the svg (which is
+          {/* no z-index here: the face must paint BELOW the svg (which is
             position:relative), or its backdrop blur swallows the band
             and text into a gray disc */}
-        <div className="hero-disc-face opacity-100" />
-        {/* position:relative so the svg paints ABOVE the absolutely-
+          <div className="hero-disc-face opacity-100" />
+          {/* position:relative so the svg paints ABOVE the absolutely-
             positioned glass face — static elements always paint below
             positioned siblings, which buried the band + text under the
             face's backdrop blur */}
-        <svg viewBox="0 0 120 120" className="relative size-32 overflow-visible">
-          <defs>
-            {/* the ring the text rides: r46 around the hub */}
-            <path
-              id="hero-disc-arc"
-              d="M 60 14 A 46 46 0 0 1 60 106 A 46 46 0 0 1 60 14"
-            />
-            {/* band material: dark glass with a faint lime cast —
-                furniture, never brighter than the wordmark */}
-            <linearGradient
-              id="hero-band-grad"
-              gradientUnits="userSpaceOnUse"
-              x1="14"
-              y1="14"
-              x2="106"
-              y2="106"
-            >
-              <stop offset="0" stopColor="#1c2110" />
-              <stop offset="0.45" stopColor="#101408" />
-              <stop offset="0.72" stopColor="#191e0c" />
-              <stop offset="1" stopColor="#0c0f06" />
-            </linearGradient>
-            <filter
-              id="hero-band-fx"
-              filterUnits="userSpaceOnUse"
-              x="-20"
-              y="-20"
-              width="160"
-              height="160"
-            >
-              <feDropShadow
-                dx="0"
-                dy="5"
-                stdDeviation="6"
-                floodColor="#000000"
-                floodOpacity="0.45"
+          <svg
+            viewBox="0 0 120 120"
+            className="relative size-32 overflow-visible"
+          >
+            <defs>
+              {/* the ring the text rides: r46 around the hub */}
+              <path
+                id="hero-disc-arc"
+                d="M 60 14 A 46 46 0 0 1 60 106 A 46 46 0 0 1 60 14"
               />
-            </filter>
-          </defs>
-          {/* the band: a thick ring stroke with a slightly wider lime
+              {/* band material: dark glass with a faint lime cast —
+                furniture, never brighter than the wordmark */}
+              <linearGradient
+                id="hero-band-grad"
+                gradientUnits="userSpaceOnUse"
+                x1="14"
+                y1="14"
+                x2="106"
+                y2="106"
+              >
+                <stop offset="0" stopColor="#1c2110" />
+                <stop offset="0.45" stopColor="#101408" />
+                <stop offset="0.72" stopColor="#191e0c" />
+                <stop offset="1" stopColor="#0c0f06" />
+              </linearGradient>
+              <filter
+                id="hero-band-fx"
+                filterUnits="userSpaceOnUse"
+                x="-20"
+                y="-20"
+                width="160"
+                height="160"
+              >
+                <feDropShadow
+                  dx="0"
+                  dy="5"
+                  stdDeviation="6"
+                  floodColor="#000000"
+                  floodOpacity="0.45"
+                />
+              </filter>
+            </defs>
+            {/* the band: a thick ring stroke with a slightly wider lime
               under-stroke so it keeps an edge against the near-black
               ground */}
-          <use
-            href="#hero-disc-arc"
-            fill="none"
-            stroke="rgba(200,255,0,0.32)"
-            strokeWidth="24"
-            strokeLinecap="round"
-          />
-          <use
-            href="#hero-disc-arc"
-            fill="none"
-            stroke="url(#hero-band-grad)"
-            strokeWidth="22"
-            strokeLinecap="round"
-            filter="url(#hero-band-fx)"
-          />
-          <g opacity="1">
-            <circle
-              cx="60"
-              cy="60"
-              r="58"
+            <use
+              href="#hero-disc-arc"
               fill="none"
-              stroke="rgba(255,255,255,0.12)"
+              stroke="rgba(200,255,0,0.32)"
+              strokeWidth="24"
+              strokeLinecap="round"
             />
-            <circle
-              cx="60"
-              cy="60"
-              r="30"
+            <use
+              href="#hero-disc-arc"
               fill="none"
-              stroke="rgba(255,255,255,0.08)"
+              stroke="url(#hero-band-grad)"
+              strokeWidth="22"
+              strokeLinecap="round"
+              filter="url(#hero-band-fx)"
             />
-            <circle cx="60" cy="60" r="4" fill="#C8FF00" />
-          </g>
-          <g ref={discSpinRef} className="hero-disc-spin">
-            <text
-              fill="#C8FF00"
-              fontSize="10.5"
-              dominantBaseline="central"
-              className="font-mono"
-            >
-              {/* textLength alone distributes the glyphs across the
+            <g opacity="1">
+              <circle
+                cx="60"
+                cy="60"
+                r="58"
+                fill="none"
+                stroke="rgba(255,255,255,0.12)"
+              />
+              <circle
+                cx="60"
+                cy="60"
+                r="30"
+                fill="none"
+                stroke="rgba(255,255,255,0.08)"
+              />
+              <circle cx="60" cy="60" r="4" fill="#C8FF00" />
+            </g>
+            <g ref={discSpinRef} className="hero-disc-spin">
+              <text
+                fill="#C8FF00"
+                fontSize="10.5"
+                dominantBaseline="central"
+                className="font-mono"
+              >
+                {/* textLength alone distributes the glyphs across the
                   path's constant length (≈289) — combining it with
                   letter-spacing double-counts in Chrome and leaves the
                   tail of the ring empty */}
-              <textPath
-                href="#hero-disc-arc"
-                textLength="286"
-                lengthAdjust="spacing"
-              >
-                2L+ PRIZE POOL · LIMITED TEAMS ONLY ·
-              </textPath>
-            </text>
-          </g>
+                <textPath
+                  href="#hero-disc-arc"
+                  textLength="286"
+                  lengthAdjust="spacing"
+                >
+                  2L+ PRIZE POOL · LIMITED TEAMS ONLY ·
+                </textPath>
+              </text>
+            </g>
           </svg>
         </div>,
-        document.body
+        document.body,
       )}
     </section>
   );

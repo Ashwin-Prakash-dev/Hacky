@@ -97,18 +97,6 @@
   src: url('/fonts/open-sauce-sans-latin-900-italic.ttf') format('truetype');
 }
 
-/* Cabinet Grotesk Extrabold: the display voice — chunky industrial grotesk
-   WITH true lowercase, so the brand renders exactly as "Startathon.".
-   The single 800 cut is declared as weight 400: every display style in the
-   codebase asks for 400 and gets this face — never synthetic-bold it. */
-@font-face {
-  font-family: 'Cabinet Grotesk';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/cabinet-grotesk-800.woff2') format('woff2');
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -130,6 +118,7 @@
 
 body {
   width: 100dvw;
+  font-weight: 400;
   overflow-x: hidden;
   background-color: var(--bg);
   font-family: var(--font-general);
@@ -201,9 +190,9 @@ body.custom-cursor {
   }
 
   .hero-heading {
-    @apply text-6xl sm:text-7xl md:text-8xl;
+    @apply text-6xl sm:text-9xl md:text-[9rem] lg:text-[10rem] xl:text-[12rem] 2xl:text-[14rem] text-center;
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 900;
     letter-spacing: -0.01em;
     line-height: 0.95;
     text-wrap: balance;
@@ -790,7 +779,7 @@ body.lens-lock .cursor-ring::after {
 .nav-logo {
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: 0.01em;
   color: #fff;
   text-decoration: none;
