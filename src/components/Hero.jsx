@@ -5,14 +5,15 @@ import { useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import PortalTunnel from "./PortalTunnel";
+import HeroDissolve from "./HeroDissolve";
 
-// The hero: a scroll-scrubbed portal tunnel (PortalTunnel, WebGL) — three
-// rounded video cards at depth the camera dives through while the hero is
-// pinned. The HTML wordmark and corner posts float over the first portal
-// and leave during the first dive; one fact line surfaces at each portal
-// crossing. The badge disc (fixed) and the site-wide x-ray lens
-// (LiquidLens, mounted in MainPage) survive the whole ride.
+// The hero: one fullscreen video (HeroDissolve, WebGL) that comes apart
+// bottom-up in large mosaic pixels as the pinned hero is scrubbed,
+// revealing the DOM atmosphere gradient underneath. The wordmark, CTA,
+// and date/venue facts sit over it for the whole (short) pin and scroll
+// away naturally when it releases. The badge disc (fixed) and the
+// site-wide x-ray lens (LiquidLens, mounted in MainPage) survive the
+// whole ride.
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,25 +33,9 @@ const supportsWebGL = () => {
   }
 };
 
-// Each fact is said exactly once in the hero: these three ride the portal
-// crossings; prize pool + team cap stay on the badge disc; date + venue
-// stay in the corner posts.
-const FACTS = ["30 hours", "20 teams", "Ship something real"];
-// [in, out] scroll-progress windows — each fact sits in its stage's hold
-// between the swirl transitions (holds at p ≈ 0.20–0.30 / 0.42–0.52 /
-// 0.64→). The last fact has no out: it holds to the end of the stage and
-// scrolls away with the section — the closing statement.
-const FACT_WINDOWS = [
-  [0.2, 0.32],
-  [0.42, 0.54],
-  [0.66, null],
-];
-
 const Hero = () => {
   const sectionRef = useRef(null);
   const overlayRef = useRef(null);
-  const scrimRef = useRef(null);
-  const factRefs = useRef([]);
   const progressRef = useRef(0);
   const discRef = useRef(null);
   const discSpinRef = useRef(null);
@@ -120,45 +105,19 @@ const Hero = () => {
       }
       if (reduced || !webgl) return;
 
-      // the tunnel: pin the hero for 3 viewports and scrub one timeline —
-      // camera dolly (via progressRef), overlay departure, fact lines
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=300%",
-          scrub: true,
-          pin: true,
-          onUpdate: (self) => {
-            progressRef.current = self.progress;
-          },
+      // one short pin: the dissolve is the only beat here, so the
+      // overlay just persists for the pin and scrolls away naturally
+      // when it releases — no fade choreography needed
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "+=100%",
+        scrub: true,
+        pin: true,
+        onUpdate: (self) => {
+          progressRef.current = self.progress;
         },
       });
-      // the scrim keeps the copy legible over the fullscreen footage and
-      // dissolves as the zoom-out reveals the atmosphere
-      gsap.set(scrimRef.current, { opacity: 1 });
-      tl.to(scrimRef.current, { opacity: 0, duration: 0.14 }, 0.06);
-      // the hero copy leaves during the first dive
-      tl.to(
-        overlayRef.current,
-        { opacity: 0, yPercent: -5, duration: 0.1 },
-        0.02
-      );
-      FACT_WINDOWS.forEach(([tIn, tOut], i) => {
-        const el = factRefs.current[i];
-        if (!el) return;
-        tl.fromTo(
-          el,
-          { opacity: 0, scale: 0.97 },
-          { opacity: 1, scale: 1, duration: 0.045 },
-          tIn
-        );
-        if (tOut !== null) {
-          tl.to(el, { opacity: 0, duration: 0.045 }, tOut - 0.045);
-        }
-      });
-      tl.to({}, { duration: 0.001 }, 1); // pad the timeline to exactly p=1
     },
     { scope: sectionRef, dependencies: [reduced, webgl] }
   );
@@ -183,58 +142,28 @@ const Hero = () => {
       <div className="absolute left-0 top-0 size-full">
         <StaticHeroBackground />
         {webgl && (
-          <PortalTunnel progressRef={progressRef} staticMode={reduced} />
+          <HeroDissolve progressRef={progressRef} staticMode={reduced} />
         )}
-        {/* fullscreen-footage scrim: opacity driven by the tunnel
-            timeline (1 at the top, gone once the zoom-out reveals the
-            atmosphere); opacity-0 default keeps reduced motion clean */}
-        <div
-          ref={scrimRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.6),transparent_42%),linear-gradient(to_bottom,rgba(0,0,0,0.45),transparent_38%)]"
-        />
         <div className="hero-vignette" />
       </div>
 
-      {/* fact lines — one per portal crossing, scrubbed by the tunnel
-          timeline */}
-      {webgl &&
-        !reduced &&
-        FACTS.map((fact, i) => (
-          <div
-            key={fact}
-            ref={(el) => {
-              factRefs.current[i] = el;
-            }}
-            className="pointer-events-none absolute inset-0 z-[22] flex items-center justify-center opacity-0"
-          >
-            <p className="font-display text-5xl text-blue-50 [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_6px_48px_rgba(0,0,0,0.9)] sm:text-7xl">
-              {fact}
-              <span className="text-[#C8FF00]">.</span>
-            </p>
-          </div>
-        ))}
-
       {/* Text overlay: z-[21] — above the base ink (z-20) but BELOW the
           lens (z-45), so the blob's backdrop filter recolors this text
-          live as it passes over. Fades out during the first dive. */}
+          live as it passes over. Persists for the whole pin and scrolls
+          away naturally when it releases. */}
       <div
         ref={overlayRef}
         className="absolute left-0 top-0 z-[21] flex size-full flex-col justify-between px-5 pb-8 pt-24 sm:px-10 sm:pb-12 sm:pt-28"
       >
-        {/* Top band: positioning line left, date/venue facts right
-            (the badge disc owns the bottom-right corner). */}
-        <div className="flex w-full items-start justify-between gap-6">
-          <p className="hero-rise max-w-60 font-display text-xl leading-snug text-blue-50/80 [text-shadow:0_2px_14px_rgba(0,0,0,0.75)] sm:text-2xl">
-            Kerala&rsquo;s most curated hackathon
-            <span className="text-[#C8FF00]">.</span>
-          </p>
+        {/* Top band: date/venue facts (the badge disc owns the
+            bottom-right corner). */}
+        <div className="flex w-full items-start justify-end gap-6">
           <div className="hero-rise hidden flex-col items-end gap-1.5 pt-1 text-right sm:flex">
             {facts}
           </div>
         </div>
 
-        {/* Center: the wordmark, floating over the first portal */}
+        {/* Center: the wordmark, floating over the dissolving video */}
         <div className="flex flex-col items-center gap-4 text-center">
           <h1 className="hero-heading hero-rise text-[#C8FF00]">
             Startathon.
@@ -251,7 +180,7 @@ const Hero = () => {
             here instead of the top band. */}
         <div className="flex w-full flex-wrap items-end justify-between gap-6">
           <div className="w-fit max-w-full">
-            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50 [text-shadow:0_2px_14px_rgba(0,0,0,0.75)]">
+            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50 [text-shadow:0_2px_16px_rgba(0,0,0,0.8)]">
               Not everyone gets in.
             </p>
 
