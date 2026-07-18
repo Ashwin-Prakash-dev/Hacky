@@ -38,4 +38,10 @@ export default [
       "react/prop-types": "off",
     },
   },
+  {
+    // react-three-fiber scene files: their JSX takes three.js props
+    // (position, args, intensity, ...) the DOM-oriented rule rejects
+    files: ["src/components/journey/**/*.jsx"],
+    rules: { "react/no-unknown-property": "off" },
+  },
 ];

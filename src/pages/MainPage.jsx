@@ -7,18 +7,10 @@ import GoogleOneTap from "../components/GoogleOneTap";
 import CustomCursor from "../components/CustomCursor";
 import ScrollProgress from "../components/ScrollProgress";
 import NavBar from "../components/Navbar";
-import Hero from "../components/Hero";
-import LiquidLens from "../components/LiquidLens";
-import SponsorsSection from "../components/SponsorsSection";
-import Marquee from "../components/Marquee";
-import TerminalBridge from "../components/TerminalBridge";
-import Briefing from "../components/Briefing";
-import Prizes from "../components/Prizes";
+import LensJourney from "../components/journey/LensJourney";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
-import VideoCards from "../components/VideoCards";
-import StudentHook from "../components/StudentHook";
 import { usePageMeta } from "../lib/seo";
 
 const INTRO_SEEN_KEY = "startathon:intro-seen";
@@ -73,16 +65,8 @@ const MainPage = () => {
       {introComplete && <GoogleOneTap />}
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
-        {/* the site-wide x-ray lens blob chasing the cursor */}
-        <LiquidLens />
-        <Hero />
-        <SponsorsSection />
-        <Prizes />
-        <Briefing />
-        <VideoCards />
-        <StudentHook />
-        {/* <Marquee /> */}
-        {/* <TerminalBridge /> */}
+        {/* the whole story as one WebGL scroll journey under the glass lens */}
+        <LensJourney />
         <FAQ />
         <Contact />
         <Footer />

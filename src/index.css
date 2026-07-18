@@ -200,17 +200,6 @@ body.custom-cursor {
     color: var(--lime);
   }
 
-  .hero-heading {
-    @apply text-6xl sm:text-7xl md:text-8xl;
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 0.95;
-    text-wrap: balance;
-    /* lifts the wordmark off the mercury rims passing behind it */
-    text-shadow: 0 6px 60px rgba(0, 0, 0, 0.75);
-  }
-
   .about-subtext {
     @apply absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center font-general text-lg md:max-w-[34rem];
   }
@@ -272,79 +261,6 @@ body.custom-cursor {
   .contact-clip-path-2 {
     clip-path: polygon(29% 15%, 85% 30%, 50% 100%, 10% 64%);
   }
-}
-
-/* ── Hero liquid reveal: x-ray lens surface ─────────────────────────────── */
-/* Inside the cursor blob the hero flips to its blueprint: a fine lime
-   drafting grid on near-black, a soft scan-light trailing the cursor, and
-   a faint lens rim hugging the blob edge. All clipped by the blob. */
-.lens-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(200, 255, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 255, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(200, 255, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 255, 0, 0.1) 1px, transparent 1px);
-  background-size:
-    44px 44px,
-    44px 44px,
-    220px 220px,
-    220px 220px;
-  pointer-events: none;
-}
-/* Scan-light: a soft lime glow trailing the blob center, positioned
-   per-frame — the lens's own illumination */
-.lens-glare {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 460px;
-  height: 460px;
-  margin: -230px 0 0 -230px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(200, 255, 0, 0.13),
-    rgba(200, 255, 0, 0.04) 45%,
-    transparent 65%
-  );
-  pointer-events: none;
-  will-change: transform;
-}
-/* Lens rim: a faint lime ring scaled per-frame to hug the blob edge */
-.lens-rim {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 300px;
-  height: 300px;
-  margin: -150px 0 0 -150px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    transparent 56%,
-    rgba(200, 255, 0, 0.2) 66%,
-    rgba(200, 255, 0, 0.05) 76%,
-    transparent 86%
-  );
-  pointer-events: none;
-  will-change: transform;
-}
-/* Live cursor coordinate readout riding beside the blob center */
-.lens-readout {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(200, 255, 0, 0.85);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-  will-change: transform;
 }
 
 /* Hero badge banner→disc: ring text around a lime hub. Curl, position,
@@ -725,7 +641,7 @@ body.custom-cursor {
 }
 .cursor-ring::before { width: 40px; height: 1px; margin: -0.5px 0 0 -20px; }
 .cursor-ring::after { width: 1px; height: 40px; margin: -20px 0 0 -0.5px; }
-/* Target lock (body class set by LiquidLens while an Apply CTA is
+/* Target lock (body class set by the journey's Apply CTAs while
    hovered): the ring squares into a reticle, the dot goes lime */
 body.lens-lock .cursor-dot { background: #C8FF00; }
 body.lens-lock .cursor-ring {
@@ -871,11 +787,6 @@ body.lens-lock .cursor-ring::after {
 }
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
-.hero-vignette {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
-  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
-  z-index: 30; pointer-events: none;
-}
 .hero-sub { opacity: 0.85; line-height: 1.75; letter-spacing: 0.01em; }
 
 /* ── Marquee ─────────────────────────────────────────────────────────────── */
