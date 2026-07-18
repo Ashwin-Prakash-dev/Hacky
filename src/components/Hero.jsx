@@ -36,19 +36,20 @@ const supportsWebGL = () => {
 // crossings; prize pool + team cap stay on the badge disc; date + venue
 // stay in the corner posts.
 const FACTS = ["30 hours", "20 teams", "Ship something real"];
-// [in, out] scroll-progress windows — each fact sits on its stage's
-// fullscreen moment (cards fill the frame at p ≈ 0.10 / 0.44 / 0.77).
-// The last fact has no out: it arrives early, holds to the end of the
-// tunnel, and scrolls away with the section — the closing statement.
+// [in, out] scroll-progress windows — each fact sits in its stage's hold
+// between the swirl transitions (holds at p ≈ 0.20–0.30 / 0.42–0.52 /
+// 0.64→). The last fact has no out: it holds to the end of the stage and
+// scrolls away with the section — the closing statement.
 const FACT_WINDOWS = [
-  [0.1, 0.24],
-  [0.42, 0.56],
-  [0.68, null],
+  [0.2, 0.32],
+  [0.42, 0.54],
+  [0.66, null],
 ];
 
 const Hero = () => {
   const sectionRef = useRef(null);
   const overlayRef = useRef(null);
+  const scrimRef = useRef(null);
   const factRefs = useRef([]);
   const progressRef = useRef(0);
   const discRef = useRef(null);
@@ -134,6 +135,10 @@ const Hero = () => {
           },
         },
       });
+      // the scrim keeps the copy legible over the fullscreen footage and
+      // dissolves as the zoom-out reveals the atmosphere
+      gsap.set(scrimRef.current, { opacity: 1 });
+      tl.to(scrimRef.current, { opacity: 0, duration: 0.14 }, 0.06);
       // the hero copy leaves during the first dive
       tl.to(
         overlayRef.current,
@@ -180,6 +185,14 @@ const Hero = () => {
         {webgl && (
           <PortalTunnel progressRef={progressRef} staticMode={reduced} />
         )}
+        {/* fullscreen-footage scrim: opacity driven by the tunnel
+            timeline (1 at the top, gone once the zoom-out reveals the
+            atmosphere); opacity-0 default keeps reduced motion clean */}
+        <div
+          ref={scrimRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.6),transparent_42%),linear-gradient(to_bottom,rgba(0,0,0,0.45),transparent_38%)]"
+        />
         <div className="hero-vignette" />
       </div>
 
@@ -212,7 +225,7 @@ const Hero = () => {
         {/* Top band: positioning line left, date/venue facts right
             (the badge disc owns the bottom-right corner). */}
         <div className="flex w-full items-start justify-between gap-6">
-          <p className="hero-rise max-w-60 font-display text-xl leading-snug text-blue-50/80 sm:text-2xl">
+          <p className="hero-rise max-w-60 font-display text-xl leading-snug text-blue-50/80 [text-shadow:0_2px_14px_rgba(0,0,0,0.75)] sm:text-2xl">
             Kerala&rsquo;s most curated hackathon
             <span className="text-[#C8FF00]">.</span>
           </p>
@@ -238,7 +251,7 @@ const Hero = () => {
             here instead of the top band. */}
         <div className="flex w-full flex-wrap items-end justify-between gap-6">
           <div className="w-fit max-w-full">
-            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50">
+            <p className="hero-sub mb-4 max-w-sm font-general text-lg font-medium text-blue-50 [text-shadow:0_2px_14px_rgba(0,0,0,0.75)]">
               Not everyone gets in.
             </p>
 

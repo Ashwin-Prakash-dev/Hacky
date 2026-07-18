@@ -4,6 +4,21 @@
 **Branch:** `hero`
 **Status:** Approved by user (with constraints, see Non-Goals)
 
+> **v2 (same day, user feedback on phone screenshots):** the dolly-through
+> crossings didn't read as portals — at the crossing it's just a fullscreen
+> video, and the tail was empty black. Replaced choreography (same component,
+> same videos, same pin): **open on video 1 fullscreen** behind the wordmark →
+> scroll **zooms it out** into a floating card, revealing the fogged
+> atmosphere → each handoff is a **swirl transition** (current card distorts
+> and slides off one side while the next swirls in from the other; direction
+> alternates) → big fact lines sit in the holds between transitions
+> ("30 hours" / "20 teams" / "Ship something real", the last persisting to
+> the exit) → card 3 sinks away as the atmosphere settles to page ground.
+> Camera is now fixed (pointer parallax only, suppressed while fullscreen);
+> the swirl is a per-card shader (rounded-rect SDF mask + hairline lime
+> border + center-falloff UV rotation), replacing the alphaMap + rim-plane
+> pair.
+
 ## Goal
 
 Replace the current hero (MercuryField raymarched metaball shader + wordmark overlay)
