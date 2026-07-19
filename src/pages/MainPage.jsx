@@ -14,6 +14,7 @@ import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
 import Briefing from "../components/Briefing";
 import Prizes from "../components/Prizes";
+import Timeline from "../components/Timeline";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -79,6 +80,7 @@ const MainPage = () => {
         <SponsorsSection />
         <Prizes />
         {/* <Briefing /> */}
+        <Timeline />
         <VideoCards />
         <StudentHook />
         {/* <Marquee /> */}
