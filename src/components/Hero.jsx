@@ -212,7 +212,7 @@ const Hero = () => {
       {createPortal(
         <div
           ref={discRef}
-          className="hero-disc pointer-events-none fixed left-0 top-0 z-30"
+          className="hero-disc pointer-events-none fixed left-0 top-0 z-30 hidden sm:block"
           aria-hidden="true"
         >
           {/* no z-index here: the face must paint BELOW the svg (which is
