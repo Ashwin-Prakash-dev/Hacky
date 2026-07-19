@@ -54,6 +54,12 @@ const TermsPage = () => {
           non-exclusive license to demo, photograph, record, and showcase your submission and
           team for judging and promotional purposes.
         </p>
+        <p>
+          Event sponsors may be inspired by ideas, problem statements, or approaches shown at
+          the event to independently develop their own products or solutions. This does not
+          give a sponsor the right to copy, reproduce, or directly use your code, designs, or
+          other work product without your separate agreement.
+        </p>
       </LegalSection>
 
       <LegalSection title="Photography and media">
