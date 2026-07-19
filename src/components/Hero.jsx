@@ -148,7 +148,12 @@ const Hero = () => {
             bottom-right corner). */}
         <div className="flex w-full items-start justify-end gap-6">
           <div className="hero-rise hidden flex-col items-end gap-1.5 pt-1 text-right sm:flex">
-            {/* {facts} */}
+            <span className="font-mono text-sm uppercase tracking-[0.2em] text-white md:text-base">
+              Sep 5&ndash;6, 2026
+            </span>
+            <span className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/55">
+              SCTCE, Thiruvananthapuram
+            </span>
           </div>
         </div>
 

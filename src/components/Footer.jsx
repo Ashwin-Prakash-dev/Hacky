@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Mail, Phone, Globe } from "lucide-react";
@@ -86,13 +87,30 @@ const Footer = () => (
 
     {/* Bottom bar */}
     <div className="border-t border-white/5">
-      <div className="container mx-auto flex flex-col items-start gap-1.5 px-6 py-[1.1rem] md:flex-row md:items-center md:justify-between md:gap-0">
+      <div className="container mx-auto flex flex-col items-start gap-3 px-6 py-[1.1rem] md:flex-row md:items-center md:justify-between md:gap-0">
         <p className="font-general text-[0.8rem] tracking-[0.03em] text-white/50">
           © 2026 Startathon · Sree Chitra Thirunal College of Engineering
         </p>
-        <p className="font-general text-[0.8rem] tracking-[0.03em] text-white/50">
-          Thiruvananthapuram, Kerala
-        </p>
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:gap-6">
+          <p className="font-general text-[0.8rem] tracking-[0.03em] text-white/50">
+            Thiruvananthapuram, Kerala
+          </p>
+          <div className="flex items-center gap-5">
+            {[
+              { to: "/terms", label: "Terms" },
+              { to: "/privacy", label: "Privacy" },
+              { to: "/referral-program", label: "Referral rules" },
+            ].map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`font-general text-[0.8rem] tracking-[0.03em] text-white/50 no-underline hover:text-lime ${linkTransition}`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </footer>

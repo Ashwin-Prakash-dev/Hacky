@@ -10,14 +10,14 @@ Entry is selective. Applications are reviewed on idea quality and team profile. 
 
 ## Who Should Apply?
 
-Any college student in Kerala — developer, designer, or aspiring founder. Teams of 1 to 4 people. Solo entries are welcome. If you're already building things, you should apply.
+Any college student — developer, designer, or aspiring founder. Teams of 3 to 4 people. If you're already building things, you should apply.
 
 ## Key Details
 
 - **Format:** In-person only, SCTCE, Thiruvananthapuram, Kerala
 - **Duration:** 30 hours non-stop
 - **Teams:** 20 curated teams selected from applicants
-- **Team size:** 1 to 4 members (solo entries welcome)
+- **Team size:** 3 to 4 members
 - **Prize pool:** ₹2L+ total · 1st place ₹1L+ *(subject to changes)*
 - **Mentors:** Technical founders, domain specialists, SCTCE alumni — hands-on, not panel speakers
 - **Demo Day:** Present to judges, sponsors, and ecosystem partners; top teams compete for prizes; sponsors make spot offers
@@ -36,9 +36,9 @@ Any college student in Kerala — developer, designer, or aspiring founder. Team
 
 ## FAQ
 
-**Who can apply?** Any student in Kerala — developer, designer, aspiring founder. If you want to build something real and you're serious about it, apply.
+**Who can apply?** Any college student — developer, designer, aspiring founder. If you want to build something real and you're serious about it, apply.
 
-**How big is the team?** 1 to 4 people. Solo entries are welcome.
+**How big is the team?** 3 to 4 people.
 
 **Is this in-person?** Yes. Fully in-person at SCTCE, Thiruvananthapuram. You have to be in the room.
 
@@ -89,7 +89,7 @@ Content-Type: application/json
 
 ## How to Apply
 
-Applications go through the website: create an account at https://startathon.sctcoding.club/apply, complete your profile, and form or join a team (1–4 members). Only 20 teams are selected.
+Applications go through the website: create an account at https://startathon.sctcoding.club/apply, complete your profile, and form or join a team (3–4 members). Only 20 teams are selected.
 
 ## Machine-Readable Resources
 

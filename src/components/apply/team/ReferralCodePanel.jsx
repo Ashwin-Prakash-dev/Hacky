@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Check, Eye } from "lucide-react";
 import { Panel, Eyebrow, GhostButton } from "../ui";
 
@@ -67,6 +68,13 @@ const ReferralCodePanel = ({ code, count }) => {
             : "Nobody's used it yet."}
         </p>
       )}
+
+      <Link
+        to="/referral-program"
+        className="mt-3 inline-block font-mono text-[0.78rem] tracking-[0.03em] text-lime/70 underline underline-offset-[3px] hover:text-lime"
+      >
+        Full referral program rules
+      </Link>
     </Panel>
   );
 };

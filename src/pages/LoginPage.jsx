@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
@@ -65,6 +65,12 @@ const LoginPage = () => {
               {busy ? "Logging in…" : "Log in"}
             </PrimaryButton>
           </form>
+          <p className="mt-4 text-center font-mono text-[0.75rem] leading-relaxed text-white/45">
+            By continuing you agree to our{" "}
+            <Link to="/terms" className="text-lime/80 underline underline-offset-[3px]">Terms</Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="text-lime/80 underline underline-offset-[3px]">Privacy Policy</Link>.
+          </p>
           <Divider />
           <GoogleSignInPanel onError={setError} disabled={busy} />
           <div className="mt-6 flex items-baseline justify-between">

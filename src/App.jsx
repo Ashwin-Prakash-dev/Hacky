@@ -15,6 +15,9 @@ import ResetPage from "./pages/ResetPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
 import ProfilePage from "./pages/ProfilePage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import ReferralRulesPage from "./pages/ReferralRulesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
       <Route path="/forgot" element={<ForgotPage />} />
       <Route path="/reset" element={<ResetPage />} />
       <Route path="/reset-password" element={<ResetPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/referral-program" element={<ReferralRulesPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/profile" element={<ProfilePage />} />
         <Route element={<RequirePhone />}>

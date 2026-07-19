@@ -44,8 +44,12 @@ const SponsorCard = ({ sponsor }) => (
         src={sponsor.src}
         alt={sponsor.name}
         style={{ height: `${sponsor.h}px` }}
-        // white logos flip to ink on the lime flood
-        className="w-auto object-contain transition-[transform,filter] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-y-[-3px] group-hover:scale-[1.04] group-hover:brightness-0"
+        // invert + hue-rotate(180) flips white to ink on the lime flood
+        // while roughly restoring the original hue on chromatic pixels
+        // (hue-rotate is a no-op on white/black, so it only cancels out
+        // invert's hue-flip on colors like VoiceStack's violet mark) —
+        // one filter that works for both plain-white and full-color logos
+        className="w-auto object-contain transition-[transform,filter] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-y-[-3px] group-hover:scale-[1.04] group-hover:hue-rotate-180 group-hover:invert"
       />
       <p className="font-general text-[0.88rem] leading-[1.7] text-white/70 transition-colors duration-[450ms] group-hover:text-[rgba(5,5,5,0.8)]">
         {sponsor.blurb}
