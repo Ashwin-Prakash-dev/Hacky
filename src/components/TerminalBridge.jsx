@@ -50,7 +50,7 @@ const COMMANDS = {
       "Applications opening soon.",
       "",
       "  Eligibility: any college student",
-      "  Team size:   1 to 4 members",
+      "  Team size:   3 to 4 members",
       "  Format:      in-person, Kerala",
       "",
       "Hit 'Register Interest' above to get notified.",

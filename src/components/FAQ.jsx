@@ -4,11 +4,11 @@ import gsap from "gsap";
 const faqs = [
   {
     q: "Who can apply?",
-    a: "Any student in Kerala. Developer, designer, aspiring founder. Doesn't matter. If you want to build something real and you're serious about it, apply.",
+    a: "Any college student. Developer, designer, aspiring founder. Doesn't matter. If you want to build something real and you're serious about it, apply.",
   },
   {
     q: "How big is the team?",
-    a: "1 to 4 people. Solo entries are welcome.",
+    a: "3 to 4 people.",
   },
   {
     q: "Is this in-person?",
