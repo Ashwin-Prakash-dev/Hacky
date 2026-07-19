@@ -141,7 +141,7 @@ const Timeline = () => {
             <div key={m.label}>
               <div
                 ref={(el) => (rowRefs.current[i] = el)}
-                className={`group -mx-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 rounded-md px-2 opacity-0 transition-colors duration-300 hover:bg-lime/[0.03] ${
+                className={`group -mx-2 flex flex-col items-start gap-y-1.5 rounded-md px-2 opacity-0 transition-colors duration-300 hover:bg-lime/[0.03] sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-6 sm:gap-y-2 ${
                   m.finale ? "py-[clamp(1.6rem,3.2vw,2.2rem)]" : "py-[clamp(1.2rem,2.6vw,1.75rem)]"
                 }`}
               >
