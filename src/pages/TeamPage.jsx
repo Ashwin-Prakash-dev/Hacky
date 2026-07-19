@@ -185,11 +185,17 @@ const TeamPage = () => {
   const leave = () => {
     if (anyBusy()) return;
     const isLeader = team.your_role === "leader";
+    const confirmed = team.status === "confirmed";
+    const fee = team.expected_fee ?? 100;
     setConfirm({
       title: isLeader ? "Disband the team?" : "Leave this team?",
       body: isLeader
-        ? "This deletes the team for everyone and can't be undone. Your teammates will have to start over."
-        : "You'll be removed from the roster. You can rejoin later with the join code or a new invite.",
+        ? confirmed
+          ? `This deletes the team for everyone and can't be undone. Your ₹${fee} registration fee won't be refunded, and your teammates will have to start over.`
+          : "This deletes the team for everyone and can't be undone. Your teammates will have to start over."
+        : confirmed
+          ? `You'll be removed from the roster. Your team's ₹${fee} registration fee has already been paid and won't be refunded to you. You can rejoin later with the join code or a new invite.`
+          : "You'll be removed from the roster. You can rejoin later with the join code or a new invite.",
       confirmLabel: isLeader ? "Disband team" : "Leave team",
       action: async () => {
         setConfirm(null);
@@ -356,6 +362,12 @@ const TeamPage = () => {
               />
 
               <ErrorLine>{actionError}</ErrorLine>
+
+              <div className="border-t border-white/[0.06] pt-2">
+                <GhostButton danger disabled={leaveBusy} onClick={leave}>
+                  {isLeader ? "Disband team" : "Leave team"}
+                </GhostButton>
+              </div>
             </>
           )}
 
