@@ -24,7 +24,6 @@ const MILESTONES = [
 ];
 
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-const fmt = (d) => `${MONTHS[d.getMonth()]} ${d.getDate()}`;
 
 const dateTextClass = (status, finale) => {
   if (finale || status === "active") return "text-lime";
@@ -43,6 +42,8 @@ const dotClass = (status) => {
 const Timeline = () => {
   const sectionRef = useRef(null);
   const rowRefs = useRef([]);
+  const ruleRefs = useRef([]);
+  const dayRefs = useRef([]);
 
   // Computed once on mount: real-world done / active / upcoming per
   // milestone, based on today's date.
@@ -62,29 +63,55 @@ const Timeline = () => {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.set(ruleRefs.current.filter(Boolean), { scaleX: 0, transformOrigin: "left center" });
+
         rowRefs.current.forEach((el, i) => {
           if (!el) return;
-          gsap.fromTo(
+          const m = MILESTONES[i];
+          const dayEl = dayRefs.current[i];
+          // Resting DOM already shows the true day number (no-JS / SSR
+          // correct-by-default); only reset it to a decoy start once we
+          // know the count-up is about to run, mirroring Prizes' reel.
+          if (dayEl) dayEl.textContent = "1";
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            },
+          });
+
+          tl.fromTo(
             el,
             { opacity: 0, y: 28 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.65,
-              ease: "power3.out",
-              delay: (i % 4) * 0.05,
-              scrollTrigger: {
-                trigger: el,
-                start: "top 90%",
-                toggleActions: "play none none reverse",
-              },
-            },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" },
+            0,
           );
+          if (ruleRefs.current[i]) {
+            tl.to(ruleRefs.current[i], { scaleX: 1, duration: 0.7, ease: "power2.inOut" }, 0.15);
+          }
+          if (dayEl) {
+            const proxy = { v: 1 };
+            tl.to(
+              proxy,
+              {
+                v: m.date.getDate(),
+                duration: 0.6,
+                ease: "power2.out",
+                onUpdate: () => {
+                  dayEl.textContent = String(Math.round(proxy.v));
+                },
+              },
+              0.05,
+            );
+          }
         });
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         rowRefs.current.forEach((el) => el && gsap.set(el, { opacity: 1, y: 0 }));
+        gsap.set(ruleRefs.current.filter(Boolean), { scaleX: 1 });
       });
 
       return () => mm.revert();
@@ -114,11 +141,11 @@ const Timeline = () => {
             <div key={m.label}>
               <div
                 ref={(el) => (rowRefs.current[i] = el)}
-                className={`flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 opacity-0 ${
+                className={`group -mx-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 rounded-md px-2 opacity-0 transition-colors duration-300 hover:bg-lime/[0.03] ${
                   m.finale ? "py-[clamp(1.6rem,3.2vw,2.2rem)]" : "py-[clamp(1.2rem,2.6vw,1.75rem)]"
                 }`}
               >
-                <div className="flex items-baseline gap-4">
+                <div className="flex items-baseline gap-4 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1.5">
                   <span
                     aria-hidden="true"
                     className={`size-2.5 shrink-0 ${m.finale ? "rotate-45" : "rounded-full"} ${dotClass(rowStatus[i])}`}
@@ -128,11 +155,18 @@ const Timeline = () => {
                       m.finale ? "text-[clamp(1.9rem,4.5vw,2.8rem)]" : "text-[clamp(1.3rem,2.6vw,1.7rem)]"
                     } ${dateTextClass(rowStatus[i], m.finale)}`}
                   >
-                    {m.finale ? `${fmt(m.date)}–${m.endDate.getDate()}` : fmt(m.date)}
+                    {m.finale ? (
+                      `${MONTHS[m.date.getMonth()]} ${m.date.getDate()}–${m.endDate.getDate()}`
+                    ) : (
+                      <>
+                        {MONTHS[m.date.getMonth()]}{" "}
+                        <span ref={(el) => (dayRefs.current[i] = el)}>{m.date.getDate()}</span>
+                      </>
+                    )}
                   </span>
                 </div>
                 <span
-                  className={`font-general leading-[1.35] ${
+                  className={`font-general leading-[1.35] transition-colors duration-300 group-hover:text-white ${
                     m.finale
                       ? "text-[clamp(1.15rem,2.2vw,1.5rem)] font-bold text-white/90"
                       : "text-[clamp(1rem,1.8vw,1.2rem)] font-semibold text-white/75"
@@ -141,7 +175,7 @@ const Timeline = () => {
                   {m.label}
                 </span>
               </div>
-              <div className="h-px bg-white/10" />
+              <div ref={(el) => (ruleRefs.current[i] = el)} className="h-px bg-white/10" />
             </div>
           ))}
         </div>
