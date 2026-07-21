@@ -7,6 +7,7 @@ import ConfirmDialog from "../components/apply/ConfirmDialog";
 import TeammatesPanel from "../components/apply/team/TeammatesPanel";
 import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
+import IdeaStatusCard from "../components/apply/team/IdeaStatusCard";
 import {
   Panel,
   ErrorLine,
@@ -22,23 +23,6 @@ const StepLabel = ({ children }) => (
   <p className="font-mono text-xs uppercase tracking-[0.16em] text-lime/85">
     {children}
   </p>
-);
-
-const IdeaNotice = ({ prominent }) => (
-  <div
-    className={`rounded-md border-[0.5px] px-[1.1rem] py-[0.9rem] ${
-      prominent
-        ? "border-lime/30 bg-lime/[0.06]"
-        : "border-white/[0.08] bg-white/[0.02]"
-    }`}
-  >
-    <p
-      className={`font-general text-[0.85rem] leading-relaxed ${prominent ? "text-lime/85" : "text-white/55"}`}
-    >
-      Applications open soon. Once submissions open, your team will pitch its
-      idea right here.
-    </p>
-  </div>
 );
 
 const TeamPage = () => {
@@ -264,6 +248,8 @@ const TeamPage = () => {
         <div className="flex w-full max-w-[760px] flex-col gap-5">
           {header}
 
+          <IdeaStatusCard isLeader={isLeader} />
+
           {stage === "roster" && (
             <>
               <TeammatesPanel
@@ -340,8 +326,6 @@ const TeamPage = () => {
                 You&apos;re in. Payment&apos;s confirmed (₹{fee}). You can still
                 add or remove teammates before submissions open.
               </p>
-
-              <IdeaNotice prominent />
 
               <TeammatesPanel
                 team={team}

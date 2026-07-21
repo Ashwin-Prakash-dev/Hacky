@@ -89,4 +89,10 @@ export const api = {
     request("/payment", { method: "POST", body: { transaction_id: transactionId } }),
   applyReferral: (code) =>
     request("/team/referral", { method: "PUT", body: { referral_code: code } }),
+
+  // idea
+  getIdea: () => request("/team/idea"),
+  submitIdea: (fields) => request("/team/idea", { method: "PUT", body: fields }),
+  updateMyLinks: (fields) =>
+    request("/team/idea/links", { method: "PUT", body: fields }),
 };
