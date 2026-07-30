@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { clamp01 } from "../lib/wordmark";
+import { clamp01 } from "../../lib/wordmark";
 
 // The site's liquid x-ray lens: a fixed, full-viewport filter that shows
 // through an organic blob chasing the cursor ANYWHERE on the page. It is
