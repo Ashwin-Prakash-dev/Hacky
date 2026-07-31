@@ -11,9 +11,9 @@ gsap.registerPlugin(ScrollTrigger);
 const MILESTONES = [
   { date: new Date(2026, 4, 31), label: "Waitlist & website go live" },
   { date: new Date(2026, 6, 19), label: "Registration opens · dates announced" },
-  { date: new Date(2026, 6, 31), label: "Idea submissions open" },
-  { date: new Date(2026, 7, 7), label: "Submissions close and payment due" },
-  { date: new Date(2026, 7, 12), label: "Shortlisted teams announced" },
+  { date: new Date(2026, 7, 5), label: "Idea submissions open" },
+  { date: new Date(2026, 7, 12), label: "Submissions close and payment due" },
+  { date: new Date(2026, 7, 15), label: "Shortlisted teams announced" },
   // { date: new Date(2026, 7, 20), label: "Payment deadline" },
   {
     date: new Date(2026, 8, 5),
