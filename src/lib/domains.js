@@ -1,9 +1,9 @@
-// Startathon problem domains — the single source of truth for /domains, the
+// Startathon problem domains. Single source of truth for /domains, the
 // four detail routes, and the homepage teaser. Comparison values and detail
 // copy live on the same object so the two can never drift apart.
 
 // Drop the brief at public/startathon-problem-domains.pdf and flip this on.
-// Until then the download button doesn't render (no dead links).
+// Until then the download blocks don't render (no dead links).
 export const BRIEF_PDF = null; // "/startathon-problem-domains.pdf"
 
 // The five dimensions teams weigh domains against. One is shown at a time;
@@ -43,7 +43,7 @@ export const DOMAINS = [
     name: "Preventive Health and Everyday Care",
     short: "Preventive Health",
     glimpse:
-      "Most health outcomes are decided outside the clinic — by whether people understand their instructions, perform techniques correctly, and keep going after week two.",
+      "Most health outcomes are decided outside the clinic, by whether people understand their instructions, perform techniques correctly, and keep going after week two.",
     compare: {
       outcome: "Improving health behaviour or care outside a healthcare facility",
       audience: "Patients, caregivers and families",
@@ -56,9 +56,9 @@ export const DOMAINS = [
       failure: "Building another habit tracker",
     },
     overview:
-      "Patients and caregivers leave with instructions, recommendations or treatment plans, then struggle to apply them in daily life. Existing tools lean almost entirely on reminders and notifications — they never address understanding, technique, motivation, coordination or changing circumstances.",
+      "Patients and caregivers leave with instructions, recommendations or treatment plans, then struggle to apply them in daily life. Existing tools lean almost entirely on reminders and notifications. They never address understanding, technique, motivation, coordination or changing circumstances.",
     challenge:
-      "Choose one health-related activity a specific person must perform correctly and repeatedly outside a clinical setting, where doing it wrong or inconsistently has real consequences. Build a system that measurably improves how well that activity is understood, performed or sustained — and that escalates to a human professional when it should.",
+      "Choose one health-related activity a specific person must perform correctly and repeatedly outside a clinical setting, where doing it wrong or inconsistently has real consequences. Build a system that measurably improves how well that activity is understood, performed or sustained, and that escalates to a human professional when it should.",
     oneProblem: {
       lead: "One health routine: a bounded set of actions a person carries out over time to reach a health outcome.",
       examples:
@@ -68,11 +68,11 @@ export const DOMAINS = [
     problems: [
       {
         title: "Turning healthcare instructions into daily action",
-        body: "A patient leaves a consultation with instructions on medication, diet, hygiene, exercise and follow-up. Each one makes sense alone, but they never become a routine that fits an actual day. A solution could organise the instructions, surface dependencies and conflicts, adapt to the person's real schedule, and record difficulties for the next consultation.",
+        body: "A patient leaves a consultation with instructions on medication, diet, hygiene, exercise and follow-up. Each one makes sense alone, but together they never become a routine that fits an actual day. A solution could organise the instructions, surface dependencies and conflicts, adapt to the person's real schedule, and record difficulties for the next consultation.",
       },
       {
         title: "Improving preventive oral-care technique",
-        body: "Children and adults brush regularly but use ineffective technique, miss areas, or stop too early. A solution could help users learn and practise correct technique and give feedback they can act on — without claiming to diagnose dental conditions.",
+        body: "Children and adults brush regularly but use ineffective technique, miss areas, or stop too early. A solution could help users learn and practise correct technique and give feedback they can act on, without claiming to diagnose dental conditions.",
       },
       {
         title: "Supporting family caregivers",
@@ -84,17 +84,17 @@ export const DOMAINS = [
       },
       {
         title: "Knowing when to seek help",
-        body: "Someone notices a change in symptoms or behaviour and cannot judge whether to keep watching, call a professional, or seek urgent help. A solution could structure their observations, explain general warning signs from trusted sources, and connect them to the right human — without attempting diagnosis.",
+        body: "Someone notices a change in symptoms or behaviour and cannot judge whether to keep watching, call a professional, or seek urgent help. A solution could structure their observations, explain general warning signs from trusted sources, and connect them to the right human, without attempting diagnosis.",
       },
     ],
     strongSolution: [
       {
         term: "Adaptability",
-        body: "Works across different people, schedules, abilities and living situations — not one idealised user.",
+        body: "Works across different people, schedules, abilities and living situations, not one idealised user.",
       },
       {
         term: "Understanding",
-        body: "Addresses why the routine fails for this person — comprehension, technique, motivation, coordination — not just that it was forgotten.",
+        body: "Addresses why the routine fails for this person (comprehension, technique, motivation, coordination), not just that it was forgotten.",
       },
       {
         term: "Context and continuity",
@@ -114,15 +114,15 @@ export const DOMAINS = [
       },
     ],
     opportunities: [
-      "Preventive oral and general healthcare — routine care people perform unsupervised",
-      "Medication and treatment adherence — understanding and sustaining, not just remembering",
-      "Caregiver coordination — information split across people, notes and chat apps",
-      "Health education and comprehension — instructions understood individually but not as a whole",
-      "Correct execution of techniques — inhaler use, wound care, exercises, injections",
-      "Recovery and rehabilitation routines — long programmes with declining motivation",
-      "Long-term behaviour change — beyond the first two weeks",
-      "Symptom and routine monitoring — recording observations without attempting diagnosis",
-      "Preparing for consultations — helping patients bring useful information to professionals",
+      "Preventive oral and general healthcare: routine care people perform unsupervised",
+      "Medication and treatment adherence: understanding and sustaining, not just remembering",
+      "Caregiver coordination: information split across people, notes and chat apps",
+      "Health education and comprehension: instructions understood individually but not as a whole",
+      "Correct execution of techniques: inhaler use, wound care, exercises, injections",
+      "Recovery and rehabilitation routines: long programmes with declining motivation",
+      "Long-term behaviour change: beyond the first two weeks",
+      "Symptom and routine monitoring: recording observations without attempting diagnosis",
+      "Preparing for consultations: helping patients bring useful information to professionals",
       "Accessibility for elderly, disabled or low-literacy users",
     ],
     inScope: [
@@ -167,7 +167,7 @@ export const DOMAINS = [
     name: "Intelligent Operations and Case Work",
     short: "Intelligent Operations",
     glimpse:
-      "Work that looks like data entry but isn't. Someone reads five sources, interprets them in context, applies rules, and decides what happens next — hundreds of times a week.",
+      "Someone reads five sources, interprets them in context, applies the rules, and decides what happens next. Then does it again, hundreds of times a week.",
     compare: {
       outcome: "Making complex organisational work adaptive, intelligent and efficient",
       audience: "Employees who process cases",
@@ -180,9 +180,9 @@ export const DOMAINS = [
       failure: "Building a scraper for one website",
     },
     overview:
-      "A billing employee checks an insurer's portal, reads previous follow-up notes and decides what to do next. A finance employee compares an invoice, purchase order and delivery record before approving payment. An administrator reviews forms and certificates against eligibility rules. None of them are copying data or repeating a fixed sequence of clicks — they are interpreting information in context and deciding.",
+      "A billing employee checks an insurer's portal, reads previous follow-up notes and decides what to do next. A finance employee compares an invoice, purchase order and delivery record before approving payment. An administrator reviews forms and certificates against eligibility rules. None of them are copying data or repeating a fixed sequence of clicks. They are interpreting information in context and deciding.",
     challenge:
-      "Choose one real administrative or operational process where a person has to gather information from several sources, understand what it means, compare it against rules or previous actions, decide the next step, update a system or send a reply, and follow the case until it closes. Build a system that meaningfully improves part of that process — and that recognises when it lacks the information or the authority to proceed.",
+      "Choose one real administrative or operational process where a person has to gather information from several sources, understand what it means, compare it against rules or previous actions, decide the next step, update a system or send a reply, and follow the case until it closes. Build a system that meaningfully improves part of that process, and that recognises when it lacks the information or the authority to proceed.",
     oneProblem: {
       lead: "One case: a single unit of work taken from an initial request, transaction or problem through to a completed outcome.",
       examples:
@@ -218,7 +218,7 @@ export const DOMAINS = [
       },
       {
         term: "Understanding",
-        body: "Recognises equivalent business concepts expressed differently — and flags when similar-looking terms may not be equivalent.",
+        body: "Recognises equivalent business concepts expressed differently, and flags when similar-looking terms may not be equivalent.",
       },
       {
         term: "Context and continuity",
@@ -238,14 +238,14 @@ export const DOMAINS = [
       },
     ],
     opportunities: [
-      "Collecting and organising information from portals, PDFs, spreadsheets, emails, call notes and policy documents — showing where each value came from",
-      "Handling different and changing sources — recognising that “patient responsibility” and “estimated amount payable by member” may mean the same thing, and that similar labels sometimes don't",
-      "Deciding the next action — is the request complete, which rule applies, has a deadline passed, should this be approved, corrected, chased or escalated",
-      "Maintaining case history — knowing what has already been tried, and what is therefore appropriate now",
-      "Identifying unusual or stuck cases — conflicting records, no progress, repeated failures, approaching deadlines, replies that don't answer the question",
+      "Collecting and organising information from portals, PDFs, spreadsheets, emails, call notes and policy documents, showing where each value came from",
+      "Handling different and changing sources: recognising that “patient responsibility” and “estimated amount payable by member” may mean the same thing, and that similar labels sometimes don't",
+      "Deciding the next action: is the request complete, which rule applies, has a deadline passed, should this be approved, corrected, chased or escalated",
+      "Maintaining case history: knowing what has already been tried, and what is therefore appropriate now",
+      "Identifying unusual or stuck cases: conflicting records, no progress, repeated failures, approaching deadlines, replies that don't answer the question",
       "Prioritising work across hundreds of pending cases, with the reasoning visible rather than reduced to a score",
-      "Learning processes from examples — inferring undocumented steps, decision points and exceptions from completed cases and audit logs",
-      "On-demand analytics — answering operational questions no existing dashboard was built for",
+      "Learning processes from examples: inferring undocumented steps, decision points and exceptions from completed cases and audit logs",
+      "On-demand analytics: answering operational questions no existing dashboard was built for",
     ],
     inScope: [
       "Case management",
@@ -294,7 +294,7 @@ export const DOMAINS = [
     name: "Inclusive and Trustworthy Access to Essential Services",
     short: "Inclusive Access",
     glimpse:
-      "A service that technically works is not a service people can use. Language, literacy, disability, age and sheer complexity lock people out of things they are entitled to.",
+      "A service can work perfectly and still be unusable. Language, literacy, disability, age and sheer complexity lock people out of things they are entitled to.",
     compare: {
       outcome: "Helping people understand and successfully use an essential service",
       audience: "People excluded by language, literacy, disability, age or complexity",
@@ -307,14 +307,14 @@ export const DOMAINS = [
       failure: "Wrapping a translation API in a new interface",
     },
     overview:
-      "Essential services increasingly run on apps, websites, forms, automated calls and digital documents — across healthcare, government, education, finance and utilities. People must be able to understand the interaction, correct misunderstandings, give informed consent, and reach a human when automation fails. Many cannot.",
+      "Essential services increasingly run on apps, websites, forms, automated calls and digital documents, across healthcare, government, education, finance and utilities. People must be able to understand the interaction, correct misunderstandings, give informed consent, and reach a human when automation fails. Many cannot.",
     challenge:
-      "Choose one essential-service interaction that a specific, identified group of users currently cannot complete without help, and establish why. Build a system that lets them complete it themselves — with the ability to check and correct what the system understood, and a working route to a human when it fails.",
+      "Choose one essential-service interaction that a specific, identified group of users currently cannot complete without help, and establish why. Build a system that lets them complete it themselves, with the ability to check and correct what the system understood, and a working route to a human when it fails.",
     oneProblem: {
       lead: "One service interaction: a bounded exchange between a person and an institution that has a defined completion state.",
       examples:
         "Understanding a hospital discharge summary and acting on it. Submitting a pension claim. Giving informed consent to a procedure. Disputing an incorrect utility bill. Completing a scholarship application.",
-      test: "Name the affected group specifically — “elderly Malayalam-speaking users with low text literacy”, not “people who find technology difficult” — and test with at least one representative user.",
+      test: "Name the affected group specifically: “elderly Malayalam-speaking users with low text literacy”, not “people who find technology difficult”. Test with at least one representative user.",
     },
     problems: [
       {
@@ -369,15 +369,15 @@ export const DOMAINS = [
       },
     ],
     opportunities: [
-      "Multilingual and code-switched communication — how people actually speak, not clean single-language input",
-      "Accessibility for people with disabilities — designed around one group's requirements, not a compliance checklist",
-      "Low-literacy and voice-first interaction — where reading is the barrier",
-      "Simplification of complex information — without losing the details that carry consequences",
-      "Informed consent and comprehension — verifying understanding, not just recording agreement",
-      "Transparent automated assistance — the user knows what the system did and why",
-      "Human hand-off and escalation — recognising failure and transferring with context intact",
-      "Offline or low-connectivity access — where the service is needed but the network isn't reliable",
-      "Multimodal interfaces — voice, text, image and touch used together",
+      "Multilingual and code-switched communication: how people actually speak, not clean single-language input",
+      "Accessibility for people with disabilities: designed around one group's requirements, not a compliance checklist",
+      "Low-literacy and voice-first interaction, where reading is the barrier",
+      "Simplification of complex information, without losing the details that carry consequences",
+      "Informed consent and comprehension: verifying understanding, not just recording agreement",
+      "Transparent automated assistance: the user knows what the system did and why",
+      "Human hand-off and escalation: recognising failure and transferring with context intact",
+      "Offline or low-connectivity access, where the service is needed but the network isn't reliable",
+      "Multimodal interfaces: voice, text, image and touch used together",
       "Preservation of context across channels, so the user doesn't restart from zero",
     ],
     inScope: [
@@ -423,7 +423,7 @@ export const DOMAINS = [
     name: "Digital Trust and Scam Resilience",
     short: "Digital Trust",
     glimpse:
-      "Fraud now runs on urgency and impersonation, not exploits. Security tools protect infrastructure; almost nothing helps at the moment a person decides whether to pay.",
+      "Fraud now runs on urgency and impersonation, not exploits. Security tools protect infrastructure. Almost nothing helps at the moment a person decides whether to pay.",
     compare: {
       outcome: "Helping people resist and recover from digital deception",
       audience: "Individuals and small organisations facing fraud",
@@ -432,13 +432,13 @@ export const DOMAINS = [
         "Detecting changed bank details on an invoice",
         "Guided recovery after money is lost",
       ],
-      success: "Whether users pause and verify — and recover well when they don't",
+      success: "Whether users pause and verify, and recover well when they don't",
       failure: "Claiming to detect fraud without explaining the evidence",
     },
     overview:
       "Individuals and small organisations receive fraudulent calls, messages, invoices and payment instructions through channels they normally trust. Existing security tools focus on technical infrastructure. They rarely help at the moment a person has to decide: is this request genuine, should I pay this, how do I verify who sent it, what do I do now that I've been deceived?",
     challenge:
-      "Choose one decision moment where a person must judge whether a request is genuine, or one recovery moment immediately after they have been deceived. Build a system that improves that specific moment — by interrupting, verifying, explaining or guiding — without blocking legitimate activity and without demanding surveillance of private communications.",
+      "Choose one decision moment where a person must judge whether a request is genuine, or one recovery moment immediately after they have been deceived. Build a system that improves that specific moment by interrupting, verifying, explaining or guiding, without blocking legitimate activity and without demanding surveillance of private communications.",
     oneProblem: {
       lead: "One decision or recovery moment: a point where a person acts on a request whose authenticity is uncertain, or responds to a deception already under way.",
       examples:
@@ -448,7 +448,7 @@ export const DOMAINS = [
     problems: [
       {
         title: "Urgent payment impersonation",
-        body: "An employee receives an urgent payment instruction that appears to come from a senior colleague, customer or vendor — by email, message or voice, with convincing contextual detail. A solution could introduce proportionate verification, approval or cooling-off steps without obstructing legitimate work.",
+        body: "An employee receives an urgent payment instruction that appears to come from a senior colleague, customer or vendor, by email, message or voice, with convincing contextual detail. A solution could introduce proportionate verification, approval or cooling-off steps without obstructing legitimate work.",
       },
       {
         title: "Changed invoice or bank information",
@@ -474,7 +474,7 @@ export const DOMAINS = [
     strongSolution: [
       {
         term: "Adaptability",
-        body: "Works across channels and scam variants — not one message template collected in advance.",
+        body: "Works across channels and scam variants, not one message template collected in advance.",
       },
       {
         term: "Understanding",
@@ -486,7 +486,7 @@ export const DOMAINS = [
       },
       {
         term: "Explainability",
-        body: "States what is suspicious, why it matters, and how confident it is — in terms a pressured non-expert can act on.",
+        body: "States what is suspicious, why it matters, and how confident it is, in terms a pressured non-expert can act on.",
       },
       {
         term: "Uncertainty handling",
@@ -498,16 +498,16 @@ export const DOMAINS = [
       },
     ],
     opportunities: [
-      "Social-engineering resistance — help at the moment of pressure, not in advance training",
-      "Impersonation and payment fraud — verifying that the sender is who they claim to be",
-      "Cross-channel identity verification — confirming a request through a channel the attacker doesn't control",
-      "Trusted-contact and approval workflows — a second pair of eyes, and cooling-off periods",
-      "Scam reporting and evidence preservation — capturing proof before it is deleted or lost",
-      "Recovery after account compromise — what to do first, second and third",
+      "Social-engineering resistance: help at the moment of pressure, not in advance training",
+      "Impersonation and payment fraud: verifying that the sender is who they claim to be",
+      "Cross-channel identity verification: confirming a request through a channel the attacker doesn't control",
+      "Trusted-contact and approval workflows: a second pair of eyes, and cooling-off periods",
+      "Scam reporting and evidence preservation: capturing proof before it is deleted or lost",
+      "Recovery after account compromise: what to do first, second and third",
       "Protection of vulnerable users, without continuous monitoring of their private messages",
-      "Explainable fraud warnings — evidence and proportionate action, not an unexplained verdict",
+      "Explainable fraud warnings: evidence and proportionate action, not an unexplained verdict",
       "Small-business incident response for organisations with no security staff",
-      "Safe handling of uncertain authenticity — acting sensibly when you genuinely cannot tell",
+      "Safe handling of uncertain authenticity: acting sensibly when you genuinely cannot tell",
     ],
     inScope: [
       "Social-engineering protection",
@@ -552,6 +552,34 @@ export const DOMAINS = [
 
 export const getDomain = (slug) => DOMAINS.find((d) => d.slug === slug);
 
+// Rough read time for a domain brief, so the page can tell you up front how
+// much there is rather than letting you discover it by scrolling.
+const wordsIn = (value) => {
+  if (!value) return 0;
+  if (typeof value === "string") return value.trim().split(/\s+/).length;
+  if (Array.isArray(value)) return value.reduce((n, v) => n + wordsIn(v), 0);
+  if (typeof value === "object") return Object.values(value).reduce((n, v) => n + wordsIn(v), 0);
+  return 0;
+};
+
+export const readingMinutes = (d) =>
+  Math.max(
+    1,
+    Math.round(
+      wordsIn([
+        d.overview,
+        d.challenge,
+        d.oneProblem,
+        d.problems,
+        d.strongSolution,
+        d.opportunities,
+        d.inScope,
+        d.outOfScope,
+        d.measures,
+      ]) / 220,
+    ),
+  );
+
 // Applies to every submission, in every domain.
 export const EXPECTATIONS = [
   {
@@ -584,17 +612,17 @@ export const EXPECTATIONS = [
   {
     num: "06",
     title: "Show material differentiation",
-    body: "You are not expected to invent a new category of technology — but reproducing an existing product behind a new interface is not enough. If your project resembles something that exists, show a material improvement: an overlooked user group, an underserved environment, variation existing automation cannot handle, better accessibility or comprehension, lower cost or effort, better reliability or explainability, an unresolved part of the user journey, safer human collaboration, or generalisation across workflows.",
+    body: "You are not expected to invent a new category of technology. But reproducing an existing product behind a new interface is not enough. If your project resembles something that exists, show a material improvement: an overlooked user group, an underserved environment, variation existing automation cannot handle, better accessibility or comprehension, lower cost or effort, better reliability or explainability, an unresolved part of the user journey, safer human collaboration, or generalisation across workflows.",
     note: "Not sufficient: replacing a form with a chatbot, adding voice without improving accessibility, another appointment scheduler, a basic claims dashboard, connecting an LLM to company documents, a fixed scraper for one website, a generic agent that claims to do everything.",
   },
 ];
 
-// Appendix A — extra bar for anything that generates analyses on demand.
+// Appendix A: extra bar for anything that generates analyses on demand.
 export const ANALYTICS = {
   intro:
     "Read this only if your solution generates analyses, charts or data-driven answers on demand. It applies in any domain, and is most common in Intelligent Operations.",
   context:
-    "Managers ask questions no dashboard covers: which insurers and denial categories drove claims ageing past 90 days last quarter? Which stages cause the greatest delay in application processing? Which complaint categories are repeatedly reopened? The challenge is not turning text into a chart — it is understanding the organisation's data, the meaning of the question, and whether the resulting analysis is actually valid.",
+    "Managers ask questions no dashboard covers. Which insurers and denial categories drove claims ageing past 90 days last quarter? Which stages cause the greatest delay in application processing? Which complaint categories are repeatedly reopened? The challenge is not turning text into a chart. It is understanding the organisation's data, the meaning of the question, and whether the resulting analysis is actually valid.",
   requirements: [
     {
       term: "Business language understanding",
@@ -602,7 +630,7 @@ export const ANALYTICS = {
     },
     {
       term: "Ambiguity clarification",
-      body: "Asking when a question has multiple reasonable readings — does “this quarter” mean the calendar or the financial quarter?",
+      body: "Asking when a question has multiple reasonable readings. Does “this quarter” mean the calendar or the financial quarter?",
     },
     {
       term: "Appropriate data selection",

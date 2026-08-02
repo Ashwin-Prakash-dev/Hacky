@@ -2,16 +2,24 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import Footer from "../sections/Footer";
+import ScrollProgress from "../ui/ScrollProgress";
 
 // Chrome for the domain routes. Follows the legal pages in skipping NavBar,
 // whose links scroll-anchor to homepage sections that don't exist here.
+// The scroll bar is here on purpose: these are long documents and people
+// should be able to see how much is left.
 const DomainsShell = ({ children }) => {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const hash = window.location.hash.slice(1);
+    const target = hash && document.getElementById(hash);
+    if (target) target.scrollIntoView();
+    else window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="min-h-dvh bg-[#050505]">
+      <ScrollProgress />
+
       <header className="border-b border-white/[0.07]">
         <div className="container mx-auto flex items-center justify-between gap-4 px-5 py-4 md:px-10">
           <Link to="/" className="nav-logo">

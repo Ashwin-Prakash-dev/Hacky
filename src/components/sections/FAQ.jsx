@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import gsap from "gsap";
 
 const faqs = [
@@ -19,7 +20,7 @@ const faqs = [
     q: "What are the problem statements?",
     a: (
       <>
-        There aren&apos;t any — you bring the problem. We publish four domains: preventive
+        There aren&apos;t any. You bring the problem. We publish four domains: preventive
         health, intelligent operations, inclusive access, and digital trust. Pick the one your
         problem lives in.{" "}
         <Link
@@ -74,25 +75,36 @@ const FAQItem = ({ question, answer }) => {
       paddingLeft: "1rem", marginLeft: "-1rem",
       transition: "border-color 0.3s ease",
     }}>
-      <button onClick={toggle} className="w-full text-left" data-lens-label={question} style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "1.5rem 0", background: "none", border: "none", cursor: "pointer", gap: "1.25rem",
-      }}>
-        <span className="font-general" style={{
-          fontSize: "clamp(0.95rem, 1.5vw, 1.05rem)",
-          color: open ? "#fff" : "rgba(255,255,255,0.8)",
-          transition: "color 0.2s", lineHeight: 1.4,
-        }}>{question}</span>
-        <span style={{
-          flexShrink: 0, width: "24px", height: "24px", borderRadius: "50%",
-          border: open ? "1px solid rgba(200,255,0,0.5)" : "1px solid rgba(255,255,255,0.15)",
-          background: open ? "rgba(200,255,0,0.08)" : "transparent",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: open ? "#C8FF00" : "rgba(255,255,255,0.35)",
-          fontSize: "1rem", lineHeight: 1,
-          transition: "color 0.25s, border-color 0.25s, background 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-          transform: open ? "rotate(45deg)" : "rotate(0deg)",
-        }}>+</span>
+      <button
+        onClick={toggle}
+        aria-expanded={open}
+        data-lens-label={question}
+        className="flex w-full cursor-pointer items-center justify-between gap-5 border-none bg-transparent py-6 text-left"
+      >
+        <span
+          className={`font-general text-[clamp(0.95rem,1.5vw,1.05rem)] leading-[1.4] transition-colors duration-200 ${
+            open ? "text-white" : "text-white/80"
+          }`}
+        >
+          {question}
+        </span>
+        {/* A literal Show / Hide beside the chevron: the one thing that
+            makes it obvious this opens in place rather than navigating. */}
+        <span
+          className={`flex shrink-0 items-center gap-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] transition-colors duration-200 ${
+            open ? "text-lime" : "text-white/45"
+          }`}
+        >
+          {open ? "Hide" : "Show"}
+          <ChevronDown
+            size={15}
+            strokeWidth={2.25}
+            aria-hidden="true"
+            className={`transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </span>
       </button>
       <div ref={bodyRef} style={{ height: 0, overflow: "hidden", opacity: 0 }}>
         <p className="font-general" style={{
@@ -179,7 +191,7 @@ const FAQ = () => {
                   transition: "color 0.2s",
                   letterSpacing: "0.08em",
                 }}>0{i + 1}</span>
-                <span className="font-general faq-q-text" style={{
+                <span className="faq-q-text font-general" style={{
                   fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
                   color: selected === i ? "#fff" : "rgba(255,255,255,0.75)",
                   lineHeight: 1.45,

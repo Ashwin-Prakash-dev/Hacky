@@ -6,7 +6,7 @@ import { COMPARE_ATTRS, DOMAINS } from "../../lib/domains";
 
 // Comparing four domains across five dimensions is a 20-cell table, which is
 // unreadable on a phone. So we render one dimension at a time and let all
-// four domains answer it together — the comparison survives, the table
+// four domains answer it together. The comparison survives, the table
 // doesn't. Each answer is itself the link through, so weighing the domains
 // and choosing one are the same gesture.
 const DomainCompare = () => {
@@ -89,8 +89,11 @@ const DomainCompare = () => {
           tabIndex={0}
           className="outline-none"
         >
-          <p className="mb-8 font-general text-[clamp(1.05rem,2.2vw,1.35rem)] leading-[1.4] tracking-[-0.01em] text-white">
+          <p className="mb-2 font-general text-[clamp(1.05rem,2.2vw,1.35rem)] leading-[1.4] tracking-[-0.01em] text-white">
             {attr.heading}
+          </p>
+          <p className="mb-8 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/35">
+            Each answer opens that domain&apos;s full brief
           </p>
 
           <div
@@ -104,7 +107,7 @@ const DomainCompare = () => {
                   key={d.slug}
                   to={`/domains/${d.slug}`}
                   data-cell
-                  className="group flex flex-col gap-3 border-t border-white/[0.09] py-6 no-underline outline-none transition-colors duration-300 focus-visible:border-lime/45 focus-visible:ring-1 focus-visible:ring-lime/50 hover:border-lime/45"
+                  className="group flex flex-col gap-3 border-t-2 border-white/[0.09] py-6 pr-4 no-underline outline-none transition-colors duration-300 focus-visible:border-lime/45 focus-visible:ring-1 focus-visible:ring-lime/50 hover:border-lime/60"
                 >
                   <span className="flex items-center gap-3">
                     <span className="font-mono text-[0.7rem] tracking-[0.14em] text-lime/55">
@@ -132,7 +135,7 @@ const DomainCompare = () => {
                     </p>
                   )}
 
-                  <span className="mt-auto flex items-center gap-1.5 pt-3 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/35 transition-colors duration-300 group-hover:text-lime">
+                  <span className="mt-auto inline-flex w-fit items-center gap-1.5 rounded-full border border-lime/25 bg-lime/[0.05] px-3 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-lime/85 transition-[background,border-color,color] duration-300 group-hover:border-lime/50 group-hover:bg-lime/10 group-hover:text-lime">
                     Read the brief
                     <ArrowUpRight size={12} strokeWidth={2.25} aria-hidden="true" />
                   </span>

@@ -1,12 +1,21 @@
 import { useEffect, useId, useRef, useState } from "react";
 import gsap from "gsap";
-import { Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 // Collapsible reference block used at the foot of a domain brief. The heavy
-// lists (opportunity areas, scope, success measures) stay on the page but
-// out of the first read.
-const Disclosure = ({ label, meta, children }) => {
-  const [open, setOpen] = useState(false);
+// lists stay on the page but out of the first read.
+//
+// Affordance: a down chevron plus a literal "Show" / "Hide" means the
+// content opens right here. Anything that navigates away uses an up-right
+// arrow instead, so the two are never confused.
+//
+// Pass `open` and `onToggle` to drive it from outside (the show-all
+// control); leave both off and it manages its own state.
+const Disclosure = ({ label, meta, children, open: openProp, onToggle }) => {
+  const [ownOpen, setOwnOpen] = useState(false);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : ownOpen;
+
   const bodyRef = useRef(null);
   const tween = useRef(null);
   const id = useId();
@@ -38,14 +47,16 @@ const Disclosure = ({ label, meta, children }) => {
     return () => tween.current?.kill();
   }, [open]);
 
+  const toggle = () => (controlled ? onToggle?.() : setOwnOpen((v) => !v));
+
   return (
     <div className="border-t border-white/[0.07]">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         aria-expanded={open}
         aria-controls={id}
-        className="group flex w-full items-center justify-between gap-6 bg-transparent py-6 text-left outline-none focus-visible:ring-1 focus-visible:ring-lime/60"
+        className="group flex w-full items-center justify-between gap-6 rounded-lg bg-transparent px-3 py-5 text-left outline-none transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-lime/60 hover:bg-white/[0.03]"
       >
         <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <span
@@ -61,20 +72,26 @@ const Disclosure = ({ label, meta, children }) => {
             </span>
           )}
         </span>
+
         <span
-          aria-hidden="true"
-          className={`flex size-6 shrink-0 items-center justify-center rounded-full border transition-[color,border-color,background,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            open
-              ? "rotate-45 border-lime/50 bg-lime/[0.08] text-lime"
-              : "border-white/15 text-white/35 group-hover:border-white/30 group-hover:text-white/60"
+          className={`flex shrink-0 items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] transition-colors duration-200 ${
+            open ? "text-lime" : "text-white/50 group-hover:text-white/80"
           }`}
         >
-          <Plus size={14} strokeWidth={2} />
+          {open ? "Hide" : "Show"}
+          <ChevronDown
+            size={15}
+            strokeWidth={2.25}
+            aria-hidden="true"
+            className={`transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+              open ? "rotate-180" : ""
+            }`}
+          />
         </span>
       </button>
 
       <div id={id} ref={bodyRef} role="region" className="h-0 overflow-hidden opacity-0">
-        <div className="pb-8">{children}</div>
+        <div className="px-3 pb-8">{children}</div>
       </div>
     </div>
   );

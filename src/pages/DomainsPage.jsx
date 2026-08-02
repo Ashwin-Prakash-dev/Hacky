@@ -1,19 +1,41 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Download } from "lucide-react";
 import DomainsShell from "../components/domains/DomainsShell";
 import DomainCompare from "../components/domains/DomainCompare";
 import Disclosure from "../components/domains/Disclosure";
 import ScopeList from "../components/domains/ScopeList";
-import { ANALYTICS, DOMAINS, EXPECTATIONS } from "../lib/domains";
+import { ANALYTICS, BRIEF_PDF, DOMAINS, EXPECTATIONS, readingMinutes } from "../lib/domains";
 import { usePageMeta } from "../lib/seo";
+
+// Reading this end to end is the point, so the page says up front what the
+// three steps are and how long each domain takes.
+const READING_PATH = [
+  {
+    num: "01",
+    title: "Compare the four domains",
+    body: "Work across the five dimensions below until one domain clearly matches the outcome you want to improve.",
+  },
+  {
+    num: "02",
+    title: "Read that domain in full",
+    body: "Every brief follows the same structure: the challenge, what counts as one problem, example problems, what a strong solution shows, scope, and how success is measured.",
+  },
+  {
+    num: "03",
+    title: "Read the expectations",
+    body: "Six things apply to every submission in every domain. Judges use them whatever you built.",
+  },
+];
 
 const DomainsPage = () => {
   usePageMeta({
     title: "Problem Domains",
     description:
-      "The four Startathon problem domains — preventive health, intelligent operations, inclusive access, and digital trust. Opportunity areas, example problems, and what a strong solution has to demonstrate.",
+      "The four Startathon problem domains: preventive health, intelligent operations, inclusive access, and digital trust. Opportunity areas, example problems, and what a strong solution has to demonstrate.",
     path: "/domains",
   });
+
+  const totalMinutes = DOMAINS.reduce((n, d) => n + readingMinutes(d), 0);
 
   return (
     <DomainsShell>
@@ -31,14 +53,43 @@ const DomainsPage = () => {
           </p>
           <p className="font-general text-[0.98rem] leading-[1.8] text-white/65">
             The four domains below are opportunity areas, not fixed problem statements. The
-            examples show the kind of problem — and the depth — that fits each one. Pick one of
-            the examples, or bring a different problem that clearly belongs to your domain.
+            examples show what kind of problem fits each one, and how deep you are expected to
+            go. Pick one of the examples, or bring a different problem that clearly belongs to
+            your domain.
           </p>
           <p className="font-general text-[0.98rem] leading-[1.8] text-white/65">
             Solutions do not have to use artificial intelligence. Choose the technology from the
             problem, not the other way round.
           </p>
         </div>
+      </section>
+
+      {/* ── How to read this ──────────────────────────────────────────── */}
+      <section className="container mx-auto px-5 pb-0 pt-[clamp(3rem,7vw,4.5rem)] md:px-10">
+        <div className="mb-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <h2 className="font-general text-[0.72rem] font-bold uppercase tracking-[0.2em] text-white/45">
+            How to read this
+          </h2>
+          <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-white/35">
+            All four briefs, about {totalMinutes} minutes
+          </p>
+        </div>
+
+        <ol className="grid grid-cols-1 gap-x-[clamp(2rem,5vw,3.5rem)] gap-y-8 border-t border-white/[0.06] pt-8 md:grid-cols-3">
+          {READING_PATH.map((step) => (
+            <li key={step.num}>
+              <span className="mb-3 block font-mono text-[0.7rem] tracking-[0.14em] text-lime/55">
+                {step.num}
+              </span>
+              <h3 className="mb-2 font-general text-[1rem] font-bold leading-[1.3] tracking-[-0.01em] text-white">
+                {step.title}
+              </h3>
+              <p className="font-general text-[0.9rem] leading-[1.75] text-white/60">
+                {step.body}
+              </p>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* ── The comparison ────────────────────────────────────────────── */}
@@ -54,7 +105,7 @@ const DomainsPage = () => {
             <Link
               key={d.slug}
               to={`/domains/${d.slug}`}
-              className="group grid grid-cols-[2.5rem_1fr_auto] items-start gap-x-[clamp(1.25rem,3vw,2.5rem)] border-b border-white/[0.06] py-[clamp(1.75rem,3.5vw,2.5rem)] no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.03] hover:bg-lime/[0.018] sm:grid-cols-[3.5rem_1fr_1.4fr_auto]"
+              className="group grid grid-cols-[2.5rem_1fr] items-start gap-x-[clamp(1.25rem,3vw,2.5rem)] border-b border-white/[0.06] py-[clamp(1.75rem,3.5vw,2.5rem)] no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.03] hover:bg-lime/[0.018] sm:grid-cols-[3.5rem_1fr_1.4fr]"
             >
               <span className="select-none font-display text-[clamp(2rem,3.5vw,2.9rem)] font-normal leading-none tracking-[-0.03em] text-lime/[0.14] transition-colors duration-300 group-hover:text-lime/40">
                 {d.num}
@@ -64,23 +115,22 @@ const DomainsPage = () => {
                 {d.name}
               </h3>
 
-              <p className="col-span-2 col-start-2 pt-3 font-general text-[0.9rem] leading-[1.7] text-white/60 transition-colors duration-[0.4s] group-hover:text-white/85 sm:col-span-1 sm:col-start-3 sm:pt-1">
-                {d.glimpse}
-              </p>
-
-              <span
-                aria-hidden="true"
-                className="col-start-3 row-start-1 self-start pt-1 text-white/25 transition-[color,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:text-lime sm:col-start-4"
-              >
-                <ArrowUpRight size={20} strokeWidth={1.75} />
-              </span>
+              <div className="col-start-2 sm:col-start-3 sm:row-start-1">
+                <p className="pt-3 font-general text-[0.9rem] leading-[1.7] text-white/60 transition-colors duration-[0.4s] group-hover:text-white/85 sm:pt-1">
+                  {d.glimpse}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-lime/25 bg-lime/[0.05] px-3.5 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-lime/85 transition-[background,border-color,color] duration-300 group-hover:border-lime/50 group-hover:bg-lime/10 group-hover:text-lime">
+                  Read the brief, {readingMinutes(d)} min
+                  <ArrowUpRight size={12} strokeWidth={2.25} aria-hidden="true" />
+                </span>
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
       {/* ── Expectations ──────────────────────────────────────────────── */}
-      <section className="w-full bg-[#050505] py-[clamp(3rem,8vw,5rem)]">
+      <section id="expectations" className="w-full bg-[#050505] py-[clamp(3rem,8vw,5rem)]">
         <div className="container mx-auto px-5 md:px-10">
           <span className="eyebrow eyebrow--quiet mb-6">Applies to every submission</span>
           <h2 className="special-font bento-title mb-4 max-w-[20ch] text-[clamp(1.9rem,4.5vw,3rem)] leading-[1.05] tracking-[-0.03em] text-white">
@@ -116,7 +166,7 @@ const DomainsPage = () => {
       </section>
 
       {/* ── Appendix A ────────────────────────────────────────────────── */}
-      <section id="analytics" className="w-full bg-[#050505] pb-[clamp(4rem,10vw,7rem)] pt-4">
+      <section id="analytics" className="w-full bg-[#050505] py-[clamp(2rem,5vw,3rem)]">
         <div className="container mx-auto max-w-[860px] px-5 md:px-10">
           <Disclosure
             label="Extra requirements for analytics-type submissions"
@@ -147,8 +197,32 @@ const DomainsPage = () => {
               <ScopeList title="Additional measures" items={ANALYTICS.measures} />
             </div>
           </Disclosure>
+          <div className="border-t border-white/[0.07]" />
         </div>
       </section>
+
+      {/* ── The full brief ────────────────────────────────────────────── */}
+      {BRIEF_PDF && (
+        <section className="container mx-auto max-w-[860px] px-5 pb-[clamp(4rem,10vw,7rem)] pt-6 md:px-10">
+          <div className="flex flex-col items-start gap-5 rounded-xl border border-white/[0.09] bg-white/[0.02] p-7 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="mb-1.5 font-general text-[1.05rem] font-bold tracking-[-0.01em] text-white">
+                Prefer it as one document?
+              </h2>
+              <p className="font-general text-[0.9rem] leading-[1.7] text-white/60">
+                The full brief carries everything on these pages, all four domains and the
+                expectations, in a single PDF.
+              </p>
+            </div>
+            <a href={BRIEF_PDF} download className="cta-pill shrink-0">
+              Download PDF
+              <span className="cta-pill-icon" aria-hidden="true">
+                <Download size={14} strokeWidth={2.25} />
+              </span>
+            </a>
+          </div>
+        </section>
+      )}
     </DomainsShell>
   );
 };
