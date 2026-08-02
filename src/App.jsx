@@ -6,6 +6,8 @@ gsap.registerPlugin(ScrollTrigger);
 import RequireAuth from "./components/apply/RequireAuth";
 import RequirePhone from "./components/apply/RequirePhone";
 import MainPage from "./pages/MainPage";
+import DomainsPage from "./pages/DomainsPage";
+import DomainDetailPage from "./pages/DomainDetailPage";
 import ApplyPage from "./pages/ApplyPage";
 import CallbackPage from "./pages/CallbackPage";
 import LoginPage from "./pages/LoginPage";
@@ -24,6 +26,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<MainPage />} />
+      <Route path="/domains" element={<DomainsPage />} />
+      <Route path="/domains/:slug" element={<DomainDetailPage />} />
       <Route path="/auth/callback" element={<CallbackPage />} />
       <Route path="/auth/google/callback" element={<CallbackPage />} />
       <Route path="/apply" element={<ApplyPage />} />

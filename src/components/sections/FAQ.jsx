@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 
 const faqs = [
@@ -16,7 +17,20 @@ const faqs = [
   },
   {
     q: "What are the problem statements?",
-    a: "Announced when applications open. Real-world problems with real stakes. Not the kind of thing you can solve with a tutorial.",
+    a: (
+      <>
+        There aren&apos;t any — you bring the problem. We publish four domains: preventive
+        health, intelligent operations, inclusive access, and digital trust. Pick the one your
+        problem lives in.{" "}
+        <Link
+          to="/domains"
+          className="text-lime/90 underline underline-offset-[3px] hover:text-lime"
+        >
+          Read the four domains
+        </Link>
+        .
+      </>
+    ),
   },
   {
     q: "How do you pick teams?",

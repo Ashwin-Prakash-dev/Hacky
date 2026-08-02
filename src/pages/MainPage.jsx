@@ -13,6 +13,7 @@ import Marquee from "../components/ui/Marquee";
 import TerminalBridge from "../components/ui/TerminalBridge";
 import Briefing from "../components/sections/Briefing";
 import Prizes from "../components/sections/Prizes";
+import Domains from "../components/sections/Domains";
 import Timeline from "../components/sections/Timeline";
 import FAQ from "../components/sections/FAQ";
 import Contact from "../components/sections/Contact";
@@ -49,6 +50,7 @@ const MainPage = () => {
         <Hero />
         <SponsorsSection />
         <Prizes />
+        <Domains />
         {/* <Briefing /> */}
         <Timeline />
         <VideoCards />
