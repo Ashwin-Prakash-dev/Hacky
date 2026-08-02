@@ -337,8 +337,9 @@ const TeamPage = () => {
           {stage === "done" && (
             <>
               <p className="font-general text-base font-semibold leading-relaxed text-lime">
-                You&apos;re in. Payment&apos;s confirmed (₹{fee}). You can still
-                add or remove teammates before submissions open.
+                Payment confirmed (₹{fee}). Your team is registered for idea
+                submission. You can still add or remove teammates before
+                submissions open.
               </p>
 
               <IdeaNotice prominent />

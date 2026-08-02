@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
 import TerminalInput from "../inputs/TerminalInput";
 import {
@@ -83,7 +84,8 @@ const PaymentPanel = ({
     <Panel maxWidth="none">
       <Eyebrow>Payment (₹{fee})</Eyebrow>
       <p className="mt-2 font-general text-[0.88rem] leading-relaxed text-white/70">
-        One payment covers your whole team. Once it&apos;s verified, your spot is locked in.
+        One payment covers your whole team and registers you for idea submission.
+        It does not guarantee selection — 20 teams are shortlisted from the submissions.
       </p>
 
       {!team.referred_by && (
@@ -146,6 +148,10 @@ const PaymentPanel = ({
             <PrimaryButton type="submit" disabled={busy || !ref.trim()}>
               {busy ? "Confirming…" : "Confirm payment"}
             </PrimaryButton>
+            <p className="mt-4 font-mono text-[0.75rem] leading-relaxed text-white/45">
+              Registration fees are non-refundable. By paying you agree to our{" "}
+              <Link to="/terms" className="text-lime/80 underline underline-offset-[3px]">Terms</Link>.
+            </p>
           </form>
         </div>
       </div>
