@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useWindowScroll } from "react-use";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,6 +15,8 @@ import { usePageMeta } from "../lib/seo";
 
 gsap.registerPlugin(ScrollTrigger, Flip);
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
 // /domains — the picker field. /domains/:slug — one domain expanded into a
 // long-form brief. One component serves both routes so selection is pure
 // URL state: deep links, back/forward and Escape all resolve the same way.
@@ -27,11 +30,19 @@ const DomainsPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const domain = slug ? DOMAINS.find((d) => d.slug === slug) : null;
+  const { y: scrollY } = useWindowScroll();
 
-  const reduced = useMemo(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    []
+  // Tracked live: the OS setting can change while the page is open, and every
+  // morph, drift and reveal on this page keys off it.
+  const [reduced, setReduced] = useState(
+    () => window.matchMedia(REDUCED_MOTION_QUERY).matches
   );
+  useEffect(() => {
+    const mq = window.matchMedia(REDUCED_MOTION_QUERY);
+    const onChange = (e) => setReduced(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // 'picker' | 'expanding' | 'detail' | 'collapsing'
   const [phase, setPhase] = useState(() => (domain ? "detail" : "picker"));
@@ -40,6 +51,8 @@ const DomainsPage = () => {
   phaseRef.current = phase;
   const shownRef = useRef(shownDomain);
   shownRef.current = shownDomain;
+  const reducedRef = useRef(reduced);
+  reducedRef.current = reduced;
 
   const lenisRef = useRef(null);
   const pickerHeroRef = useRef(null);
@@ -62,9 +75,10 @@ const DomainsPage = () => {
         }
   );
 
-  // Smooth scroll for this page, same recipe as MainPage.
+  // Smooth scroll for this page, same recipe as MainPage. Reduced motion gets
+  // native scrolling: Lenis still drives ScrollTrigger, just without easing.
   useEffect(() => {
-    const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    const lenis = new Lenis({ lerp: reduced ? 1 : 0.08, smoothWheel: !reduced });
     lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (time) => lenis.raf(time * 1000);
@@ -73,9 +87,10 @@ const DomainsPage = () => {
     ScrollTrigger.refresh();
     return () => {
       lenis.destroy();
+      lenisRef.current = null;
       gsap.ticker.remove(raf);
     };
-  }, []);
+  }, [reduced]);
 
   const scrollTop = (immediate = true) => {
     if (lenisRef.current) lenisRef.current.scrollTo(0, { immediate, force: true });
@@ -99,13 +114,13 @@ const DomainsPage = () => {
 
     if (domain) {
       setShownDomain(domain);
-      if (phaseRef.current === "picker" && flipStateRef.current && !reduced) {
+      if (phaseRef.current === "picker" && flipStateRef.current && !reducedRef.current) {
         setPhase("expanding");
       } else {
         flipStateRef.current = null;
         setPhase("detail");
       }
-    } else if (phaseRef.current === "detail" && shownRef.current && !reduced) {
+    } else if (phaseRef.current === "detail" && shownRef.current && !reducedRef.current) {
       returnFocusSlugRef.current = shownRef.current.slug;
       setPhase("collapsing");
     } else {
@@ -268,9 +283,12 @@ const DomainsPage = () => {
   return (
     <>
       <ScrollProgress />
-      <main className="relative min-h-dvh w-screen overflow-x-clip bg-[#050505]">
+      <div className="relative min-h-dvh w-full overflow-x-clip bg-[#050505]">
         <header className="nav-shell">
-          <div className="nav-island">
+          <nav
+            aria-label="Primary"
+            className={`nav-island ${scrollY > 10 ? "nav-island--scrolled" : ""}`}
+          >
             <Link to="/" className="nav-logo">
               Startathon<span className="nav-logo-dot">.</span>
             </Link>
@@ -288,66 +306,83 @@ const DomainsPage = () => {
                   Apply
                 </span>
               </span>
-              <span className="nav-cta-icon" aria-hidden="true">
-                <ArrowUpRight size={13} strokeWidth={2.25} />
+              <span className="cta-pill-icon" aria-hidden="true">
+                <ArrowUpRight size={15} strokeWidth={2.25} />
               </span>
             </Link>
-          </div>
+          </nav>
         </header>
 
-        {/* ── Picker ──────────────────────────────────────────────────── */}
-        <section
-          hidden={isDetailSettled}
-          aria-hidden={!isPicker}
-          className={!isPicker ? "pointer-events-none" : undefined}
-        >
-          <div ref={pickerHeroRef} className="container mx-auto px-5 pb-4 pt-36 md:px-10 md:pt-44">
-            <span className="eyebrow mb-6">Domain briefs</span>
-            <h1 className="special-font max-w-[12ch] font-display text-[clamp(2.6rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.03em] text-white">
-              Choose your d<b>o</b>main<b>.</b>
-            </h1>
-            <p className="mt-6 max-w-xl font-general text-base leading-[1.8] text-white/75 md:text-lg">
-              Projects may draw on more than one domain. Open each brief, then pick the
-              single domain that best represents your central problem — and the primary
-              outcome you intend to improve.
-            </p>
-          </div>
-          <div className="container mx-auto grid items-start gap-5 px-5 pb-24 pt-10 md:grid-cols-2 md:gap-7 md:px-10 md:pb-32">
-            {DOMAINS.map((d, i) => (
-              <DomainCard
-                key={d.slug}
-                domain={d}
-                className={i % 2 === 1 ? "md:mt-14" : undefined}
-                floatActive={isPicker}
-                motionOK={!reduced}
-                onSelect={handleSelect}
-                wrapperRef={(el) => (cardWrapperRefs.current[d.slug] = el)}
-                panelRef={(el) => (cardPanelRefs.current[d.slug] = el)}
-              />
-            ))}
-          </div>
-        </section>
+        <main className="relative">
+          {/* ── Picker ──────────────────────────────────────────────────── */}
+          {/* `inert` keeps keyboard focus out of the field while it is fading
+              or fully replaced by the detail view — aria-hidden alone leaves
+              the card links tabbable. */}
+          <section
+            hidden={isDetailSettled}
+            aria-labelledby="domains-title"
+            aria-hidden={!isPicker || undefined}
+            inert={isPicker ? undefined : ""}
+            className={!isPicker ? "pointer-events-none" : undefined}
+          >
+            <div ref={pickerHeroRef} className="container mx-auto px-5 pb-4 pt-36 md:px-10 md:pt-44">
+              <span className="eyebrow mb-6">Domain briefs</span>
+              <h1
+                id="domains-title"
+                className="special-font max-w-[12ch] font-display text-[clamp(2.6rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.03em] text-white"
+              >
+                Choose your d<b>o</b>main<b>.</b>
+              </h1>
+              <p className="mt-6 max-w-xl font-general text-base leading-[1.8] text-white/75 md:text-lg">
+                Projects may draw on more than one domain. Open each brief, then pick the
+                single domain that best represents your central problem — and the primary
+                outcome you intend to improve.
+              </p>
+            </div>
+            <ul
+              role="list"
+              className="container mx-auto grid items-start gap-5 px-5 pb-24 pt-10 md:grid-cols-2 md:gap-7 md:px-10 md:pb-32"
+            >
+              {DOMAINS.map((d, i) => (
+                <DomainCard
+                  key={d.slug}
+                  domain={d}
+                  className={i % 2 === 1 ? "md:mt-14" : undefined}
+                  floatActive={isPicker}
+                  motionOK={!reduced}
+                  onSelect={handleSelect}
+                  wrapperRef={(el) => {
+                    cardWrapperRefs.current[d.slug] = el;
+                  }}
+                  panelRef={(el) => {
+                    cardPanelRefs.current[d.slug] = el;
+                  }}
+                />
+              ))}
+            </ul>
+          </section>
 
-        {/* ── Detail: fixed overlay while morphing, normal flow once settled ── */}
-        {shownDomain && (
-          <div className={isDetailSettled ? "relative" : "fixed inset-0 z-40 overflow-hidden"}>
-            {!isDetailSettled && (
-              <div
-                ref={backdropRef}
-                className="pointer-events-none absolute inset-0 bg-[#050505] opacity-0"
+          {/* ── Detail: fixed overlay while morphing, normal flow once settled ── */}
+          {shownDomain && (
+            <div className={isDetailSettled ? "relative" : "fixed inset-0 z-40 overflow-hidden"}>
+              {!isDetailSettled && (
+                <div
+                  ref={backdropRef}
+                  className="pointer-events-none absolute inset-0 bg-[#050505] opacity-0"
+                />
+              )}
+              <DomainDetail
+                domain={shownDomain}
+                settled={isDetailSettled}
+                heroPanelRef={heroPanelRef}
+                onBack={handleBack}
               />
-            )}
-            <DomainDetail
-              domain={shownDomain}
-              settled={isDetailSettled}
-              heroPanelRef={heroPanelRef}
-              onBack={handleBack}
-            />
-          </div>
-        )}
+            </div>
+          )}
+        </main>
 
         <Footer />
-      </main>
+      </div>
     </>
   );
 };
