@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
+// `id` scroll-anchors to a homepage section; `to` routes to another page.
 const navItems = [
   { label: "Prizes", id: "prizes" },
   { label: "What is it", id: "what-is-it" },
+  { label: "Domains", to: "/domains" },
   { label: "FAQ", id: "faq" },
 ];
 
@@ -41,15 +43,21 @@ const NavBar = () => {
 
           {/* Desktop links */}
           <div className="hidden items-center md:flex">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className="nav-link"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) =>
+              item.to ? (
+                <Link key={item.to} to={item.to} className="nav-link no-underline">
+                  {item.label}
+                </Link>
+              ) : (
+                <button
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
+                  className="nav-link"
+                >
+                  {item.label}
+                </button>
+              )
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -102,24 +110,40 @@ const NavBar = () => {
         style={{ transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)" }}
       >
         <nav className="flex w-full flex-col gap-1 px-[clamp(2rem,8vw,4rem)]">
-          {navItems.map((item, i) => (
-            <div key={item.id} className="overflow-hidden">
-              <button
-                onClick={() => {
-                  scrollTo(item.id);
-                  setMenuOpen(false);
-                }}
-                className="block w-full cursor-pointer border-none bg-none py-[0.55rem] text-left font-display text-[clamp(2.2rem,9vw,3.2rem)] font-normal leading-none tracking-[0.01em] text-white"
-                style={{
-                  opacity: menuOpen ? 1 : 0,
-                  transform: menuOpen ? "translateY(0)" : "translateY(110%)",
-                  transition: `transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.08 + i * 0.07}s, opacity 0.5s ease ${0.08 + i * 0.07}s`,
-                }}
-              >
-                {item.label}
-              </button>
-            </div>
-          ))}
+          {navItems.map((item, i) => {
+            const itemClass =
+              "block w-full cursor-pointer border-none bg-none py-[0.55rem] text-left font-display text-[clamp(2.2rem,9vw,3.2rem)] font-normal leading-none tracking-[0.01em] text-white no-underline";
+            const itemStyle = {
+              opacity: menuOpen ? 1 : 0,
+              transform: menuOpen ? "translateY(0)" : "translateY(110%)",
+              transition: `transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.08 + i * 0.07}s, opacity 0.5s ease ${0.08 + i * 0.07}s`,
+            };
+            return (
+              <div key={item.to || item.id} className="overflow-hidden">
+                {item.to ? (
+                  <Link
+                    to={item.to}
+                    onClick={() => setMenuOpen(false)}
+                    className={itemClass}
+                    style={itemStyle}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      scrollTo(item.id);
+                      setMenuOpen(false);
+                    }}
+                    className={itemClass}
+                    style={itemStyle}
+                  >
+                    {item.label}
+                  </button>
+                )}
+              </div>
+            );
+          })}
           <div className="mt-8 overflow-hidden">
             <Link
               to="/apply"

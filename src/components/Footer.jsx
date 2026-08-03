@@ -97,6 +97,7 @@ const Footer = () => (
           </p>
           <div className="flex items-center gap-5">
             {[
+              { to: "/domains", label: "Domains" },
               { to: "/terms", label: "Terms" },
               { to: "/privacy", label: "Privacy" },
               { to: "/referral-program", label: "Referral rules" },

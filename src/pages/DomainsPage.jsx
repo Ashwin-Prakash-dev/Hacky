@@ -77,6 +77,9 @@ const DomainsPage = () => {
 
   // Smooth scroll for this page, same recipe as MainPage.
   useEffect(() => {
+    // Router navigation keeps the previous page's scroll offset, so arriving
+    // from mid-homepage would drop you mid-brief. Reset before Lenis reads it.
+    window.scrollTo(0, 0);
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
     lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);

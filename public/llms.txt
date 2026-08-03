@@ -42,13 +42,35 @@ Any college student — developer, designer, or aspiring founder. Teams of 3 to 
 
 **Is this in-person?** Yes. Fully in-person at SCTCE, Thiruvananthapuram. You have to be in the room.
 
-**What are the problem statements?** Announced when applications open. Real-world problems with real stakes.
+**What are the problem statements?** There are four problem domains, published in full at https://startathon.sctcoding.club/domains — see the Problem Domains section below. They are opportunity areas, not fixed problem statements: teams pick the specific problem.
 
 **How do you pick teams?** We look at your idea and your team. 20 spots. We're looking for people who are already building, not people who want to start someday.
 
 **What's the prize pool?** ₹2L+ total. First place takes ₹1L+. Biggest builder prize in Kerala's student circuit. (*subject to changes*)
 
 **What happens at Demo Day?** You present to judges, sponsors, and ecosystem partners. The top teams compete for prizes. Sponsors make offers.
+
+## Problem Domains
+
+Startathon is a problem-first event. Teams identify a meaningful problem, understand the people and workflows affected by it, and build a testable solution during the event. The four domains are opportunity areas, not fixed problem statements — teams may pick one of the published examples or propose a different problem that clearly falls within their chosen domain. Solutions do not have to use artificial intelligence; teams choose technology based on the problem.
+
+Projects may draw on more than one domain. Teams select the single domain that best represents their central problem and the primary outcome they intend to improve.
+
+Full briefs: https://startathon.sctcoding.club/domains
+
+**1. Preventive Health and Everyday Care** (/domains/preventive-health)
+Primary outcome: improving health behaviour or care outside a healthcare facility. Built for patients, caregivers and families. Success is measured by better understanding, technique or adherence than a reminder app achieves. Most common way teams fail here: building another habit tracker. Autonomous diagnosis, treatment prescription and unsupervised medical triage are not permitted.
+
+**2. Intelligent Operations and Case Work** (/domains/intelligent-operations)
+Primary outcome: making complex organisational work adaptive, intelligent and efficient. Built for employees who process cases. Success is measured by time, manual steps and missed follow-ups per case. Most common way teams fail here: building a scraper for one website. Fully autonomous consequential decisions without safeguards or review are not permitted.
+
+**3. Inclusive and Trustworthy Access to Essential Services** (/domains/inclusive-access)
+Primary outcome: helping people understand and successfully use an essential service. Built for people excluded by language, literacy, disability, age or complexity. Success is measured by task completion and comprehension for a specific underserved group. Most common way teams fail here: wrapping a translation API in a new interface. Sales and lead-conversion bots and fully automated high-consequence decisions are not permitted.
+
+**4. Digital Trust and Scam Resilience** (/domains/digital-trust)
+Primary outcome: helping people resist and recover from digital deception. Built for individuals and small organisations facing fraud. Success is measured by whether users pause and verify — and recover well when they don't. Most common way teams fail here: claiming to detect fraud without explaining the evidence. Offensive hacking, malware development, credential harvesting, tools that claim to guarantee authenticity, and designs that expose users to unnecessary surveillance are not permitted.
+
+**Expectations across all domains:** start with a specific problem · build for a bounded workflow · handle uncertainty honestly · demonstrate more than a prepared example · protect users · show material differentiation.
 
 ## Sponsorship
 

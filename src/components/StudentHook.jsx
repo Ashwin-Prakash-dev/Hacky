@@ -105,21 +105,30 @@ const StudentHook = () => {
             </p>
             <p className="mb-6 font-general text-[clamp(0.95rem,1.4vw,1.05rem)] leading-[1.75] text-white/75">
               If you&apos;re a builder and you resonated with that, there&apos;s no reason
-              you shouldn&apos;t apply.
+              you shouldn&apos;t apply. Read the four problem domains first — walk in
+              knowing what you want to build.
             </p>
-            <Link to="/apply" className="cta-pill group">
-              <span className="relative inline-flex overflow-hidden">
-                <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                  Apply Now
+            <div className="flex flex-wrap items-center gap-3">
+              <Link to="/apply" className="cta-pill group">
+                <span className="relative inline-flex overflow-hidden">
+                  <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                    Apply Now
+                  </span>
+                  <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                    Apply Now
+                  </span>
                 </span>
-                <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                  Apply Now
+                <span className="cta-pill-icon" aria-hidden="true">
+                  <ArrowUpRight size={15} strokeWidth={2.25} />
                 </span>
-              </span>
-              <span className="cta-pill-icon" aria-hidden="true">
-                <ArrowUpRight size={15} strokeWidth={2.25} />
-              </span>
-            </Link>
+              </Link>
+              <Link to="/domains" className="cta-pill cta-pill--ghost group">
+                Choose your domain
+                <span className="cta-pill-icon" aria-hidden="true">
+                  <ArrowUpRight size={15} strokeWidth={2.25} />
+                </span>
+              </Link>
+            </div>
           </div>
 
           {/* Right: video */}
