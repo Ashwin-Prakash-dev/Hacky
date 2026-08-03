@@ -1,33 +1,94 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, FileDown, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  FileDown,
+  X,
+} from "lucide-react";
 import DomainTitle from "./DomainTitle";
 import SectionHead from "./SectionHead";
 import { useScrollReveal } from "../../lib/useScrollReveal";
+
+// One end of the domain pager that closes the brief: a full-width target
+// naming the adjacent domain, mirrored so "previous" reads leftward and
+// "next" reads rightward.
+const PagerCard = ({ domain, direction, onNavigate }) => {
+  const Icon = domain.icon;
+  const isNext = direction === "next";
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(domain)}
+      aria-label={`${isNext ? "Next" : "Previous"} domain: ${domain.title}`}
+      className={`group flex cursor-pointer items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5 outline-none transition-[border-color,background-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:border-lime/40 hover:border-lime/25 hover:bg-lime/[0.02] md:p-6 ${
+        isNext ? "flex-row-reverse text-right" : "text-left"
+      }`}
+    >
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/45 transition-colors duration-300 group-hover:border-lime/30 group-hover:text-lime">
+        {isNext ? (
+          <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
+        ) : (
+          <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
+        )}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-white/40">
+          {isNext ? "Next domain" : "Previous domain"}
+        </span>
+        <span className="special-font mt-1.5 block text-balance font-display text-[1.02rem] leading-[1.2] tracking-[-0.01em] text-white">
+          <DomainTitle title={domain.title} />
+        </span>
+      </span>
+      <span className="hidden size-10 shrink-0 items-center justify-center rounded-full border border-lime/20 bg-lime/[0.06] text-lime sm:flex">
+        <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
+      </span>
+    </button>
+  );
+};
 
 // The long-form brief a card expands into. The hero panel carries the same
 // data-flip-id as its card so the page can morph one into the other; the
 // [data-hero-fade] elements are what the expand timeline crossfades in.
 // Scroll reveals only mount once the page has settled into normal flow.
-const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
+//
+// `prev`/`next` are the adjacent domains (wrapping at both ends) and drive
+// two switching affordances: compact chevrons in the hero for an immediate
+// jump, and a named pager at the foot of the brief for the reader who got
+// to the end. Both call `onNavigate`, which re-enters this same view.
+const DomainDetail = ({ domain, settled, heroPanelRef, onBack, prev, next, onNavigate }) => {
   const rootRef = useRef(null);
   const Icon = domain.icon;
   const hasLinks = Boolean(domain.links?.guide || domain.links?.pdf);
+  const hasPager = Boolean(prev && next && onNavigate);
   useScrollReveal(rootRef, settled, [domain.slug]);
 
   return (
     <article ref={rootRef}>
       {/* ── Hero: the expanded card ─────────────────────────────────────── */}
-      <div className="flex min-h-dvh flex-col px-3 pb-3 pt-24 md:px-4 md:pb-4 md:pt-28">
+      {/* From sm up the section holds the viewport and the panel stretches to
+          fill it — the poster proportion the design wants. On a phone that
+          same rule strands dead space (a full-height panel opens a gap under
+          the controls; a content-height panel leaves the viewport remainder
+          empty), so there the section and panel both size to content and the
+          brief follows directly. [data-brief-body] is what the expand and
+          collapse timelines fade, so nothing shows below the panel mid-morph
+          at widths where the panel no longer covers the screen. */}
+      <div className="flex flex-col px-3 pb-3 pt-20 sm:min-h-dvh sm:pt-24 md:px-4 md:pb-4 md:pt-28">
         <div
           ref={heroPanelRef}
           data-flip-id={`domain-${domain.slug}`}
           tabIndex={-1}
-          className="relative flex w-full flex-1 flex-col justify-between overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0b0b0b] p-6 outline-none sm:p-8 md:p-12"
+          className="relative flex w-full flex-col gap-12 overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0b0b0b] p-6 outline-none sm:flex-1 sm:justify-between sm:gap-0 sm:p-8 md:p-12"
         >
           <div className="pointer-events-none absolute -right-32 -top-40 size-[30rem] rounded-full bg-lime/[0.04] blur-3xl" />
 
-          <div data-hero-fade className="relative flex items-center justify-between">
+          <div data-hero-fade className="relative flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={onBack}
@@ -36,9 +97,33 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
               <ArrowLeft size={13} strokeWidth={2} aria-hidden="true" />
               All domains
             </button>
-            <span className="flex size-12 items-center justify-center rounded-full border border-lime/20 bg-lime/[0.06] text-lime md:size-14">
-              <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
-            </span>
+
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              {hasPager && (
+                <div className="flex items-center rounded-full border border-white/10 bg-white/[0.03]">
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(prev)}
+                    aria-label={`Previous domain: ${prev.title}`}
+                    className="flex size-8 cursor-pointer items-center justify-center rounded-l-full text-white/50 outline-none transition-colors duration-300 focus-visible:text-lime hover:text-white sm:size-9"
+                  >
+                    <ChevronLeft size={16} strokeWidth={2} aria-hidden="true" />
+                  </button>
+                  <span className="h-4 w-px bg-white/10" aria-hidden="true" />
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(next)}
+                    aria-label={`Next domain: ${next.title}`}
+                    className="flex size-8 cursor-pointer items-center justify-center rounded-r-full text-white/50 outline-none transition-colors duration-300 focus-visible:text-lime hover:text-white sm:size-9"
+                  >
+                    <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+              <span className="flex size-12 items-center justify-center rounded-full border border-lime/20 bg-lime/[0.06] text-lime md:size-14">
+                <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+              </span>
+            </div>
           </div>
 
           <div className="relative">
@@ -69,7 +154,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </div>
 
       {/* ── Lead: Overview → Central Challenge → What Counts as One Problem ── */}
-      <section className="container mx-auto px-5 pt-20 md:px-10 md:pt-28">
+      <section data-brief-body className="container mx-auto px-5 pt-12 sm:pt-20 md:px-10 md:pt-28">
         <div className="flex max-w-[46rem] flex-col gap-5">
           {domain.intro.map((paragraph, i) => (
             <p
@@ -88,7 +173,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── Who you're building for ─────────────────────────────────────── */}
-      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+      <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <SectionHead title="Who you're building for" sub={domain.audienceLine} />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {domain.audiences.map((a) => (
@@ -107,7 +192,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── Representative problems ──────────────────────────────────────── */}
-      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+      <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHead title="Representative problems" />
           <p data-reveal className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/40">
@@ -136,7 +221,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── What a strong solution must demonstrate ─────────────────────── */}
-      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+      <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <SectionHead
           title="What a strong solution must demonstrate"
           sub="The same six qualities apply in every domain; what changes is what each one means here."
@@ -159,7 +244,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── Primary measure of success ──────────────────────────────────── */}
-      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+      <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div data-reveal className="bezel bezel--lime">
           <div className="bezel-core p-8 md:p-14">
             <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-lime/80">
@@ -184,7 +269,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── Scope & pitfalls ─────────────────────────────────────────────── */}
-      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+      <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div data-reveal className="mb-14">
           <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/40">In scope</p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -245,8 +330,24 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
+      {/* ── Keep exploring: the adjacent domains ────────────────────────── */}
+      {hasPager && (
+        <section data-brief-body className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+          <p
+            data-reveal
+            className="border-t border-white/[0.06] pt-10 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/40"
+          >
+            Not this one?
+          </p>
+          <div data-reveal className="mt-6 grid gap-4 sm:grid-cols-2">
+            <PagerCard domain={prev} direction="prev" onNavigate={onNavigate} />
+            <PagerCard domain={next} direction="next" onNavigate={onNavigate} />
+          </div>
+        </section>
+      )}
+
       {/* ── Close ───────────────────────────────────────────────────────── */}
-      <section className="container mx-auto px-5 pb-28 pt-24 md:px-10 md:py-32">
+      <section data-brief-body className="container mx-auto px-5 pb-28 pt-24 md:px-10 md:py-32">
         <div
           data-reveal
           className="flex flex-col items-start gap-8 border-t border-white/[0.06] pt-16 md:flex-row md:items-end md:justify-between md:pt-20"
