@@ -1,24 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, FileDown, X } from "lucide-react";
-import AmpTitle from "./AmpTitle";
-
-gsap.registerPlugin(ScrollTrigger);
-
-const SectionHead = ({ title, sub }) => (
-  <div data-reveal>
-    <h2 className="max-w-[24ch] text-balance font-display text-[clamp(1.9rem,4vw,2.9rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-white">
-      {title}
-    </h2>
-    {sub && (
-      <p className="mt-3 max-w-[38rem] font-general text-[0.95rem] leading-[1.75] text-white/60">
-        {sub}
-      </p>
-    )}
-  </div>
-);
+import DomainTitle from "./DomainTitle";
+import SectionHead from "./SectionHead";
+import { useScrollReveal } from "../../lib/useScrollReveal";
 
 // The long-form brief a card expands into. The hero panel carries the same
 // data-flip-id as its card so the page can morph one into the other; the
@@ -28,32 +13,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
   const rootRef = useRef(null);
   const Icon = domain.icon;
   const hasLinks = Boolean(domain.links?.guide || domain.links?.pdf);
-
-  useEffect(() => {
-    if (!settled) return undefined;
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      rootRef.current?.querySelectorAll("[data-reveal]").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 26 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.65,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 88%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
-    });
-    ScrollTrigger.refresh();
-    return () => mm.revert();
-  }, [settled, domain.slug]);
+  useScrollReveal(rootRef, settled, [domain.slug]);
 
   return (
     <article ref={rootRef}>
@@ -83,13 +43,13 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
 
           <div className="relative">
             <p data-hero-fade className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-lime/80">
-              Domain brief
+              Domain {String(domain.number).padStart(2, "0")}
             </p>
             <h1
               data-hero-fade
-              className="special-font mt-4 max-w-[16ch] text-balance font-display text-[clamp(2.4rem,6.5vw,5.5rem)] leading-[0.98] tracking-[-0.02em] text-white"
+              className="special-font mt-4 max-w-[18ch] text-balance font-display text-[clamp(2.2rem,6vw,5rem)] leading-[0.98] tracking-[-0.02em] text-white"
             >
-              <AmpTitle title={domain.title} />
+              <DomainTitle title={domain.fullTitle || domain.title} />
             </h1>
             <p
               data-hero-fade
@@ -108,24 +68,28 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </div>
 
-      {/* ── Lead ────────────────────────────────────────────────────────── */}
+      {/* ── Lead: Overview → Central Challenge → What Counts as One Problem ── */}
       <section className="container mx-auto px-5 pt-20 md:px-10 md:pt-28">
-        <div data-reveal className="max-w-[46rem]">
-          <p className="font-general text-[1.05rem] leading-[1.85] text-white/85 md:text-[1.15rem]">
-            {domain.intro[0]}
-          </p>
-          <p className="mt-5 font-general text-[0.98rem] leading-[1.85] text-white/60 md:text-[1.02rem]">
-            {domain.intro[1]}
-          </p>
+        <div className="flex max-w-[46rem] flex-col gap-5">
+          {domain.intro.map((paragraph, i) => (
+            <p
+              key={paragraph.slice(0, 24)}
+              data-reveal
+              className={
+                i === 0
+                  ? "font-general text-[1.05rem] leading-[1.85] text-white/85 md:text-[1.15rem]"
+                  : "font-general text-[0.95rem] leading-[1.85] text-white/60 md:text-[1rem]"
+              }
+            >
+              {paragraph}
+            </p>
+          ))}
         </div>
       </section>
 
       {/* ── Who you're building for ─────────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
-        <SectionHead
-          title="Who you're building for"
-          sub="Not personas — people you can find and talk to before the event."
-        />
+        <SectionHead title="Who you're building for" sub={domain.audienceLine} />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {domain.audiences.map((a) => (
             <div
@@ -142,12 +106,12 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
-      {/* ── Example problems ────────────────────────────────────────────── */}
+      {/* ── Representative problems ──────────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionHead title="Problems worth 30 hours" />
+          <SectionHead title="Representative problems" />
           <p data-reveal className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/40">
-            Representative, not exhaustive
+            Illustrative, not exhaustive
           </p>
         </div>
         <div className="mt-10 border-t border-white/[0.06]">
@@ -160,7 +124,35 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
               <h3 className="font-general text-[clamp(1.1rem,2vw,1.35rem)] font-extrabold leading-[1.2] tracking-[-0.01em] text-white transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-2">
                 {p.title}
               </h3>
-              <p className="font-general text-[0.95rem] leading-[1.78] text-white/70">{p.body}</p>
+              <div>
+                <p className="font-general text-[0.95rem] leading-[1.78] text-white/70">{p.body}</p>
+                <p className="mt-2.5 font-general text-[0.9rem] italic leading-[1.7] text-white/50">
+                  {p.solution}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── What a strong solution must demonstrate ─────────────────────── */}
+      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+        <SectionHead
+          title="What a strong solution must demonstrate"
+          sub="The same six qualities apply in every domain; what changes is what each one means here."
+        />
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {domain.mustDemonstrate.map((m, i) => (
+            <div
+              key={m.label}
+              data-reveal
+              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5"
+            >
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-lime/70">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <p className="mt-2 font-general text-[0.95rem] font-bold text-white">{m.label}</p>
+              <p className="mt-1.5 font-general text-[0.85rem] leading-[1.65] text-white/55">{m.body}</p>
             </div>
           ))}
         </div>
@@ -173,14 +165,11 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-lime/80">
               Primary measure of success
             </p>
-            <p className="mt-5 max-w-[22ch] text-balance font-display text-[clamp(1.7rem,3.6vw,2.9rem)] font-semibold leading-[1.08] tracking-[-0.02em] text-white">
+            <p className="mt-5 max-w-[26ch] text-balance font-display text-[clamp(1.5rem,3.2vw,2.5rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-white">
               {domain.success.statement}
             </p>
-            <p className="mt-5 max-w-[44rem] font-general text-[0.98rem] leading-[1.8] text-white/70">
-              {domain.success.detail}
-            </p>
-            <ul className="mt-8 grid gap-4 md:grid-cols-3 md:gap-6">
-              {domain.success.signals.map((s) => (
+            <ul className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {domain.success.measures.map((s) => (
                 <li
                   key={s}
                   className="flex gap-3 font-general text-[0.9rem] leading-[1.65] text-white/65"
@@ -194,30 +183,65 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
-      {/* ── Common pitfalls ─────────────────────────────────────────────── */}
+      {/* ── Scope & pitfalls ─────────────────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+        <div data-reveal className="mb-14">
+          <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/40">In scope</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {domain.inScope.map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-general text-[0.78rem] text-white/60"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <SectionHead
           title="Ideas that won't survive judging"
-          sub="Some are merely insufficient without a substantial new capability; some are not permitted at all. If your idea is on this list, push it one level deeper."
+          sub="Some are merely insufficient without a substantial new capability; some are not permitted at all."
         />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {domain.pitfalls.map((p) => (
-            <div
-              key={p.title}
-              data-reveal
-              className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors duration-300 hover:border-white/[0.16]"
-            >
-              <div className="flex items-center gap-3">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/45">
-                  <X size={13} strokeWidth={2.25} aria-hidden="true" />
-                </span>
-                <h3 className="font-general text-[1rem] font-bold text-white">{p.title}</h3>
-              </div>
-              <p className="mt-3 font-general text-[0.88rem] leading-[1.7] text-white/55">
-                {p.body}
-              </p>
-            </div>
-          ))}
+
+        <div data-reveal className="mt-10 rounded-2xl border border-lime/20 bg-lime/[0.04] p-6 md:p-7">
+          <p className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-lime/80">
+            Most common way teams fail here
+          </p>
+          <p className="mt-2 font-general text-[1.02rem] font-bold text-white">
+            {domain.pitfalls.mostCommon}
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-8 md:grid-cols-2">
+          <div data-reveal>
+            <p className="mb-3 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-white/45">
+              Insufficient without a substantial new capability
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {domain.pitfalls.insufficient.map((item) => (
+                <li key={item} className="flex gap-2.5 font-general text-[0.88rem] leading-[1.6] text-white/60">
+                  <span className="mt-[0.5em] size-[5px] shrink-0 rounded-full bg-white/25" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div data-reveal>
+            <p className="mb-3 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-white/45">
+              Not permitted in any form
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {domain.pitfalls.notPermitted.map((item) => (
+                <li key={item} className="flex gap-2.5 font-general text-[0.88rem] leading-[1.6] text-white/60">
+                  <span className="mt-[0.15em] flex size-[16px] shrink-0 items-center justify-center rounded-full border border-white/15 text-white/45">
+                    <X size={9} strokeWidth={2.5} aria-hidden="true" />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ArrowUpRight } from "lucide-react";
-import AmpTitle from "./AmpTitle";
+import DomainTitle from "./DomainTitle";
 
 // One domain tile in the picker field. Owns its ambient drift (paused on
 // hover, frozen while a page transition runs) and hands its panel element
@@ -78,8 +78,13 @@ const DomainCard = ({ domain, className, floatActive, motionOK, onSelect, wrappe
           <div className="pointer-events-none absolute -right-24 -top-28 size-72 rounded-full bg-lime/[0.05] opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
 
           <div className="relative flex items-start justify-between">
-            <span className="flex size-12 items-center justify-center rounded-full border border-lime/20 bg-lime/[0.06] text-lime">
-              <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+            <span className="flex items-center gap-3">
+              <span className="flex size-12 items-center justify-center rounded-full border border-lime/20 bg-lime/[0.06] text-lime">
+                <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+              </span>
+              <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-white/30">
+                {String(domain.number).padStart(2, "0")}
+              </span>
             </span>
             <ArrowUpRight
               size={18}
@@ -90,8 +95,8 @@ const DomainCard = ({ domain, className, floatActive, motionOK, onSelect, wrappe
           </div>
 
           <div className="relative">
-            <h3 className="special-font max-w-[13ch] text-balance font-display text-[clamp(1.6rem,2.4vw,2.05rem)] leading-[1.05] tracking-[-0.02em] text-white">
-              <AmpTitle title={domain.title} />
+            <h3 className="special-font max-w-[16ch] text-balance font-display text-[clamp(1.5rem,2.2vw,1.9rem)] leading-[1.08] tracking-[-0.02em] text-white">
+              <DomainTitle title={domain.title} />
             </h3>
             <div className="pointer-events-none mt-4 translate-y-3 opacity-0 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100">
               <p className="max-w-[34ch] font-general text-[0.92rem] leading-[1.7] text-white/60">

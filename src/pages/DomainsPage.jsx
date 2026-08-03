@@ -5,16 +5,20 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
 import { ArrowUpRight } from "lucide-react";
-import { DOMAINS } from "../lib/domains";
+import { ANALYTICS_APPENDIX, DOMAINS, EXPECTATIONS } from "../lib/domains";
 import DomainCard from "../components/domains/DomainCard";
 import DomainDetail from "../components/domains/DomainDetail";
+import DomainComparison from "../components/domains/DomainComparison";
+import ExpectationsSection from "../components/domains/ExpectationsSection";
+import AppendixSection from "../components/domains/AppendixSection";
 import ScrollProgress from "../components/ScrollProgress";
 import Footer from "../components/Footer";
 import { usePageMeta } from "../lib/seo";
 
 gsap.registerPlugin(ScrollTrigger, Flip);
 
-// /domains — the picker field. /domains/:slug — one domain expanded into a
+// /domains — the picker: intro, comparison matrix, domain cards, shared
+// expectations, appendix. /domains/:slug — one domain expanded into a
 // long-form brief. One component serves both routes so selection is pure
 // URL state: deep links, back/forward and Escape all resolve the same way.
 //
@@ -22,7 +26,10 @@ gsap.registerPlugin(ScrollTrigger, Flip);
 // detail hero panel (they share a data-flip-id). While it runs, the detail
 // lives in a fixed overlay above the picker; once settled it re-renders in
 // normal document flow and the picker is hidden. Collapse reverses it.
-// Reduced motion skips the morphs entirely.
+// Reduced motion skips the morphs entirely. Selecting a domain from the
+// comparison matrix reuses the same morph — it just scrolls the matching
+// card into place first, then hands off to the same expand path a direct
+// card click takes.
 const DomainsPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -43,6 +50,9 @@ const DomainsPage = () => {
 
   const lenisRef = useRef(null);
   const pickerHeroRef = useRef(null);
+  const comparisonRef = useRef(null);
+  const expectationsRef = useRef(null);
+  const appendixRef = useRef(null);
   const cardWrapperRefs = useRef({});
   const cardPanelRefs = useRef({});
   const heroPanelRef = useRef(null);
@@ -82,9 +92,18 @@ const DomainsPage = () => {
     else window.scrollTo(0, 0);
   };
 
+  // Every element that fades as a group when a domain expands or collapses:
+  // the hero intro plus the comparison, expectations and appendix sections
+  // flanking the card grid. The grid's own cards animate separately (blur +
+  // scale) so the picker keeps its one signature move on the cards alone.
+  const auxEls = () =>
+    [pickerHeroRef.current, comparisonRef.current, expectationsRef.current, appendixRef.current].filter(
+      Boolean
+    );
+
   const resetPickerVisuals = () => {
     const els = [
-      pickerHeroRef.current,
+      ...auxEls(),
       ...Object.values(cardWrapperRefs.current),
       ...Object.values(cardPanelRefs.current),
     ].filter(Boolean);
@@ -138,7 +157,7 @@ const DomainsPage = () => {
     gsap.set(cardEl, { autoAlpha: 0 });
     const tl = gsap.timeline({ onComplete: () => setPhase("detail") });
     tl.to(siblings, { autoAlpha: 0, scale: 0.94, filter: "blur(10px)", duration: 0.55, ease: "power2.out", stagger: 0.05 }, 0);
-    tl.to(pickerHeroRef.current, { autoAlpha: 0, y: -24, duration: 0.5, ease: "power2.out" }, 0);
+    tl.to(auxEls(), { autoAlpha: 0, y: -24, duration: 0.5, ease: "power2.out" }, 0);
     tl.to(backdropRef.current, { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, 0.1);
     tl.add(
       Flip.from(state, {
@@ -179,10 +198,11 @@ const DomainsPage = () => {
       .filter(([s, el]) => s !== shownDomain.slug && el)
       .map(([, el]) => el);
     const heroFadeEls = heroPanelRef.current.querySelectorAll("[data-hero-fade]");
+    const aux = auxEls();
 
     gsap.set(backdropRef.current, { autoAlpha: 1 });
     gsap.set(wrappers, { y: 0, rotation: 0 });
-    gsap.set(pickerHeroRef.current, { autoAlpha: 0, y: -24 });
+    gsap.set(aux, { autoAlpha: 0, y: -24 });
     gsap.set(siblings, { autoAlpha: 0, scale: 0.94, filter: "blur(10px)" });
     gsap.set(cardEl, { autoAlpha: 0 });
 
@@ -202,7 +222,7 @@ const DomainsPage = () => {
       0.08
     );
     tl.to(backdropRef.current, { autoAlpha: 0, duration: 0.5, ease: "power2.out" }, 0.15);
-    tl.to(pickerHeroRef.current, { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.3);
+    tl.to(aux, { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.3);
     tl.to(siblings, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.6, ease: "power2.out", stagger: 0.05 }, 0.3);
     tl.to(heroPanelRef.current, { autoAlpha: 0, duration: 0.16, ease: "power1.out" }, 0.78);
     tl.to(cardEl, { autoAlpha: 1, duration: 0.22, ease: "power1.out" }, 0.8);
@@ -238,6 +258,30 @@ const DomainsPage = () => {
     if (phaseRef.current !== "picker") return;
     if (!reduced && panelEl) flipStateRef.current = Flip.getState(panelEl);
     navigate(`/domains/${dom.slug}`);
+  };
+
+  // Entry point for the comparison matrix: scroll the matching card into
+  // place first (it may be off-screen), then hand off to the exact same
+  // Flip-based expand path a direct card click takes.
+  const handleExplore = (dom) => {
+    if (phaseRef.current !== "picker") return;
+    const cardEl = cardPanelRefs.current[dom.slug];
+    if (!cardEl) {
+      navigate(`/domains/${dom.slug}`);
+      return;
+    }
+    if (reduced || !lenisRef.current) {
+      navigate(`/domains/${dom.slug}`);
+      return;
+    }
+    lenisRef.current.scrollTo(cardEl, {
+      offset: -140,
+      duration: 0.9,
+      onComplete: () => {
+        flipStateRef.current = Flip.getState(cardEl);
+        navigate(`/domains/${dom.slug}`);
+      },
+    });
   };
 
   const handleBack = () => {
@@ -295,7 +339,7 @@ const DomainsPage = () => {
           </div>
         </header>
 
-        {/* ── Picker ──────────────────────────────────────────────────── */}
+        {/* ── Picker: intro → comparison → domain cards → expectations → appendix ── */}
         <section
           hidden={isDetailSettled}
           aria-hidden={!isPicker}
@@ -307,12 +351,15 @@ const DomainsPage = () => {
               Choose your d<b>o</b>main<b>.</b>
             </h1>
             <p className="mt-6 max-w-xl font-general text-base leading-[1.8] text-white/75 md:text-lg">
-              Projects may draw on more than one domain. Open each brief, then pick the
-              single domain that best represents your central problem — and the primary
-              outcome you intend to improve.
+              Startathon is a problem-first event. The four domains below are opportunity
+              areas, not fixed problem statements — understand how they differ before you
+              pick where your idea belongs.
             </p>
           </div>
-          <div className="container mx-auto grid items-start gap-5 px-5 pb-24 pt-10 md:grid-cols-2 md:gap-7 md:px-10 md:pb-32">
+
+          <DomainComparison ref={comparisonRef} domains={DOMAINS} active={isPicker} onExplore={handleExplore} />
+
+          <div className="container mx-auto grid items-start gap-5 px-5 pb-24 pt-16 md:grid-cols-2 md:gap-7 md:px-10 md:pb-32 md:pt-20">
             {DOMAINS.map((d, i) => (
               <DomainCard
                 key={d.slug}
@@ -326,6 +373,9 @@ const DomainsPage = () => {
               />
             ))}
           </div>
+
+          <ExpectationsSection ref={expectationsRef} items={EXPECTATIONS} active={isPicker} />
+          <AppendixSection ref={appendixRef} appendix={ANALYTICS_APPENDIX} active={isPicker} />
         </section>
 
         {/* ── Detail: fixed overlay while morphing, normal flow once settled ── */}
