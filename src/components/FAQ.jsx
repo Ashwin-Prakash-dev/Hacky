@@ -16,7 +16,15 @@ const faqs = [
   },
   {
     q: "What are the problem statements?",
-    a: "Announced when applications open. Real-world problems with real stakes. Not the kind of thing you can solve with a tutorial.",
+    a: "There aren't any. You get four bounded domains, not fixed problem statements: preventive health, intelligent operations, inclusive access, and digital trust. Each brief defines what counts as one problem and how judges measure it. Read all four under Domains, then bring your own problem or adapt one of the examples.",
+  },
+  {
+    q: "Can we start building before the event?",
+    a: "No. Research hard beforehand: interview users, study the domain, learn the tech, sketch. But don't build the core product, implement the main user journey, or deploy anything. You'll declare any prior work at kickoff and record a baseline, and only what you build during the event earns execution credit.",
+  },
+  {
+    q: "Do we need to use AI?",
+    a: "No. Choose the technology that fits the problem. A simple, reliable solution to a real problem scores higher than a sophisticated system with weak user value.",
   },
   {
     q: "How do you pick teams?",

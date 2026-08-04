@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, ArrowLeft, ArrowUpRight, BookOpen, FileDown, X } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpRight, Ban, BookOpen, FileDown, X } from "lucide-react";
 import AmpTitle from "./AmpTitle";
+import { primaryCta } from "../../lib/phase";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,6 +29,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
   const rootRef = useRef(null);
   const Icon = domain.icon;
   const hasLinks = Boolean(domain.links?.guide || domain.links?.pdf);
+  const cta = primaryCta();
 
   useEffect(() => {
     if (!settled) return undefined;
@@ -120,11 +122,34 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
+      {/* ── What counts as one problem ──────────────────────────────────── */}
+      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+        <SectionHead title="What counts as one problem" />
+        <div data-reveal className="mt-10 max-w-[46rem] border-l border-lime/25 pl-6 md:pl-8">
+          <p className="font-general text-[1.02rem] leading-[1.8] text-white/85">
+            {domain.scope.line}
+          </p>
+          <ul className="mt-6 border-t border-white/[0.06]">
+            {domain.scope.examples.map((ex) => (
+              <li
+                key={ex}
+                className="border-b border-white/[0.06] py-3 font-general text-[0.92rem] leading-[1.6] text-white/60"
+              >
+                {ex}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 font-general text-[0.92rem] leading-[1.75] text-white/55">
+            {domain.scope.note}
+          </p>
+        </div>
+      </section>
+
       {/* ── Who you're building for ─────────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <SectionHead
           title="Who you're building for"
-          sub="Not personas — people you can find and talk to before the event."
+          sub="Identify real users you can speak to before the event, not an invented generic audience."
         />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {domain.audiences.map((a) => (
@@ -166,6 +191,28 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
+      {/* ── What a strong solution demonstrates ─────────────────────────── */}
+      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
+        <SectionHead
+          title="What a strong solution demonstrates"
+          sub="The same six dimensions in all four domains. Judges read your project against them."
+        />
+        <div className="mt-10 border-t border-white/[0.06]">
+          {domain.demonstrates.map((d) => (
+            <div
+              key={d.label}
+              data-reveal
+              className="grid gap-2 border-b border-white/[0.06] py-6 md:grid-cols-[1fr_2.2fr] md:gap-12 md:py-7"
+            >
+              <h3 className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-lime/80">
+                {d.label}
+              </h3>
+              <p className="font-general text-[0.95rem] leading-[1.75] text-white/70">{d.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Primary measure of success ──────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div data-reveal className="bezel bezel--lime">
@@ -194,14 +241,14 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
-      {/* ── Common pitfalls ─────────────────────────────────────────────── */}
+      {/* ── Allowed, but too shallow ────────────────────────────────────── */}
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <SectionHead
-          title="Ideas that won't survive judging"
-          sub="Some are merely insufficient without a substantial new capability; some are not permitted at all. If your idea is on this list, push it one level deeper."
+          title="Ideas that need to go deeper"
+          sub="These are allowed, but insufficient on their own. If your idea is here, push it one level further before you commit to it."
         />
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {domain.pitfalls.map((p) => (
+          {domain.insufficient.map((p) => (
             <div
               key={p.title}
               data-reveal
@@ -221,6 +268,59 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
         </div>
       </section>
 
+      {/* ── Hard boundary ───────────────────────────────────────────────── */}
+      <section className="container mx-auto px-5 pt-20 md:px-10 md:pt-24">
+        <SectionHead
+          title="Not permitted"
+          sub="Out of scope in any form, however well it is built. A project resting on any of these cannot be judged."
+        />
+        <div data-reveal className="bezel mt-10">
+          <div className="bezel-core p-7 md:p-10">
+            <ul className="grid gap-4 sm:grid-cols-2 sm:gap-x-10">
+              {domain.prohibited.map((p) => (
+                <li
+                  key={p}
+                  className="flex gap-3 font-general text-[0.95rem] leading-[1.6] text-white/80"
+                >
+                  <Ban
+                    size={15}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="mt-[0.3em] shrink-0 text-white/35"
+                  />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── The standards above every domain ────────────────────────────── */}
+      <section className="container mx-auto px-5 pt-20 md:px-10 md:pt-24">
+        <Link
+          to="/domains#expectations"
+          data-reveal
+          className="group flex flex-wrap items-center justify-between gap-6 border-y border-white/[0.08] py-8 no-underline outline-none transition-colors duration-300 focus-visible:border-lime hover:border-lime/25"
+        >
+          <div>
+            <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-lime/80">
+              Before you build
+            </p>
+            <p className="mt-2.5 max-w-[46ch] font-general text-[1.05rem] leading-[1.55] text-white">
+              Six expectations apply to every submission, in every domain. Judges will use them
+              to evaluate your project regardless of what you build.
+            </p>
+          </div>
+          <span
+            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/50 transition-colors duration-300 group-hover:border-lime/40 group-hover:text-lime"
+            aria-hidden="true"
+          >
+            <ArrowUpRight size={17} strokeWidth={2} />
+          </span>
+        </Link>
+      </section>
+
       {/* ── Close ───────────────────────────────────────────────────────── */}
       <section className="container mx-auto px-5 pb-28 pt-24 md:px-10 md:py-32">
         <div
@@ -233,10 +333,11 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             </h2>
             <p className="mt-3 max-w-[34rem] font-general text-[0.95rem] leading-[1.75] text-white/60">
               {hasLinks
-                ? "This brief is the short version. The complete guide goes deeper — evaluation rubric, scope boundaries and example datasets — on the web or as a PDF for offline reading."
-                : "You'll pick your domain on the application form — walk in knowing where your idea lives. If this brief matched the problem you can't stop thinking about, this is it."}
+                ? "This brief is the short version. The complete guide goes further: evaluation rubric, scope boundaries and example datasets, on the web or as a PDF for offline reading."
+                : "You'll pick your domain on the application form, so walk in knowing where your idea lives. If this brief matched the problem you can't stop thinking about, this is it."}
             </p>
           </div>
+          <div className="flex flex-col items-start gap-3 md:items-end">
           <div className="flex flex-wrap items-center gap-4">
             {domain.links?.guide && (
               <a href={domain.links.guide} className="cta-pill cta-pill--ghost group">
@@ -257,16 +358,22 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             <Link to="/apply" className="cta-pill group">
               <span className="relative inline-flex overflow-hidden">
                 <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                  Apply with your idea
+                  {cta.label}
                 </span>
                 <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                  Apply with your idea
+                  {cta.label}
                 </span>
               </span>
               <span className="cta-pill-icon" aria-hidden="true">
                 <ArrowUpRight size={15} strokeWidth={2.25} />
               </span>
             </Link>
+          </div>
+            {cta.note && (
+              <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/40">
+                {cta.note}
+              </p>
+            )}
           </div>
         </div>
       </section>

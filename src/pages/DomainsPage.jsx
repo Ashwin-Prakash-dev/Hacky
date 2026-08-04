@@ -1,14 +1,15 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
-import { ArrowUpRight } from "lucide-react";
 import { DOMAINS } from "../lib/domains";
 import DomainCard from "../components/domains/DomainCard";
 import DomainDetail from "../components/domains/DomainDetail";
+import Expectations from "../components/domains/Expectations";
 import ScrollProgress from "../components/ScrollProgress";
+import NavBar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { usePageMeta } from "../lib/seo";
 
@@ -25,6 +26,7 @@ gsap.registerPlugin(ScrollTrigger, Flip);
 // Reduced motion skips the morphs entirely.
 const DomainsPage = () => {
   const { slug } = useParams();
+  const { hash } = useLocation();
   const navigate = useNavigate();
   const domain = slug ? DOMAINS.find((d) => d.slug === slug) : null;
 
@@ -42,6 +44,7 @@ const DomainsPage = () => {
   shownRef.current = shownDomain;
 
   const lenisRef = useRef(null);
+  const pickerRootRef = useRef(null);
   const pickerHeroRef = useRef(null);
   const cardWrapperRefs = useRef({});
   const cardPanelRefs = useRef({});
@@ -57,7 +60,7 @@ const DomainsPage = () => {
       : {
           title: "Choose your domain",
           description:
-            "The four Startathon challenge domains — who each one serves, problems worth 30 hours, and how submissions are judged.",
+            "The four Startathon challenge domains: who each one serves, problems worth 30 hours, and how submissions are judged.",
           path: "/domains",
         }
   );
@@ -71,10 +74,45 @@ const DomainsPage = () => {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
     ScrollTrigger.refresh();
+
+    // Always open at the top. Browsers restore the previous offset on reload,
+    // and a client-side route change keeps whatever offset you left behind,
+    // so both are overridden here. An explicit #hash still wins.
+    const prevRestoration = window.history.scrollRestoration;
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true, force: true });
+    }
+
     return () => {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = prevRestoration || "auto";
+      }
       lenis.destroy();
       gsap.ticker.remove(raf);
     };
+  }, []);
+
+  // Entrance: the hero copy and the card field arrive in one pass on first
+  // load. Cards are animated on their outermost wrapper, because the wrapper
+  // inside it owns the ambient drift and the <Link> inside that is the Flip
+  // morph target. Touching either would fight an existing animation.
+  useEffect(() => {
+    const els = pickerRootRef.current?.querySelectorAll("[data-enter]") ?? [];
+    if (!els.length) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.fromTo(
+        els,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.07, delay: 0.05 }
+      );
+    });
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set(els, { opacity: 1, y: 0 });
+    });
+    return () => mm.revert();
   }, []);
 
   const scrollTop = (immediate = true) => {
@@ -234,6 +272,21 @@ const DomainsPage = () => {
     }
   }, [phase]);
 
+  // `/domains#expectations` — the link every brief closes with. The picker
+  // is hidden while a brief is open and the collapse animation forces the
+  // scroll back to the top, so the jump has to wait for the picker phase
+  // rather than relying on the browser's native hash handling.
+  useEffect(() => {
+    if (phase !== "picker" || hash !== "#expectations") return undefined;
+    const id = requestAnimationFrame(() => {
+      const el = document.getElementById("expectations");
+      if (!el) return;
+      if (lenisRef.current) lenisRef.current.scrollTo(el, { offset: -80, duration: 0.9 });
+      else el.scrollIntoView();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [phase, hash]);
+
   const handleSelect = (dom, panelEl) => {
     if (phaseRef.current !== "picker") return;
     if (!reduced && panelEl) flipStateRef.current = Flip.getState(panelEl);
@@ -269,47 +322,54 @@ const DomainsPage = () => {
     <>
       <ScrollProgress />
       <main className="relative min-h-dvh w-screen overflow-x-clip bg-[#050505]">
-        <header className="nav-shell">
-          <div className="nav-island">
-            <Link to="/" className="nav-logo">
-              Startathon<span className="nav-logo-dot">.</span>
-            </Link>
-            <div className="hidden items-center md:flex">
-              <Link to="/" className="nav-link">
-                Back to site
-              </Link>
-            </div>
-            <Link to="/apply" className="nav-cta group">
-              <span className="relative inline-flex overflow-hidden">
-                <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                  Apply
-                </span>
-                <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                  Apply
-                </span>
-              </span>
-              <span className="nav-cta-icon" aria-hidden="true">
-                <ArrowUpRight size={13} strokeWidth={2.25} />
-              </span>
-            </Link>
-          </div>
-        </header>
+        <NavBar />
 
         {/* ── Picker ──────────────────────────────────────────────────── */}
         <section
+          ref={pickerRootRef}
           hidden={isDetailSettled}
           aria-hidden={!isPicker}
           className={!isPicker ? "pointer-events-none" : undefined}
         >
           <div ref={pickerHeroRef} className="container mx-auto px-5 pb-4 pt-36 md:px-10 md:pt-44">
-            <span className="eyebrow mb-6">Domain briefs</span>
-            <h1 className="special-font max-w-[12ch] font-display text-[clamp(2.6rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.03em] text-white">
-              Choose your d<b>o</b>main<b>.</b>
-            </h1>
-            <p className="mt-6 max-w-xl font-general text-base leading-[1.8] text-white/75 md:text-lg">
-              Projects may draw on more than one domain. Open each brief, then pick the
-              single domain that best represents your central problem — and the primary
-              outcome you intend to improve.
+            <span data-enter className="eyebrow mb-6 opacity-0">
+              Domain briefs
+            </span>
+            <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-16">
+              <h1
+                data-enter
+                className="special-font max-w-[12ch] font-display text-[clamp(2.6rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.03em] text-white opacity-0"
+              >
+                Choose your d<b>o</b>main<b>.</b>
+              </h1>
+              <div data-enter className="max-w-2xl space-y-5 opacity-0 md:pt-3">
+                <p className="font-general text-base leading-[1.8] text-white/85 md:text-lg">
+                  Startathon is a problem-first event. You are expected to identify a meaningful
+                  problem, understand the people and workflows it affects, and build something
+                  testable inside 30 hours.
+                </p>
+                <p className="font-general text-[0.98rem] leading-[1.8] text-white/60">
+                  The four domains below are opportunity areas, not fixed problem statements. Use
+                  the examples in each brief as benchmarks for scope and depth: choose one, adapt
+                  one to a specific user and setting, or propose a different problem within one of
+                  the four domains that is comparable in complexity and real-world significance.
+                </p>
+                <p className="font-general text-[0.98rem] leading-[1.8] text-white/60">
+                  Solutions do not have to use artificial intelligence. Let the problem determine
+                  the technology, not the other way around.
+                </p>
+              </div>
+            </div>
+            <p
+              data-enter
+              className="mt-14 max-w-[54rem] font-general text-[0.95rem] leading-[1.8] text-white/50 opacity-0"
+            >
+              Every brief answers the same five questions in the same order: the outcome it
+              improves, who experiences the problem, which problems fit, how success is measured,
+              and which ideas won&rsquo;t survive judging. Use them to compare the domains, then choose
+              the one whose problems most strongly resonate with your team. Projects may draw on
+              more than one domain; pick the single domain that best represents your central
+              problem.
             </p>
           </div>
           <div className="container mx-auto grid items-start gap-5 px-5 pb-24 pt-10 md:grid-cols-2 md:gap-7 md:px-10 md:pb-32">
@@ -326,6 +386,7 @@ const DomainsPage = () => {
               />
             ))}
           </div>
+          <Expectations />
         </section>
 
         {/* ── Detail: fixed overlay while morphing, normal flow once settled ── */}

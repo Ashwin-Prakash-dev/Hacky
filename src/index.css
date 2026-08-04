@@ -834,6 +834,12 @@ body.lens-lock .cursor-ring::after {
     transform-origin: left center;
   }
 }
+/* Current page: the underline is already drawn, and stays */
+.nav-link--active { color: #fff; }
+.nav-link--active::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
 .nav-cta {
   display: inline-flex;
   align-items: center;

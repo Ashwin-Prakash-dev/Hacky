@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,6 +15,7 @@ import Marquee from "../components/Marquee";
 import TerminalBridge from "../components/TerminalBridge";
 import Briefing from "../components/Briefing";
 import Prizes from "../components/Prizes";
+import DomainsPreview from "../components/DomainsPreview";
 import Timeline from "../components/Timeline";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
@@ -26,6 +28,7 @@ const INTRO_SEEN_KEY = "startathon:intro-seen";
 
 const MainPage = () => {
   usePageMeta({ path: "/" });
+  const { hash } = useLocation();
   const [introComplete, setIntroComplete] = useState(
     () => sessionStorage.getItem(INTRO_SEEN_KEY) === "1"
   );
@@ -59,6 +62,20 @@ const MainPage = () => {
     };
   }, [introComplete]);
 
+  // Sections of this page are linked from other routes as /#faq. Scrolling
+  // has to wait for the intro overlay, which holds Lenis stopped until it
+  // finishes, otherwise the jump is swallowed.
+  useEffect(() => {
+    if (!introComplete || !hash) return undefined;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return undefined;
+    const id = requestAnimationFrame(() => {
+      if (lenisRef.current) lenisRef.current.scrollTo(el, { offset: -80, duration: 0.9 });
+      else el.scrollIntoView({ behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [hash, introComplete]);
+
   return (
     <>
       <ScrollProgress />
@@ -80,6 +97,7 @@ const MainPage = () => {
         <SponsorsSection />
         <Prizes />
         {/* <Briefing /> */}
+        <DomainsPreview />
         <Timeline />
         <VideoCards />
         <StudentHook />
