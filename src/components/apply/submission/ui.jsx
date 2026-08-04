@@ -37,6 +37,20 @@ export const RefLink = ({ to, children }) => (
   </Link>
 );
 
+// The same treatment for a link off the site. A plain anchor, because
+// react-router's Link is for in-app routes and mangles absolute URLs.
+export const ExtLink = ({ href, children }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-[0.3rem] font-mono text-[0.78rem] tracking-[0.04em] text-lime/90 underline underline-offset-[3px] transition-colors duration-200 hover:text-lime"
+  >
+    {children}
+    <ArrowUpRight size={13} strokeWidth={2} aria-hidden="true" />
+  </a>
+);
+
 // The guidance that sits beside a field, drawn from lib/format.js so it can
 // never drift from what /format publishes.
 export const InlineRef = ({ label, items, note, children }) => (

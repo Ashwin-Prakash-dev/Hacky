@@ -2,6 +2,7 @@ import TerminalInput from "../inputs/TerminalInput";
 import LinkCheck from "./LinkCheck";
 import { APPLYING } from "../../../lib/format";
 import {
+  ExtLink,
   InlineRef,
   LockNote,
   ReadOnlyLink,
@@ -53,7 +54,20 @@ const LinksStep = ({ form, errors, onChange, canEdit, leaderName }) => {
       />
       <LinkCheck url={form.deck_url} kind="drive" />
 
-      <InlineRef label="The video" items={APPLYING.video} />
+      <InlineRef label="The video" items={APPLYING.video}>
+        {APPLYING.videoExamples && (
+          <>
+            <p className="mt-3 font-general text-[0.82rem] leading-relaxed text-white/50">
+              {APPLYING.videoExamples.note}
+            </p>
+            <p className="mt-2">
+              <ExtLink href={APPLYING.videoExamples.url}>
+                {APPLYING.videoExamples.label}
+              </ExtLink>
+            </p>
+          </>
+        )}
+      </InlineRef>
 
       <TerminalInput
         label="Sixty-second team video"

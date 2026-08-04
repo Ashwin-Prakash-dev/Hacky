@@ -236,6 +236,19 @@ export const APPLYING = {
     "Explain why your team cares about this problem",
     "Production quality is not evaluated",
   ],
+  // A worked example for the video, since "60 seconds, everyone on camera,
+  // say why you care" is hard to picture from a description. Y Combinator
+  // asks applicants for a comparable one-minute founder intro and publishes
+  // the ones that got in.
+  //
+  // This is somebody else's playlist on somebody else's platform. If it goes
+  // private or moves, delete this key: the link renders only when it exists,
+  // so removing it is the whole fix.
+  videoExamples: {
+    label: "Watch YC application videos",
+    url: "https://www.youtube.com/playlist?list=PLTa6hsGq6YA9qjH-TjS0PwGBRfHCtqp7G",
+    note: "Y Combinator asks applicants for a similar one minute video. Watching a few is the quickest way to get the tone right. Yours is about the problem your team picked, not about raising money.",
+  },
   notRequired: [
     "Detailed architecture",
     "Large feature lists",
