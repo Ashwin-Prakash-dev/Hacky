@@ -1,5 +1,5 @@
-import AnimatedTitle from "./AnimatedTitle";
-import LaptopReveal from "./LaptopReveal";
+import AnimatedTitle from "../ui/AnimatedTitle";
+import LaptopReveal from "../three/LaptopReveal";
 
 const About = () => {
   return (

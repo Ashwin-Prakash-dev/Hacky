@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { loadGis } from "../lib/gis";
-import { api } from "../lib/startathon";
-import { saveAuth, isAuthed } from "../lib/auth";
+import { loadGis } from "../../lib/gis";
+import { api } from "../../lib/startathon";
+import { saveAuth, isAuthed } from "../../lib/auth";
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 

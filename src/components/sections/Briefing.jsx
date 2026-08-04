@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import BriefingPortals from "./BriefingPortals";
+import BriefingPortals from "../three/BriefingPortals";
 
 gsap.registerPlugin(ScrollTrigger);
 

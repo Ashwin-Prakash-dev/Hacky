@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
-import { DOMAINS } from "../lib/domains";
-import AmpTitle from "./domains/AmpTitle";
+import { DOMAINS } from "../../lib/domains";
+import AmpTitle from "../domains/AmpTitle";
 
 gsap.registerPlugin(ScrollTrigger);
 

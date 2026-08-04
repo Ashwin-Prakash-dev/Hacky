@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Footer from "../Footer";
+import Footer from "../sections/Footer";
 
 // Shared chrome for standalone long-form pages (Terms, Privacy, Referral
 // rules). Skips Navbar since its nav links scroll-anchor to homepage

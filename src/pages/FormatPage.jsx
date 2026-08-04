@@ -15,9 +15,9 @@ import {
   WHAT_IT_IS,
 } from "../lib/format";
 import { primaryCta } from "../lib/phase";
-import ScrollProgress from "../components/ScrollProgress";
-import NavBar from "../components/Navbar";
-import Footer from "../components/Footer";
+import ScrollProgress from "../components/ui/ScrollProgress";
+import NavBar from "../components/sections/Navbar";
+import Footer from "../components/sections/Footer";
 import { usePageMeta } from "../lib/seo";
 
 gsap.registerPlugin(ScrollTrigger);

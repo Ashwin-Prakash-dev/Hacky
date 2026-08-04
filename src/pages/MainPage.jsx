@@ -1,37 +1,31 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Intro from "../components/Intro";
-import GoogleOneTap from "../components/GoogleOneTap";
-import CustomCursor from "../components/CustomCursor";
-import ScrollProgress from "../components/ScrollProgress";
-import NavBar from "../components/Navbar";
-import Hero from "../components/Hero";
-import LiquidLens from "../components/LiquidLens";
-import SponsorsSection from "../components/SponsorsSection";
-import Marquee from "../components/Marquee";
-import TerminalBridge from "../components/TerminalBridge";
-import Briefing from "../components/Briefing";
-import Prizes from "../components/Prizes";
-import DomainsPreview from "../components/DomainsPreview";
-import Timeline from "../components/Timeline";
-import FAQ from "../components/FAQ";
-import Contact from "../components/Contact";
-import Footer from "../components/Footer";
-import VideoCards from "../components/VideoCards";
-import StudentHook from "../components/StudentHook";
+import GoogleOneTap from "../components/ui/GoogleOneTap";
+import CustomCursor from "../components/ui/CustomCursor";
+import ScrollProgress from "../components/ui/ScrollProgress";
+import NavBar from "../components/sections/Navbar";
+import Hero from "../components/sections/Hero";
+import LiquidLens from "../components/ui/LiquidLens";
+import SponsorsSection from "../components/sections/SponsorsSection";
+import Marquee from "../components/ui/Marquee";
+import TerminalBridge from "../components/ui/TerminalBridge";
+import Briefing from "../components/sections/Briefing";
+import Prizes from "../components/sections/Prizes";
+import DomainsPreview from "../components/sections/DomainsPreview";
+import Timeline from "../components/sections/Timeline";
+import FAQ from "../components/sections/FAQ";
+import Contact from "../components/sections/Contact";
+import Footer from "../components/sections/Footer";
+import VideoCards from "../components/sections/VideoCards";
+import StudentHook from "../components/sections/StudentHook";
 import { usePageMeta } from "../lib/seo";
-
-const INTRO_SEEN_KEY = "startathon:intro-seen";
 
 const MainPage = () => {
   usePageMeta({ path: "/" });
   const { hash } = useLocation();
-  const [introComplete, setIntroComplete] = useState(
-    () => sessionStorage.getItem(INTRO_SEEN_KEY) === "1"
-  );
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -48,25 +42,11 @@ const MainPage = () => {
     };
   }, []);
 
-  // Keep the page from scrolling behind the fixed intro overlay.
+  // Sections of this page are linked from other routes as /#faq. Lenis owns
+  // the scroll, so the jump goes through it rather than native smooth
+  // scrolling, which the two would otherwise fight over.
   useEffect(() => {
-    if (introComplete) {
-      lenisRef.current?.start();
-      document.body.style.overflow = "";
-    } else {
-      lenisRef.current?.stop();
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [introComplete]);
-
-  // Sections of this page are linked from other routes as /#faq. Scrolling
-  // has to wait for the intro overlay, which holds Lenis stopped until it
-  // finishes, otherwise the jump is swallowed.
-  useEffect(() => {
-    if (!introComplete || !hash) return undefined;
+    if (!hash) return undefined;
     const el = document.getElementById(hash.slice(1));
     if (!el) return undefined;
     const id = requestAnimationFrame(() => {
@@ -74,21 +54,13 @@ const MainPage = () => {
       else el.scrollIntoView({ behavior: "smooth" });
     });
     return () => cancelAnimationFrame(id);
-  }, [hash, introComplete]);
+  }, [hash]);
 
   return (
     <>
       <ScrollProgress />
       {/* <CustomCursor /> */}
-      {!introComplete && (
-        <Intro
-          onComplete={() => {
-            sessionStorage.setItem(INTRO_SEEN_KEY, "1");
-            setIntroComplete(true);
-          }}
-        />
-      )}
-      {introComplete && <GoogleOneTap />}
+      <GoogleOneTap />
       <main className="relative min-h-screen w-screen overflow-x-clip">
         <NavBar />
         {/* the site-wide x-ray lens blob chasing the cursor */}

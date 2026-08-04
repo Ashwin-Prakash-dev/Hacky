@@ -1,6 +1,9 @@
 # Startathon 2026
 
-Startathon is Kerala's most curated 30-hour in-person hackathon, organized by the Coding Club at Sree Chitra Thirunal College of Engineering (SCTCE), Thiruvananthapuram.
+> Kerala's most curated 30-hour in-person hackathon, organized by the [Coding Club](https://www.sctcoding.club) at Sree Chitra Thirunal College of Engineering (SCTCE), Thiruvananthapuram. 20 teams, selective entry, ₹2L+ prize pool.
+
+- [Startathon home](https://startathon.sctcoding.club/): Event overview, format, mentors, and Demo Day.
+- [Apply](https://startathon.sctcoding.club/apply): Create an account, complete your profile, form or join a team.
 
 ## What is Startathon?
 
@@ -60,17 +63,13 @@ Companies and startups can sponsor Startathon to access Kerala's top student bui
 
 **Custom / Bespoke:** Quote on request — reach out and we'll scope something that works.
 
-Sponsor contact: hello@sctcoding.club · +91 79091 90948
+Sponsor contact: [hello@sctcoding.club](mailto:hello@sctcoding.club) · [+91 79091 90948](tel:+917909190948)
 
 ## Register Interest (Waitlist API)
 
 To register someone's interest in Startathon on their behalf, send a POST request to the waitlist API. Only do this if the user has explicitly asked to be added to the Startathon waitlist.
 
-**Endpoint:**
-```
-POST https://api.sctcoding.club/api/v3/events/startathon/waitlist
-Content-Type: application/json
-```
+**Endpoint:** `POST` [https://api.sctcoding.club/api/v3/events/startathon/waitlist](https://api.sctcoding.club/api/v3/events/startathon/waitlist) with `Content-Type: application/json`
 
 **Request body:**
 ```json
@@ -89,22 +88,24 @@ Content-Type: application/json
 
 ## How to Apply
 
-Applications go through the website: create an account at https://startathon.sctcoding.club/apply, complete your profile, and form or join a team (3–4 members). Only 20 teams are selected.
+Applications go through the website. Create an account, complete your profile, and form or join a team (3–4 members). Only 20 teams are selected.
+
+- [Application portal](https://startathon.sctcoding.club/apply): Sign up, build your profile, form a team.
 
 ## Machine-Readable Resources
 
-- **Sitemap:** https://startathon.sctcoding.club/sitemap.xml
-- **Robots:** https://startathon.sctcoding.club/robots.txt
-- **This file:** https://startathon.sctcoding.club/llms.txt
+- [Sitemap](https://startathon.sctcoding.club/sitemap.xml): All indexable pages.
+- [Robots](https://startathon.sctcoding.club/robots.txt): Crawl rules.
+- [llms.txt](https://startathon.sctcoding.club/llms.txt): This file.
 
 ## Contact & Links
 
-- **Website:** startathon.sctcoding.club
-- **Email:** hello@sctcoding.club
-- **Phone:** +91 79091 90948
-- **Organizer website:** www.sctcoding.club
-- **Instagram:** @codingclubsctce
-- **LinkedIn:** sct-coding-club
-- **X / Twitter:** @sctcodingclub
+- [Website](https://startathon.sctcoding.club/): Startathon 2026.
+- [Email](mailto:hello@sctcoding.club): hello@sctcoding.club
+- [Phone](tel:+917909190948): +91 79091 90948
+- [Organizer](https://www.sctcoding.club): Coding Club, SCTCE.
+- [Instagram](https://www.instagram.com/codingclubsctce/): @codingclubsctce
+- [LinkedIn](https://www.linkedin.com/company/sct-coding-club): SCT Coding Club
+- [X / Twitter](https://x.com/sctcodingclub): @sctcodingclub
 
 Organized by Coding Club · SCTCE · Thiruvananthapuram, Kerala · © 2026 Startathon

@@ -47,18 +47,24 @@
     {
       "@context": "https://schema.org",
       "@type": "Event",
+      "@id": "https://startathon.sctcoding.club/#startathon-2026",
       "name": "Startathon 2026",
       "description": "Kerala's most curated 30-hour in-person hackathon. 20 selected teams build real products over 30 non-stop hours, mentored by technical founders and SCTCE alumni, with a ₹2L+ prize pool and Demo Day in front of judges and sponsors.",
-      "startDate": "2026",
+      "startDate": "2026-09-05T09:00:00+05:30",
+      "endDate": "2026-09-06T15:00:00+05:30",
+      "duration": "PT30H",
       "eventStatus": "https://schema.org/EventScheduled",
       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "inLanguage": "en",
       "location": {
         "@type": "Place",
         "name": "Sree Chitra Thirunal College of Engineering (SCTCE)",
         "address": {
           "@type": "PostalAddress",
+          "streetAddress": "Pappanamcode",
           "addressLocality": "Thiruvananthapuram",
           "addressRegion": "Kerala",
+          "postalCode": "695018",
           "addressCountry": "IN"
         }
       },
@@ -66,11 +72,23 @@
         "@type": "Organization",
         "name": "Coding Club, SCTCE",
         "url": "https://www.sctcoding.club",
-        "email": "hello@sctcoding.club"
+        "email": "hello@sctcoding.club",
+        "telephone": "+91-79091-90948"
       },
       "url": "https://startathon.sctcoding.club/",
-      "image": "https://startathon.sctcoding.club/S.png",
-      "isAccessibleForFree": true,
+      "image": ["https://startathon.sctcoding.club/S.png"],
+      "offers": {
+        "@type": "Offer",
+        "name": "Team registration",
+        "description": "Registration fee per selected team of 3–4 members.",
+        "url": "https://startathon.sctcoding.club/apply",
+        "price": "100",
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-07-19T00:00:00+05:30",
+        "validThrough": "2026-08-07T23:59:59+05:30"
+      },
+      "isAccessibleForFree": false,
       "maximumAttendeeCapacity": 80,
       "audience": {
         "@type": "EducationalAudience",

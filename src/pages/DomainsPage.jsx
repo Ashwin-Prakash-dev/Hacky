@@ -8,9 +8,9 @@ import { DOMAINS } from "../lib/domains";
 import DomainCard from "../components/domains/DomainCard";
 import DomainDetail from "../components/domains/DomainDetail";
 import Expectations from "../components/domains/Expectations";
-import ScrollProgress from "../components/ScrollProgress";
-import NavBar from "../components/Navbar";
-import Footer from "../components/Footer";
+import ScrollProgress from "../components/ui/ScrollProgress";
+import NavBar from "../components/sections/Navbar";
+import Footer from "../components/sections/Footer";
 import { usePageMeta } from "../lib/seo";
 
 gsap.registerPlugin(ScrollTrigger, Flip);

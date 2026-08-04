@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import HeroDissolve from "./HeroDissolve";
+import HeroDissolve from "../three/HeroDissolve";
 
 // The hero: one fullscreen video (HeroDissolve, WebGL) that comes apart
 // bottom-up in large mosaic pixels as the pinned hero is scrubbed,

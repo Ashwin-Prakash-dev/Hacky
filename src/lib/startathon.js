@@ -1,4 +1,5 @@
 import { getToken, clearAuth } from "./auth";
+import { getUtm, utmQueryString } from "./utm";
 
 const BASE = import.meta.env.VITE_STARTATHON_API_BASE;
 
@@ -41,16 +42,22 @@ async function request(path, { method = "GET", body } = {}) {
 
 export const api = {
   // auth
-  signup: (fields) => request("/auth/signup", { method: "POST", body: fields }),
+  // The three account-creation calls carry first-touch UTM; login deliberately
+  // does not, so a returning user never overwrites their original attribution.
+  signup: (fields) =>
+    request("/auth/signup", { method: "POST", body: { ...getUtm(), ...fields } }),
   login: (email, password) =>
     request("/auth/login", { method: "POST", body: { email, password } }),
   googleInit: () => request("/auth/google"),
   googleCallback: (code, state) =>
     request(
-      `/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+      `/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}${utmQueryString()}`
     ),
   googleCredential: (credential) =>
-    request("/auth/google/credential", { method: "POST", body: { credential } }),
+    request("/auth/google/credential", {
+      method: "POST",
+      body: { credential, ...getUtm() },
+    }),
   requestReset: (email) =>
     request("/auth/password/reset", { method: "POST", body: { email } }),
   verifyReset: (token, newPassword) =>
