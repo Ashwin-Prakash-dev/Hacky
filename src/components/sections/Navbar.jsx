@@ -1,16 +1,21 @@
 import { useWindowScroll } from "react-use";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
+// The one nav for the whole site. `to` is a route; `id` is a section of the
+// home page, which is reached by hash from anywhere else so the link works
+// off-home too (MainPage scrolls to it once the intro has cleared).
 const navItems = [
-  { label: "Prizes", id: "prizes" },
-  { label: "What is it", id: "what-is-it" },
+  { label: "Domains", to: "/domains" },
+  { label: "Format", to: "/format" },
   { label: "FAQ", id: "faq" },
 ];
 
 const NavBar = () => {
   const { y: currentScrollY } = useWindowScroll();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -27,29 +32,54 @@ const NavBar = () => {
     };
   }, [menuOpen]);
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  // Close the menu whenever a navigation lands.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  const isActive = (item) =>
+    item.to ? pathname === item.to || pathname.startsWith(`${item.to}/`) : false;
+
+  const goToSection = (id) => {
+    if (pathname === "/") {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/#${id}`);
+    }
+  };
+
+  const handleItem = (item) => {
+    setMenuOpen(false);
+    if (item.to) navigate(item.to);
+    else goToSection(item.id);
   };
 
   return (
     <>
       <div className="nav-shell">
         <div className={`nav-island ${scrolled ? "nav-island--scrolled" : ""}`}>
-          <Link to="#" className="nav-logo">
+          <Link to="/" className="nav-logo">
             Startathon<span className="nav-logo-dot">.</span>
           </Link>
 
           {/* Desktop links */}
           <div className="hidden items-center md:flex">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className="nav-link"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) =>
+              item.to ? (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`nav-link ${isActive(item) ? "nav-link--active" : ""}`}
+                  aria-current={isActive(item) ? "page" : undefined}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <button key={item.label} onClick={() => goToSection(item.id)} className="nav-link">
+                  {item.label}
+                </button>
+              )
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -103,13 +133,13 @@ const NavBar = () => {
       >
         <nav className="flex w-full flex-col gap-1 px-[clamp(2rem,8vw,4rem)]">
           {navItems.map((item, i) => (
-            <div key={item.id} className="overflow-hidden">
+            <div key={item.label} className="overflow-hidden">
               <button
-                onClick={() => {
-                  scrollTo(item.id);
-                  setMenuOpen(false);
-                }}
-                className="block w-full cursor-pointer border-none bg-none py-[0.55rem] text-left font-display text-[clamp(2.2rem,9vw,3.2rem)] font-normal leading-none tracking-[0.01em] text-white"
+                onClick={() => handleItem(item)}
+                tabIndex={menuOpen ? 0 : -1}
+                className={`block w-full cursor-pointer border-none bg-none py-[0.55rem] text-left font-display text-[clamp(2.2rem,9vw,3.2rem)] font-normal leading-none tracking-[0.01em] ${
+                  isActive(item) ? "text-lime" : "text-white"
+                }`}
                 style={{
                   opacity: menuOpen ? 1 : 0,
                   transform: menuOpen ? "translateY(0)" : "translateY(110%)",
@@ -125,6 +155,7 @@ const NavBar = () => {
               to="/apply"
               className="cta-pill group"
               onClick={() => setMenuOpen(false)}
+              tabIndex={menuOpen ? 0 : -1}
               style={{
                 opacity: menuOpen ? 1 : 0,
                 transform: menuOpen ? "translateY(0)" : "translateY(110%)",

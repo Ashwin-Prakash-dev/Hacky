@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -13,6 +14,7 @@ import Marquee from "../components/ui/Marquee";
 import TerminalBridge from "../components/ui/TerminalBridge";
 import Briefing from "../components/sections/Briefing";
 import Prizes from "../components/sections/Prizes";
+import DomainsPreview from "../components/sections/DomainsPreview";
 import Timeline from "../components/sections/Timeline";
 import FAQ from "../components/sections/FAQ";
 import Contact from "../components/sections/Contact";
@@ -23,9 +25,12 @@ import { usePageMeta } from "../lib/seo";
 
 const MainPage = () => {
   usePageMeta({ path: "/" });
+  const { hash } = useLocation();
+  const lenisRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
@@ -36,6 +41,20 @@ const MainPage = () => {
       gsap.ticker.remove(raf);
     };
   }, []);
+
+  // Sections of this page are linked from other routes as /#faq. Lenis owns
+  // the scroll, so the jump goes through it rather than native smooth
+  // scrolling, which the two would otherwise fight over.
+  useEffect(() => {
+    if (!hash) return undefined;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return undefined;
+    const id = requestAnimationFrame(() => {
+      if (lenisRef.current) lenisRef.current.scrollTo(el, { offset: -80, duration: 0.9 });
+      else el.scrollIntoView({ behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [hash]);
 
   return (
     <>
@@ -50,6 +69,7 @@ const MainPage = () => {
         <SponsorsSection />
         <Prizes />
         {/* <Briefing /> */}
+        <DomainsPreview />
         <Timeline />
         <VideoCards />
         <StudentHook />
