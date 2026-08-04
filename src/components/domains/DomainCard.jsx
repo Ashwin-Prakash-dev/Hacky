@@ -85,7 +85,7 @@ const DomainCard = ({ domain, className, floatActive, motionOK, onSelect, wrappe
               size={18}
               strokeWidth={2}
               aria-hidden="true"
-              className="text-white/25 transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-lime"
+              className="text-white/45 transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-lime"
             />
           </div>
 

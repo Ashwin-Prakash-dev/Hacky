@@ -50,7 +50,7 @@ const MarkList = ({ label, items, tone = "neutral" }) => (
   <div data-reveal>
     <p
       className={`font-mono text-[0.64rem] uppercase tracking-[0.22em] ${
-        tone === "allowed" ? "text-lime/80" : "text-white/35"
+        tone === "allowed" ? "text-lime/80" : "text-white/55"
       }`}
     >
       {label}
@@ -60,14 +60,14 @@ const MarkList = ({ label, items, tone = "neutral" }) => (
         <li
           key={item}
           className={`flex gap-3 font-general text-[0.93rem] leading-[1.6] ${
-            tone === "barred" ? "text-white/45" : "text-white/75"
+            tone === "barred" ? "text-white/55" : "text-white/75"
           }`}
         >
           {tone === "allowed" && (
             <Check size={14} strokeWidth={2.25} aria-hidden="true" className="mt-[0.3em] shrink-0 text-lime" />
           )}
           {tone === "barred" && (
-            <Ban size={14} strokeWidth={2} aria-hidden="true" className="mt-[0.3em] shrink-0 text-white/25" />
+            <Ban size={14} strokeWidth={2} aria-hidden="true" className="mt-[0.3em] shrink-0 text-white/45" />
           )}
           {tone === "neutral" && (
             <span className="mt-[0.6em] size-[5px] shrink-0 rounded-full bg-white/25" />
@@ -208,7 +208,7 @@ const FormatPage = () => {
         {/* ── What it is not ──────────────────────────────────────────────── */}
         <section className="mt-28 w-full bg-[#0b0b0b] py-20 md:mt-40 md:py-28">
           <div className="container mx-auto px-5 md:px-10">
-            <p data-reveal className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/35">
+            <p data-reveal className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55">
               Things this is not
             </p>
             <ul className="mt-9 grid gap-x-16 gap-y-4 md:grid-cols-2">
@@ -216,7 +216,7 @@ const FormatPage = () => {
                 <li
                   key={n}
                   data-reveal
-                  className="font-display text-[clamp(1.15rem,2.2vw,1.55rem)] leading-tight tracking-[-0.01em] text-white/35 line-through decoration-lime/45 decoration-[1.5px]"
+                  className="font-display text-[clamp(1.15rem,2.2vw,1.55rem)] leading-tight tracking-[-0.01em] text-white/55 line-through decoration-lime/45 decoration-[1.5px]"
                 >
                   {n}
                 </li>
@@ -264,7 +264,7 @@ const FormatPage = () => {
                   </li>
                 ))}
               </ul>
-              <p className="mt-7 font-general text-[0.9rem] leading-[1.75] text-white/50">
+              <p className="mt-7 font-general text-[0.9rem] leading-[1.75] text-white/55">
                 {BEFORE_THE_EVENT.declareNote}
               </p>
             </div>
@@ -355,8 +355,16 @@ const FormatPage = () => {
                 Six dimensions, one scorecard.
               </h2>
               <p className="mt-4 font-general text-[0.98rem] leading-[1.8] text-white/60">
-                Judges score every team on the same six. Complexity on its own earns nothing, and
-                visible effort is not a dimension.
+                This is the scorecard: every team is scored on the same six dimensions. It sits
+                alongside the{" "}
+                <Link
+                  to="/domains#expectations"
+                  className="text-lime underline decoration-lime/40 underline-offset-4 transition-colors duration-300 hover:decoration-lime"
+                >
+                  six expectations
+                </Link>{" "}
+                every submission has to meet in the first place. Complexity on its own earns
+                nothing, and visible effort is not a dimension.
               </p>
             </div>
 
@@ -443,7 +451,7 @@ const FormatPage = () => {
                 </Link>
               </div>
               {cta.note && (
-                <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/40">
+                <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/55">
                   {cta.note}
                 </p>
               )}

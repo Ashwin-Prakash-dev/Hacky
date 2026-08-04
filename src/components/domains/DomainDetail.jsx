@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, ArrowLeft, ArrowUpRight, Ban, BookOpen, FileDown, X } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Ban, BookOpen, FileDown, X } from "lucide-react";
 import AmpTitle from "./AmpTitle";
+import { DOMAINS } from "../../lib/domains";
 import { primaryCta } from "../../lib/phase";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -30,6 +31,11 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
   const Icon = domain.icon;
   const hasLinks = Boolean(domain.links?.guide || domain.links?.pdf);
   const cta = primaryCta();
+
+  // Briefs wrap, so there is always somewhere to go in both directions.
+  const index = DOMAINS.findIndex((d) => d.slug === domain.slug);
+  const prev = DOMAINS[(index - 1 + DOMAINS.length) % DOMAINS.length];
+  const next = DOMAINS[(index + 1) % DOMAINS.length];
 
   useEffect(() => {
     if (!settled) return undefined;
@@ -101,7 +107,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             </p>
             <div
               data-hero-fade
-              className="mt-10 flex items-center gap-2.5 font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/40"
+              className="mt-10 flex items-center gap-2.5 font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55"
             >
               <ArrowDown size={12} strokeWidth={2} aria-hidden="true" className="motion-safe:animate-pulse" />
               Scroll for the brief
@@ -171,7 +177,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHead title="Problems worth 30 hours" />
-          <p data-reveal className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/40">
+          <p data-reveal className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/55">
             Representative, not exhaustive
           </p>
         </div>
@@ -195,7 +201,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <SectionHead
           title="What a strong solution demonstrates"
-          sub="The same six dimensions in all four domains. Judges read your project against them."
+          sub="The same six axes in every domain. What each one requires in practice is what changes."
         />
         <div className="mt-10 border-t border-white/[0.06]">
           {domain.demonstrates.map((d) => (
@@ -255,7 +261,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
               className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 transition-colors duration-300 hover:border-white/[0.16]"
             >
               <div className="flex items-center gap-3">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/45">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/55">
                   <X size={13} strokeWidth={2.25} aria-hidden="true" />
                 </span>
                 <h3 className="font-general text-[1rem] font-bold text-white">{p.title}</h3>
@@ -286,7 +292,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
                     size={15}
                     strokeWidth={2}
                     aria-hidden="true"
-                    className="mt-[0.3em] shrink-0 text-white/35"
+                    className="mt-[0.3em] shrink-0 text-white/55"
                   />
                   {p}
                 </li>
@@ -313,7 +319,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             </p>
           </div>
           <span
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/50 transition-colors duration-300 group-hover:border-lime/40 group-hover:text-lime"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/55 transition-colors duration-300 group-hover:border-lime/40 group-hover:text-lime"
             aria-hidden="true"
           >
             <ArrowUpRight size={17} strokeWidth={2} />
@@ -322,7 +328,7 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
       </section>
 
       {/* ── Close ───────────────────────────────────────────────────────── */}
-      <section className="container mx-auto px-5 pb-28 pt-24 md:px-10 md:py-32">
+      <section className="container mx-auto px-5 pt-24 md:px-10 md:pt-32">
         <div
           data-reveal
           className="flex flex-col items-start gap-8 border-t border-white/[0.06] pt-16 md:flex-row md:items-end md:justify-between md:pt-20"
@@ -370,13 +376,57 @@ const DomainDetail = ({ domain, settled, heroPanelRef, onBack }) => {
             </Link>
           </div>
             {cta.note && (
-              <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/40">
+              <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-white/55">
                 {cta.note}
               </p>
             )}
           </div>
         </div>
       </section>
+
+      {/* ── Prev / next brief ───────────────────────────────────────────── */}
+      <nav
+        aria-label="Other domain briefs"
+        className="container mx-auto px-5 pb-28 pt-20 md:px-10 md:pb-32 md:pt-24"
+      >
+        <div data-reveal className="grid border-y border-white/[0.08] sm:grid-cols-2">
+          <Link
+            to={`/domains/${prev.slug}`}
+            className="group flex flex-col gap-2.5 border-b border-white/[0.08] px-1 py-7 no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.06] hover:bg-lime/[0.02] sm:border-b-0 sm:border-r sm:pr-8"
+          >
+            <span className="inline-flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55">
+              <ArrowLeft
+                size={12}
+                strokeWidth={2}
+                aria-hidden="true"
+                className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-x-1"
+              />
+              Previous domain
+            </span>
+            <span className="special-font font-display text-[clamp(1.15rem,2vw,1.5rem)] leading-tight tracking-[-0.01em] text-white">
+              <AmpTitle title={prev.title} />
+            </span>
+          </Link>
+
+          <Link
+            to={`/domains/${next.slug}`}
+            className="group flex flex-col items-start gap-2.5 px-1 py-7 no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.06] hover:bg-lime/[0.02] sm:items-end sm:pl-8 sm:text-right"
+          >
+            <span className="inline-flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55">
+              Next domain
+              <ArrowRight
+                size={12}
+                strokeWidth={2}
+                aria-hidden="true"
+                className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1"
+              />
+            </span>
+            <span className="special-font font-display text-[clamp(1.15rem,2vw,1.5rem)] leading-tight tracking-[-0.01em] text-white">
+              <AmpTitle title={next.title} />
+            </span>
+          </Link>
+        </div>
+      </nav>
     </article>
   );
 };

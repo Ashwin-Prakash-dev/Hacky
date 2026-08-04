@@ -101,7 +101,7 @@ const DomainsPreview = () => {
                 ref={(el) => (rowRefs.current[i] = el)}
                 className="group grid grid-cols-[2.75rem_1fr] items-start gap-x-5 gap-y-3 border-b border-white/[0.06] py-7 no-underline opacity-0 outline-none transition-colors duration-300 focus-visible:bg-lime/[0.05] hover:bg-lime/[0.018] md:grid-cols-[3.25rem_1.05fr_1.35fr] md:items-center md:gap-x-10 md:py-8"
               >
-                <span className="flex size-11 items-center justify-center rounded-full border border-white/10 text-white/40 transition-colors duration-500 group-hover:border-lime/30 group-hover:text-lime">
+                <span className="flex size-11 items-center justify-center rounded-full border border-white/10 text-white/55 transition-colors duration-500 group-hover:border-lime/30 group-hover:text-lime">
                   <Icon size={19} strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <h3 className="special-font font-display text-[clamp(1.3rem,2.4vw,1.8rem)] leading-[1.1] tracking-[-0.02em] text-white transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-2">

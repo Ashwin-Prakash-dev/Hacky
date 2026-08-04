@@ -270,7 +270,11 @@ const DomainsPage = () => {
       lenisRef.current?.start();
       requestAnimationFrame(() => ScrollTrigger.refresh());
     }
-  }, [phase]);
+    // The slug is a dependency because the prev/next links move between
+    // briefs without leaving the 'detail' phase. Without it this never
+    // re-runs, and you land partway down the next brief still scrolled to
+    // where you were on the last one.
+  }, [phase, shownDomain?.slug]);
 
   // `/domains#expectations` — the link every brief closes with. The picker
   // is hidden while a brief is open and the collapse animation forces the
@@ -362,7 +366,7 @@ const DomainsPage = () => {
             </div>
             <p
               data-enter
-              className="mt-14 max-w-[54rem] font-general text-[0.95rem] leading-[1.8] text-white/50 opacity-0"
+              className="mt-14 max-w-[54rem] font-general text-[0.95rem] leading-[1.8] text-white/55 opacity-0"
             >
               Every brief answers the same five questions in the same order: the outcome it
               improves, who experiences the problem, which problems fit, how success is measured,

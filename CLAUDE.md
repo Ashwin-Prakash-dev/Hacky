@@ -3,8 +3,25 @@
 ## Critical Rules
 
 - **Never run `npm run dev`, `npm run build`, `npm run preview`, or `npm run deploy` unless the user explicitly asks.** Assume a dev server is already running.
+- **Never merge to `main` locally.** See Git & Branching below — this one has no exceptions.
 - Never introduce new dependencies, fonts, or colors without asking first.
 - Prefer editing existing components over creating new ones. Never leave dead code or unused components behind.
+
+## Git & Branching
+
+Work flows in one direction only:
+
+```
+feature branch  →  dev  →  main
+```
+
+- **Branch off `dev`**, not `main`. A feature branch is merged into `dev` first; nothing reaches `main` any other way.
+- **`main` is merged only through GitHub**, via a pull request from `dev`. Never locally.
+- **Never run a local merge, rebase, fast-forward, or push that lands commits on `main`.** No `git checkout main && git merge …`, no `git push origin <branch>:main`. There is no situation where this is the right move, including "it's just a fast-forward" or "the PR is already approved".
+
+If asked to merge to `main` locally, **stop and ask for confirmation twice** — two separate exchanges, each with an explicit yes, not one prompt with two questions. On the first ask, say what the correct path is: open a PR from `dev` on GitHub. Only a clear, repeated yes counts; silence, "sure", or a topic change does not. Even after two confirmations, prefer opening the PR and say so.
+
+Committing and pushing to a feature branch or to `dev` is ordinary work and needs no special confirmation, but still only when the user asks for it.
 
 ## Project Overview
 

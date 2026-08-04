@@ -33,7 +33,7 @@ const Expectations = () => (
             <div>
               <p className="font-general text-[0.95rem] leading-[1.78] text-white/70">{e.body}</p>
               {e.note && (
-                <p className="mt-3.5 font-general text-[0.88rem] leading-[1.7] text-white/45">
+                <p className="mt-3.5 font-general text-[0.88rem] leading-[1.7] text-white/55">
                   {e.note}
                 </p>
               )}
@@ -48,7 +48,7 @@ const Expectations = () => (
       <details className="group border-b border-white/[0.06]">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-6 rounded-2xl py-7 outline-none focus-visible:shadow-[0_0_0_1px_rgba(200,255,0,0.6)] [&::-webkit-details-marker]:hidden">
           <div>
-            <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/40">
+            <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/55">
               Appendix A
             </p>
             <p className="mt-2 max-w-[52ch] font-general text-[1.02rem] leading-[1.55] text-white">
@@ -56,7 +56,7 @@ const Expectations = () => (
             </p>
           </div>
           <span
-            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/10 font-mono text-[0.9rem] leading-none text-white/50 transition-colors duration-300 group-open:border-lime/40 group-open:text-lime"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/10 font-mono text-[0.9rem] leading-none text-white/55 transition-colors duration-300 group-open:border-lime/40 group-open:text-lime"
             aria-hidden="true"
           >
             <span className="group-open:hidden">+</span>
@@ -65,7 +65,7 @@ const Expectations = () => (
         </summary>
 
         <div className="pb-10">
-          <p className="max-w-[46rem] font-general text-[0.92rem] leading-[1.75] text-white/50">
+          <p className="max-w-[46rem] font-general text-[0.92rem] leading-[1.75] text-white/55">
             {ANALYTICS_APPENDIX.applies}
           </p>
           <p className="mt-5 max-w-[46rem] font-general text-[0.98rem] leading-[1.8] text-white/75">
@@ -88,7 +88,7 @@ const Expectations = () => (
 
           <div className="mt-10 grid gap-8 md:grid-cols-2 md:gap-14">
             <div>
-              <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/40">
+              <p className="font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/55">
                 Not sufficient on its own
               </p>
               <ul className="mt-5 grid gap-3">
@@ -101,7 +101,7 @@ const Expectations = () => (
                       size={14}
                       strokeWidth={2}
                       aria-hidden="true"
-                      className="mt-[0.3em] shrink-0 text-white/30"
+                      className="mt-[0.3em] shrink-0 text-white/45"
                     />
                     {n}
                   </li>
