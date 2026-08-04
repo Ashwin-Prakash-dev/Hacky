@@ -4,9 +4,12 @@
 // this file, because it is internal rather than participant-facing:
 //   - mentor staffing rules (who may judge whom, allocation of support)
 //   - the reasoning behind the pre-build checks, as opposed to the checks
-//   - the exact judging weights and checkpoint score split, which the source
-//     document marks as "suggested" and "possible" rather than settled
-// If the weights are confirmed, add them to JUDGING entries as `weight`.
+//   - the per-dimension judging weights and the checkpoint score split
+//
+// The weights are deliberate: they exist and are settled, but the organisers
+// have decided they stay internal. Do not add them to JUDGING entries, and
+// do not surface them in the application flow, even though the dimensions
+// themselves are public. The checkpoint split is unconfirmed as well.
 
 export const WHAT_IT_IS = {
   lead: "Startathon is a compressed simulation of the earliest stage of building a startup: identifying a meaningful problem, reducing uncertainty, building something testable, and explaining why it should continue.",
@@ -39,14 +42,14 @@ export const WHAT_IT_IS = {
       body: "Changing direction is fine when evidence drove it. Be ready to say what you originally believed, what you discovered, why you changed, and what you did differently afterwards.",
     },
     {
-      title: "Progress is what gets scored",
-      body: "Removing important uncertainty, prioritising well, building the right minimum scope and responding to evidence all count. Visible effort and sleep deprivation do not.",
+      title: "Progress and learning are recognised in the scoring",
+      body: "Removing important uncertainty, prioritising well, building the right minimum scope and responding to evidence all count, alongside the quality of what you end up with. Visible effort and sleep deprivation do not.",
     },
   ],
 };
 
 export const BEFORE_THE_EVENT = {
-  lead: "Research before the event is encouraged, and user discovery should mostly happen here. Building the project itself should not.",
+  lead: "Most of your user discovery is meant to happen before kickoff, not during it. Come in knowing the problem, the people it affects and what you still need to find out. The one thing to leave alone is the product itself.",
   allowed: [
     "Interview users and observe their workflows",
     "Research competitors and existing solutions",
@@ -56,12 +59,15 @@ export const BEFORE_THE_EVENT = {
     "Create non-functional sketches",
     "Define your assumptions and the experiments that test them",
   ],
+  // "Conceal an existing implementation" deliberately lives in declareNote
+  // rather than here. It is a disclosure problem, not a timing one, and
+  // mixing it in made this read as a list of bans rather than of things the
+  // 30 hours are actually for.
   notAllowed: [
     "Build the project-specific core product",
     "Implement the main user journey",
     "Deploy the proposed solution",
     "Prepare the final demonstration",
-    "Conceal an existing implementation",
   ],
   declare: [
     "Existing repositories",
@@ -74,7 +80,7 @@ export const BEFORE_THE_EVENT = {
     "Generic reusable components you plan to use",
   ],
   declareNote:
-    "Declared prior work may be used where appropriate, but it earns no in-event execution credit. Undeclared substantial prior work can lead to penalties or disqualification.",
+    "Declaring something does not count against you. Declared prior work can be used where it makes sense, it simply earns no execution credit for the 30 hours. Concealing it is the problem: undeclared substantial prior work can lead to penalties or disqualification.",
 };
 
 export const KICKOFF = {
@@ -88,7 +94,7 @@ export const KICKOFF = {
     "What you plan to build during the event",
   ],
   deltaNote:
-    "Anything already functional at kickoff earns no build-progress credit. Judges score what you created, tested, learned or materially improved during the event, so a polished final product on its own does not guarantee a high score.",
+    "Anything already functional at kickoff earns no build or execution credit. What you create, test and learn during the event is judged alongside the quality of your final reasoning, evidence and product. Arriving well prepared is an advantage, not a handicap.",
   probes: [
     "Why an implementation choice was made",
     "What the limitations and failure cases are",

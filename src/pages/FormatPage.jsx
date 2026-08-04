@@ -200,8 +200,8 @@ const FormatPage = () => {
             data-enter
             className="mt-16 max-w-[44rem] font-general text-[clamp(1.05rem,2vw,1.35rem)] leading-[1.55] text-white/70 opacity-0 md:mt-20"
           >
-            Judges score what changes between your kickoff baseline and your final demo. Not what
-            you arrived with, and not how polished it looks at the end.
+            Judges weigh the quality of your reasoning, your evidence and the working product,
+            together with the progress and learning you can show for the 30 hours.
           </p>
         </section>
 
@@ -242,19 +242,31 @@ const FormatPage = () => {
         </Rail>
 
         {/* ── Before kickoff ──────────────────────────────────────────────── */}
-        <Rail eyebrow="Before kickoff" title="Research hard. Do not build." sub={BEFORE_THE_EVENT.lead}>
+        <Rail
+          eyebrow="Before kickoff"
+          title="Most of the research happens before you arrive"
+          sub={BEFORE_THE_EVENT.lead}
+        >
           <div className="grid gap-10 md:grid-cols-2 md:gap-0">
             <div className="md:pr-10">
-              <MarkList label="You can" items={BEFORE_THE_EVENT.allowed} tone="allowed" />
+              <MarkList
+                label="Do this before you arrive"
+                items={BEFORE_THE_EVENT.allowed}
+                tone="allowed"
+              />
             </div>
             <div className="md:border-l md:border-white/[0.08] md:pl-10">
-              <MarkList label="You cannot" items={BEFORE_THE_EVENT.notAllowed} tone="barred" />
+              <MarkList
+                label="Leave these for the 30 hours"
+                items={BEFORE_THE_EVENT.notAllowed}
+                tone="barred"
+              />
             </div>
           </div>
           <div data-reveal className="bezel mt-14">
             <div className="bezel-core p-7 md:p-9">
               <p className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-lime/80">
-                You must declare, before the event
+                Bring these, and declare them
               </p>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-x-8">
                 {BEFORE_THE_EVENT.declare.map((d) => (
@@ -271,8 +283,8 @@ const FormatPage = () => {
           </div>
         </Rail>
 
-        {/* ── The delta ───────────────────────────────────────────────────── */}
-        <Rail eyebrow="At kickoff" title="You are scored on the delta" sub={KICKOFF.lead}>
+        {/* ── What carries over from before the event ─────────────────────── */}
+        <Rail eyebrow="At kickoff" title="What carries over from before" sub={KICKOFF.lead}>
           <div className="grid gap-10 md:grid-cols-2 md:gap-x-14">
             <MarkList label="Your baseline records" items={KICKOFF.baseline} />
             <MarkList label="Your canvas v0 states" items={KICKOFF.canvas} />
