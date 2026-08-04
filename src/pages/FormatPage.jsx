@@ -53,7 +53,7 @@ const Rail = ({ eyebrow, title, sub, children }) => (
   </section>
 );
 
-const MarkList = ({ label, items, tone = "neutral" }) => (
+const MarkList = ({ label, items, tone = "neutral", children }) => (
   <div data-reveal>
     <p
       className={`font-mono text-[0.64rem] uppercase tracking-[0.22em] ${
@@ -83,6 +83,7 @@ const MarkList = ({ label, items, tone = "neutral" }) => (
         </li>
       ))}
     </ul>
+    {children}
   </div>
 );
 
@@ -431,7 +432,26 @@ const FormatPage = () => {
         <Rail eyebrow="Applying" title="What you submit" sub={APPLYING.lead}>
           <div className="grid gap-10 md:grid-cols-2 md:gap-x-14">
             <MarkList label="Five-slide deck" items={APPLYING.deck} />
-            <MarkList label="Sixty-second team video" items={APPLYING.video} />
+            <MarkList label="Sixty-second team video" items={APPLYING.video}>
+              {/* Rendered only while the key exists, so a dead playlist is
+                  removed from lib/format.js rather than from two components. */}
+              {APPLYING.videoExamples && (
+                <>
+                  <p className="mt-5 font-general text-[0.9rem] leading-[1.75] text-white/55">
+                    {APPLYING.videoExamples.note}
+                  </p>
+                  <a
+                    href={APPLYING.videoExamples.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1.5 font-general text-[0.9rem] text-lime underline decoration-lime/40 underline-offset-4 transition-colors duration-300 hover:decoration-lime"
+                  >
+                    {APPLYING.videoExamples.label}
+                    <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
+                  </a>
+                </>
+              )}
+            </MarkList>
           </div>
           <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-14">
             <MarkList label="What we evaluate" items={APPLYING.evaluation} tone="allowed" />
