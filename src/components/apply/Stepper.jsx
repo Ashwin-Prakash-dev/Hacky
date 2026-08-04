@@ -3,6 +3,7 @@ const STEPS = [
   { key: "phone", label: "Details" },
   { key: "team", label: "Team" },
   { key: "pay", label: "Pay" },
+  { key: "idea", label: "Idea" },
 ];
 
 const Dot = ({ done, active }) => (
@@ -20,7 +21,10 @@ const Dot = ({ done, active }) => (
 
 /**
  * Cross-page progress indicator for the application flow.
- * `current`: "account" | "phone" | "team" | "pay" | "done"
+ * `current`: "account" | "phone" | "team" | "pay" | "idea" | "done"
+ *
+ * "done" means the idea has been submitted, not merely that payment cleared —
+ * a confirmed team that hasn't submitted yet is on "idea".
  */
 const Stepper = ({ current }) => {
   const idx = current === "done" ? STEPS.length : STEPS.findIndex((s) => s.key === current);

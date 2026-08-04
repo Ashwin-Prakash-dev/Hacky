@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
@@ -10,12 +10,14 @@ import PaymentPanel from "../components/apply/team/PaymentPanel";
 import {
   Panel,
   ErrorLine,
+  NoticeLine,
   PrimaryButton,
   GhostButton,
   MonoLink,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
+import { applicationsOpen } from "../lib/phase";
 import { MIN_MEMBERS } from "../lib/teamRules";
 
 const StepLabel = ({ children }) => (
@@ -24,25 +26,45 @@ const StepLabel = ({ children }) => (
   </p>
 );
 
-const IdeaNotice = ({ prominent }) => (
-  <div
-    className={`rounded-md border-[0.5px] px-[1.1rem] py-[0.9rem] ${
-      prominent
-        ? "border-lime/30 bg-lime/[0.06]"
-        : "border-white/[0.08] bg-white/[0.02]"
-    }`}
-  >
-    <p
-      className={`font-general text-[0.85rem] leading-relaxed ${prominent ? "text-lime/85" : "text-white/55"}`}
-    >
-      Applications open soon. Once submissions open, your team will pitch its
-      idea right here.
-    </p>
+// The one entry point to /submission. It appears only in the "done" stage,
+// which is exactly the confirmed-payment state /submission itself requires,
+// so the link is never shown to a team that would just be bounced back.
+const IdeaPanel = () => (
+  <div className="rounded-md border-[0.5px] border-lime/30 bg-lime/[0.06] px-[1.1rem] py-[0.9rem]">
+    {applicationsOpen() ? (
+      <>
+        <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
+          Submissions are open. This is the part that gets you shortlisted: the
+          problem you picked, what convinced you it&rsquo;s real, and a deck and
+          video to show for it.
+        </p>
+        <Link
+          to="/submission"
+          className="mt-4 inline-flex items-center gap-[0.4rem] rounded bg-lime px-6 py-[0.7rem] font-mono text-[0.78rem] font-bold uppercase tracking-[0.14em] text-black no-underline transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-y-[-2px]"
+        >
+          Submit your idea
+          <ArrowRight size={14} />
+        </Link>
+      </>
+    ) : (
+      <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
+        Submissions aren&rsquo;t open yet. When they are, this is where your team
+        pitches its idea.
+      </p>
+    )}
   </div>
 );
 
 const TeamPage = () => {
   const navigate = useNavigate();
+  // /submission bounces people back here with a reason when they aren't
+  // eligible yet, so a shared link doesn't dead-end without explanation.
+  //
+  // Read once into state, then stripped from the history entry below. Router
+  // state outlives the render that consumed it: without the strip, a reload or
+  // a back-navigation resurrects a message that may no longer be true.
+  const location = useLocation();
+  const [redirectNotice, setRedirectNotice] = useState(location.state?.notice ?? "");
   const [team, setTeam] = useState(null);
   const [stage, setStage] = useState(null); // "roster" | "payment" | "done"
   const [loadError, setLoadError] = useState("");
@@ -74,6 +96,12 @@ const TeamPage = () => {
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    if (!location.state?.notice) return;
+    setRedirectNotice(location.state.notice);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location, navigate]);
 
   // Keep the wizard stage consistent with the team's actual state.
   useEffect(() => {
@@ -244,7 +272,6 @@ const TeamPage = () => {
   const memberCount = team.members.length;
   const rosterReady = memberCount >= MIN_MEMBERS;
   const missing = MIN_MEMBERS - memberCount;
-  const fee = team.expected_fee ?? 100;
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -257,12 +284,14 @@ const TeamPage = () => {
   return (
     <AuthShell
       label="TEAM"
-      step={stage === "done" ? "done" : stage === "payment" ? "pay" : "team"}
+      step={stage === "done" ? "idea" : stage === "payment" ? "pay" : "team"}
       right={headerRight}
     >
       <PhaseTransition>
         <div className="flex w-full max-w-[760px] flex-col gap-5">
           {header}
+
+          <NoticeLine>{redirectNotice}</NoticeLine>
 
           {stage === "roster" && (
             <>
@@ -336,13 +365,7 @@ const TeamPage = () => {
 
           {stage === "done" && (
             <>
-              <p className="font-general text-base font-semibold leading-relaxed text-lime">
-                Payment confirmed (₹{fee}). Your team is registered for idea
-                submission. You can still add or remove teammates before
-                submissions open.
-              </p>
-
-              <IdeaNotice prominent />
+              <IdeaPanel />
 
               <TeammatesPanel
                 team={team}

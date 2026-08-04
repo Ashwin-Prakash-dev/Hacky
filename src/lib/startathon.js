@@ -96,4 +96,25 @@ export const api = {
     request("/payment", { method: "POST", body: { transaction_id: transactionId } }),
   applyReferral: (code) =>
     request("/team/referral", { method: "PUT", body: { referral_code: code } }),
+
+  // idea submission
+  // Both PUTs replace the whole record, so callers must send every field —
+  // build bodies with toApplicationPayload / toMemberPayload in lib/submission.js
+  // rather than assembling them by hand.
+  getApplication: () => request("/team/application"),
+  putApplication: (fields) =>
+    request("/team/application", { method: "PUT", body: fields }),
+  putMemberDetails: (userId, fields) =>
+    request(`/team/application/members/${encodeURIComponent(userId)}`, {
+      method: "PUT",
+      body: fields,
+    }),
+
+  // link checks
+  // Advisory only: nothing is stored and PUT /team/application never calls
+  // these. A failed check is a warning beside the field, never a blocker.
+  verifyDriveLink: (url) =>
+    request("/links/verify/drive", { method: "POST", body: { url } }),
+  verifyYoutubeLink: (url) =>
+    request("/links/verify/youtube", { method: "POST", body: { url } }),
 };
