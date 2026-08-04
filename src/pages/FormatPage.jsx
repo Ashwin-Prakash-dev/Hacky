@@ -22,6 +22,13 @@ import { usePageMeta } from "../lib/seo";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Derived, never typed: the scorecard footnote has to stay true if a weight
+// is ever edited, rather than quietly contradicting the figures above it.
+const totalWeight = JUDGING.reduce((sum, j) => sum + j.weight, 0);
+const understandingWeight = JUDGING.filter((j) =>
+  ["Problem insight", "Validation and learning"].includes(j.dimension)
+).reduce((sum, j) => sum + j.weight, 0);
+
 // Sticky section header. The title holds its position while its content
 // scrolls past, which is what gives the page its hierarchy: you always know
 // which of the seven parts you are inside.
@@ -411,9 +418,11 @@ const FormatPage = () => {
             </div>
             <p
               data-reveal
-              className="mt-6 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/55"
+              className="mt-6 font-general text-[0.92rem] leading-[1.7] text-white/55"
             >
-              Total {JUDGING.reduce((sum, j) => sum + j.weight, 0)}%
+              Total {totalWeight}%. Problem insight and validation together carry{" "}
+              {understandingWeight}%, so how well you understand the problem counts for as much as
+              what you build with it.
             </p>
           </div>
         </section>
