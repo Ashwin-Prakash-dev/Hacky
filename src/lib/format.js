@@ -4,12 +4,12 @@
 // this file, because it is internal rather than participant-facing:
 //   - mentor staffing rules (who may judge whom, allocation of support)
 //   - the reasoning behind the pre-build checks, as opposed to the checks
-//   - the per-dimension judging weights and the checkpoint score split
+//   - the checkpoint score split (checkpoint 1 / checkpoint 2 / final), which
+//     the source document still marks as "possible" rather than settled
 //
-// The weights are deliberate: they exist and are settled, but the organisers
-// have decided they stay internal. Do not add them to JUDGING entries, and
-// do not surface them in the application flow, even though the dimensions
-// themselves are public. The checkpoint split is unconfirmed as well.
+// The per-dimension weights below ARE published, confirmed by the organisers.
+// They must sum to 100; the page renders the total from the data so a bad
+// edit shows up on the page rather than silently misleading teams.
 
 export const WHAT_IT_IS = {
   lead: "Startathon is a compressed simulation of the earliest stage of building a startup: identifying a meaningful problem, reducing uncertainty, building something testable, and explaining why it should continue.",
@@ -157,6 +157,7 @@ export const LEARNING_NOTE =
 export const JUDGING = [
   {
     dimension: "Problem insight",
+    weight: 20,
     evaluates: [
       "Clarity of the target user",
       "Importance of the problem",
@@ -166,6 +167,7 @@ export const JUDGING = [
   },
   {
     dimension: "Validation and learning",
+    weight: 20,
     evaluates: [
       "Quality of pre-event research",
       "Importance of the assumption tested during the event",
@@ -176,6 +178,7 @@ export const JUDGING = [
   },
   {
     dimension: "Solution and value proposition",
+    weight: 15,
     evaluates: [
       "Whether the solution addresses the identified problem",
       "Whether the core value is clear",
@@ -184,6 +187,7 @@ export const JUDGING = [
   },
   {
     dimension: "Product and technical execution",
+    weight: 25,
     evaluates: [
       "Functionality of the core workflow",
       "Reliability",
@@ -195,6 +199,7 @@ export const JUDGING = [
   },
   {
     dimension: "Team execution and ownership",
+    weight: 10,
     evaluates: [
       "Prioritisation",
       "Collaboration",
@@ -204,7 +209,8 @@ export const JUDGING = [
     ],
   },
   {
-    dimension: "Communication and continuation",
+    dimension: "Communication and continuation plan",
+    weight: 10,
     evaluates: [
       "Clarity of explanation",
       "Quality of the demonstration",

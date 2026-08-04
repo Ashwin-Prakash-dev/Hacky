@@ -367,8 +367,8 @@ const FormatPage = () => {
                 Six dimensions, one scorecard.
               </h2>
               <p className="mt-4 font-general text-[0.98rem] leading-[1.8] text-white/60">
-                This is the scorecard: every team is scored on the same six dimensions. It sits
-                alongside the{" "}
+                This is the scorecard: every team is scored on the same six dimensions, weighted
+                as shown. It sits alongside the{" "}
                 <Link
                   to="/domains#expectations"
                   className="text-lime underline decoration-lime/40 underline-offset-4 transition-colors duration-300 hover:decoration-lime"
@@ -387,9 +387,14 @@ const FormatPage = () => {
                   data-reveal
                   className="grid gap-5 border-b border-white/[0.08] py-9 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] md:gap-14 md:py-11"
                 >
-                  <h3 className="max-w-[14ch] text-balance font-display text-[clamp(1.4rem,2.6vw,2rem)] leading-[1.05] tracking-[-0.02em] text-white">
-                    {j.dimension}
-                  </h3>
+                  <div>
+                    <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-lime">
+                      {j.weight}%
+                    </p>
+                    <h3 className="mt-2.5 max-w-[14ch] text-balance font-display text-[clamp(1.4rem,2.6vw,2rem)] leading-[1.05] tracking-[-0.02em] text-white">
+                      {j.dimension}
+                    </h3>
+                  </div>
                   <ul className="grid gap-2.5 sm:grid-cols-2 sm:gap-x-8">
                     {j.evaluates.map((e) => (
                       <li
@@ -404,6 +409,12 @@ const FormatPage = () => {
                 </div>
               ))}
             </div>
+            <p
+              data-reveal
+              className="mt-6 font-mono text-[0.66rem] uppercase tracking-[0.22em] text-white/55"
+            >
+              Total {JUDGING.reduce((sum, j) => sum + j.weight, 0)}%
+            </p>
           </div>
         </section>
 

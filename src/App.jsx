@@ -14,6 +14,7 @@ import ForgotPage from "./pages/ForgotPage";
 import ResetPage from "./pages/ResetPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
+import SubmissionPage from "./pages/SubmissionPage";
 import ProfilePage from "./pages/ProfilePage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -45,6 +46,8 @@ function App() {
         <Route element={<RequirePhone />}>
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/team" element={<TeamPage />} />
+          {/* Gated further inside: only a confirmed team, once submissions open. */}
+          <Route path="/submission" element={<SubmissionPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
