@@ -254,3 +254,49 @@ export const APPLYING = {
   resetNote:
     "Your application score is used only for shortlisting. Once the twenty teams enter the main event, competition scores reset to zero.",
 };
+
+// The at-a-glance version, for the reader who wants to know what is being
+// asked of them before reading why. Nothing here is a new fact: every item is
+// APPLYING or FLOW compressed to a single line, in the order a team produces
+// it. Counts are read from the source lists so a summary line cannot quietly
+// disagree with the section that explains it. If an item needs a caveat, the
+// caveat belongs in that section, not here.
+export const HAND_IN = {
+  apply: [
+    {
+      item: `A deck, ${APPLYING.deck.length} slides`,
+      // The five points of APPLYING.deck, compressed.
+      note: "Who has the problem, what happens today, your evidence, your hypothesis, and what you intend to build and validate.",
+    },
+    {
+      item: "A 60-second team video",
+      note: "Every member in it, saying why your team cares about this problem. Production quality is not evaluated.",
+    },
+    {
+      item: "The problem and your evidence, in writing",
+      note: "A title, a short summary and the evidence that the problem is real, entered in the application form.",
+    },
+    {
+      item: "A declaration of prior work",
+      note: "Repositories, prototypes, design files, datasets or earlier versions of the idea you are bringing with you.",
+    },
+  ],
+  event: [
+    {
+      item: "Startup canvas v0 and a baseline record",
+      note: `At kickoff: the ${KICKOFF.canvas.length} canvas fields, plus a demo, screenshots or repository state showing what already exists.`,
+    },
+    {
+      item: "Checkpoint 1: problem and plan",
+      note: "Who the user is, what is still uncertain, the assumption you will test and the smallest useful thing you will build.",
+    },
+    {
+      item: "Checkpoint 2: product learning",
+      note: "What you tested, what happened, what you changed or deliberately did not, and what is left before judging.",
+    },
+    {
+      item: "A working demo and a next step",
+      note: "The core user journey running live, your limitations stated honestly, and the next experiment you would run.",
+    },
+  ],
+};

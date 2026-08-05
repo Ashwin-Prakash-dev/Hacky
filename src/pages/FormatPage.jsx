@@ -8,6 +8,7 @@ import {
   APPLYING,
   BEFORE_THE_EVENT,
   FLOW,
+  HAND_IN,
   JUDGING,
   KICKOFF,
   LEARNING_LOOP,
@@ -80,6 +81,28 @@ const MarkList = ({ label, items, tone = "neutral" }) => (
             <span className="mt-[0.6em] size-[5px] shrink-0 rounded-full bg-white/25" />
           )}
           {item}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+// The summary lists: a term and one line of what it means, divided the same
+// way the judging and principle lists are, so the page reads as one system.
+const HandInList = ({ label, items }) => (
+  <div data-reveal>
+    <p className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55">
+      {label}
+    </p>
+    <ul className="mt-5 border-t border-white/[0.06]">
+      {items.map(({ item, note }) => (
+        <li key={item} className="border-b border-white/[0.06] py-5">
+          <h3 className="font-general text-[0.98rem] font-extrabold leading-tight tracking-[-0.01em] text-white">
+            {item}
+          </h3>
+          <p className="mt-1.5 font-general text-[0.9rem] leading-[1.7] text-white/60">
+            {note}
+          </p>
         </li>
       ))}
     </ul>
@@ -211,6 +234,21 @@ const FormatPage = () => {
             together with the progress and learning you can show for the 30 hours.
           </p>
         </section>
+
+        {/* ── The summary, before the explanation ─────────────────────────── */}
+        <Rail
+          title="What you actually hand in"
+          sub="Two sets of deliverables: one to apply, one during the event if you are shortlisted. The rest of this page is what each of them is judged against."
+        >
+          <div className="grid gap-10 md:grid-cols-2 md:gap-0">
+            <div className="md:pr-10">
+              <HandInList label="To apply" items={HAND_IN.apply} />
+            </div>
+            <div className="md:border-l md:border-white/[0.08] md:pl-10">
+              <HandInList label="At the event, if shortlisted" items={HAND_IN.event} />
+            </div>
+          </div>
+        </Rail>
 
         {/* ── What it is not ──────────────────────────────────────────────── */}
         <section className="mt-28 w-full bg-[#0b0b0b] py-20 md:mt-40 md:py-28">
