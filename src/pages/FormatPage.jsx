@@ -8,7 +8,6 @@ import {
   APPLYING,
   BEFORE_THE_EVENT,
   FLOW,
-  HAND_IN,
   JUDGING,
   KICKOFF,
   LEARNING_LOOP,
@@ -81,28 +80,6 @@ const MarkList = ({ label, items, tone = "neutral" }) => (
             <span className="mt-[0.6em] size-[5px] shrink-0 rounded-full bg-white/25" />
           )}
           {item}
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-// The summary lists: a term and one line of what it means, divided the same
-// way the judging and principle lists are, so the page reads as one system.
-const HandInList = ({ label, items }) => (
-  <div data-reveal>
-    <p className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-white/55">
-      {label}
-    </p>
-    <ul className="mt-5 border-t border-white/[0.06]">
-      {items.map(({ item, note }) => (
-        <li key={item} className="border-b border-white/[0.06] py-5">
-          <h3 className="font-general text-[0.98rem] font-extrabold leading-tight tracking-[-0.01em] text-white">
-            {item}
-          </h3>
-          <p className="mt-1.5 font-general text-[0.9rem] leading-[1.7] text-white/60">
-            {note}
-          </p>
         </li>
       ))}
     </ul>
@@ -235,19 +212,49 @@ const FormatPage = () => {
           </p>
         </section>
 
-        {/* ── The summary, before the explanation ─────────────────────────── */}
-        <Rail
-          title="What you actually hand in"
-          sub="Two sets of deliverables: one to apply, one during the event if you are shortlisted. The rest of this page is what each of them is judged against."
-        >
-          <div className="grid gap-10 md:grid-cols-2 md:gap-0">
-            <div className="md:pr-10">
-              <HandInList label="To apply" items={HAND_IN.apply} />
-            </div>
-            <div className="md:border-l md:border-white/[0.08] md:pl-10">
-              <HandInList label="At the event, if shortlisted" items={HAND_IN.event} />
+        {/* ── Applying: first, because it is what a reader came to find out ─ */}
+        <Rail eyebrow="Applying" title="What you submit" sub={APPLYING.lead}>
+          <div className="grid gap-10 md:grid-cols-2 md:gap-x-14">
+            <MarkList label="Five-slide deck" items={APPLYING.deck} />
+            <div className="flex flex-col gap-8">
+              <MarkList label="Sixty-second team video" items={APPLYING.video} />
+              {/* The one outbound link on the page: examples beat a spec for
+                  the deliverable teams most often get wrong. */}
+              <a
+                data-reveal
+                href={APPLYING.videoReference.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block border-l border-lime/40 bg-lime/[0.03] py-5 pl-6 pr-5 no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.09] hover:bg-lime/[0.07]"
+              >
+                <span className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-lime/80">
+                  Watch these first
+                </span>
+                <span className="mt-3 flex items-start gap-2 font-general text-[1rem] font-extrabold leading-tight tracking-[-0.01em] text-white">
+                  {APPLYING.videoReference.label}
+                  <ArrowUpRight
+                    size={15}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="mt-[0.15em] shrink-0 text-lime transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-visible:-translate-y-0.5 group-focus-visible:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </span>
+                <span className="mt-2 block font-general text-[0.92rem] leading-[1.7] text-white/60">
+                  {APPLYING.videoReference.note}
+                </span>
+              </a>
             </div>
           </div>
+          <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-14">
+            <MarkList label="What we evaluate" items={APPLYING.evaluation} tone="allowed" />
+            <MarkList label="Not required" items={APPLYING.notRequired} tone="barred" />
+          </div>
+          <p
+            data-reveal
+            className="mt-12 border-l border-lime/30 pl-6 font-general text-[1rem] leading-[1.8] text-white/80 md:pl-8"
+          >
+            {APPLYING.resetNote}
+          </p>
         </Rail>
 
         {/* ── What it is not ──────────────────────────────────────────────── */}
@@ -464,51 +471,6 @@ const FormatPage = () => {
             </p>
           </div>
         </section>
-
-        {/* ── Applying ────────────────────────────────────────────────────── */}
-        <Rail eyebrow="Applying" title="What you submit" sub={APPLYING.lead}>
-          <div className="grid gap-10 md:grid-cols-2 md:gap-x-14">
-            <MarkList label="Five-slide deck" items={APPLYING.deck} />
-            <div className="flex flex-col gap-8">
-              <MarkList label="Sixty-second team video" items={APPLYING.video} />
-              {/* The one outbound link on the page: examples beat a spec for
-                  the deliverable teams most often get wrong. */}
-              <a
-                data-reveal
-                href={APPLYING.videoReference.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block border-l border-lime/40 bg-lime/[0.03] py-5 pl-6 pr-5 no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.09] hover:bg-lime/[0.07]"
-              >
-                <span className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-lime/80">
-                  Watch these first
-                </span>
-                <span className="mt-3 flex items-start gap-2 font-general text-[1rem] font-extrabold leading-tight tracking-[-0.01em] text-white">
-                  {APPLYING.videoReference.label}
-                  <ArrowUpRight
-                    size={15}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                    className="mt-[0.15em] shrink-0 text-lime transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-visible:-translate-y-0.5 group-focus-visible:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
-                </span>
-                <span className="mt-2 block font-general text-[0.92rem] leading-[1.7] text-white/60">
-                  {APPLYING.videoReference.note}
-                </span>
-              </a>
-            </div>
-          </div>
-          <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-14">
-            <MarkList label="What we evaluate" items={APPLYING.evaluation} tone="allowed" />
-            <MarkList label="Not required" items={APPLYING.notRequired} tone="barred" />
-          </div>
-          <p
-            data-reveal
-            className="mt-12 border-l border-lime/30 pl-6 font-general text-[1rem] leading-[1.8] text-white/80 md:pl-8"
-          >
-            {APPLYING.resetNote}
-          </p>
-        </Rail>
 
         {/* ── Close ───────────────────────────────────────────────────────── */}
         <section className="container mx-auto px-5 py-28 md:px-10 md:pb-32 md:pt-40">
