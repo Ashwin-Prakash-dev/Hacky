@@ -14,10 +14,13 @@ import ForgotPage from "./pages/ForgotPage";
 import ResetPage from "./pages/ResetPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
+import SubmissionPage from "./pages/SubmissionPage";
 import ProfilePage from "./pages/ProfilePage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import ReferralRulesPage from "./pages/ReferralRulesPage";
+import DomainsPage from "./pages/DomainsPage";
+import FormatPage from "./pages/FormatPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -35,11 +38,16 @@ function App() {
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/referral-program" element={<ReferralRulesPage />} />
+      <Route path="/domains" element={<DomainsPage />} />
+      <Route path="/domains/:slug" element={<DomainsPage />} />
+      <Route path="/format" element={<FormatPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/profile" element={<ProfilePage />} />
         <Route element={<RequirePhone />}>
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/team" element={<TeamPage />} />
+          {/* Gated further inside: only a confirmed team, once submissions open. */}
+          <Route path="/submission" element={<SubmissionPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
