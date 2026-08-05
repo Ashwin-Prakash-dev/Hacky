@@ -236,6 +236,16 @@ export const APPLYING = {
     "Explain why your team cares about this problem",
     "Production quality is not evaluated",
   ],
+  // The video is the piece teams have the least reference for, so the page
+  // points at real ones instead of describing them: Y Combinator application
+  // videos from companies that got in. Same length, same job — the founders on
+  // camera, saying plainly who they are and why this problem. Linked as a
+  // register to aim for, not a template to copy.
+  videoReference: {
+    label: "YC application videos from teams that got in",
+    href: "https://www.youtube.com/playlist?list=PLTa6hsGq6YA9qjH-TjS0PwGBRfHCtqp7G",
+    note: "A minute each, filmed on whatever was to hand. Notice how fast they get to the problem, and that nobody is performing.",
+  },
   notRequired: [
     "Detailed architecture",
     "Large feature lists",

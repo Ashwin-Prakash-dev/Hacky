@@ -469,7 +469,34 @@ const FormatPage = () => {
         <Rail eyebrow="Applying" title="What you submit" sub={APPLYING.lead}>
           <div className="grid gap-10 md:grid-cols-2 md:gap-x-14">
             <MarkList label="Five-slide deck" items={APPLYING.deck} />
-            <MarkList label="Sixty-second team video" items={APPLYING.video} />
+            <div className="flex flex-col gap-8">
+              <MarkList label="Sixty-second team video" items={APPLYING.video} />
+              {/* The one outbound link on the page: examples beat a spec for
+                  the deliverable teams most often get wrong. */}
+              <a
+                data-reveal
+                href={APPLYING.videoReference.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block border-l border-lime/40 bg-lime/[0.03] py-5 pl-6 pr-5 no-underline outline-none transition-colors duration-300 focus-visible:bg-lime/[0.09] hover:bg-lime/[0.07]"
+              >
+                <span className="font-mono text-[0.64rem] uppercase tracking-[0.22em] text-lime/80">
+                  Watch these first
+                </span>
+                <span className="mt-3 flex items-start gap-2 font-general text-[1rem] font-extrabold leading-tight tracking-[-0.01em] text-white">
+                  {APPLYING.videoReference.label}
+                  <ArrowUpRight
+                    size={15}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="mt-[0.15em] shrink-0 text-lime transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-visible:-translate-y-0.5 group-focus-visible:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </span>
+                <span className="mt-2 block font-general text-[0.92rem] leading-[1.7] text-white/60">
+                  {APPLYING.videoReference.note}
+                </span>
+              </a>
+            </div>
           </div>
           <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-14">
             <MarkList label="What we evaluate" items={APPLYING.evaluation} tone="allowed" />
