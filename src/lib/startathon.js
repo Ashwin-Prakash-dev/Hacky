@@ -83,6 +83,10 @@ export const api = {
   leaveTeam: () => request("/team/leave", { method: "POST" }),
   kickMember: (userId) =>
     request(`/team/members/${encodeURIComponent(userId)}/kick`, { method: "POST" }),
+  // The server reads role from the DB per request, so no token refresh is
+  // needed — but your_role is stale for both users until GET /team is refetched.
+  transferLeadership: (userId) =>
+    request("/team/leader", { method: "POST", body: { new_leader_id: userId } }),
 
   // invites (receiving side)
   listInvites: () => request("/invites"),

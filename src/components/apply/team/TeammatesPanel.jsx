@@ -8,9 +8,9 @@ import {
 import { MIN_MEMBERS, MAX_MEMBERS } from "../../../lib/teamRules";
 import RosterMeter from "./RosterMeter";
 
-const MemberRow = ({ member, canKick, busy, onKick }) => (
-  <div className="flex items-center justify-between gap-3 rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-4 py-3">
-    <div className="min-w-0">
+const MemberRow = ({ member, canManage, kickBusy, promoteBusy, onKick, onPromote }) => (
+  <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-4 py-3">
+    <div className="min-w-0 flex-1">
       <p className="font-general text-[0.9rem] font-semibold text-white">
         {member.name}
         {member.role === "leader" && (
@@ -23,10 +23,22 @@ const MemberRow = ({ member, canKick, busy, onKick }) => (
         {member.email}
       </p>
     </div>
-    {canKick && member.role !== "leader" && (
-      <GhostButton danger disabled={busy} onClick={() => onKick(member)}>
-        remove
-      </GhostButton>
+    {canManage && member.role !== "leader" && (
+      <div className="flex shrink-0 items-center gap-4">
+        <GhostButton
+          disabled={kickBusy || promoteBusy}
+          onClick={() => onPromote(member)}
+        >
+          {promoteBusy ? "handing over…" : "make leader"}
+        </GhostButton>
+        <GhostButton
+          danger
+          disabled={kickBusy || promoteBusy}
+          onClick={() => onKick(member)}
+        >
+          {kickBusy ? "removing…" : "remove"}
+        </GhostButton>
+      </div>
     )}
   </div>
 );
@@ -179,7 +191,7 @@ const AddTeammateModal = ({
  * open a modal offering the join code and (for the leader) email invites.
  */
 const TeammatesPanel = ({
-  team, onKick, kickBusyId,
+  team, onKick, kickBusyId, onPromote, promoteBusyId,
   canInvite, onInvite, inviteBusy, inviteError, inviteSentTo,
   onCancelInvite, cancelBusyId,
 }) => {
@@ -188,7 +200,6 @@ const TeammatesPanel = ({
   const count = team.members.length;
   const invites = team.invites ?? [];
   const isLeader = team.your_role === "leader";
-  const canKick = isLeader;
   const canAdd = count < MAX_MEMBERS;
   const openSlots = Math.max(0, MAX_MEMBERS - count - invites.length);
 
@@ -202,8 +213,10 @@ const TeammatesPanel = ({
       <div className="mt-2 flex flex-col gap-2">
         {team.members.map((m) => (
           <MemberRow
-            key={m.user_id} member={m}
-            canKick={canKick} busy={kickBusyId === m.user_id} onKick={onKick}
+            key={m.user_id} member={m} canManage={isLeader}
+            kickBusy={kickBusyId === m.user_id}
+            promoteBusy={promoteBusyId === m.user_id}
+            onKick={onKick} onPromote={onPromote}
           />
         ))}
         {invites.map((inv) => (
