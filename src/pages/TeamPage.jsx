@@ -76,10 +76,12 @@ const TeamPage = () => {
   const [applyRefBusy, setApplyRefBusy] = useState(false);
   const [applyRefError, setApplyRefError] = useState("");
   const [kickBusyId, setKickBusyId] = useState(null);
+  const [promoteBusyId, setPromoteBusyId] = useState(null);
   const [cancelBusyId, setCancelBusyId] = useState(null);
   const [actionError, setActionError] = useState("");
   const [leaveBusy, setLeaveBusy] = useState(false);
-  const [confirm, setConfirm] = useState(null); // { title, body, confirmLabel, action }
+  // { title, body, confirmLabel, danger?, action }
+  const [confirm, setConfirm] = useState(null);
 
   const refresh = useCallback(() => {
     setLoadError("");
@@ -114,6 +116,7 @@ const TeamPage = () => {
 
   const anyBusy = () =>
     kickBusyId ||
+    promoteBusyId ||
     cancelBusyId ||
     inviteBusy ||
     payBusy ||
@@ -168,6 +171,30 @@ const TeamPage = () => {
     });
   };
 
+  const promote = (member) => {
+    if (anyBusy()) return;
+    setConfirm({
+      title: `Make ${member.name} the leader?`,
+      body: "They take over invites, removals and the idea submission. You stay on the roster as an ordinary member, and only they can hand it back.",
+      confirmLabel: "Hand over",
+      danger: false,
+      action: async () => {
+        setConfirm(null);
+        setPromoteBusyId(member.user_id);
+        setActionError("");
+        try {
+          await api.transferLeadership(member.user_id);
+          // your_role is stale for both of us now; the refetch is what fixes it.
+          await refresh();
+        } catch (err) {
+          setActionError(err.message);
+        } finally {
+          setPromoteBusyId(null);
+        }
+      },
+    });
+  };
+
   const cancelInvite = async (inv) => {
     if (anyBusy()) return;
     setCancelBusyId(inv.invite_id);
@@ -216,11 +243,11 @@ const TeamPage = () => {
     const confirmed = team.status === "confirmed";
     const fee = team.expected_fee ?? 100;
     setConfirm({
+      // A leader can only reach this once the team is unpaid: leaving deletes
+      // the team, and the API refuses that after payment (see handOverOnly).
       title: isLeader ? "Disband the team?" : "Leave this team?",
       body: isLeader
-        ? confirmed
-          ? `This deletes the team for everyone and can't be undone. Your ₹${fee} registration fee won't be refunded, and your teammates will have to start over.`
-          : "This deletes the team for everyone and can't be undone. Your teammates will have to start over."
+        ? "This deletes the team for everyone and can't be undone. Your teammates will have to start over."
         : confirmed
           ? `You'll be removed from the roster. Your team's ₹${fee} registration fee has already been paid and won't be refunded to you. You can rejoin later with the join code or a new invite.`
           : "You'll be removed from the roster. You can rejoin later with the join code or a new invite.",
@@ -281,6 +308,39 @@ const TeamPage = () => {
     </div>
   );
 
+  // Leaving deletes the team when the leader does it, so a paid team's leader
+  // has to hand the role over first. Nothing to click here — the way out is
+  // "make leader" on a teammate's row above.
+  const handOverOnly = isLeader && team.status === "confirmed";
+
+  const leaveBlock = (
+    <div className="border-t border-white/[0.06] pt-2">
+      {handOverOnly ? (
+        <p className="font-general text-[0.85rem] leading-relaxed text-white/50">
+          {memberCount > 1 ? (
+            "Your team has already paid, so it can't be deleted. Hand leadership to a teammate above, then leave as an ordinary member."
+          ) : (
+            <>
+              Your team has already paid, so it can&rsquo;t be deleted, and
+              there&rsquo;s no teammate to hand leadership to. Email{" "}
+              <a
+                href="mailto:support@sctcoding.club"
+                className="text-lime/80 underline underline-offset-[3px]"
+              >
+                support@sctcoding.club
+              </a>{" "}
+              if you need to withdraw.
+            </>
+          )}
+        </p>
+      ) : (
+        <GhostButton danger disabled={leaveBusy} onClick={leave}>
+          {isLeader ? "Disband team" : "Leave team"}
+        </GhostButton>
+      )}
+    </div>
+  );
+
   return (
     <AuthShell
       label="TEAM"
@@ -306,6 +366,8 @@ const TeamPage = () => {
                 inviteSentTo={inviteSentTo}
                 onCancelInvite={cancelInvite}
                 cancelBusyId={cancelBusyId}
+                onPromote={promote}
+                promoteBusyId={promoteBusyId}
               />
 
               <PrimaryButton
@@ -325,11 +387,7 @@ const TeamPage = () => {
 
               <ErrorLine>{actionError}</ErrorLine>
 
-              <div className="border-t border-white/[0.06] pt-2">
-                <GhostButton danger disabled={leaveBusy} onClick={leave}>
-                  {isLeader ? "Disband team" : "Leave team"}
-                </GhostButton>
-              </div>
+              {leaveBlock}
             </>
           )}
 
@@ -378,6 +436,8 @@ const TeamPage = () => {
                 inviteSentTo={inviteSentTo}
                 onCancelInvite={cancelInvite}
                 cancelBusyId={cancelBusyId}
+                onPromote={promote}
+                promoteBusyId={promoteBusyId}
               />
 
               <ReferralCodePanel
@@ -387,11 +447,7 @@ const TeamPage = () => {
 
               <ErrorLine>{actionError}</ErrorLine>
 
-              <div className="border-t border-white/[0.06] pt-2">
-                <GhostButton danger disabled={leaveBusy} onClick={leave}>
-                  {isLeader ? "Disband team" : "Leave team"}
-                </GhostButton>
-              </div>
+              {leaveBlock}
             </>
           )}
 
@@ -409,8 +465,8 @@ const TeamPage = () => {
         title={confirm?.title}
         body={confirm?.body}
         confirmLabel={confirm?.confirmLabel}
-        danger
-        busy={leaveBusy || !!kickBusyId}
+        danger={confirm?.danger ?? true}
+        busy={leaveBusy || !!kickBusyId || !!promoteBusyId}
         onConfirm={() => confirm?.action()}
         onCancel={() => setConfirm(null)}
       />
