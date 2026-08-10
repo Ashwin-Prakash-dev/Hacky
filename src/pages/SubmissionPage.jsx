@@ -208,6 +208,12 @@ const SubmissionPage = () => {
       setExists(!!appData);
       setMemberForm(memberFromServer(myRow));
 
+      // A team that has already submitted opens on the review, not the brief.
+      // What someone returning wants is what their team sent, and the review
+      // is the only step that shows all of it plus a way into any of it. The
+      // steps behind it stay reachable through Back and the Edit links.
+      if (appData) setStep(REVIEW);
+
       // The server is the source of truth once an application exists; the
       // draft only fills in for the window before the first successful PUT.
       const draft = appData ? null : loadDraft(teamData.team_id);
