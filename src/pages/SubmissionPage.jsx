@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import BriefRecap from "../components/apply/submission/BriefRecap";
+import DomainsStep from "../components/apply/submission/DomainsStep";
 import IdeaStep from "../components/apply/submission/IdeaStep";
 import LinksStep from "../components/apply/submission/LinksStep";
 import PriorWorkStep from "../components/apply/submission/PriorWorkStep";
@@ -32,35 +33,34 @@ import {
   isClosedError,
   isNoApplicationError,
   isNoTeamError,
+  LAST_STEP,
   loadDraft,
   memberFromServer,
   parseFieldErrors,
   saveDraft,
+  STEPS,
   toApplicationPayload,
   toMemberPayload,
+  validateDomains,
   validateIdea,
   validateLinks,
   validateMember,
   validatePriorWork,
 } from "../lib/submission";
 
-// Step order. Index is the unit of navigation everywhere in this file; the
-// names exist so the jump targets in ReviewStep read as something.
-const BRIEF = 0;
-const IDEA = 1;
-const LINKS = 2;
-const PRIOR = 3;
-const MEMBER = 4;
-const REVIEW = 5;
-const LAST = REVIEW;
+// Step order lives in lib/submission so ReviewStep's jump targets read from
+// the same source this file navigates by.
+const { BRIEF, DOMAINS, IDEA, LINKS, PRIOR, MEMBER, REVIEW } = STEPS;
+const LAST = LAST_STEP;
 
 // Which steps write to PUT /team/application (leader-only) rather than to the
 // member row (anyone, their own).
-const APPLICATION_STEPS = [IDEA, LINKS, PRIOR];
+const APPLICATION_STEPS = [DOMAINS, IDEA, LINKS, PRIOR];
 
 // Where a 400's field path belongs, so a rejected save lands the user on the
 // step that can actually fix it.
 const STEP_FOR_FIELD = {
+  domains: DOMAINS,
   title: IDEA,
   summary: IDEA,
   problem_evidence: IDEA,
@@ -255,6 +255,7 @@ const SubmissionPage = () => {
 
   const validateStep = useCallback(
     (index) => {
+      if (index === DOMAINS) return canEditApplication ? validateDomains(form) : {};
       if (index === IDEA) return canEditApplication ? validateIdea(form) : {};
       if (index === LINKS) return canEditApplication ? validateLinks(form) : {};
       if (index === PRIOR) {
@@ -391,7 +392,7 @@ const SubmissionPage = () => {
     if (saving) return;
     // Submit validates everything the leader owns, not just the current step,
     // because this is the one call that has to satisfy the API all at once.
-    const all = { ...validateIdea(form), ...validateLinks(form) };
+    const all = { ...validateDomains(form), ...validateIdea(form), ...validateLinks(form) };
     const priorWorkErrors = validatePriorWork(form.prior_work);
     if (hasErrors(all)) {
       setErrors(all);
@@ -399,7 +400,7 @@ const SubmissionPage = () => {
         .map((field) => STEP_FOR_FIELD[field])
         .filter((s) => s !== undefined)
         .sort((a, b) => a - b)[0];
-      goTo(target ?? IDEA, "back");
+      goTo(target ?? DOMAINS, "back");
       setErrors(all);
       setSaveError("Fix these before submitting.");
       return;
@@ -453,6 +454,16 @@ const SubmissionPage = () => {
 
   const stepView = () => {
     if (step === BRIEF) return <BriefRecap />;
+    if (step === DOMAINS)
+      return (
+        <DomainsStep
+          form={form}
+          errors={errors}
+          onChange={updateForm}
+          canEdit={canEditApplication}
+          leaderName={leaderName}
+        />
+      );
     if (step === IDEA)
       return (
         <IdeaStep

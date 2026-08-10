@@ -1,5 +1,5 @@
 import { CircleCheck, CircleDashed, TriangleAlert } from "lucide-react";
-import { priorWorkLabel } from "../../../lib/submission";
+import { priorWorkLabel, STEPS } from "../../../lib/submission";
 import {
   ReadOnlyField,
   ReadOnlyLink,
@@ -34,6 +34,7 @@ const Block = ({ label, onEdit, children }) => (
 const ReviewStep = ({ form, members, exists, canEdit, onJump }) => {
   const priorWork = form.prior_work;
   const priorWorkUnanswered = !Array.isArray(priorWork);
+  const domains = Array.isArray(form.domains) ? form.domains : [];
   const completed = members.filter((m) => m.completed).length;
 
   return (
@@ -59,23 +60,31 @@ const ReviewStep = ({ form, members, exists, canEdit, onJump }) => {
             You haven&rsquo;t answered the prior work question. Undeclared prior work can
             lead to penalties at the event, so answer it even if the answer is
             &ldquo;nothing&rdquo;.{" "}
-            {canEdit && <EditLink onClick={() => onJump(3)} />}
+            {canEdit && <EditLink onClick={() => onJump(STEPS.PRIOR)} />}
           </p>
         </div>
       )}
 
-      <Block label="The idea" onEdit={canEdit ? () => onJump(1) : null}>
+      <Block label="Domains" onEdit={canEdit ? () => onJump(STEPS.DOMAINS) : null}>
+        <ReadOnlyField
+          label="Aimed at"
+          value={domains.join("\n")}
+          empty="Not chosen yet."
+        />
+      </Block>
+
+      <Block label="The idea" onEdit={canEdit ? () => onJump(STEPS.IDEA) : null}>
         <ReadOnlyField label="Title" value={form.title} />
         <ReadOnlyField label="Summary" value={form.summary} />
         <ReadOnlyField label="Evidence the problem is real" value={form.problem_evidence} />
       </Block>
 
-      <Block label="Deck and video" onEdit={canEdit ? () => onJump(2) : null}>
+      <Block label="Deck and video" onEdit={canEdit ? () => onJump(STEPS.LINKS) : null}>
         <ReadOnlyLink label="Five-slide deck" value={form.deck_url} />
         <ReadOnlyLink label="Sixty-second team video" value={form.video_url} />
       </Block>
 
-      <Block label="Prior work" onEdit={canEdit ? () => onJump(3) : null}>
+      <Block label="Prior work" onEdit={canEdit ? () => onJump(STEPS.PRIOR) : null}>
         {priorWorkUnanswered && (
           <p className="font-general text-[0.95rem] text-white/40">Not answered yet.</p>
         )}
@@ -112,7 +121,10 @@ const ReviewStep = ({ form, members, exists, canEdit, onJump }) => {
 
       {/* updated_at === null on a member means that person has filled in
           nothing at all: the one reliable completion signal the API gives. */}
-      <Block label={`Team details · ${completed} of ${members.length} filled in`} onEdit={() => onJump(4)}>
+      <Block
+        label={`Team details · ${completed} of ${members.length} filled in`}
+        onEdit={() => onJump(STEPS.MEMBER)}
+      >
         <ul className="grid gap-3">
           {members.map((member) => (
             <li key={member.user_id} className="flex items-center gap-[0.6rem]">

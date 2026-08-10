@@ -16,6 +16,24 @@
 
 import { APPLICATIONS_CLOSE } from "./phase";
 
+// ── steps ───────────────────────────────────────────────────────────────────
+
+// Index is the unit of navigation through the flow. These live here rather
+// than in SubmissionPage because ReviewStep jumps into the same order, and a
+// reorder that only updated one of the two would send Edit links to the wrong
+// step without failing anywhere.
+export const STEPS = {
+  BRIEF: 0,
+  DOMAINS: 1,
+  IDEA: 2,
+  LINKS: 3,
+  PRIOR: 4,
+  MEMBER: 5,
+  REVIEW: 6,
+};
+
+export const LAST_STEP = STEPS.REVIEW;
+
 // ── prior work ──────────────────────────────────────────────────────────────
 
 // The `kind` values the API accepts. Anything outside this list is a 400.
@@ -58,6 +76,7 @@ export const LIMITS = {
 
 export const emptyApplication = () => ({
   title: "",
+  domains: [],
   summary: "",
   problem_evidence: "",
   deck_url: "",
@@ -80,6 +99,9 @@ export const emptyMember = () => ({
 // controlled. prior_work keeps its null, because null is meaningful there.
 export const applicationFromServer = (data) => ({
   title: data?.title ?? "",
+  // Domain titles, verbatim. An application stored before domains existed has
+  // none, and comes back as an empty selection the leader has to make.
+  domains: Array.isArray(data?.domains) ? data.domains : [],
   summary: data?.summary ?? "",
   problem_evidence: data?.problem_evidence ?? "",
   deck_url: data?.deck_url ?? "",
@@ -114,6 +136,7 @@ const omitEmpty = (payload) =>
 export const toApplicationPayload = (form) => {
   const payload = {
     title: trimmed(form.title),
+    domains: Array.isArray(form.domains) ? form.domains : [],
     summary: trimmed(form.summary),
     problem_evidence: trimmed(form.problem_evidence),
     deck_url: trimmed(form.deck_url),
@@ -181,6 +204,13 @@ export const validateIdea = (form) => {
   if (evidence) errors.problem_evidence = evidence;
   return errors;
 };
+
+// Array.isArray is checked as well as the length because a draft saved before
+// domains existed has no key at all, not an empty one.
+export const validateDomains = (form) =>
+  Array.isArray(form.domains) && form.domains.length > 0
+    ? {}
+    : { domains: "Pick at least one domain." };
 
 export const validateLinks = (form) => {
   const errors = {};
@@ -289,7 +319,12 @@ export const loadDraft = (teamId) => {
     // A draft written before the deadline is worthless after it, and a stale
     // one would silently overwrite what the server already has.
     if (parsed?.savedAt && parsed.savedAt > APPLICATIONS_CLOSE.getTime()) return null;
-    return parsed?.form ?? null;
+    if (!parsed?.form) return null;
+    // Merged over the empty shape rather than returned raw: a draft written
+    // before a field existed has no key for it, and this object is set as the
+    // form wholesale. Without this, every reader of a new field would have to
+    // guard against undefined, and the one that forgot would be the bug.
+    return { ...emptyApplication(), ...parsed.form };
   } catch {
     return null;
   }
