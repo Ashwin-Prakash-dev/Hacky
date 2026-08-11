@@ -354,6 +354,22 @@ const SubmissionPage = () => {
     const writesMember = index === MEMBER && !!myUserId;
     if (!writesApplication && !writesMember) return true;
 
+    // Every application write replaces the whole record, so an empty domain
+    // list is rejected no matter which step triggered the save. Checked here
+    // rather than only on submit because an application stored before domains
+    // existed comes back with none, and its leader can reach a save from any
+    // step through the review's Edit links.
+    if (writesApplication) {
+      const domainErrors = validateDomains(form);
+      if (hasErrors(domainErrors)) {
+        setErrors(domainErrors);
+        setDirection("back");
+        setStep(DOMAINS);
+        setSaveError("Pick your domains before this can be saved.");
+        return false;
+      }
+    }
+
     setSaving(true);
     setSaveError("");
     try {
