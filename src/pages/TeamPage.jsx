@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import ConfirmDialog from "../components/apply/ConfirmDialog";
+import WhatsAppNotice from "../components/apply/WhatsAppNotice";
 import TeammatesPanel from "../components/apply/team/TeammatesPanel";
 import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import PaymentPanel from "../components/apply/team/PaymentPanel";
@@ -470,6 +471,8 @@ const TeamPage = () => {
         onConfirm={() => confirm?.action()}
         onCancel={() => setConfirm(null)}
       />
+
+      <WhatsAppNotice />
     </AuthShell>
   );
 };
