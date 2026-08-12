@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
+import WhatsAppNotice from "../components/apply/WhatsAppNotice";
 import TerminalInput from "../components/apply/inputs/TerminalInput";
 import InviteCards from "../components/apply/team/InviteCards";
 import {
@@ -192,6 +193,8 @@ const OnboardingPage = () => {
           </p>
         </div>
       </PhaseTransition>
+
+      <WhatsAppNotice />
     </AuthShell>
   );
 };
