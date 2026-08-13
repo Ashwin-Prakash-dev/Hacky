@@ -8,11 +8,56 @@ import { SectionLabel, StepIntro, StepTitle } from "./ui";
 // Step 4. Your own row, and only ever your own. The API lets a leader write
 // anyone's details, but nobody should be describing a teammate on their behalf.
 // Every field is optional, and this works before the application exists at all.
-const MemberDetailsStep = ({ form, errors, onChange, name }) => {
+//
+// `canSave` is false when the account couldn't be matched to a roster row, which
+// leaves nowhere to write. The form is withheld rather than shown-and-ignored:
+// there is no draft for member details, so anything typed here would be lost the
+// moment the tab closed, with nothing having said so.
+const MemberDetailsStep = ({
+  form, errors, onChange, name, canSave, accountEmail, leaderName,
+}) => {
   const links = form.project_links;
   const atLimit = links.length >= LIMITS.project_links;
 
   const setLinks = (next) => onChange("project_links", next);
+
+  if (!canSave) {
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="mb-4 flex flex-col gap-3">
+          <StepTitle>Your details</StepTitle>
+          <StepIntro>
+            We can&rsquo;t match your account to a row on your team&rsquo;s roster, so
+            there&rsquo;s nowhere to save your details right now.
+          </StepIntro>
+        </div>
+
+        <div className="rounded-md border-[0.5px] border-[rgba(255,120,120,0.35)] bg-[rgba(255,120,120,0.06)] px-[1.1rem] py-[0.9rem]">
+          <SectionLabel>Signed in as</SectionLabel>
+          <p className="mt-1.5 break-all font-mono text-[0.9rem] text-white">
+            {accountEmail || "this account has no email address"}
+          </p>
+          <p className="mt-3 font-general text-[0.87rem] leading-relaxed text-white/75">
+            Usually this means you signed in with a different address than the one your
+            invite was sent to. Log out and sign back in with that address, or ask{" "}
+            {leaderName} to send a fresh invite to this one. Your team&rsquo;s
+            application is unaffected either way — only your own details are
+            blocked.
+          </p>
+          <p className="mt-3 font-general text-[0.85rem] leading-relaxed text-white/50">
+            If neither works, email{" "}
+            <a
+              href="mailto:support@sctcoding.club"
+              className="text-lime/80 underline underline-offset-[3px]"
+            >
+              support@sctcoding.club
+            </a>{" "}
+            and we&rsquo;ll sort out the row by hand.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-1">

@@ -161,10 +161,15 @@ const SubmissionPage = () => {
       }
 
       // The stored user object has no guaranteed id field, so identity comes
-      // from matching the account email against the roster.
+      // from matching the account email against the roster. An account with no
+      // email matches nothing on purpose: `undefined === undefined` would
+      // otherwise pair us with the first roster row that has no email and write
+      // this person's details into someone else's row.
       const email = getUser()?.email?.toLowerCase();
       const mine =
-        teamData.members.find((m) => m.email?.toLowerCase() === email) ??
+        (email
+          ? teamData.members.find((m) => m.email?.toLowerCase() === email)
+          : null) ??
         (teamData.your_role === "leader"
           ? teamData.members.find((m) => m.role === "leader")
           : null);
@@ -523,6 +528,9 @@ const SubmissionPage = () => {
           errors={errors}
           onChange={updateMemberForm}
           name={myName}
+          canSave={!!myUserId}
+          accountEmail={getUser()?.email ?? ""}
+          leaderName={leaderName}
         />
       );
     return (
