@@ -35,7 +35,7 @@
 	"vars": {
 		"VITE_API_BASE": "https://api.sctcoding.club/api/v3/events/startathon",
 		"VITE_STARTATHON_API_BASE": "https://api.sctcoding.club/api/v3/events/startathon",
-		"VITE_UPI_ID": "9072767620@hdfc",
+		"VITE_UPI_ID": "zakuzzdj-1@okhdfcbank",
 		"VITE_UPI_QR": "/upi-qr.png",
 		"VITE_GOOGLE_CLIENT_ID": "243299702505-ia97kgm1aq4a32o0t76ljlmpk47jgnem.apps.googleusercontent.com"
 	},
