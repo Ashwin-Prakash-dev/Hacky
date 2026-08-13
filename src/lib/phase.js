@@ -12,7 +12,7 @@ export const APPLICATIONS_OPEN = new Date("2026-08-04T00:00:00+05:30");
 // this constant is a duplicate kept in sync by hand: it drives the countdown
 // and the client-side lock only. A 403 "Applications are closed" from either
 // PUT is always the authority — if the two disagree, the server wins.
-export const APPLICATIONS_CLOSE = new Date("2026-08-13T23:59:59+05:30");
+export const APPLICATIONS_CLOSE = new Date("2026-08-14T18:00:00+05:30");
 
 export const applicationsOpen = (now = new Date()) => now >= APPLICATIONS_OPEN;
 
