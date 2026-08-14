@@ -95,12 +95,6 @@ export const api = {
   declineInvite: (id) =>
     request(`/invites/${encodeURIComponent(id)}/decline`, { method: "POST" }),
 
-  // payment
-  submitPayment: (transactionId) =>
-    request("/payment", { method: "POST", body: { transaction_id: transactionId } }),
-  applyReferral: (code) =>
-    request("/team/referral", { method: "PUT", body: { referral_code: code } }),
-
   // idea submission
   // Both PUTs replace the whole record, so callers must send every field —
   // build bodies with toApplicationPayload / toMemberPayload in lib/submission.js

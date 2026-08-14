@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import ConfirmDialog from "../components/apply/ConfirmDialog";
 import WhatsAppNotice from "../components/apply/WhatsAppNotice";
 import TeammatesPanel from "../components/apply/team/TeammatesPanel";
 import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
-import PaymentPanel from "../components/apply/team/PaymentPanel";
 import {
   Panel,
   ErrorLine,
@@ -19,13 +18,6 @@ import {
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
 import { applicationsOpen } from "../lib/phase";
-import { MIN_MEMBERS } from "../lib/teamRules";
-
-const StepLabel = ({ children }) => (
-  <p className="font-mono text-xs uppercase tracking-[0.16em] text-lime/85">
-    {children}
-  </p>
-);
 
 // The one entry point to /submission. It appears only in the "done" stage,
 // which is exactly the confirmed-payment state /submission itself requires,
@@ -67,15 +59,11 @@ const TeamPage = () => {
   const location = useLocation();
   const [redirectNotice, setRedirectNotice] = useState(location.state?.notice ?? "");
   const [team, setTeam] = useState(null);
-  const [stage, setStage] = useState(null); // "roster" | "payment" | "done"
+  const [stage, setStage] = useState(null); // "suspended" | "done"
   const [loadError, setLoadError] = useState("");
   const [inviteBusy, setInviteBusy] = useState(false);
   const [inviteError, setInviteError] = useState("");
   const [inviteSentTo, setInviteSentTo] = useState("");
-  const [payBusy, setPayBusy] = useState(false);
-  const [payError, setPayError] = useState("");
-  const [applyRefBusy, setApplyRefBusy] = useState(false);
-  const [applyRefError, setApplyRefError] = useState("");
   const [kickBusyId, setKickBusyId] = useState(null);
   const [promoteBusyId, setPromoteBusyId] = useState(null);
   const [cancelBusyId, setCancelBusyId] = useState(null);
@@ -106,13 +94,11 @@ const TeamPage = () => {
     navigate(location.pathname, { replace: true, state: null });
   }, [location, navigate]);
 
-  // Keep the wizard stage consistent with the team's actual state.
+  // Registration is closed for the rest of the event: a team already marked
+  // confirmed keeps going, anyone else is frozen where they stand.
   useEffect(() => {
     if (!team) return;
-    const rosterReady = team.members.length >= MIN_MEMBERS;
-    if (team.status === "confirmed") setStage("done");
-    else if (!rosterReady) setStage("roster");
-    else setStage((s) => s ?? "payment");
+    setStage(team.status === "confirmed" ? "done" : "suspended");
   }, [team]);
 
   const anyBusy = () =>
@@ -120,9 +106,7 @@ const TeamPage = () => {
     promoteBusyId ||
     cancelBusyId ||
     inviteBusy ||
-    payBusy ||
-    leaveBusy ||
-    applyRefBusy;
+    leaveBusy;
 
   const logout = () => {
     clearAuth();
@@ -210,34 +194,6 @@ const TeamPage = () => {
     }
   };
 
-  const pay = async (transactionId) => {
-    if (anyBusy()) return;
-    setPayBusy(true);
-    setPayError("");
-    try {
-      await api.submitPayment(transactionId);
-      await refresh();
-    } catch (err) {
-      setPayError(err.message);
-    } finally {
-      setPayBusy(false);
-    }
-  };
-
-  const applyReferralCode = async (code) => {
-    if (anyBusy()) return;
-    setApplyRefBusy(true);
-    setApplyRefError("");
-    try {
-      await api.applyReferral(code);
-      await refresh();
-    } catch (err) {
-      setApplyRefError(err.message);
-    } finally {
-      setApplyRefBusy(false);
-    }
-  };
-
   const leave = () => {
     if (anyBusy()) return;
     const isLeader = team.your_role === "leader";
@@ -298,8 +254,6 @@ const TeamPage = () => {
 
   const isLeader = team.your_role === "leader";
   const memberCount = team.members.length;
-  const rosterReady = memberCount >= MIN_MEMBERS;
-  const missing = MIN_MEMBERS - memberCount;
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -345,7 +299,7 @@ const TeamPage = () => {
   return (
     <AuthShell
       label="TEAM"
-      step={stage === "done" ? "idea" : stage === "payment" ? "pay" : "team"}
+      step={stage === "done" ? "idea" : "team"}
       right={headerRight}
     >
       <PhaseTransition>
@@ -354,72 +308,24 @@ const TeamPage = () => {
 
           <NoticeLine>{redirectNotice}</NoticeLine>
 
-          {stage === "roster" && (
-            <>
-              <TeammatesPanel
-                team={team}
-                onKick={kick}
-                kickBusyId={kickBusyId}
-                canInvite={isLeader}
-                onInvite={invite}
-                inviteBusy={inviteBusy}
-                inviteError={inviteError}
-                inviteSentTo={inviteSentTo}
-                onCancelInvite={cancelInvite}
-                cancelBusyId={cancelBusyId}
-                onPromote={promote}
-                promoteBusyId={promoteBusyId}
-              />
-
-              <PrimaryButton
-                disabled={!rosterReady}
-                onClick={() => setStage("payment")}
-              >
-                <span className="inline-flex items-center gap-[0.4rem]">
-                  {rosterReady ? (
-                    <>
-                      Continue to payment <ArrowRight size={14} />
-                    </>
-                  ) : (
-                    `Add ${missing} more to continue`
-                  )}
-                </span>
-              </PrimaryButton>
-
-              <ErrorLine>{actionError}</ErrorLine>
-
-              {leaveBlock}
-            </>
-          )}
-
-          {stage === "payment" && (
-            <>
-              <StepLabel>Step 2 of 2: Payment</StepLabel>
-
-              <p className="font-general text-sm leading-relaxed text-white/70">
-                After payment, your team will be eligible to submit an idea once
-                the problem statement is released. From those submissions, 20
-                teams will be shortlisted.
+          {stage === "suspended" && (
+            <Panel maxWidth="none">
+              <p className="font-general text-[0.9rem] leading-relaxed text-white/70">
+                Registration is closed. Your team wasn&rsquo;t confirmed before
+                the cutoff, so there&rsquo;s nothing left to do here — no
+                inviting, removing, or leaving.
               </p>
-
-              <PaymentPanel
-                team={team}
-                locked={!rosterReady}
-                onSubmit={pay} busy={payBusy} error={payError}
-                onApplyReferral={applyReferralCode}
-                applyRefBusy={applyRefBusy}
-                referralError={applyRefError}
-              />
-
-              <ErrorLine>{actionError}</ErrorLine>
-              <div>
-                <GhostButton onClick={() => setStage("roster")}>
-                  <span className="inline-flex items-center gap-[0.35rem]">
-                    <ArrowLeft size={13} /> Back to your roster
-                  </span>
-                </GhostButton>
-              </div>
-            </>
+              <p className="mt-3 font-general text-[0.85rem] leading-relaxed text-white/50">
+                Questions? Email{" "}
+                <a
+                  href="mailto:support@sctcoding.club"
+                  className="text-lime/80 underline underline-offset-[3px]"
+                >
+                  support@sctcoding.club
+                </a>
+                .
+              </p>
+            </Panel>
           )}
 
           {stage === "done" && (
@@ -450,13 +356,6 @@ const TeamPage = () => {
 
               {leaveBlock}
             </>
-          )}
-
-          {stage !== "done" && (
-            <ReferralCodePanel
-              code={team.referral_code}
-              count={team.referral_count}
-            />
           )}
         </div>
       </PhaseTransition>
