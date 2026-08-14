@@ -14,6 +14,7 @@ import {
 import { api } from "../lib/startathon";
 import { saveAuth, isAuthed } from "../lib/auth";
 import { usePageMeta } from "../lib/seo";
+import { registrationsOpen } from "../lib/phase";
 
 const GENDERS = ["male", "female", "other"];
 
@@ -40,6 +41,23 @@ const SignupPage = () => {
   const [busy, setBusy] = useState(false);
 
   if (isAuthed()) return <Navigate to="/apply" replace />;
+
+  if (!registrationsOpen()) {
+    return (
+      <AuthShell label="SIGN UP" step="account">
+        <PhaseTransition>
+          <Panel maxWidth="480px">
+            <Eyebrow>SIGN UP</Eyebrow>
+            <Title>Registration is closed</Title>
+            <p className="mt-3 font-general text-[0.9rem] leading-relaxed text-white/70">
+              Startathon isn&rsquo;t taking new sign-ups anymore. If you already
+              have an account, <MonoLink to="/login">log in</MonoLink> instead.
+            </p>
+          </Panel>
+        </PhaseTransition>
+      </AuthShell>
+    );
+  }
 
   const set = (key) => (e) =>
     setFields((prev) => ({ ...prev, [key]: e.target.value }));
