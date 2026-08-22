@@ -22,7 +22,7 @@ import {
 import { api } from "../lib/startathon";
 import { clearAuth, getUser } from "../lib/auth";
 import { applicationsOpen, submissionsClosed } from "../lib/phase";
-import { MIN_MEMBERS } from "../lib/teamRules";
+import { MIN_MEMBERS, isRegistered } from "../lib/teamRules";
 import { usePageMeta } from "../lib/seo";
 import {
   applicationFromServer,
@@ -142,7 +142,7 @@ const SubmissionPage = () => {
       if (cancelled) return;
 
       // The gate: payment confirmed, roster complete, submissions open.
-      if (teamData.members.length < MIN_MEMBERS || teamData.status !== "confirmed") {
+      if (teamData.members.length < MIN_MEMBERS || !isRegistered(teamData)) {
         navigate("/team", {
           replace: true,
           state: {

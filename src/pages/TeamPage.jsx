@@ -18,6 +18,7 @@ import {
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
 import { applicationsOpen } from "../lib/phase";
+import { isRegistered, isSelected, selectionFee } from "../lib/teamRules";
 
 // The one entry point to /submission. It appears only in the "done" stage,
 // which is exactly the confirmed-payment state /submission itself requires,
@@ -45,6 +46,25 @@ const IdeaPanel = () => (
         pitches its idea.
       </p>
     )}
+  </div>
+);
+
+// Replaces IdeaPanel once a team is shortlisted. Its copy ("the part that gets
+// you shortlisted") is already behind them, and the fee is the only thing left
+// that needs doing, so this is the single lime call to action on the page.
+const SelectionFeeCta = ({ team }) => (
+  <div className="rounded-md border-[0.5px] border-lime/30 bg-lime/[0.06] px-[1.1rem] py-[0.9rem]">
+    <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
+      Your team made the shortlist. Each member pays &#8377;{selectionFee(team)}{" "}
+      of their own to hold their seat. You pay for yourself, not for the team.
+    </p>
+    <Link
+      to="/payment"
+      className="mt-4 inline-flex items-center gap-[0.4rem] rounded bg-lime px-6 py-[0.7rem] font-mono text-[0.78rem] font-bold uppercase tracking-[0.14em] text-black no-underline transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-y-[-2px]"
+    >
+      Pay your selection fee
+      <ArrowRight size={14} />
+    </Link>
   </div>
 );
 
@@ -94,11 +114,13 @@ const TeamPage = () => {
     navigate(location.pathname, { replace: true, state: null });
   }, [location, navigate]);
 
-  // Registration is closed for the rest of the event: a team already marked
-  // confirmed keeps going, anyone else is frozen where they stand.
+  // Registration is closed for the rest of the event: a team that finished
+  // registering keeps going, anyone else is frozen where they stand. Shortlisted
+  // teams read as registered too, so being picked never demotes a team into the
+  // suspended state.
   useEffect(() => {
     if (!team) return;
-    setStage(team.status === "confirmed" ? "done" : "suspended");
+    setStage(isRegistered(team) ? "done" : "suspended");
   }, [team]);
 
   const anyBusy = () =>
@@ -197,7 +219,7 @@ const TeamPage = () => {
   const leave = () => {
     if (anyBusy()) return;
     const isLeader = team.your_role === "leader";
-    const confirmed = team.status === "confirmed";
+    const confirmed = isRegistered(team);
     const fee = team.expected_fee ?? 100;
     setConfirm({
       // A leader can only reach this once the team is unpaid: leaving deletes
@@ -266,7 +288,7 @@ const TeamPage = () => {
   // Leaving deletes the team when the leader does it, so a paid team's leader
   // has to hand the role over first. Nothing to click here — the way out is
   // "make leader" on a teammate's row above.
-  const handOverOnly = isLeader && team.status === "confirmed";
+  const handOverOnly = isLeader && isRegistered(team);
 
   const leaveBlock = (
     <div className="border-t border-white/[0.06] pt-2">
@@ -330,7 +352,7 @@ const TeamPage = () => {
 
           {stage === "done" && (
             <>
-              <IdeaPanel />
+              {isSelected(team) ? <SelectionFeeCta team={team} /> : <IdeaPanel />}
 
               <TeammatesPanel
                 team={team}

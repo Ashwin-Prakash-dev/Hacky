@@ -95,6 +95,20 @@ export const api = {
   declineInvite: (id) =>
     request(`/invites/${encodeURIComponent(id)}/decline`, { method: "POST" }),
 
+  // selection fee
+  // The per-member fee a shortlisted team pays after evaluation. This is NOT
+  // the ₹100 registration payment, which used POST /payment and is handled out
+  // of band now — the paths are kept apart on purpose so neither payment can be
+  // credited as the other.
+  //
+  // Always pays for the authenticated user. There is no path for one member to
+  // submit on another's behalf.
+  submitSelectionPayment: (transactionId) =>
+    request("/payment/selection", {
+      method: "POST",
+      body: { transaction_id: transactionId },
+    }),
+
   // idea submission
   // Both PUTs replace the whole record, so callers must send every field —
   // build bodies with toApplicationPayload / toMemberPayload in lib/submission.js
