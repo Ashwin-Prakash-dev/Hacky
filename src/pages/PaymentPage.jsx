@@ -13,16 +13,24 @@ import {
   MonoLink,
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
-import { clearAuth, getUser } from "../lib/auth";
-import { isSelected } from "../lib/teamRules";
+import { clearAuth } from "../lib/auth";
+import { currentMember, isSelected, payerOf } from "../lib/teamRules";
+
+// How long a reference can sit unmatched before we stop re-reading the roster.
+// The server's own sweep runs every five minutes, so this covers two of them
+// and then leaves the page alone.
+const PENDING_POLL_MS = 20_000;
+const PENDING_TRIES = 30;
 
 const STATUS_LABEL = {
   confirmed: "paid",
   submitted: "checking",
 };
 
-const StatusChip = ({ status }) => {
-  const label = STATUS_LABEL[status] ?? "not paid";
+const StatusChip = ({ status, payer }) => {
+  const label = payer
+    ? `${STATUS_LABEL[status] ?? "not paid"} by ${payer.name.split(" ")[0]}`
+    : (STATUS_LABEL[status] ?? "not paid");
   const tone =
     status === "confirmed"
       ? "text-lime"
@@ -76,7 +84,10 @@ const FeeProgress = ({ team, me }) => {
                 </span>
               )}
             </span>
-            <StatusChip status={m.selection_payment_status} />
+            <StatusChip
+              status={m.selection_payment_status}
+              payer={payerOf(team, m)}
+            />
           </li>
         ))}
       </ul>
@@ -84,7 +95,7 @@ const FeeProgress = ({ team, me }) => {
       <p className="mt-4 font-general text-[0.85rem] leading-relaxed text-white/50">
         {everyone
           ? "Everyone has paid. Your team is set for the event."
-          : `${paid.length} of ${members.length} paid. Everyone pays their own, so nobody is waiting on anybody else to act.`}
+          : `${paid.length} of ${members.length} seats paid. If anyone misses the deadline the whole team is disqualified and the fees come back, so chase whoever is left. One transfer can cover more than one seat.`}
       </p>
     </Panel>
   );
@@ -96,6 +107,7 @@ const PaymentPage = () => {
   const [loadError, setLoadError] = useState("");
   const [busy, setBusy] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [pollsLeft, setPollsLeft] = useState(PENDING_TRIES);
 
   const refresh = useCallback(() => {
     setLoadError("");
@@ -129,33 +141,40 @@ const PaymentPage = () => {
     });
   }, [team, navigate]);
 
-  // The stored user object has no guaranteed id field, so identity comes from
-  // matching the account email against the roster, the same way SubmissionPage
-  // does it.
-  const me = useMemo(() => {
-    if (!team) return null;
-    const email = getUser()?.email?.toLowerCase();
-    return (
-      team.members.find((m) => m.email?.toLowerCase() === email) ??
-      (team.your_role === "leader"
-        ? team.members.find((m) => m.role === "leader")
-        : null)
-    );
-  }, [team]);
+  const me = useMemo(() => currentMember(team), [team]);
 
-  const pay = async (transactionId) => {
+  // submitted -> confirmed happens server-side without anyone asking: at submit,
+  // when the bank message is ingested, and on a sweep every five minutes. So a
+  // reference that is still `submitted` is a reason to look again, not to sit
+  // there. Polling stops the moment it clears, and gives up after PENDING_TRIES
+  // so a mismatched amount — which never clears on its own — doesn't leave a
+  // request loop running for the rest of the session.
+  useEffect(() => {
+    const pending = team?.members.some(
+      (m) => m.selection_payment_status === "submitted"
+    );
+    if (!pending || pollsLeft <= 0) return;
+    const id = setTimeout(() => {
+      setPollsLeft((n) => n - 1);
+      refresh();
+    }, PENDING_POLL_MS);
+    return () => clearTimeout(id);
+  }, [team, pollsLeft, refresh]);
+
+  const pay = async (transactionId, covers) => {
     if (busy) return;
-    // The panel already hides the form once a reference is in, but a stale
-    // render must not be able to produce a second payment either.
-    const status = me?.selection_payment_status;
-    if (status === "submitted" || status === "confirmed") return;
+    // A submitted payment is deliberately re-submittable: the same POST
+    // replaces its reference and cover list. A confirmed one is final, and the
+    // server 409s it, so don't spend a request finding that out.
+    if (me?.selection_payment_status === "confirmed") return;
 
     setBusy(true);
     setSubmitError("");
     try {
-      await api.submitSelectionPayment(transactionId);
-      // The server decides what counts as submitted, so re-read rather than
-      // patching local state.
+      await api.submitSelectionPayment(transactionId, covers);
+      // The server decides what the payment is now — it can come back already
+      // confirmed — so re-read rather than patching local state.
+      setPollsLeft(PENDING_TRIES);
       await refresh();
     } catch (err) {
       setSubmitError(err.message);

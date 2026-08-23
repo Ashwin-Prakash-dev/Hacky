@@ -101,12 +101,19 @@ export const api = {
   // of band now — the paths are kept apart on purpose so neither payment can be
   // credited as the other.
   //
-  // Always pays for the authenticated user. There is no path for one member to
-  // submit on another's behalf.
-  submitSelectionPayment: (transactionId) =>
+  // Always attributed to the authenticated user: `covers` names the seats their
+  // one transfer pays for, and the server bills them 250 x covers.length. Omit
+  // it and the payment covers the caller alone. Nobody can submit a payment
+  // *as* someone else — only for them.
+  //
+  // The same POST replaces a payment that is still `submitted`, reference and
+  // cover list together. There is no PATCH; once confirmed, the server 409s.
+  submitSelectionPayment: (transactionId, covers) =>
     request("/payment/selection", {
       method: "POST",
-      body: { transaction_id: transactionId },
+      body: covers?.length
+        ? { transaction_id: transactionId, covers }
+        : { transaction_id: transactionId },
     }),
 
   // idea submission

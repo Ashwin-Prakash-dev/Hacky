@@ -10,7 +10,7 @@ import LinksStep from "../components/apply/submission/LinksStep";
 import PriorWorkStep from "../components/apply/submission/PriorWorkStep";
 import MemberDetailsStep from "../components/apply/submission/MemberDetailsStep";
 import ReviewStep from "../components/apply/submission/ReviewStep";
-import Countdown from "../components/apply/submission/Countdown";
+import Countdown from "../components/apply/Countdown";
 import { StepNav } from "../components/apply/submission/ui";
 import {
   ErrorLine,
@@ -22,7 +22,7 @@ import {
 import { api } from "../lib/startathon";
 import { clearAuth, getUser } from "../lib/auth";
 import { applicationsOpen, submissionsClosed } from "../lib/phase";
-import { MIN_MEMBERS, isRegistered } from "../lib/teamRules";
+import { MIN_MEMBERS, currentMember, isRegistered } from "../lib/teamRules";
 import { usePageMeta } from "../lib/seo";
 import {
   applicationFromServer,
@@ -160,14 +160,7 @@ const SubmissionPage = () => {
         return;
       }
 
-      // The stored user object has no guaranteed id field, so identity comes
-      // from matching the account email against the roster.
-      const email = getUser()?.email?.toLowerCase();
-      const mine =
-        teamData.members.find((m) => m.email?.toLowerCase() === email) ??
-        (teamData.your_role === "leader"
-          ? teamData.members.find((m) => m.role === "leader")
-          : null);
+      const mine = currentMember(teamData);
 
       let appData = null;
       try {
