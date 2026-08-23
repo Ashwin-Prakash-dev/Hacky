@@ -6,7 +6,8 @@ import { useEffect } from "react";
  */
 const ConfirmDialog = ({
   open, title, body,
-  confirmLabel = "Confirm", danger = false, busy = false,
+  confirmLabel = "Confirm", cancelLabel = "Cancel",
+  danger = false, busy = false,
   onConfirm, onCancel,
 }) => {
   useEffect(() => {
@@ -41,7 +42,7 @@ const ConfirmDialog = ({
             type="button" onClick={onCancel} disabled={busy}
             className="cursor-pointer rounded border-[0.5px] border-white/20 bg-transparent px-5 py-[0.65rem] font-mono text-[0.78rem] tracking-[0.08em] text-white/85"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
             type="button" onClick={onConfirm} disabled={busy}
