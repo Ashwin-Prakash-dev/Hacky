@@ -95,6 +95,27 @@ export const api = {
   declineInvite: (id) =>
     request(`/invites/${encodeURIComponent(id)}/decline`, { method: "POST" }),
 
+  // selection fee
+  // The per-member fee a shortlisted team pays after evaluation. This is NOT
+  // the ₹100 registration payment, which used POST /payment and is handled out
+  // of band now — the paths are kept apart on purpose so neither payment can be
+  // credited as the other.
+  //
+  // Always attributed to the authenticated user: `covers` names the seats their
+  // one transfer pays for, and the server bills them 250 x covers.length. Omit
+  // it and the payment covers the caller alone. Nobody can submit a payment
+  // *as* someone else — only for them.
+  //
+  // The same POST replaces a payment that is still `submitted`, reference and
+  // cover list together. There is no PATCH; once confirmed, the server 409s.
+  submitSelectionPayment: (transactionId, covers) =>
+    request("/payment/selection", {
+      method: "POST",
+      body: covers?.length
+        ? { transaction_id: transactionId, covers }
+        : { transaction_id: transactionId },
+    }),
+
   // idea submission
   // Both PUTs replace the whole record, so callers must send every field —
   // build bodies with toApplicationPayload / toMemberPayload in lib/submission.js

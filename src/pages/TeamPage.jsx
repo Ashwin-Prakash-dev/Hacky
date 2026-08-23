@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
@@ -6,7 +6,6 @@ import PhaseTransition from "../components/apply/PhaseTransition";
 import ConfirmDialog from "../components/apply/ConfirmDialog";
 import WhatsAppNotice from "../components/apply/WhatsAppNotice";
 import TeammatesPanel from "../components/apply/team/TeammatesPanel";
-import ReferralCodePanel from "../components/apply/team/ReferralCodePanel";
 import {
   Panel,
   ErrorLine,
@@ -17,7 +16,14 @@ import {
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
-import { applicationsOpen } from "../lib/phase";
+import { applicationsOpen, SELECTION_FEE_DUE_LABEL } from "../lib/phase";
+import {
+  currentMember,
+  isRegistered,
+  isSelected,
+  selectionFee,
+  selectionFeeSettled,
+} from "../lib/teamRules";
 
 // The one entry point to /submission. It appears only in the "done" stage,
 // which is exactly the confirmed-payment state /submission itself requires,
@@ -48,6 +54,27 @@ const IdeaPanel = () => (
   </div>
 );
 
+// Replaces IdeaPanel once a team is shortlisted. Its copy ("the part that gets
+// you shortlisted") is already behind them, and the fee is the only thing left
+// that needs doing, so this is the single lime call to action on the page.
+const SelectionFeeCta = ({ team }) => (
+  <div className="rounded-md border-[0.5px] border-lime/30 bg-lime/[0.06] px-[1.1rem] py-[0.9rem]">
+    <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
+      Your team made the shortlist. Every seat costs &#8377;{selectionFee(team)},
+      and all of them have to be paid by {SELECTION_FEE_DUE_LABEL}. If anyone
+      misses it the whole team is disqualified and the fees are refunded. Pay
+      for your own, or cover teammates in one transfer.
+    </p>
+    <Link
+      to="/payment"
+      className="mt-4 inline-flex items-center gap-[0.4rem] rounded bg-lime px-6 py-[0.7rem] font-mono text-[0.78rem] font-bold uppercase tracking-[0.14em] text-black no-underline transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-y-[-2px]"
+    >
+      Pay your selection fee
+      <ArrowRight size={14} />
+    </Link>
+  </div>
+);
+
 const TeamPage = () => {
   const navigate = useNavigate();
   // /submission bounces people back here with a reason when they aren't
@@ -71,6 +98,13 @@ const TeamPage = () => {
   const [leaveBusy, setLeaveBusy] = useState(false);
   // { title, body, confirmLabel, danger?, action }
   const [confirm, setConfirm] = useState(null);
+  // The fee prompt is dismissible but not remembered: a shortlisted member who
+  // hasn't paid meets it again every time they land here, because nothing else
+  // on this page matters until their seat is paid for.
+  const [feePromptDismissed, setFeePromptDismissed] = useState(false);
+
+  const me = useMemo(() => currentMember(team), [team]);
+  const owesSelectionFee = !!team && isSelected(team) && !selectionFeeSettled(me);
 
   const refresh = useCallback(() => {
     setLoadError("");
@@ -94,11 +128,13 @@ const TeamPage = () => {
     navigate(location.pathname, { replace: true, state: null });
   }, [location, navigate]);
 
-  // Registration is closed for the rest of the event: a team already marked
-  // confirmed keeps going, anyone else is frozen where they stand.
+  // Registration is closed for the rest of the event: a team that finished
+  // registering keeps going, anyone else is frozen where they stand. Shortlisted
+  // teams read as registered too, so being picked never demotes a team into the
+  // suspended state.
   useEffect(() => {
     if (!team) return;
-    setStage(team.status === "confirmed" ? "done" : "suspended");
+    setStage(isRegistered(team) ? "done" : "suspended");
   }, [team]);
 
   const anyBusy = () =>
@@ -197,7 +233,7 @@ const TeamPage = () => {
   const leave = () => {
     if (anyBusy()) return;
     const isLeader = team.your_role === "leader";
-    const confirmed = team.status === "confirmed";
+    const confirmed = isRegistered(team);
     const fee = team.expected_fee ?? 100;
     setConfirm({
       // A leader can only reach this once the team is unpaid: leaving deletes
@@ -266,7 +302,7 @@ const TeamPage = () => {
   // Leaving deletes the team when the leader does it, so a paid team's leader
   // has to hand the role over first. Nothing to click here — the way out is
   // "make leader" on a teammate's row above.
-  const handOverOnly = isLeader && team.status === "confirmed";
+  const handOverOnly = isLeader && isRegistered(team);
 
   const leaveBlock = (
     <div className="border-t border-white/[0.06] pt-2">
@@ -312,8 +348,8 @@ const TeamPage = () => {
             <Panel maxWidth="none">
               <p className="font-general text-[0.9rem] leading-relaxed text-white/70">
                 Registration is closed. Your team wasn&rsquo;t confirmed before
-                the cutoff, so there&rsquo;s nothing left to do here — no
-                inviting, removing, or leaving.
+                the cutoff, so there&rsquo;s nothing left to do here. You
+                can&rsquo;t invite, remove, or leave.
               </p>
               <p className="mt-3 font-general text-[0.85rem] leading-relaxed text-white/50">
                 Questions? Email{" "}
@@ -330,7 +366,7 @@ const TeamPage = () => {
 
           {stage === "done" && (
             <>
-              <IdeaPanel />
+              {isSelected(team) ? <SelectionFeeCta team={team} /> : <IdeaPanel />}
 
               <TeammatesPanel
                 team={team}
@@ -347,11 +383,6 @@ const TeamPage = () => {
                 promoteBusyId={promoteBusyId}
               />
 
-              <ReferralCodePanel
-                code={team.referral_code}
-                count={team.referral_count}
-              />
-
               <ErrorLine>{actionError}</ErrorLine>
 
               {leaveBlock}
@@ -359,6 +390,26 @@ const TeamPage = () => {
           )}
         </div>
       </PhaseTransition>
+
+      <ConfirmDialog
+        open={owesSelectionFee && !feePromptDismissed}
+        title="Your team made the shortlist"
+        body={
+          <>
+            Every seat costs{" "}
+            <b className="text-lime">&#8377;{selectionFee(team)}</b>, and yours
+            isn&rsquo;t paid yet. The whole team has to be paid up by{" "}
+            <b className="text-lime">{SELECTION_FEE_DUE_LABEL}</b>. If one
+            teammate misses it, the team is disqualified and everyone&rsquo;s
+            fee is refunded, so don&rsquo;t leave it to the last day.
+          </>
+        }
+        confirmLabel="Pay now"
+        cancelLabel="Not now"
+        danger={false}
+        onConfirm={() => navigate("/payment")}
+        onCancel={() => setFeePromptDismissed(true)}
+      />
 
       <ConfirmDialog
         open={!!confirm}

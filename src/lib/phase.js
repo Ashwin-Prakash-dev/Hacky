@@ -14,6 +14,15 @@ export const APPLICATIONS_OPEN = new Date("2026-08-04T00:00:00+05:30");
 // PUT is always the authority — if the two disagree, the server wins.
 export const APPLICATIONS_CLOSE = new Date("2026-08-14T19:05:00+05:30");
 
+// When every shortlisted seat's fee has to be in. A team that still has an
+// unpaid seat after this loses its place, so this date is a hard one for the
+// people reading it, not a soft nudge.
+//
+// Hand-synced with the server the same way APPLICATIONS_CLOSE is: nothing
+// exposes it over the API, so this drives copy and the countdown only. The
+// server is always the authority on whether a payment still counts.
+export const SELECTION_FEE_DUE = new Date("2026-08-27T23:59:00+05:30");
+
 // New registrations (signup, team creation, joining a team) were shut off
 // manually ahead of the deadline above — not time-based, just flipped once
 // and left off for the rest of the event. Teams that were already confirmed
@@ -25,6 +34,29 @@ export const applicationsOpen = (now = new Date()) => now >= APPLICATIONS_OPEN;
 export const submissionsClosed = (now = new Date()) => now >= APPLICATIONS_CLOSE;
 
 export const registrationsOpen = () => REGISTRATIONS_OPEN;
+
+export const selectionFeeClosed = (now = new Date()) => now >= SELECTION_FEE_DUE;
+
+// The deadline as people read it, formatted once from the constant above so the
+// copy can never drift from the clock it belongs to.
+export const SELECTION_FEE_DUE_LABEL = new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "long",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "Asia/Kolkata",
+}).format(SELECTION_FEE_DUE);
+
+// The same moment written out for the Terms, where a year and a timezone are
+// the difference between a date and a commitment.
+export const SELECTION_FEE_DUE_LONG = `${new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "Asia/Kolkata",
+}).format(SELECTION_FEE_DUE)} IST`;
 
 // The one place the primary CTA's wording is decided.
 export const primaryCta = (now = new Date()) =>
