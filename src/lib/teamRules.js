@@ -76,8 +76,26 @@ export const payerOf = (team, member) =>
     ? (team?.members.find((m) => m.user_id === selectionPayerId(member)) ?? null)
     : null;
 
-// Whether `payerId` may put `member` on their payment: either nobody has paid
-// for that seat, or the payment that already covers it is the one being edited.
-// Anyone else's payment is off limits — the server 409s and names them.
-export const canCover = (member, payerId) =>
-  !member?.selection_payment_status || selectionPayerId(member) === payerId;
+// Whether `payerId` may put `member` on their payment. A free seat, yes. A seat
+// on a payment still awaiting matching, only for the person who sent that
+// payment, since re-posting rewrites it. A confirmed seat, never: it is closed
+// to everyone including whoever paid for it, so having paid for someone is not
+// a licence to pay for them twice.
+export const canCover = (member, payerId) => {
+  const status = member?.selection_payment_status;
+  if (!status) return true;
+  return status === "submitted" && selectionPayerId(member) === payerId;
+};
+
+// The caller's own selection payments, newest first as the API sends them. One
+// person can hold several: a confirmed one covering a teammate, and another for
+// their own seat. Anything that reasons about "the payment I sent" must come
+// from here rather than from roster rows, which only say who paid for a seat,
+// not which payment did it.
+export const mySelectionPayments = (team) => team?.my_selection_payments ?? [];
+
+// The one payment still open to editing. Re-posting replaces its reference and
+// its cover list; a confirmed payment is closed, and a new POST starts a fresh
+// one instead.
+export const openSelectionPayment = (team) =>
+  mySelectionPayments(team).find((p) => p.status === "submitted") ?? null;

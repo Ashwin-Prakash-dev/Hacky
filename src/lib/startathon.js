@@ -106,14 +106,20 @@ export const api = {
   // it and the payment covers the caller alone. Nobody can submit a payment
   // *as* someone else — only for them.
   //
-  // The same POST replaces a payment that is still `submitted`, reference and
-  // cover list together. There is no PATCH; once confirmed, the server 409s.
-  submitSelectionPayment: (transactionId, covers) =>
+  // Whether this opens a payment or edits one is decided by `payment_id`, and
+  // without it by the cover list: an identical set corrects the open payment,
+  // anything else opens a new one. So editing what a payment covers must send
+  // `payment_id`, or the server reads it as a second payment and 409s on the
+  // seats the first one already holds. A confirmed payment can't be edited at
+  // all, but it never blocks a new one.
+  submitSelectionPayment: (transactionId, covers, paymentId) =>
     request("/payment/selection", {
       method: "POST",
-      body: covers?.length
-        ? { transaction_id: transactionId, covers }
-        : { transaction_id: transactionId },
+      body: {
+        transaction_id: transactionId,
+        ...(covers?.length ? { covers } : null),
+        ...(paymentId ? { payment_id: paymentId } : null),
+      },
     }),
 
   // idea submission
