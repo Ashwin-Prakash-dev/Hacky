@@ -214,10 +214,13 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
   const stillToPay = team.members.filter((m) => !m.selection_payment_status);
   const teamSettled = awaiting.length === 0 && stillToPay.length === 0;
 
+  // Everyone but this member: their own state is already stated above, and
+  // repeating it as "you still have to pay" reads like a second problem.
+  const othersToPay = stillToPay.filter((m) => m.user_id !== myId);
+  const othersAwaiting = awaiting.filter((m) => m.user_id !== myId);
+
   const nameList = (list) =>
-    list
-      .map((m) => (m.user_id === myId ? "you" : m.name))
-      .join(list.length > 2 ? ", " : " and ");
+    list.map((m) => m.name).join(list.length > 2 ? ", " : " and ");
 
   // ── the state of this member's own seat ───────────────────────────────────
 
@@ -230,10 +233,11 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
             {payer ? `Paid by ${payer.name}` : "Paid"}
           </Heading>
           <Body>
-            {payer ? "Their transfer covers your seat." : "Your seat is held."}{" "}
             {teamSettled
               ? "Every seat on your team is paid for, so there is nothing left to do."
-              : "Your team isn't in yet though. Here is who is left."}
+              : payer
+                ? "Their transfer covers your seat."
+                : "Your seat is held."}
           </Body>
         </>
       );
@@ -245,22 +249,16 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
           <Heading>
             {payer ? `${payer.name} paid for you` : "Reference submitted"}
           </Heading>
-          {me.selection_transaction_ref && (
-            <>
-              <p className="mt-3 font-general text-[0.78rem] uppercase tracking-[0.14em] text-white/50">
-                {payer ? "Reference they sent" : "Reference you sent"}
-              </p>
-              <p className="mt-1 select-all break-all font-mono text-[0.9rem] text-white/80">
-                {me.selection_transaction_ref}
-              </p>
-            </>
+          {payer && me.selection_transaction_ref && (
+            <p className="mt-3 select-all break-all font-mono text-[0.9rem] text-white/80">
+              {me.selection_transaction_ref}
+            </p>
           )}
           <Body>
+            Matching happens automatically, usually within five minutes.{" "}
             {payer
-              ? "We check it against our UPI records automatically, usually within five minutes. Your seat is held while we do."
-              : `This reference covers ${openCovers.length || 1} ${
-                  (openCovers.length || 1) === 1 ? "seat" : "seats"
-                }. Check it against your UPI app: if it is wrong, we can't match it, and you can replace it below until it clears. Matching is automatic and usually takes under five minutes.`}
+              ? "Your seat is held while we do it."
+              : "If that number is wrong we can't match it, so check your UPI app and replace it below."}
           </Body>
         </>
       );
@@ -280,17 +278,16 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
           <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
             {team.members.length - awaiting.length - stillToPay.length} of{" "}
             {team.members.length} seats are confirmed.{" "}
-            {stillToPay.length > 0 &&
-              `${nameList(stillToPay)} still ${
-                stillToPay.length === 1 && stillToPay[0].user_id !== myId
-                  ? "has"
-                  : "have"
+            {othersToPay.length > 0 &&
+              `${nameList(othersToPay)} still ${
+                othersToPay.length === 1 ? "has" : "have"
               } to pay. `}
-            {awaiting.length > 0 &&
-              `We are still matching the money for ${nameList(awaiting)}. `}
-            Every seat has to be confirmed by {SELECTION_FEE_DUE_LABEL}. If one
-            is missing then, the whole team is disqualified and every fee
-            already paid is refunded.
+            {othersAwaiting.length > 0 &&
+              `We are still matching ${nameList(othersAwaiting)}${
+                othersAwaiting.length === 1 ? "'s" : "'"
+              } payment. `}
+            All of them have to be confirmed by {SELECTION_FEE_DUE_LABEL}, or
+            the team is disqualified and every fee paid is refunded.
           </p>
           <div className="mt-2">
             <Countdown
@@ -325,11 +322,9 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
           {!open && (
             <>
               <Body>
-                Your team made the shortlist. Every seat costs &#8377;{fee}. It
-                pays for your food across the 30 hours, meals and snacks, and
-                the rest of what it takes to host you on site. Pay for your own,
-                or cover teammates in the same transfer. This is separate from
-                the registration fee your leader already paid.
+                A seat is &#8377;{fee}, on top of the registration fee your
+                leader paid. It covers your food across the 30 hours, meals and
+                snacks, and the rest of what it takes to host you.
               </Body>
             </>
           )}
@@ -408,16 +403,24 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
                       </span>
                       {!selectable && (
                         <span className="shrink-0 font-mono text-[0.78rem] tracking-[0.12em] text-white/40">
-                          {covered
-                            ? `PAID BY ${
-                                covered.user_id === myId
-                                  ? "YOU"
-                                  : covered.name.toUpperCase()
-                              }`
-                            : "PAID"}
+                          {m.selection_payment_status === "submitted"
+                            ? "CHECKING"
+                            : covered
+                              ? `PAID BY ${
+                                  covered.user_id === myId
+                                    ? "YOU"
+                                    : covered.name.toUpperCase()
+                                }`
+                              : "PAID"}
                         </span>
                       )}
                     </label>
+                    {m.selection_payment_status === "submitted" &&
+                      m.selection_transaction_ref && (
+                        <p className="mt-1 select-all break-all pl-7 font-mono text-[0.75rem] text-white/35">
+                          {m.selection_transaction_ref}
+                        </p>
+                      )}
                   </li>
                 );
               })}
@@ -434,10 +437,10 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
             )}
             <div className="flex-[1_1_240px]">
               <p className="font-general text-[0.85rem] leading-relaxed text-white/70">
-                Transfer exactly <b className="text-lime">&#8377;{total}</b> to
-                the UPI ID below, or scan the QR. If the amount doesn&rsquo;t
-                match, your payment sits unmatched until we sort it out by hand.
-                Then paste the transaction reference from your UPI app.
+                Send exactly <b className="text-lime">&#8377;{total}</b> to this
+                UPI ID or scan the QR, then paste the reference your UPI app
+                gives you. An amount that doesn&rsquo;t match sits unmatched
+                until we sort it out by hand.
               </p>
               <p className="my-3 flex flex-wrap items-center gap-x-[0.6rem] gap-y-1">
                 <span className="select-all break-all font-mono text-[0.9rem] text-white">
@@ -472,16 +475,15 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
                   {busy
                     ? "Confirming…"
                     : mode === "edit"
-                      ? `Replace payment with ₹${total}`
+                      ? "Replace this payment"
                       : mode === "correction"
-                        ? `Replace reference for ₹${total}`
-                        : `Confirm payment of ₹${total}`}
+                        ? "Replace reference"
+                        : "Confirm payment"}
                 </PrimaryButton>
                 <p className="mt-4 font-mono text-[0.75rem] leading-relaxed text-white/45">
-                  Changed your mind? We refund this fee until{" "}
-                  {SELECTION_FEE_DUE_LABEL}. After that it stays with us, unless
-                  a teammate misses the deadline and the team is disqualified,
-                  in which case it comes back to you. By paying you agree to our{" "}
+                  Refundable until {SELECTION_FEE_DUE_LABEL}, and refunded in
+                  full if the team is disqualified for an unpaid seat. By paying
+                  you agree to our{" "}
                   <Link
                     to="/terms"
                     className="text-lime/80 underline underline-offset-[3px]"

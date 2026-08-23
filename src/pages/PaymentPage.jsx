@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import SelectionFeePanel from "../components/apply/team/SelectionFeePanel";
-import RosterMeter from "../components/apply/team/RosterMeter";
 import {
   Panel,
-  Eyebrow,
   ErrorLine,
   PrimaryButton,
   GhostButton,
@@ -14,103 +12,13 @@ import {
 } from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
-import { currentMember, isSelected, payerOf } from "../lib/teamRules";
+import { currentMember, isSelected } from "../lib/teamRules";
 
 // How long a reference can sit unmatched before we stop re-reading the roster.
 // The server's own sweep runs every five minutes, so this covers two of them
 // and then leaves the page alone.
 const PENDING_POLL_MS = 20_000;
 const PENDING_TRIES = 30;
-
-const STATUS_LABEL = {
-  confirmed: "paid",
-  submitted: "checking",
-};
-
-const StatusChip = ({ status, payer }) => {
-  const label = payer
-    ? `${STATUS_LABEL[status] ?? "not paid"} by ${payer.name.split(" ")[0]}`
-    : (STATUS_LABEL[status] ?? "not paid");
-  const tone =
-    status === "confirmed"
-      ? "text-lime"
-      : status === "submitted"
-        ? "text-lime/55"
-        : "text-white/40";
-  return (
-    <span className={`shrink-0 font-mono text-[0.78rem] tracking-[0.12em] ${tone}`}>
-      [{label.toUpperCase()}]
-    </span>
-  );
-};
-
-/**
- * Who on the roster has paid. Reuses RosterMeter rather than inventing a second
- * progress idiom: filled is paid, faint is awaiting verification, outlined is
- * still owed. Every member is required, so min and max are both the roster size.
- */
-const FeeProgress = ({ team, me }) => {
-  const { members } = team;
-  const paid = members.filter((m) => m.selection_payment_status === "confirmed");
-  const checking = members.filter((m) => m.selection_payment_status === "submitted");
-  const everyone = paid.length === members.length;
-
-  return (
-    <Panel maxWidth="none">
-      <Eyebrow>Your team</Eyebrow>
-
-      <div className="my-[0.85rem]">
-        <RosterMeter
-          joined={paid.length}
-          pending={checking.length}
-          min={members.length}
-          max={members.length}
-        />
-      </div>
-
-      <ul className="flex flex-col gap-2">
-        {members.map((m) => (
-          <li
-            key={m.user_id ?? m.email}
-            className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-4 py-[0.7rem]"
-          >
-            <span className="min-w-0 flex-1 font-general text-[0.9rem] text-white">
-              <span className="block truncate">
-                {m.name}
-                {/* Reference equality, not email: `me` is an element of this same
-                    array, and two members with no email must not both read "you". */}
-                {m === me && (
-                  <span className="ml-2 font-mono text-[0.75rem] tracking-[0.12em] text-white/40">
-                    you
-                  </span>
-                )}
-              </span>
-              {/* Only while it is unmatched: this is the number to check a typo
-                  against, and the window in which sending a corrected one still
-                  does something. */}
-              {m.selection_payment_status === "submitted" &&
-                m.selection_transaction_ref && (
-                  <span className="mt-1 block select-all break-all font-mono text-[0.78rem] text-white/45">
-                    {m.selection_transaction_ref}
-                  </span>
-                )}
-            </span>
-            <StatusChip
-              status={m.selection_payment_status}
-              payer={payerOf(team, m)}
-            />
-          </li>
-        ))}
-      </ul>
-
-      <p className="mt-4 font-general text-[0.85rem] leading-relaxed text-white/50">
-        {everyone
-          ? "Everyone has paid. Your team is set for the event."
-          : `${paid.length} of ${members.length} seats paid. If anyone misses the deadline the whole team is disqualified and the fees come back, so chase whoever is left. One transfer can cover more than one seat.`}
-      </p>
-    </Panel>
-  );
-};
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -162,7 +70,7 @@ const PaymentPage = () => {
   // request loop running for the rest of the session.
   useEffect(() => {
     const pending = team?.members.some(
-      (m) => m.selection_payment_status === "submitted"
+      (m) => m.selection_payment_status === "submitted",
     );
     if (!pending || pollsLeft <= 0) return;
     const id = setTimeout(() => {
@@ -221,7 +129,9 @@ const PaymentPage = () => {
   if (!team || !isSelected(team)) {
     return (
       <AuthShell label="PAYMENT">
-        <p className="font-mono text-[0.8rem] text-lime/70">Loading your team&hellip;</p>
+        <p className="font-mono text-[0.8rem] text-lime/70">
+          Loading your team&hellip;
+        </p>
       </AuthShell>
     );
   }
@@ -241,8 +151,6 @@ const PaymentPage = () => {
             busy={busy}
             error={submitError}
           />
-
-          <FeeProgress team={team} me={me} />
         </div>
       </PhaseTransition>
     </AuthShell>
