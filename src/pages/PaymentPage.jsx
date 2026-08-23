@@ -74,15 +74,26 @@ const FeeProgress = ({ team, me }) => {
             key={m.user_id ?? m.email}
             className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md border-[0.5px] border-white/[0.08] bg-white/[0.02] px-4 py-[0.7rem]"
           >
-            <span className="min-w-0 flex-1 truncate font-general text-[0.9rem] text-white">
-              {m.name}
-              {/* Reference equality, not email: `me` is an element of this same
-                  array, and two members with no email must not both read "you". */}
-              {m === me && (
-                <span className="ml-2 font-mono text-[0.75rem] tracking-[0.12em] text-white/40">
-                  you
-                </span>
-              )}
+            <span className="min-w-0 flex-1 font-general text-[0.9rem] text-white">
+              <span className="block truncate">
+                {m.name}
+                {/* Reference equality, not email: `me` is an element of this same
+                    array, and two members with no email must not both read "you". */}
+                {m === me && (
+                  <span className="ml-2 font-mono text-[0.75rem] tracking-[0.12em] text-white/40">
+                    you
+                  </span>
+                )}
+              </span>
+              {/* Only while it is unmatched: this is the number to check a typo
+                  against, and the window in which sending a corrected one still
+                  does something. */}
+              {m.selection_payment_status === "submitted" &&
+                m.selection_transaction_ref && (
+                  <span className="mt-1 block select-all break-all font-mono text-[0.78rem] text-white/45">
+                    {m.selection_transaction_ref}
+                  </span>
+                )}
             </span>
             <StatusChip
               status={m.selection_payment_status}
@@ -161,17 +172,16 @@ const PaymentPage = () => {
     return () => clearTimeout(id);
   }, [team, pollsLeft, refresh]);
 
-  const pay = async (transactionId, covers) => {
+  const pay = async (transactionId, covers, paymentId) => {
     if (busy) return;
-    // A submitted payment is deliberately re-submittable: the same POST
-    // replaces its reference and cover list. A confirmed one is final, and the
-    // server 409s it, so don't spend a request finding that out.
-    if (me?.selection_payment_status === "confirmed") return;
+    // No guard on the caller's own seat: someone whose seat is settled may
+    // still open a payment for a teammate, which is what the server allows.
+    // The panel decides what is payable; this only stops a double submit.
 
     setBusy(true);
     setSubmitError("");
     try {
-      await api.submitSelectionPayment(transactionId, covers);
+      await api.submitSelectionPayment(transactionId, covers, paymentId);
       // The server decides what the payment is now — it can come back already
       // confirmed — so re-read rather than patching local state.
       setPollsLeft(PENDING_TRIES);
