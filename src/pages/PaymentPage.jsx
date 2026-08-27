@@ -109,6 +109,7 @@ const PaymentPage = () => {
   const headerRight = (
     <div className="flex items-center gap-5">
       <MonoLink to="/team">team</MonoLink>
+      <MonoLink to="/logistics">food and travel</MonoLink>
       <GhostButton onClick={logout}>logout</GhostButton>
     </div>
   );

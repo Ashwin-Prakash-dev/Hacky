@@ -73,7 +73,8 @@ export const coveredByOther = (member) => {
 // payment, or nobody's yet.
 export const payerOf = (team, member) =>
   coveredByOther(member)
-    ? (team?.members.find((m) => m.user_id === selectionPayerId(member)) ?? null)
+    ? (team?.members.find((m) => m.user_id === selectionPayerId(member)) ??
+      null)
     : null;
 
 // Whether `payerId` may put `member` on their payment. A free seat, yes. A seat
@@ -99,3 +100,9 @@ export const mySelectionPayments = (team) => team?.my_selection_payments ?? [];
 // one instead.
 export const openSelectionPayment = (team) =>
   mySelectionPayments(team).find((p) => p.status === "submitted") ?? null;
+
+// True when no seat on the roster is outstanding. Settled means what it means
+// for one member: verified, or a reference in and waiting to be matched. An
+// empty roster is not "all paid" — it is a team that hasn't loaded.
+export const allSelectionFeesSettled = (team) =>
+  !!team?.members?.length && team.members.every(selectionFeeSettled);

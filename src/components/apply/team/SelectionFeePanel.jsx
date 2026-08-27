@@ -234,10 +234,18 @@ const SelectionFeePanel = ({ team, me, onSubmit, busy, error }) => {
           </Heading>
           <Body>
             {teamSettled
-              ? "Every seat on your team is paid for, so there is nothing left to do."
+              ? "Every seat on your team is paid for."
               : payer
                 ? "Their transfer covers your seat."
-                : "Your seat is held."}
+                : "Your seat is held."}{" "}
+            Make sure your{" "}
+            <Link
+              to="/logistics"
+              className="text-lime/80 underline underline-offset-[3px]"
+            >
+              food and travel details
+            </Link>{" "}
+            are in as well.
           </Body>
         </>
       );

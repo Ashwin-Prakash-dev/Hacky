@@ -42,7 +42,12 @@ export const NoticeLine = ({ children }) =>
     </p>
   ) : null;
 
-export const PrimaryButton = ({ type = "button", disabled = false, onClick, children }) => {
+export const PrimaryButton = ({
+  type = "button",
+  disabled = false,
+  onClick,
+  children,
+}) => {
   const [hover, setHover] = useState(false);
   const lifted = hover && !disabled;
   return (
@@ -66,7 +71,35 @@ export const PrimaryButton = ({ type = "button", disabled = false, onClick, chil
   );
 };
 
-export const GhostButton = ({ onClick, disabled = false, danger = false, children }) => {
+// PrimaryButton's weight without its fill, for the second action in a pair.
+// Both read as buttons you are meant to press; only one of them is the one you
+// press most days.
+export const OutlineButton = ({
+  type = "button",
+  disabled = false,
+  onClick,
+  children,
+}) => (
+  <button
+    type={type}
+    disabled={disabled}
+    onClick={onClick}
+    className={`w-full rounded border-[0.5px] px-8 py-[0.9rem] font-mono text-[0.8rem] font-bold uppercase tracking-[0.14em] transition-colors duration-200 ${
+      disabled
+        ? "cursor-not-allowed border-lime/20 text-lime/35"
+        : "cursor-pointer border-lime/45 text-lime/90 hover:border-lime/80 hover:text-lime"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+export const GhostButton = ({
+  onClick,
+  disabled = false,
+  danger = false,
+  children,
+}) => {
   const [hover, setHover] = useState(false);
   const lit = hover && !disabled;
   const base = danger ? "text-[rgba(255,140,140,0.9)]" : "text-white/[0.78]";

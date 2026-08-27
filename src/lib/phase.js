@@ -23,6 +23,17 @@ export const APPLICATIONS_CLOSE = new Date("2026-08-14T19:05:00+05:30");
 // server is always the authority on whether a payment still counts.
 export const SELECTION_FEE_DUE = new Date("2026-08-27T23:59:00+05:30");
 
+// The day everyone arrives. Only the time of arrival is ever asked for, since
+// the date is the event's, not the traveller's: the form stores a full instant
+// so nothing downstream has to remember which day was meant.
+export const ARRIVAL_DATE = "2026-09-05";
+
+export const ARRIVAL_DATE_LABEL = new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "long",
+  timeZone: "Asia/Kolkata",
+}).format(new Date(`${ARRIVAL_DATE}T00:00:00+05:30`));
+
 // New registrations (signup, team creation, joining a team) were shut off
 // manually ahead of the deadline above — not time-based, just flipped once
 // and left off for the rest of the event. Teams that were already confirmed
