@@ -16,6 +16,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import TeamPage from "./pages/TeamPage";
 import SubmissionPage from "./pages/SubmissionPage";
 import PaymentPage from "./pages/PaymentPage";
+import LogisticsPage from "./pages/LogisticsPage";
 import ProfilePage from "./pages/ProfilePage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -49,8 +50,11 @@ function App() {
           <Route path="/team" element={<TeamPage />} />
           {/* Gated further inside: only a confirmed team, once submissions open. */}
           <Route path="/submission" element={<SubmissionPage />} />
-          {/* Gated further inside: only a shortlisted (selected) team. */}
+          {/* Both gated further inside: only a shortlisted (selected) team.
+              Neither waits on the other; a team can pay and answer in either
+              order. */}
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/logistics" element={<LogisticsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

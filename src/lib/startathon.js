@@ -122,6 +122,19 @@ export const api = {
       },
     }),
 
+  // logistics
+  // Food and travel answers for the event itself, one row per member. Reads are
+  // open to any team; writes are shortlisted-only and replace the whole row, so
+  // callers must send every field — build bodies with toLogisticsPayload in
+  // lib/logistics.js rather than assembling them by hand. A member writes their
+  // own row; a leader may write anyone's on their team.
+  getLogistics: () => request("/team/logistics"),
+  putMemberLogistics: (userId, fields) =>
+    request(`/team/logistics/members/${encodeURIComponent(userId)}`, {
+      method: "PUT",
+      body: fields,
+    }),
+
   // idea submission
   // Both PUTs replace the whole record, so callers must send every field —
   // build bodies with toApplicationPayload / toMemberPayload in lib/submission.js
