@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import AuthShell from "../components/apply/AuthShell";
 import PhaseTransition from "../components/apply/PhaseTransition";
 import ConfirmDialog from "../components/apply/ConfirmDialog";
@@ -17,6 +17,7 @@ import {
 import { api } from "../lib/startathon";
 import { clearAuth } from "../lib/auth";
 import { applicationsOpen, SELECTION_FEE_DUE_LABEL } from "../lib/phase";
+import { isComplete } from "../lib/logistics";
 import {
   currentMember,
   isRegistered,
@@ -47,21 +48,42 @@ const IdeaPanel = () => (
       </>
     ) : (
       <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
-        Submissions aren&rsquo;t open yet. When they are, this is where your team
-        pitches its idea.
+        Submissions aren&rsquo;t open yet. When they are, this is where your
+        team pitches its idea.
       </p>
     )}
   </div>
 );
 
-// Replaces IdeaPanel once a team is shortlisted. Its copy ("the part that gets
-// you shortlisted") is already behind them, and the fee is the only thing left
-// that needs doing, so this is the single lime call to action on the page.
-const SelectionFeeCta = ({ team }) => (
+// One line of the shortlist checklist. Done is a filled tick and grey text
+// rather than a strikethrough: the outstanding line has to stay the readable
+// one, and struck-out text reads as cancelled rather than finished.
+const TaskRow = ({ done, children }) => (
+  <li className="flex items-start gap-3">
+    <span
+      className={`mt-[0.15rem] flex size-[18px] shrink-0 items-center justify-center rounded-full border-[0.5px] ${
+        done
+          ? "border-lime/50 bg-lime/[0.15] text-lime"
+          : "border-white/25 text-transparent"
+      }`}
+    >
+      <Check size={11} strokeWidth={3} aria-hidden="true" />
+    </span>
+    <span className={done ? "text-white/40" : "text-white/85"}>
+      <span className="sr-only">{done ? "Done: " : "Still to do: "}</span>
+      {children}
+    </span>
+  </li>
+);
+
+// Replaces IdeaPanel once a team is shortlisted. Two things are left to do and
+// they are independent of each other, so both live here: the fee keeps the lime
+// button, the form sits under it as a quieter link.
+const ShortlistTasks = ({ team, logisticsDone }) => (
   <div className="rounded-md border-[0.5px] border-lime/30 bg-lime/[0.06] px-[1.1rem] py-[0.9rem]">
     <p className="font-general text-[0.85rem] leading-relaxed text-lime/85">
-      Your team made the shortlist. Every seat costs &#8377;{selectionFee(team)},
-      and all of them have to be paid by {SELECTION_FEE_DUE_LABEL}. If anyone
+      Your team made the shortlist. Every seat costs &#8377;{selectionFee(team)}
+      , and all of them have to be paid by {SELECTION_FEE_DUE_LABEL}. If anyone
       misses it the whole team is disqualified and the fees are refunded. Pay
       for your own, or cover teammates in one transfer.
     </p>
@@ -72,6 +94,15 @@ const SelectionFeeCta = ({ team }) => (
       Pay your selection fee
       <ArrowRight size={14} />
     </Link>
+
+    <p className="mt-5 font-general text-[0.85rem] leading-relaxed text-lime/70">
+      {logisticsDone
+        ? "Your food and travel answers are in. Change them any time."
+        : "We also need your food and travel details before the event, so we cook to the right numbers and know when you get here."}
+    </p>
+    <MonoLink to="/logistics">
+      {logisticsDone ? "review food and travel" : "fill in food and travel"}
+    </MonoLink>
   </div>
 );
 
@@ -84,7 +115,9 @@ const TeamPage = () => {
   // state outlives the render that consumed it: without the strip, a reload or
   // a back-navigation resurrects a message that may no longer be true.
   const location = useLocation();
-  const [redirectNotice, setRedirectNotice] = useState(location.state?.notice ?? "");
+  const [redirectNotice, setRedirectNotice] = useState(
+    location.state?.notice ?? "",
+  );
   const [team, setTeam] = useState(null);
   const [stage, setStage] = useState(null); // "suspended" | "done"
   const [loadError, setLoadError] = useState("");
@@ -102,9 +135,15 @@ const TeamPage = () => {
   // hasn't paid meets it again every time they land here, because nothing else
   // on this page matters until their seat is paid for.
   const [feePromptDismissed, setFeePromptDismissed] = useState(false);
+  // Null until the roster comes back, so the prompt never claims an unanswered
+  // form on a team whose answers simply haven't loaded.
+  const [myLogistics, setMyLogistics] = useState(null);
 
   const me = useMemo(() => currentMember(team), [team]);
-  const owesSelectionFee = !!team && isSelected(team) && !selectionFeeSettled(me);
+  const owesSelectionFee =
+    !!team && isSelected(team) && !selectionFeeSettled(me);
+  const owesLogistics =
+    !!team && isSelected(team) && !!myLogistics && !isComplete(myLogistics.row);
 
   const refresh = useCallback(() => {
     setLoadError("");
@@ -122,6 +161,27 @@ const TeamPage = () => {
     refresh();
   }, [refresh]);
 
+  // Only a shortlisted team has a form to fill in, and a failure here is not
+  // worth an error on this page: the worst case is that the prompt and the card
+  // stay quiet until the next load.
+  useEffect(() => {
+    if (!team || !isSelected(team) || !me) return;
+    let cancelled = false;
+    api
+      .getLogistics()
+      .then((data) => {
+        if (cancelled) return;
+        const rows = data?.members ?? (Array.isArray(data) ? data : []);
+        setMyLogistics({
+          row: rows.find((r) => r.user_id === me.user_id) ?? null,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [team, me]);
+
   useEffect(() => {
     if (!location.state?.notice) return;
     setRedirectNotice(location.state.notice);
@@ -138,11 +198,7 @@ const TeamPage = () => {
   }, [team]);
 
   const anyBusy = () =>
-    kickBusyId ||
-    promoteBusyId ||
-    cancelBusyId ||
-    inviteBusy ||
-    leaveBusy;
+    kickBusyId || promoteBusyId || cancelBusyId || inviteBusy || leaveBusy;
 
   const logout = () => {
     clearAuth();
@@ -366,7 +422,14 @@ const TeamPage = () => {
 
           {stage === "done" && (
             <>
-              {isSelected(team) ? <SelectionFeeCta team={team} /> : <IdeaPanel />}
+              {isSelected(team) ? (
+                <ShortlistTasks
+                  team={team}
+                  logisticsDone={!!myLogistics && isComplete(myLogistics.row)}
+                />
+              ) : (
+                <IdeaPanel />
+              )}
 
               <TeammatesPanel
                 team={team}
@@ -392,22 +455,41 @@ const TeamPage = () => {
       </PhaseTransition>
 
       <ConfirmDialog
-        open={owesSelectionFee && !feePromptDismissed}
+        open={(owesSelectionFee || owesLogistics) && !feePromptDismissed}
         title="Your team made the shortlist"
         body={
           <>
-            Every seat costs{" "}
-            <b className="text-lime">&#8377;{selectionFee(team)}</b>, and yours
-            isn&rsquo;t paid yet. The whole team has to be paid up by{" "}
-            <b className="text-lime">{SELECTION_FEE_DUE_LABEL}</b>. If one
-            teammate misses it, the team is disqualified and everyone&rsquo;s
-            fee is refunded, so don&rsquo;t leave it to the last day.
+            <p>
+              {owesSelectionFee && owesLogistics
+                ? "Two things to do before the event, in any order."
+                : "One thing left before the event."}
+            </p>
+            <ul className="mt-4 flex flex-col gap-3">
+              {/* A finished line keeps only its subject. The reasoning behind
+                  each one exists to get it done, so it retires with it. */}
+              <TaskRow done={!owesSelectionFee}>
+                {owesSelectionFee ? (
+                  <>
+                    Pay your seat, &#8377;{selectionFee(team)}. Every seat has
+                    to be paid by {SELECTION_FEE_DUE_LABEL}, or the team is
+                    disqualified and the fees are refunded.
+                  </>
+                ) : (
+                  "Your seat is paid."
+                )}
+              </TaskRow>
+              <TaskRow done={!owesLogistics}>
+                {owesLogistics
+                  ? "Tell us what you eat and when you get here, so we cook to the right numbers."
+                  : "Your food and travel details are in."}
+              </TaskRow>
+            </ul>
           </>
         }
-        confirmLabel="Pay now"
+        confirmLabel={owesSelectionFee ? "Pay now" : "Fill it in"}
         cancelLabel="Not now"
         danger={false}
-        onConfirm={() => navigate("/payment")}
+        onConfirm={() => navigate(owesSelectionFee ? "/payment" : "/logistics")}
         onCancel={() => setFeePromptDismissed(true)}
       />
 

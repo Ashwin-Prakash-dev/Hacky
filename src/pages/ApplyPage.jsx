@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthShell from "../components/apply/AuthShell";
-import { Panel, Eyebrow, Title, ErrorLine, PrimaryButton } from "../components/apply/ui";
+import {
+  Panel,
+  Eyebrow,
+  Title,
+  ErrorLine,
+  PrimaryButton,
+} from "../components/apply/ui";
 import { api } from "../lib/startathon";
 import { isAuthed, getUser } from "../lib/auth";
+import { allSelectionFeesSettled, isSelected } from "../lib/teamRules";
 import { usePageMeta } from "../lib/seo";
 
 const ApplyPage = () => {
@@ -28,15 +35,25 @@ const ApplyPage = () => {
     }
     let cancelled = false;
     setError("");
-    api.getTeam()
-      .then(() => { if (!cancelled) navigate("/team", { replace: true }); })
+    api
+      .getTeam()
+      .then((team) => {
+        if (cancelled) return;
+        // A shortlisted team whose every seat is paid for has nothing left on
+        // /team but a checklist of finished things. Food and travel is the only
+        // thing still asked of them, so that is where signing in should land.
+        const settled = isSelected(team) && allSelectionFeesSettled(team);
+        navigate(settled ? "/logistics" : "/team", { replace: true });
+      })
       .catch((err) => {
         if (cancelled) return;
         if (err.status === 404) navigate("/onboarding", { replace: true });
         else if (err.status === 401) navigate("/login", { replace: true });
         else setError(err.message);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [navigate, attempt]);
 
   return (
@@ -47,7 +64,9 @@ const ApplyPage = () => {
           <>
             <Title>Connection trouble</Title>
             <ErrorLine>{error}</ErrorLine>
-            <PrimaryButton onClick={() => setAttempt((a) => a + 1)}>Retry</PrimaryButton>
+            <PrimaryButton onClick={() => setAttempt((a) => a + 1)}>
+              Retry
+            </PrimaryButton>
           </>
         ) : (
           <p className="font-mono text-[0.8rem] text-lime/70">
