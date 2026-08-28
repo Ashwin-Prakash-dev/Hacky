@@ -21,7 +21,7 @@ export const APPLICATIONS_CLOSE = new Date("2026-08-14T19:05:00+05:30");
 // Hand-synced with the server the same way APPLICATIONS_CLOSE is: nothing
 // exposes it over the API, so this drives copy and the countdown only. The
 // server is always the authority on whether a payment still counts.
-export const SELECTION_FEE_DUE = new Date("2026-08-27T23:59:00+05:30");
+export const SELECTION_FEE_DUE = new Date("2026-08-28T18:00:00+05:30");
 
 // The day everyone arrives. Only the time of arrival is ever asked for, since
 // the date is the event's, not the traveller's: the form stores a full instant
