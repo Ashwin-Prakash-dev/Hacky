@@ -11,8 +11,8 @@ import { usePageMeta } from "../lib/seo";
 // Entirely client-side and deliberately not persisted — a refresh puts the
 // console back to standing by, which is the only way out of an armed clock.
 
-const DOORS_HOUR = 10;
-const DOORS_MINUTE = 30;
+const DOORS_HOUR = 11;
+const DOORS_MINUTE = 25;
 
 // The next 10:30 on the wall clock — today's if it has not passed,
 // tomorrow's if it has.
