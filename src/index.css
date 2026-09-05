@@ -528,6 +528,22 @@ body.custom-cursor {
   color: var(--lime);
 }
 
+/* Long-label variant: the launch console's CTA carries three words where the
+   hero's carries two, and the pill still has to fit a 375px screen without
+   wrapping. */
+@media (max-width: 26rem) {
+  .cta-pill--wide {
+    gap: 0.5rem;
+    padding-left: 1.15rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+  .cta-pill--wide .cta-pill-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
+
 /* Double-bezel: outer machined shell + inner core (nested radii) */
 .bezel {
   position: relative;

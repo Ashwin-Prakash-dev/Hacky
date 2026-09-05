@@ -131,7 +131,22 @@ const DissolvePlane = ({ progressRef, staticMode }) => {
   }, [size, uniforms]);
 
   useFrame(() => {
-    uniforms.uProgress.value = staticMode ? 0 : progressRef.current;
+    const p = staticMode ? 0 : progressRef.current;
+    uniforms.uProgress.value = p;
+
+    // Fully dissolved, every cell is discarded — the decoder would be
+    // spending frames on pixels that never reach the screen. Park it there
+    // and resume the moment the dissolve backs off, which is what the
+    // launch console leans on: it holds the hero at 1 indefinitely.
+    const video = texture.image;
+    if (!staticMode && video) {
+      if (p >= 1) {
+        if (!video.paused) video.pause();
+      } else if (video.paused) {
+        // autoplay can still refuse here; the still frame is the fallback
+        video.play().catch(() => {});
+      }
+    }
   });
 
   return (
