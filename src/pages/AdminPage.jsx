@@ -5,21 +5,22 @@ import LaunchHorizon from "../components/three/LaunchHorizon";
 import { usePageMeta } from "../lib/seo";
 
 // The launch console. One viewport, no scroll, one axis: the wordmark, the
-// clock, and the people backing it. Arm it and it counts down to 10:30; past
-// 10:30 it keeps counting, upward, for as long as the room is open.
+// clock, and the people backing it. Arm it and it counts down to 11:15
+// tomorrow; once there it keeps counting, upward, for as long as the room
+// is open.
 //
 // Entirely client-side and deliberately not persisted — a refresh puts the
 // console back to standing by, which is the only way out of an armed clock.
 
 const DOORS_HOUR = 11;
-const DOORS_MINUTE = 00;
+const DOORS_MINUTE = 15;
 
-// The next 10:30 on the wall clock — today's if it has not passed,
-// tomorrow's if it has.
+// Always tomorrow's 11:15, never today's — this console is armed once, the
+// day before doors, so "today" is never a valid target.
 const nextDoors = (from = new Date()) => {
   const t = new Date(from);
+  t.setDate(t.getDate() + 1);
   t.setHours(DOORS_HOUR, DOORS_MINUTE, 0, 0);
-  if (t <= from) t.setDate(t.getDate() + 1);
   return t;
 };
 
