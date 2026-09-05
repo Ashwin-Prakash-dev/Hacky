@@ -249,7 +249,7 @@ const AdminPage = () => {
             className="bezel bezel--lime group inline-block outline-none transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] active:scale-[0.99] hover:-translate-y-0.5"
           >
             <span className="block rounded-[1.125rem] bg-lime px-6 py-4 font-general text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[#050505] shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)] transition-shadow duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_14px_44px_rgba(200,255,0,0.28)] sm:px-12 sm:py-5 sm:text-base">
-              Launch Startathon countdown
+              Launch countdown
             </span>
           </button>
         ) : (
