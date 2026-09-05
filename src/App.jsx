@@ -23,6 +23,7 @@ import DomainsPage from "./pages/DomainsPage";
 import FormatPage from "./pages/FormatPage";
 import AdminPage from "./pages/AdminPage";
 import Admin2Page from "./pages/Admin2Page";
+import ScanPage from "./pages/ScanPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
       <Route path="/format" element={<FormatPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/admin2" element={<Admin2Page />} />
+      <Route path="/scan" element={<ScanPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/profile" element={<ProfilePage />} />
         <Route element={<RequirePhone />}>
