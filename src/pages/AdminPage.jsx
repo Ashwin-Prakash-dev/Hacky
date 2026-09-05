@@ -12,7 +12,7 @@ import { usePageMeta } from "../lib/seo";
 // console back to standing by, which is the only way out of an armed clock.
 
 const DOORS_HOUR = 11;
-const DOORS_MINUTE = 25;
+const DOORS_MINUTE = 00;
 
 // The next 10:30 on the wall clock — today's if it has not passed,
 // tomorrow's if it has.
