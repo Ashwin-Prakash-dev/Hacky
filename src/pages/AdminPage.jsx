@@ -31,6 +31,31 @@ const clockParts = (ms) => {
   return [pad(s / 3600), pad((s % 3600) / 60), pad(s % 60)];
 };
 
+// Confirmed team names, credited one at a time in the gap between countdown
+// ticks.
+const TEAM_NAMES = [
+  "TEAM ALTIORA",
+  "Team ViRoS",
+  "CS RIT",
+  "IGNITE",
+  "PointBreak",
+  "ASYNCHRONOUS",
+  "Athena",
+  "Tritech",
+  "Aura",
+  "OdinForce",
+  "SYNQ",
+  "MANIA",
+  "VOLTSHARE",
+  "codeX",
+  "Meridian",
+  "BEYONSPIRE",
+  "CS ROVERS",
+  "TUF",
+  "Team Synapz",
+  "Alt F4",
+];
+
 // The same three companies the landing page credits, reduced to their marks:
 // on a launch screen the logo is the whole message.
 const SPONSORS = [
@@ -117,6 +142,17 @@ const AdminPage = () => {
   const [now, setNow] = useState(() => Date.now());
   const rootRef = useRef(null);
   const armedRef = useRef(null);
+
+  // The clock and the team-credit rotation share one grid cell (see the
+  // markup below) and crossfade via opacity only. The name itself is
+  // written directly to the DOM rather than through React state — it
+  // changes every few seconds for as long as the console is armed, which
+  // could be hours, and a re-render is not needed to move text nobody but
+  // GSAP is reading.
+  const clockLayerRef = useRef(null);
+  const nameLayerRef = useRef(null);
+  const nameTextRef = useRef(null);
+  const nameIdxRef = useRef(0);
 
   // What the canvas reads every frame. Mutated in place — never state.
   const driveRef = useRef({ charge: 0, urgency: 0, flash: 0 });
@@ -207,6 +243,40 @@ const AdminPage = () => {
     { scope: rootRef },
   );
 
+  // Team credit rotation: hold the clock, fade it out, fade a name in, hold,
+  // fade it out, fade the clock back in, then advance to the next name while
+  // the name layer is invisible so nothing changes mid-fade. Gated behind
+  // reduced motion entirely — the countdown is the page's one essential
+  // job, and this cross-fade is not it.
+  useGSAP(
+    () => {
+      if (reduced || target === null || TEAM_NAMES.length === 0) return undefined;
+      if (!clockLayerRef.current || !nameLayerRef.current || !nameTextRef.current) {
+        return undefined;
+      }
+
+      nameIdxRef.current = 0;
+      nameTextRef.current.textContent = TEAM_NAMES[0];
+
+      const tl = gsap.timeline({ repeat: -1 });
+      tl.to(clockLayerRef.current, { opacity: 0, duration: 0.6, ease: "power2.out" }, 3)
+        .to(nameLayerRef.current, { opacity: 1, duration: 0.6, ease: "power2.out" })
+        .to(nameLayerRef.current, { opacity: 0, duration: 0.6, ease: "power2.out" }, "+=2.4")
+        .to(clockLayerRef.current, { opacity: 1, duration: 0.6, ease: "power2.out" })
+        .call(() => {
+          nameIdxRef.current = (nameIdxRef.current + 1) % TEAM_NAMES.length;
+          nameTextRef.current.textContent = TEAM_NAMES[nameIdxRef.current];
+        });
+
+      // an infinite timeline left running against a layer that can vanish
+      // on route change is exactly the kind of leak useGSAP exists to rule
+      // out — revert-on-cleanup is automatic, but a repeat:-1 timeline
+      // still needs its own kill to stop actually ticking
+      return () => tl.kill();
+    },
+    { scope: rootRef, dependencies: [target === null, reduced] },
+  );
+
   const doorsLabel = `${pad(DOORS_HOUR)}:${pad(DOORS_MINUTE)}`;
   const parts = clockParts(live ? -remaining : (remaining ?? 0));
   const spoken = `${Number(parts[0])} hours ${Number(parts[1])} minutes ${Number(parts[2])} seconds ${
@@ -240,8 +310,10 @@ const AdminPage = () => {
         {/* Armed, the readout uses role=timer rather than aria-live: a clock
             that announced itself every second would make the page unusable
             with a screen reader. The digits carry no text of their own — the
-            spoken form, now the only place the 10:30 target is named at all,
-            sits beside them and is read on demand. */}
+            spoken form, now the only place the 11:15 target is named at all,
+            sits beside them and is read on demand. The credited teams (if
+            any) are read once, as a plain list, rather than trying to
+            synchronize a live region to a decorative rotation. */}
         {target === null ? (
           <button
             data-rise
@@ -255,18 +327,40 @@ const AdminPage = () => {
           </button>
         ) : (
           <div ref={armedRef} role="timer" aria-label={spoken}>
-            <div aria-hidden="true">
-              <Readout
-                text={parts.join(":")}
-                reduced={reduced}
-                tone={
-                  live || (running && remaining <= 60000)
-                    ? "text-lime"
-                    : "text-white"
-                }
-              />
+            {/* Both layers occupy the same grid cell always — the track
+                sizes to the taller of the two, so nothing reflows when the
+                rotation below swaps which one is visible. Only opacity
+                moves. */}
+            <div className="grid" aria-hidden="true">
+              <div ref={clockLayerRef} className="col-start-1 row-start-1">
+                <Readout
+                  text={parts.join(":")}
+                  reduced={reduced}
+                  tone={
+                    live || (running && remaining <= 60000)
+                      ? "text-lime"
+                      : "text-white"
+                  }
+                />
+              </div>
+              {TEAM_NAMES.length > 0 && (
+                <div
+                  ref={nameLayerRef}
+                  className="col-start-1 row-start-1 flex items-center justify-center px-4 opacity-0"
+                >
+                  <span
+                    ref={nameTextRef}
+                    className="max-w-[22ch] text-balance font-display text-[clamp(1.5rem,4.8vw,3rem)] font-black leading-[1.05] tracking-[-0.02em] text-lime drop-shadow-[0_6px_60px_rgba(0,0,0,0.75)]"
+                  />
+                </div>
+              )}
             </div>
             <span className="sr-only">{spoken}</span>
+            {TEAM_NAMES.length > 0 && (
+              <span className="sr-only">
+                Teams: {TEAM_NAMES.join(", ")}.
+              </span>
+            )}
           </div>
         )}
       </div>
