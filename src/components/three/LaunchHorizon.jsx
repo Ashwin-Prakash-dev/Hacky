@@ -5,10 +5,10 @@ import { ScreenQuad } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-// The launch console's ground: a lime drafting grid projected onto a floor
+// The launch console's ground: a red drafting grid projected onto a floor
 // and a far fainter ceiling, racing toward a horizon set just above centre.
-// It is the same blueprint surface the site-wide lens paints (.lens-grid),
-// given perspective and a direction of travel.
+// It is the same blueprint surface the site-wide lens paints (.lens-grid, in
+// lime there), given perspective, a direction of travel, and its own tint.
 //
 // Everything reads from one plain object passed in as `driveRef`:
 //   charge   0 idle -> 1 armed  (travel speed, horizon bloom, ring pulse)
@@ -37,7 +37,7 @@ const QUAD_FRAG = /* glsl */ `
   uniform float uFlash;
   varying vec2  vUv;
 
-  const vec3 LIME = vec3(0.784, 1.0, 0.0);
+  const vec3 TINT = vec3(1.0, 0.16, 0.08);
 
   // One infinite plane's worth of grid, distance-faded. Line width grows
   // with distance to stand in for a screen-space derivative: fwidth needs
@@ -96,8 +96,8 @@ const QUAD_FRAG = /* glsl */ `
       smoothstep(0.10, 1.0, length((s - vec2(0.0, 0.04)) / vec2(1.12, 1.32))));
 
     vec3 col = vec3(0.0);
-    col += LIME * deck(rd, -1.0, uScroll) * (0.18 + uCharge * 0.20 + uUrgency * 0.30);
-    col += LIME * deck(rd,  2.6, uScroll) * (0.05 + uCharge * 0.07 + uUrgency * 0.12);
+    col += TINT * deck(rd, -1.0, uScroll) * (0.18 + uCharge * 0.20 + uUrgency * 0.30);
+    col += TINT * deck(rd,  2.6, uScroll) * (0.05 + uCharge * 0.07 + uUrgency * 0.12);
 
     // rings running outward across the floor once the clock is armed — the
     // console's own pulse, roughly one a second. Measured from under the
@@ -110,21 +110,21 @@ const QUAD_FRAG = /* glsl */ `
       float ring = (1.0 - smoothstep(0.0, 0.09, wave))
                  * (1.0 - smoothstep(4.0, 40.0, r))
                  * smoothstep(0.5, 3.0, tf);
-      col += LIME * ring * uCharge * 0.42;
+      col += TINT * ring * uCharge * 0.42;
     }
 
     // the horizon itself: a hairline of light, and the bloom behind it
     float band  = 1.0 - smoothstep(0.0, 0.010, abs(c.y));
     float bloom = 1.0 - smoothstep(0.0, 0.32,  abs(c.y));
     float mid   = 1.0 - smoothstep(0.0, 1.5,   abs(c.x));
-    col += LIME * band * (0.30 + uCharge * 0.45 + uUrgency * 0.55);
-    col += LIME * bloom * mid * (0.030 + uCharge * 0.075 + uUrgency * 0.20);
+    col += TINT * band * (0.30 + uCharge * 0.45 + uUrgency * 0.55);
+    col += TINT * bloom * mid * (0.030 + uCharge * 0.075 + uUrgency * 0.20);
 
     // corners fall away, then the light well; ignition sits on top of both
     // because a flash that respected the well would look like a hole
     float vig = 1.0 - 0.58 * pow(clamp(length(s * vec2(0.62, 0.78)), 0.0, 1.0), 1.8);
     col *= vig * quiet;
-    col += (LIME * 0.75 + 0.25) * uFlash;
+    col += (TINT * 0.75 + 0.25) * uFlash;
 
     gl_FragColor = vec4(col, 1.0);
   }
