@@ -6,20 +6,18 @@ import { usePageMeta } from "../lib/seo";
 
 // The launch console. One viewport, no scroll, one axis: the wordmark, the
 // clock, and the people backing it. Arm it and it counts down to 11:15
-// tomorrow; once there it keeps counting, upward, for as long as the room
+// today; once there it keeps counting, upward, for as long as the room
 // is open.
 //
 // Entirely client-side and deliberately not persisted — a refresh puts the
 // console back to standing by, which is the only way out of an armed clock.
 
-const DOORS_HOUR = 10;
-const DOORS_MINUTE = 45;
+const DOORS_HOUR = 11;
+const DOORS_MINUTE = 15;
 
-// Always tomorrow's 11:15, never today's — this console is armed once, the
-// day before doors, so "today" is never a valid target.
+// Today's 11:15 — this console is armed the same day as doors.
 const nextDoors = (from = new Date()) => {
   const t = new Date(from);
-  t.setDate(t.getDate());
   t.setHours(DOORS_HOUR, DOORS_MINUTE, 0, 0);
   return t;
 };
@@ -128,7 +126,7 @@ const AdminPage = () => {
   usePageMeta({
     title: "Launch control",
     description:
-      "The console that opens Startathon. Arm the clock and it counts down to doors at 10:30.",
+      "The console that opens Startathon. Arm the clock and it counts down to doors at 11:15.",
     path: "/admin",
     noindex: true,
   });
