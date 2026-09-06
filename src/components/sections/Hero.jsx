@@ -33,10 +33,14 @@ const supportsWebGL = () => {
   }
 };
 
-const Hero = () => {
+// `progressRef` and `cta` let the launch console (/admin2) mount this exact
+// hero and drive the dissolve itself, on a timeline rather than a scrub.
+// Whoever passes the ref owns the dissolve, so the hero pins nothing.
+const Hero = ({ progressRef: drivenProgressRef, cta }) => {
   const sectionRef = useRef(null);
   const overlayRef = useRef(null);
-  const progressRef = useRef(0);
+  const ownProgressRef = useRef(0);
+  const progressRef = drivenProgressRef ?? ownProgressRef;
   const discRef = useRef(null);
   const discSpinRef = useRef(null);
 
@@ -103,7 +107,7 @@ const Hero = () => {
           delay: 0.2,
         });
       }
-      if (reduced || !webgl) return;
+      if (reduced || !webgl || drivenProgressRef) return;
 
       // one short pin: the dissolve is the only beat here, so the
       // overlay just persists for the pin and scrolls away naturally
@@ -119,7 +123,7 @@ const Hero = () => {
         },
       });
     },
-    { scope: sectionRef, dependencies: [reduced, webgl] },
+    { scope: sectionRef, dependencies: [reduced, webgl, drivenProgressRef] },
   );
 
   return (
@@ -142,6 +146,7 @@ const Hero = () => {
           away naturally when it releases. */}
       <div
         ref={overlayRef}
+        data-hero-overlay
         className="absolute left-0 top-0 z-[21] flex size-full flex-col justify-between px-5 pb-8 pt-24 sm:px-10 sm:pb-12 sm:pt-28"
       >
         {/* Top band: date/venue facts (the badge disc owns the
@@ -185,19 +190,21 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-5">
-              <Link to="/apply" className="cta-pill group">
-                <span className="relative inline-flex overflow-hidden">
-                  <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                    Start Your Journey
+              {cta ?? (
+                <Link to="/apply" className="cta-pill group">
+                  <span className="relative inline-flex overflow-hidden">
+                    <span className="translate-y-0 skew-y-0 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                      Start Your Journey
+                    </span>
+                    <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
+                      Start Your Journey
+                    </span>
                   </span>
-                  <span className="absolute translate-y-[164%] skew-y-12 transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:skew-y-0">
-                    Start Your Journey
+                  <span className="cta-pill-icon" aria-hidden="true">
+                    <ArrowUpRight size={15} strokeWidth={2.25} />
                   </span>
-                </span>
-                <span className="cta-pill-icon" aria-hidden="true">
-                  <ArrowUpRight size={15} strokeWidth={2.25} />
-                </span>
-              </Link>
+                </Link>
+              )}
             </div>
           </div>
         </div>
